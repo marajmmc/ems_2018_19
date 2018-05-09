@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['system_site_short_name']='sms';
+$config['system_site_short_name']='ems';
 $config['offline_controllers']=array('home','sys_site_offline');
 $config['external_controllers']=array('home');//user can use them without login
 $config['system_max_actions']=8;
@@ -24,39 +24,6 @@ $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
 
 $config['system_base_url_dealer_and_farmer_visit']='http://localhost/ems_2018_19/';
 
-//Stock
-$config['system_purpose_variety_stock_in']='Stock-In';
-$config['system_purpose_variety_excess']='Excess';
-$config['system_purpose_variety_rnd']='R&D Purpose';
-$config['system_purpose_variety_short_inventory']='Short Inventory';
-$config['system_purpose_variety_demonstration']='Demonstration';
-$config['system_purpose_variety_sample']='Sample Purpose';
-$config['system_purpose_variety_in_delivery_short']='Delivery Short';
-$config['system_purpose_variety_delivery_excess']='Deliver Excess';
-
-
-
-
-
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
-
-/*Bank & Account Config*/
-// purpose
-$config['system_bank_account_purpose_lc']='lc';
-$config['system_bank_account_purpose_sale_receive']='sale_receive';
-
-/// Added by saiful. Need to review.
-$config['system_master_foil']='Master';
-$config['system_common_foil']='Foil';
-$config['system_sticker']='Sticker';
-
-//Stock out purpose
-$config['system_purpose_raw_stock_damage']='Damage';
-//System Configuration
-$config['system_purpose_sms_date_expire']='sms_date_expire';
-$config['system_purpose_sms_quantity_order_max']='sms_quantity_order_max';
-$config['system_purpose_pos_barcode_expire_date']='pos_barcode_expire_date';
-$config['system_purpose_sms_menu_odd_color']='sms_menu_odd_color';
-$config['system_purpose_sms_menu_even_color']='sms_menu_even_color';
 
