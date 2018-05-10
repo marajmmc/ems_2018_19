@@ -244,6 +244,7 @@ $lang['LABEL_MAP_ADDRESS'] = 'Google Map Link';
 $lang['LABEL_INCHARGE'] = 'In-charge';
 
 // Added by saiful
+$lang['LABEL_EMPLOYEE'] = 'Employee';
 
 $lang['LABEL_ZSC_COMMENT'] = 'ZSC Comment';
 $lang['LABEL_ATTENDANCE_STATUS']="Attendance";

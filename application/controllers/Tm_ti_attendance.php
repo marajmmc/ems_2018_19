@@ -139,6 +139,8 @@ class Tm_ti_attendance extends Root_Controller
         $this->db->order_by('dealer_farmer_visit.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
+//        print_r($items);
+//        exit;
         foreach($items as &$item)
         {
             if($item['user_updated']==null)

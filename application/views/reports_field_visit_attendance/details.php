@@ -1,20 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-$CI=& get_instance();
-$action_buttons=array();
-$action_buttons[]=array
-(
-    'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url)
-);
-$CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+$CI = & get_instance();
 ?>
 
-<style>
-    .datepicker
-    {
-        cursor: pointer !important;
-    }
-</style>
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
@@ -23,90 +10,77 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="clearfix"></div>
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE');?></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo System_helper::display_date($item['date']);?></label>
         </div>
+
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['division_name'];?></label>
         </div>
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['zone_name'];?></label>
         </div>
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['territory_name'];?></label>
         </div>
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['district_name'];?></label>
         </div>
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Outlet</label>
+            <label class="control-label pull-right">Outlet:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['customer_name'];?></label>
+            <label class="control-label"><?php echo $item['outlet'];?></label>
         </div>
     </div>
 
-    <div class="row show-grid">
+    <div style="" class="row show-grid" id="farmer_id_container">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Dealer</label>
+            <label class="control-label pull-right">Dealer:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['farmer_name'];?></label>
+            <label class="control-label"><?php echo $item['dealer'];?></label>
         </div>
-
     </div>
 
-    <?php if(sizeof($dealer_info_file)>0){?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label for="dealer_info_file_id" class="control-label pull-right">Dealer Info File</label>
-            </div>
-            <div id="dealer_info_file_id" class="col-sm-4 col-xs-8">
-                <?php foreach($dealer_info_file as $key=>$file){$key++;?>
-                    <a href="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$file['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$key;?></a>
-                <?php } ?>
-            </div>
-        </div>
-    <?php } ?>
-
-    <div class="row">
+    <div style="" class="row">
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Lead Farmer Visit Activities (1)</label>
             </div>
             <div class="col-xs-4">
-                <?php if($item['lead_farmer_visit_activities_one']){echo $item['lead_farmer_visit_activities_one'];}else{echo 'N/A';} ?>
+                <label class="control-label"><?php echo $item['lead_farmer_visit_activities_one'];?></label>
             </div>
         </div>
 
@@ -120,10 +94,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Lead Farmer Visit Activities (1)</label>
+                <label class="control-label pull-right">Lead Farmer Visit Activities (2)</label>
             </div>
             <div class="col-xs-4">
-                <?php if($item['lead_farmer_visit_activities_two']){echo $item['lead_farmer_visit_activities_two'];}else{echo 'N/A';} ?>
+                <label class="control-label"><?php echo $item['lead_farmer_visit_activities_two'];?></label>
             </div>
         </div>
 
@@ -140,7 +114,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Lead Farmer Visit Activities (3)</label>
             </div>
             <div class="col-xs-4">
-                <?php if($item['lead_farmer_visit_activities_three']){echo $item['lead_farmer_visit_activities_three'];}else{echo 'N/A';} ?>
+                <label class="control-label"><?php echo $item['lead_farmer_visit_activities_three'];?></label>
             </div>
         </div>
 
@@ -157,7 +131,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Farmer Visit Activities</label>
             </div>
             <div class="col-xs-4">
-                <?php if($item['farmer_visit_activities']){echo $item['farmer_visit_activities'];}else{echo 'N/A';} ?>
+                <label class="control-label"><?php echo $item['farmer_visit_activities'];?></label>
             </div>
         </div>
 
@@ -174,7 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Dealer Visit Activities</label>
             </div>
             <div class="col-xs-4">
-                <?php if($item['dealer_visit_activities']){echo $item['dealer_visit_activities'];}else{echo 'N/A';} ?>
+                <label class="control-label"><?php echo $item['dealer_visit_activities'];?></label>
             </div>
         </div>
 
@@ -191,12 +165,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Other Activities</label>
             </div>
             <div class="col-xs-4">
-                <?php if($item['other_activities']){echo $item['other_activities'];}else{echo 'N/A';} ?>
+                <label class="control-label"><?php echo $item['other_activities'];?></label>
             </div>
         </div>
     </div>
-
 </div>
-
 <div class="clearfix"></div>
-

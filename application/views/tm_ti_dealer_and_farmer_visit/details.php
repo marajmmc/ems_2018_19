@@ -106,7 +106,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Lead Farmer Visit Activities (1)</label>
             </div>
             <div class="col-xs-4">
-                <?php echo $item['lead_farmer_visit_activities_one'] ?>
+                <?php if($item['lead_farmer_visit_activities_one']){echo $item['lead_farmer_visit_activities_one'];}else{echo 'N/A';} ?>
             </div>
         </div>
 
@@ -123,7 +123,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Lead Farmer Visit Activities (2)</label>
             </div>
             <div class="col-xs-4">
-                <?php echo $item['lead_farmer_visit_activities_two'] ?>
+                <?php if($item['lead_farmer_visit_activities_two']){echo $item['lead_farmer_visit_activities_two'];}else{echo 'N/A';} ?>
             </div>
         </div>
 
@@ -140,7 +140,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Lead Farmer Visit Activities (3)</label>
             </div>
             <div class="col-xs-4">
-                <?php echo $item['lead_farmer_visit_activities_three'] ?>
+                <?php if($item['lead_farmer_visit_activities_three']){echo $item['lead_farmer_visit_activities_three'];}else{echo 'N/A';} ?>
             </div>
         </div>
 
@@ -157,7 +157,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Farmer Visit Activities</label>
             </div>
             <div class="col-xs-4">
-                <?php echo $item['farmer_visit_activities'] ?>
+                <?php if($item['farmer_visit_activities']){echo $item['farmer_visit_activities'];}else{echo 'N/A';} ?>
             </div>
         </div>
 
@@ -174,7 +174,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Dealer Visit Activities</label>
             </div>
             <div class="col-xs-4">
-                <?php echo $item['dealer_visit_activities'] ?>
+                <?php if($item['dealer_visit_activities']){echo $item['dealer_visit_activities'];}else{echo 'N/A';} ?>
             </div>
         </div>
 
@@ -191,7 +191,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Other Activities</label>
             </div>
             <div class="col-xs-4">
-                <?php echo $item['other_activities'] ?>
+                <?php if($item['other_activities']){echo $item['other_activities'];}else{echo 'N/A';} ?>
             </div>
         </div>
     </div>
