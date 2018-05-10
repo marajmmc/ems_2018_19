@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tm_ti_dealer_and_farmer_visit extends Root_Controller
+class Ft_ti_dealer_and_field_visit extends Root_Controller
 {
     private $message;
     public $permissions;
@@ -10,7 +10,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Tm_ti_dealer_and_farmer_visit');
+        $this->permissions=User_helper::get_permission('Ft_ti_dealer_and_field_visit');
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
@@ -18,7 +18,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->controller_url='tm_ti_dealer_and_farmer_visit';
+        $this->controller_url='ft_ti_dealer_and_field_visit';
     }
 
     public function index($action="list",$id=0)
@@ -65,7 +65,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['title']="Dealer And Farmer Visit Pending List";
+            $data['title']="Dealer And Field Visit Pending List";
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
             if($this->message)
@@ -100,11 +100,11 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
-        $this->db->from($this->config->item('table_ems_tm_dealer_and_farmer_visit').' dealer_farmer_visit');
-        $this->db->select('dealer_farmer_visit.*');
-        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
+        $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
+        $this->db->select('dealer_field_visit.*');
+        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
         $this->db->select('farmer.name farmer_name');
-        $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
+        $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
         $this->db->select('cus_info.name outlet');
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = cus_info.district_id','INNER');
@@ -127,9 +127,9 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
                 }
             }
         }
-        $this->db->where('dealer_farmer_visit.status_attendance','Pending');
-        $this->db->where('dealer_farmer_visit.status',$this->config->item('system_status_active'));
-        $this->db->order_by('dealer_farmer_visit.id','DESC');
+        $this->db->where('dealer_field_visit.status_attendance','Pending');
+        $this->db->where('dealer_field_visit.status',$this->config->item('system_status_active'));
+        $this->db->order_by('dealer_field_visit.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
@@ -177,11 +177,11 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
         {
             $pagesize=$pagesize*2;
         }
-        $this->db->from($this->config->item('table_ems_tm_dealer_and_farmer_visit').' dealer_farmer_visit');
-        $this->db->select('dealer_farmer_visit.*');
-        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
+        $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
+        $this->db->select('dealer_field_visit.*');
+        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
         $this->db->select('farmer.name farmer_name');
-        $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
+        $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
         $this->db->select('cus_info.name outlet');
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = cus_info.district_id','INNER');
@@ -204,8 +204,8 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
                 }
             }
         }
-        $this->db->where('dealer_farmer_visit.status',$this->config->item('system_status_active'));
-        $this->db->order_by('dealer_farmer_visit.id','DESC');
+        $this->db->where('dealer_field_visit.status',$this->config->item('system_status_active'));
+        $this->db->order_by('dealer_field_visit.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
@@ -309,11 +309,11 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
             {
                 $item_id=$id;
             }
-            $this->db->from($this->config->item('table_ems_tm_dealer_and_farmer_visit').' dealer_farmer_visit');
-            $this->db->select('dealer_farmer_visit.*');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
+            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
+            $this->db->select('dealer_field_visit.*');
+            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
             $this->db->select('farmer.name farmer_name');
-            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
+            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
             $this->db->select('cus_info.district_id, cus_info.name customer_name');
             $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = cus_info.district_id','INNER');
@@ -324,9 +324,9 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
             $this->db->select('zone.division_id, zone.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
-            $this->db->where('dealer_farmer_visit.id',$item_id);
+            $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
-            $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_tm_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
+            $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
             if(!$data['item'])
             {
                 System_helper::invalid_try('Edit',$item_id,'Id Not Exists');
@@ -400,7 +400,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
                 $this->json_return($ajax);
                 die();
             }
-            $result=Query_helper::get_info($this->config->item('table_ems_tm_dealer_and_farmer_visit'),array('*'),array('id ='.$id,'status !="'.$this->config->item('system_status_delete').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),array('*'),array('id ='.$id,'status !="'.$this->config->item('system_status_delete').'"'),1);
             $item['customer_id']=$result['customer_id'];
             $item['farmer_id']=$result['farmer_id'];
             if(!$result)
@@ -433,7 +433,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
         if(!$id>0)
         {
             $date=System_helper::get_time($item['date']);
-            $duplicate_entry_check=Query_helper::get_info($this->config->item('table_ems_tm_dealer_and_farmer_visit'),array('id'),array('date ='.$date,'customer_id ='.$item['customer_id']));
+            $duplicate_entry_check=Query_helper::get_info($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),array('id'),array('date ='.$date,'customer_id ='.$item['customer_id']));
             if($duplicate_entry_check)
             {
                 $ajax['status']=false;
@@ -576,14 +576,14 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
                 $item['user_updated'] = $user->user_id;
                 $item['date_updated'] = time();
                 $this->db->set('revision_count', 'revision_count+1', FALSE);
-                Query_helper::update($this->config->item('table_ems_tm_dealer_and_farmer_visit'),$item,array("id = ".$id));
+                Query_helper::update($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),$item,array("id = ".$id));
             }
             else
             {
                 $item['date']=System_helper::get_time($item['date']);
                 $item['date_created']=$time;
                 $item['user_created']=$user->user_id;
-                Query_helper::add($this->config->item('table_ems_tm_dealer_and_farmer_visit'),$item, true);
+                Query_helper::add($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),$item, true);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -667,7 +667,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
         $date=$this->input->post('date');
         $date=System_helper::get_time($date);
         $customer_id=$this->input->post('customer_id');
-        $result=Query_helper::get_info($this->config->item('table_ems_tm_dealer_and_farmer_visit'),array('id'),array('date ='.$date,'customer_id ='.$customer_id));
+        $result=Query_helper::get_info($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),array('id'),array('date ='.$date,'customer_id ='.$customer_id));
         if($result)
         {
             $ajax['status']=false;
@@ -685,7 +685,7 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
     public function get_dealer_info_file()
     {
         $farmer_id=$this->input->post('farmer_id');
-        $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_tm_dealer_file'),array('*'),array('farmer_id ='.$farmer_id));
+        $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$farmer_id));
         if($data['dealer_info_file'])
         {
             $html_container_id='#dealer_info_file_id';
@@ -711,11 +711,11 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
             {
                 $item_id=$id;
             }
-            $this->db->from($this->config->item('table_ems_tm_dealer_and_farmer_visit').' dealer_farmer_visit');
-            $this->db->select('dealer_farmer_visit.*');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
+            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
+            $this->db->select('dealer_field_visit.*');
+            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
             $this->db->select('farmer.name farmer_name');
-            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
+            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
             $this->db->select('cus_info.district_id, cus_info.name customer_name');
             $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = cus_info.district_id','INNER');
@@ -726,9 +726,9 @@ class Tm_ti_dealer_and_farmer_visit extends Root_Controller
             $this->db->select('zone.division_id, zone.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
-            $this->db->where('dealer_farmer_visit.id',$item_id);
+            $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
-            $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_tm_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
+            $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
             if(!$data['item'])
             {
                 System_helper::invalid_try('Details',$item_id,'Id Not Exists');

@@ -132,7 +132,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
-            console.log(record);
             var element = $(defaultHtml);
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
             if(column=='details_button')

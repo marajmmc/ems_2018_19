@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Setup_tm_dealer_visit extends Root_Controller
+class Setup_ft_dealer_file extends Root_Controller
 {
     private $message;
     public $permissions;
@@ -10,7 +10,7 @@ class Setup_tm_dealer_visit extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Setup_tm_dealer_visit');
+        $this->permissions=User_helper::get_permission('Setup_ft_dealer_file');
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
@@ -18,7 +18,7 @@ class Setup_tm_dealer_visit extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->controller_url='setup_tm_dealer_visit';
+        $this->controller_url='setup_ft_dealer_file';
     }
 
     public function index($action="list",$id=0)
@@ -146,7 +146,7 @@ class Setup_tm_dealer_visit extends Root_Controller
             $this->db->select('zone.division_id, zone.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
-            $this->db->join($this->config->item('table_ems_setup_tm_dealer_file').' dealer_file','dealer_file.farmer_id = farmer_outlet.farmer_id','LEFT');
+            $this->db->join($this->config->item('table_ems_setup_ft_dealer_file').' dealer_file','dealer_file.farmer_id = farmer_outlet.farmer_id','LEFT');
             $this->db->select('dealer_file.farmer_id id');
             $this->db->where('farmer_outlet.farmer_id',$item_id);
             $this->db->where('farmer_outlet.revision',1);
@@ -165,7 +165,7 @@ class Setup_tm_dealer_visit extends Root_Controller
                 $ajax['system_message']='You are trying to edit others file';
                 $this->json_return($ajax);
             }
-            $this->db->from($this->config->item('table_ems_setup_tm_dealer_file').' dealer_file');
+            $this->db->from($this->config->item('table_ems_setup_ft_dealer_file').' dealer_file');
             $this->db->select('dealer_file.*');
             $this->db->where('dealer_file.farmer_id',$item_id);
             $data['items']=$this->db->get()->result_array();
@@ -202,7 +202,7 @@ class Setup_tm_dealer_visit extends Root_Controller
                 $this->json_return($ajax);
                 die();
             }
-            $results=Query_helper::get_info($this->config->item('table_ems_setup_tm_dealer_file'),array('*'),array('farmer_id ='.$id,'status !="'.$this->config->item('system_status_delete').'"'));
+            $results=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$id,'status !="'.$this->config->item('system_status_delete').'"'));
             $item_old=array();
             foreach($results as $result)
             {
@@ -288,7 +288,7 @@ class Setup_tm_dealer_visit extends Root_Controller
                                 $item['image_location']=$path.'/'.$uploaded_files['file_'.$old_file]['info']['file_name'];
                                 $item['user_updated'] = $user->user_id;
                                 $item['date_updated'] = $time;
-                                Query_helper::update($this->config->item('table_ems_setup_tm_dealer_file'),$item,array("id = ".$old_file,"farmer_id = ".$id));
+                                Query_helper::update($this->config->item('table_ems_setup_ft_dealer_file'),$item,array("id = ".$old_file,"farmer_id = ".$id));
                             }
                             else
                             {
@@ -312,7 +312,7 @@ class Setup_tm_dealer_visit extends Root_Controller
                                 $item['image_location']=$path.'/'.$uploaded_files['file_'.$key]['info']['file_name'];
                                 $item['date_created']=$time;
                                 $item['user_created']=$user->user_id;
-                                Query_helper::add($this->config->item('table_ems_setup_tm_dealer_file'),$item, true);
+                                Query_helper::add($this->config->item('table_ems_setup_ft_dealer_file'),$item, true);
                             }
                             else
                             {
