@@ -247,4 +247,15 @@ $lang['LABEL_INCHARGE'] = 'In-charge';
 $lang['LABEL_EMPLOYEE'] = 'Employee';
 
 $lang['LABEL_ZSC_COMMENT'] = 'ZSC Comment';
-$lang['LABEL_ATTENDANCE_STATUS']="Attendance";
+$lang['LABEL_STATUS_ATTENDANCE']="Attendance";
+
+//Dealer And Field Visit
+$lang['LABEL_DEALER'] = 'Dealer';
+$lang['LABEL_DEALER_VISIT_ACTIVITIES'] = 'Dealer Visit Activities';
+$lang['LABEL_FARMER_NAME'] = 'Farmer';
+$lang['LABEL_FARMER_VISIT_ACTIVITIES'] = 'Farmer Visit Activities';
+$lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE'] = 'Lead Farmer Visit Activities (1)';
+$lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO'] = 'Lead Farmer Visit Activities (2)';
+$lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE'] = 'Lead Farmer Visit Activities (3)';
+$lang['LABEL_OTHER_ACTIVITIES'] = 'Other Activities';
+$lang['LABEL_OUTLET'] = 'Outlet';

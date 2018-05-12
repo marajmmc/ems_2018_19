@@ -2,7 +2,7 @@
 
 class Ft_ti_dealer_and_field_visit extends Root_Controller
 {
-    private $message;
+    public $message;
     public $permissions;
     public $controller_url;
     public $locations;
@@ -55,6 +55,18 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="set_preference")
+        {
+            $this->system_set_preference();
+        }
+        elseif($action=="set_preference_all")
+        {
+            $this->system_set_preference_all();
+        }
+        elseif($action=="save_preference")
+        {
+            System_helper::save_preference();
+        }
         else
         {
             $this->system_list($id);
@@ -65,6 +77,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
+            $data['system_preference_items']= $this->get_preference();
             $data['title']="Dealer And Field Visit Pending List";
             $ajax['status']=true;
             $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/list',$data,true));
@@ -139,10 +152,45 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         $this->json_return($items);
     }
 
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list"'),1);
+        $data['date']= 1;
+        $data['outlet']= 1;
+        $data['farmer_name']= 1;
+        $data['dealer_visit_activities']= 1;
+        $data['lead_farmer_visit_activities_one']= 1;
+        $data['lead_farmer_visit_activities_two']= 1;
+        $data['lead_farmer_visit_activities_three']= 1;
+        $data['farmer_visit_activities']= 1;
+        $data['other_activities']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+
     private function system_list_all()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
+            $data['system_preference_items']= $this->get_preference_all();
             $data['title']="Dealer And Farmer Visit All List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_all",$data,true));
@@ -217,6 +265,41 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             }
         }
         $this->json_return($items);
+    }
+
+    private function get_preference_all()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="list_all"'),1);
+        $data['date']= 1;
+        $data['outlet']= 1;
+        $data['farmer_name']= 1;
+        $data['dealer_visit_activities']= 1;
+        $data['lead_farmer_visit_activities_one']= 1;
+        $data['lead_farmer_visit_activities_two']= 1;
+        $data['lead_farmer_visit_activities_three']= 1;
+        $data['farmer_visit_activities']= 1;
+        $data['other_activities']= 1;
+        $data['status_attendance']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
     private function system_add()
@@ -751,6 +834,44 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']=$this->get_preference();
+            $data['preference_method_name']='list';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference_all()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']=$this->get_preference_all();
+            $data['preference_method_name']='list_all';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_all');
             $this->json_return($ajax);
         }
         else

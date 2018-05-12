@@ -15,7 +15,6 @@ if(isset($CI->permissions['action1'])&&($CI->permissions['action1']==1))
         'href'=>site_url($CI->controller_url.'/index/add')
     );
 }
-
 if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
 {
     $action_buttons[]=array
@@ -26,7 +25,6 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
 }
-
 if(isset($CI->permissions['action0'])&&($CI->permissions['action0']==1))
 {
     $action_buttons[]=array(
@@ -36,7 +34,6 @@ if(isset($CI->permissions['action0'])&&($CI->permissions['action0']==1))
         'data-action-link'=>site_url($CI->controller_url.'/index/details')
     );
 }
-
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
@@ -47,7 +44,6 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
         'data-print'=>true
     );
 }
-
 if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
     $action_buttons[]=array(
@@ -57,7 +53,14 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
-
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
+    );
+}
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
     'href'=>site_url($CI->controller_url.'/index/list')
@@ -78,22 +81,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="clearfix"></div>
     </div>
     <?php
-    if(isset($CI->permissions['action6'])&&($CI->permissions['action6']==1))
+    if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     {
-
-        ?>
-        <div class="col-xs-12" style="margin-bottom: 20px;">
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date"><?php echo $CI->lang->line('LABEL_DATE'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="outlet">Outlet</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="farmer_name">Farmer</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="dealer_visit_activities">Dealer Visit Activities</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="lead_farmer_visit_activities_one">Lead Farmer Visit Activities (1)</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="lead_farmer_visit_activities_two">Lead Farmer Visit Activities (2)</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="lead_farmer_visit_activities_three">Lead Farmer Visit Activities (3)</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="farmer_visit_activities">Farmer Visit Activities</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="other_activities">Other Activities</label>
-        </div>
-    <?php
+        $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
     }
     ?>
     <div class="col-xs-12" id="system_jqx_container">
@@ -149,15 +139,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true, dataField: 'date',width:'100',rendered:tooltiprenderer},
-                    { text: 'Outlet', dataField: 'outlet',filtertype: 'list',width:'180',rendered:tooltiprenderer},
-                    { text: 'Farmer', dataField: 'farmer_name',width:'160',rendered:tooltiprenderer},
-                    { text: 'Dealer Visit Activities', dataField: 'dealer_visit_activities',rendered:tooltiprenderer},
-                    { text: 'Lead Farmer Visit Activities (1)', dataField: 'lead_farmer_visit_activities_one',rendered:tooltiprenderer},
-                    { text: 'Lead Farmer Visit Activities (2)', dataField: 'lead_farmer_visit_activities_two',rendered:tooltiprenderer},
-                    { text: 'Lead Farmer Visit Activities (3)', dataField: 'lead_farmer_visit_activities_three',rendered:tooltiprenderer},
-                    { text: 'Farmer Visit Activities', dataField: 'farmer_visit_activities',rendered:tooltiprenderer},
-                    { text: 'Other Activities', dataField: 'other_activities',rendered:tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true, dataField: 'date',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>', dataField: 'outlet',filtertype: 'list',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>', dataField: 'farmer_name',width:'160',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES'); ?>', dataField: 'dealer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer_visit_activities']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE'); ?>', dataField: 'lead_farmer_visit_activities_one',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_one']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO'); ?>', dataField: 'lead_farmer_visit_activities_two',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_two']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE'); ?>', dataField: 'lead_farmer_visit_activities_three',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_three']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES'); ?>', dataField: 'farmer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_visit_activities']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES'); ?>', dataField: 'other_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['other_activities']?0:1;?>}
                 ]
             });
     });
