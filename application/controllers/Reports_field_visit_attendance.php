@@ -179,6 +179,8 @@ class Reports_field_visit_attendance extends Root_Controller
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
         $user_id=$this->input->post('user_id');
+
+        //Data from source table
         $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
         $this->db->select('dealer_farmer_visit.*');
         $this->db->join($this->config->item('table_login_setup_user').' user','user.id = dealer_farmer_visit.user_created','INNER');
@@ -232,6 +234,7 @@ class Reports_field_visit_attendance extends Root_Controller
         $this->db->order_by('dealer_farmer_visit.id DESC');
         $dealer_farmer_visit=$this->db->get()->result_array();
 
+        // Arranging data in new array
         $dealer_farmer_visit_list=array();
         foreach($dealer_farmer_visit as &$visit)
         {
@@ -259,6 +262,7 @@ class Reports_field_visit_attendance extends Root_Controller
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['user_updated_attendance']=$visit['user_updated_attendance'];
         }
 
+        //Searched User Info
         $this->db->from($this->config->item('table_login_setup_user').' user');
         $this->db->select('user.employee_id');
         $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id=user.id','INNER');
