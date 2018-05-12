@@ -156,16 +156,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $("#system_jqx_container").jqxGrid(
             {
                 width: '100%',
+                height:'350px',
                 source: dataAdapter,
                 filterable: true,
                 sortable: true,
                 showfilterrow: true,
                 columnsresize: true,
-                pagesize:20,
-                pagesizeoptions: ['20', '50', '100', '200','300','500'],
-                selectionmode: 'singlerow',
+                columnsreorder: true,
                 altrows: true,
+                enabletooltips: true,
+                showstatusbar: true,
                 rowsheight: 45,
+                enablebrowserselection:true,
+
+
                 columns: [
                     { text: 'ID',pinned:true,dataField: 'id',width:'110',cellsrenderer: cellsrenderer,rendered:tooltiprenderer, hidden: true},
                     {
@@ -179,13 +183,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     },
                     { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true,dataField: 'date',width:'110',rendered:tooltiprenderer},
                     { text: 'Division',pinned:true,dataField: 'division_name',width:'80',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Zone',pinned:true,dataField: 'zone_name',width:'90',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Territory',pinned:true,dataField: 'territory_name',width:'130',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Dealer',dataField: 'dealer',width:'130',filtertype: 'list',rendered:tooltiprenderer},
+                    { text: 'Zone',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer},
+                    { text: 'Territory',pinned:true,dataField: 'territory_name',width:'130',rendered:tooltiprenderer},
+                    { text: 'Dealer',dataField: 'dealer',width:'130',rendered:tooltiprenderer},
                     { text: 'Username',dataField: 'username',width:'230',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Task Created Time',dataField: 'created_time',width:'200',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Attendance',dataField: 'status_attendance',width: '65',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Attendance Taken Time',dataField: 'attendance_taken_time',width:'200',filtertype: 'list',rendered:tooltiprenderer},
+                    { text: 'Task Created Time',dataField: 'created_time',width:'200',rendered:tooltiprenderer},
+                    { text: 'Attendance',dataField: 'status_attendance',width: '75',rendered:tooltiprenderer},
+                    { text: 'Attendance Taken Time',dataField: 'attendance_taken_time',width:'200',rendered:tooltiprenderer},
                     { text: 'Details', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
 
                 ]
