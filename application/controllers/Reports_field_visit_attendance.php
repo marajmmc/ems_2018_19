@@ -177,7 +177,7 @@ class Reports_field_visit_attendance extends Root_Controller
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
         $user_id=$this->input->post('user_id');
-        $this->db->from($this->config->item('table_ems_tm_dealer_and_farmer_visit').' dealer_farmer_visit');
+        $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
         $this->db->select('dealer_farmer_visit.*');
         $this->db->join($this->config->item('table_login_setup_user').' user','user.id = dealer_farmer_visit.user_created','INNER');
         $this->db->select('user.id user_id');
@@ -375,7 +375,7 @@ class Reports_field_visit_attendance extends Root_Controller
             {
                 $item_id=$id;
             }
-            $this->db->from($this->config->item('table_ems_tm_dealer_and_farmer_visit').' dealer_farmer_visit');
+            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
             $this->db->select('dealer_farmer_visit.*');
             $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id = dealer_farmer_visit.user_created','INNER');
             $this->db->select('user_area.user_id');
