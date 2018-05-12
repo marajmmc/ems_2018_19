@@ -182,7 +182,7 @@ class Reports_field_visit_attendance extends Root_Controller
         $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
         $this->db->select('dealer_farmer_visit.*');
         $this->db->join($this->config->item('table_login_setup_user').' user','user.id = dealer_farmer_visit.user_created','INNER');
-        $this->db->select('user.id user_id');
+        $this->db->select('user.id user_id, user.employee_id');
         $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
         $this->db->select('user_info.name username');
         $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
@@ -244,7 +244,7 @@ class Reports_field_visit_attendance extends Root_Controller
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['zone_name']=$visit['zone_name'];
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['territory_name']=$visit['territory_name'];
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['district_name']=$visit['district_name'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['username']=$visit['username'];
+            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['username']=$visit['employee_id'].'-'.$visit['username'];
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['status']=$visit['status'];
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date']=$visit['date'];
             $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date_created']=$visit['date_created'];
@@ -260,6 +260,7 @@ class Reports_field_visit_attendance extends Root_Controller
         }
 
         $this->db->from($this->config->item('table_login_setup_user').' user');
+        $this->db->select('user.employee_id');
         $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id=user.id','INNER');
         if(!$user_id)
         {
@@ -353,7 +354,7 @@ class Reports_field_visit_attendance extends Root_Controller
                     }
 
                     $item['dealer']='-';
-                    $item['username']=$searched_user[$j]['name'];
+                    $item['username']=$searched_user[$j]['employee_id'].'-'.$searched_user[$j]['name'];
                     $item['created_time']='-';
                     $item['status_attendance']='-';
                     $item['attendance_taken_time']='-';
