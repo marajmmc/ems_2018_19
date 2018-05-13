@@ -390,6 +390,7 @@ class Ft_ti_attendance extends Root_Controller
             $this->db->select('zone.division_id, zone.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
+            $this->db->where('cus_info.revision',1);
             $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
             $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
@@ -510,7 +511,7 @@ class Ft_ti_attendance extends Root_Controller
     private function check_validation()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[status_attendance]',$this->lang->line('LABEL_ATTENDANCE_STATUS'),'required');
+        $this->form_validation->set_rules('item[status_attendance]',$this->lang->line('LABEL_STATUS_ATTENDANCE'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
@@ -533,6 +534,14 @@ class Ft_ti_attendance extends Root_Controller
             }
             $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
             $this->db->select('dealer_field_visit.*');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_created','user_info_created.user_id=dealer_field_visit.user_created','INNER');
+            $this->db->select('user_info_created.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_updated','user_info_updated.user_id=dealer_field_visit.user_updated','LEFT');
+            $this->db->select('user_info_updated.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance','user_info_attendance.user_id=dealer_field_visit.user_created_attendance','LEFT');
+            $this->db->select('user_info_attendance.name attendance_taken_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance_updated','user_info_attendance_updated.user_id=dealer_field_visit.user_updated_attendance','LEFT');
+            $this->db->select('user_info_attendance_updated.name attendance_updated_by');
             $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
             $this->db->select('farmer.name farmer_name');
             $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
@@ -546,6 +555,11 @@ class Ft_ti_attendance extends Root_Controller
             $this->db->select('zone.division_id, zone.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
+            $this->db->where('user_info_created.revision',1);
+            $this->db->where('user_info_updated.revision',1);
+            $this->db->where('user_info_attendance.revision',1);
+            $this->db->where('user_info_attendance_updated.revision',1);
+            $this->db->where('cus_info.revision',1);
             $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
             $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));

@@ -142,6 +142,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         }
         $this->db->where('dealer_field_visit.status_attendance','Pending');
         $this->db->where('dealer_field_visit.status',$this->config->item('system_status_active'));
+        $this->db->where('cus_info.revision',1);
         $this->db->order_by('dealer_field_visit.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
@@ -253,6 +254,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             }
         }
         $this->db->where('dealer_field_visit.status',$this->config->item('system_status_active'));
+        $this->db->where('cus_info.revision',1);
         $this->db->order_by('dealer_field_visit.id','DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
@@ -408,6 +410,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
             $this->db->where('dealer_field_visit.id',$item_id);
+            $this->db->where('cus_info.revision',1);
             $data['item']=$this->db->get()->row_array();
             $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
             if(!$data['item'])
@@ -436,13 +439,16 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             $data['zones']=Query_helper::get_info($this->config->item('table_login_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['item']['division_id']));
             $data['territories']=Query_helper::get_info($this->config->item('table_login_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['item']['zone_id']));
             $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['item']['territory_id']));
+
             $this->db->from($this->config->item('table_login_csetup_customer').' customer');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
             $this->db->select('cus_info.id value, cus_info.name text');
             $this->db->where('customer.status !=',$this->config->item('system_status_delete'));
             $this->db->where('cus_info.district_id',$data['item']['district_id']);
             $this->db->where('cus_info.type',$this->config->item('system_customer_type_outlet_id'));
+            $this->db->where('cus_info.revision',1);
             $data['customers']=$this->db->get()->result_array();
+
             $this->db->from($this->config->item('table_pos_setup_farmer_outlet').' farmer_outlet');
             $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = farmer_outlet.farmer_id','INNER');
             $this->db->select('farmer.name text, farmer.id value');
@@ -551,6 +557,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
                 }
             }
         }
+        $this->db->where('cus_info.revision',1);
         $this->db->where('farmer_outlet.revision',1);
         $result=$this->db->get()->result_array();
         $farmer_ids=array();
@@ -796,6 +803,14 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             }
             $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
             $this->db->select('dealer_field_visit.*');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_created','user_info_created.user_id=dealer_field_visit.user_created','INNER');
+            $this->db->select('user_info_created.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_updated','user_info_updated.user_id=dealer_field_visit.user_updated','LEFT');
+            $this->db->select('user_info_updated.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance','user_info_attendance.user_id=dealer_field_visit.user_created_attendance','LEFT');
+            $this->db->select('user_info_attendance.name attendance_taken_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance_updated','user_info_attendance_updated.user_id=dealer_field_visit.user_updated_attendance','LEFT');
+            $this->db->select('user_info_attendance_updated.name attendance_updated_by');
             $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
             $this->db->select('farmer.name farmer_name');
             $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
@@ -809,8 +824,15 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             $this->db->select('zone.division_id, zone.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.name division_name');
+            $this->db->where('user_info_created.revision',1);
+            $this->db->where('user_info_updated.revision',1);
+            $this->db->where('user_info_attendance.revision',1);
+            $this->db->where('user_info_attendance_updated.revision',1);
+            $this->db->where('cus_info.revision',1);
             $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
+//            print_r($data['item']);
+//            exit;
             $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
             if(!$data['item'])
             {

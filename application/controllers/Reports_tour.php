@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Reports_field_visit_attendance extends Root_Controller
+class Reports_tour extends Root_Controller
 {
     public  $message;
     public $permissions;
@@ -10,7 +10,7 @@ class Reports_field_visit_attendance extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Reports_field_visit_attendance');
+        $this->permissions = User_helper::get_permission(get_class($this));
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
@@ -18,7 +18,7 @@ class Reports_field_visit_attendance extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->controller_url='reports_field_visit_attendance';
+        $this->controller_url = strtolower(get_class($this));
     }
 
     public function index($action="search",$id=0)
@@ -33,10 +33,6 @@ class Reports_field_visit_attendance extends Root_Controller
         }elseif($action=="get_items")
         {
             $this->system_get_items();
-        }
-        elseif($action=="details")
-        {
-            $this->system_details($id);
         }
         elseif($action=="set_preference")
         {
@@ -56,7 +52,7 @@ class Reports_field_visit_attendance extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['title']="Field Visit And Attendance Report";
+            $data['title']="Tour Report";
             $ajax['status']=true;
             $this->db->from($this->config->item('table_login_setup_user').' user');
             $this->db->select('user.employee_id,user.user_name,user.status');
@@ -78,8 +74,7 @@ class Reports_field_visit_attendance extends Root_Controller
                     }
                 }
             }
-
-            $this->db->where('user_area.territory_id >',0);
+            //$this->db->where('user_area.territory_id >',0);
             $this->db->where('user_area.revision',1);
             $this->db->where('user.status',$this->config->item('system_status_active'));
             $this->db->where('user_info.revision',1);
@@ -164,7 +159,7 @@ class Reports_field_visit_attendance extends Root_Controller
             $result['date_end']=System_helper::display_date($reports['date_end']);
             $data['employee_info']=$result;
             $ajax['status']=true;
-            $data['title']="Field Visit And Attendance Report";
+            $data['title']="Tour Report";
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
             {
@@ -190,18 +185,18 @@ class Reports_field_visit_attendance extends Root_Controller
         $user_id=$this->input->post('user_id');
 
         //Data from source table
-        $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
-        $this->db->select('dealer_farmer_visit.*');
-        $this->db->join($this->config->item('table_login_setup_user').' user','user.id = dealer_farmer_visit.user_created','INNER');
+        $this->db->from($this->config->item('table_ems_tour_setup').' tour_setup');
+        $this->db->select('tour_setup.*');
+        $this->db->join($this->config->item('table_login_setup_user').' user','user.id = tour_setup.user_created','INNER');
         $this->db->select('user.id user_id, user.employee_id');
         $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
         $this->db->select('user_info.name username');
-        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
-        $this->db->select('farmer.name dealer');
-        $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-        $this->db->select('cus_info.name outlet');
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','LEFT');
+        $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
+        $this->db->select('designation.name designation_name');
+        $this->db->join($this->config->item('table_login_setup_department').' department','department.id = user_info.department_id','LEFT');
+        $this->db->select('department.name department_name');
+        $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id=user.id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = user_area.district_id','LEFT');
         $this->db->select('districts.name district_name');
         $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = districts.territory_id','LEFT');
         $this->db->select('t.name territory_name');
@@ -227,183 +222,41 @@ class Reports_field_visit_attendance extends Root_Controller
         }
         if($user_id)
         {
-            $this->db->where('dealer_farmer_visit.user_created',$user_id);
+            $this->db->where('tour_setup.user_created',$user_id);
         }
         if($date_end>0)
         {
-            $this->db->where('dealer_farmer_visit.date <=',$date_end);
+            $this->db->where('tour_setup.date_to <=',$date_end);
         }
         if($date_start>0)
         {
-            $this->db->where('dealer_farmer_visit.date >=',$date_start);
+            $this->db->where('tour_setup.date_from >=',$date_start);
         }
         $this->db->where('user_info.revision',1);
-        $this->db->where('cus_info.revision',1);
-        $this->db->where('dealer_farmer_visit.status!=',$this->config->item('system_status_delete'));
-        $this->db->order_by('dealer_farmer_visit.id DESC');
-        $dealer_farmer_visit=$this->db->get()->result_array();
-
-        // Arranging data in new array
-        $dealer_farmer_visit_list=array();
-        foreach($dealer_farmer_visit as &$visit)
+        $this->db->where('tour_setup.status!=',$this->config->item('system_status_delete'));
+        $this->db->order_by('tour_setup.id DESC');
+        $items=$this->db->get()->result_array();
+        foreach($items as &$item)
         {
-            $date_string=System_helper::display_date($visit['date']);
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date']=$date_string;
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['id']=$visit['id'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['outlet']=$visit['outlet'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['dealer']=$visit['dealer'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['division_name']=$visit['division_name'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['zone_name']=$visit['zone_name'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['territory_name']=$visit['territory_name'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['district_name']=$visit['district_name'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['username']=$visit['employee_id'].'-'.$visit['username'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['status']=$visit['status'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date']=$visit['date'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date_created']=$visit['date_created'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['user_created']=$visit['user_created'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date_updated']=$visit['date_updated'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['user_updated']=$visit['user_updated'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['zsc_comment']=$visit['zsc_comment'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['status_attendance']=$visit['status_attendance'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date_created_attendance']=$visit['date_created_attendance'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['user_created_attendance']=$visit['user_created_attendance'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['date_updated_attendance']=$visit['date_updated_attendance'];
-            $dealer_farmer_visit_list[$date_string][$visit['user_created']]['user_updated_attendance']=$visit['user_updated_attendance'];
-        }
-
-        //Searched User Info
-        $this->db->from($this->config->item('table_login_setup_user').' user');
-        $this->db->select('user.employee_id');
-        $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id=user.id','INNER');
-        if(!$user_id)
-        {
-            if($division_id>0)
+            $item['employee']=$item['employee_id'].'-'.$item['username'];
+            if(!$item['district_name'])
             {
-                $this->db->where('user_area.division_id',$division_id);
-                if($zone_id>0)
-                {
-                    $this->db->where('user_area.zone_id',$zone_id);
-                    if($territory_id>0)
-                    {
-                        $this->db->where('user_area.territory_id',$territory_id);
-                    }
-                }
+                $item['district_name']='N/A';
             }
-            $this->db->where('user_area.territory_id >',0);
-        }
-        if($user_id)
-        {
-            $this->db->where('user_area.user_id',$user_id);
-        }
-        $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = user_area.territory_id','LEFT');
-        $this->db->select('t.name territory_name');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' z','z.id = user_area.zone_id','LEFT');
-        $this->db->select('z.name zone_name');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' d','d.id = user_area.division_id','LEFT');
-        $this->db->select('d.name division_name');
-        $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
-        $this->db->select('user_info.name,user_info.ordering');
-        $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
-        $this->db->select('designation.name designation_name');
-        $this->db->select('user_area.*');
-        $this->db->where('user_area.revision',1);
-        $this->db->where('user_info.revision',1);
-        $this->db->where('user.status',$this->config->item('system_status_active'));
-        $this->db->order_by('d.id, z.id, t.id');
-        $this->db->group_by('user.id');
-        $searched_user=$this->db->get()->result_array();
-
-        $date_diff = $date_end - $date_start;
-        $day=ceil($date_diff / (60 * 60 * 24));
-        $date_time=$date_start;
-        $items=array();
-        for($i=1;$i<=$day;$i++)
-        {
-            $date_string=System_helper::display_date($date_time);
-            for($j=0;$j<count($searched_user);$j++)
+            if(!$item['territory_name'])
             {
-                if(isset($dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]))
-                {
-                    $item['id']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['id'];
-                    $item['date']=System_helper::display_date_time($dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['date']);
-                    $item['division_name']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['division_name'];
-                    $item['zone_name']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['zone_name'];
-                    $item['territory_name']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['territory_name'];
-                    $item['dealer']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['dealer'];
-                    $item['username']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['username'];
-                    $item['created_time']=System_helper::display_date_time($dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['date_created']);
-                    $item['status_attendance']=$dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['status_attendance'];
-                    $item['attendance_taken_time']=System_helper::display_date_time($dealer_farmer_visit_list[$date_string][$searched_user[$j]['user_id']]['date_created_attendance']);
-                    $items[]=$item;
-                }
-                else
-                {
-                    $item['id']=0;
-                    $item['date']=$date_string;
-                    $item['division_name']=$searched_user[$j]['division_name'];
-                    $item['zone_name']=$searched_user[$j]['zone_name'];
-                    $item['territory_name']=$searched_user[$j]['territory_name'];
-                    $item['dealer']='-';
-                    $item['username']=$searched_user[$j]['employee_id'].'-'.$searched_user[$j]['name'];
-                    $item['created_time']='-';
-                    $item['status_attendance']='-';
-                    $item['attendance_taken_time']='-';
-                    $items[]=$item;
-                }
+                $item['territory_name']='N/A';
             }
-            $date_time=$date_time+86400;
+            if(!$item['zone_name'])
+            {
+                $item['zone_name']='N/A';
+            }
+            if(!$item['division_name'])
+            {
+                $item['division_name']='N/A';
+            }
         }
         $this->json_return($items);
-    }
-
-    private function system_details($id)
-    {
-        if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
-        {
-            $html_container_id=$this->input->post('html_container_id');
-            if(($this->input->post('id')))
-            {
-                $item_id=$this->input->post('id');
-            }
-            else
-            {
-                $item_id=$id;
-            }
-            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
-            $this->db->select('dealer_farmer_visit.*');
-            $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id = dealer_farmer_visit.user_created','INNER');
-            $this->db->select('user_area.user_id');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
-            $this->db->select('farmer.name dealer');
-            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-            $this->db->select('cus_info.name outlet');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','LEFT');
-            $this->db->select('districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = districts.territory_id','LEFT');
-            $this->db->select('t.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' z','z.id = t.zone_id','LEFT');
-            $this->db->select('z.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' d','d.id = z.division_id','LEFT');
-            $this->db->select('d.name division_name');
-            $this->db->where('user_area.revision',1);
-            $this->db->where('dealer_farmer_visit.id',$item_id);
-            $data['item']=$this->db->get()->row_array();
-            $data['title']="Dealer And Field Visit Task Details";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view($this->controller_url."/details",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
     }
 
     public function get_employee_info_list()
@@ -476,15 +329,13 @@ class Reports_field_visit_attendance extends Root_Controller
         $user = User_helper::get_user();
         $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
         $data['sl_no']= 1;
-        $data['date']= 1;
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
-        $data['dealer']= 1;
-        $data['username']= 1;
-        $data['created_time']= 1;
-        $data['status_attendance']= 1;
-        $data['attendance_taken_time']= 1;
+        $data['employee']= 1;
+        $data['department_name']= 1;
+        $data['designation_name']= 1;
+        $data['title']= 1;
         $data['details_button']= 1;
         if($result)
         {

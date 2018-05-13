@@ -261,4 +261,8 @@ $lang['LABEL_OTHER_ACTIVITIES'] = 'Other Activities';
 $lang['LABEL_OUTLET'] = 'Outlet';
 $lang['LABEL_CREATED_TIME'] = 'Created Time';
 $lang['LABEL_ATTENDANCE_TAKEN_TIME'] = 'Attendance taken time';
-$lang['LABEL_DETAILS'] = 'Details';
+$lang['LABEL_DETAILS_BUTTON'] = 'Details';
+
+// Tour
+
+$lang['LABEL_TITLE'] = 'Title';

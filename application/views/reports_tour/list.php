@@ -45,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Starting Date :</label>
+            <label class="control-label pull-right">From Date :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <?php echo $employee_info['date_start']?>
@@ -54,7 +54,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div style="" class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Ending Date :</label>
+            <label class="control-label pull-right">To Date :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <?php echo $employee_info['date_end']?>
@@ -114,17 +114,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'id', type: 'string' },
                 { name: 'sl_no', type: 'string' },
-                { name: 'date', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
-                { name: 'dealer', type: 'string' },
-                { name: 'username', type: 'string' },
-                { name: 'created_time', type: 'string' },
-                { name: 'status_attendance', type: 'string' },
-                { name: 'attendance_taken_time', type: 'string' },
+                { name: 'employee', type: 'string' },
+                { name: 'department_name', type: 'string' },
+                { name: 'designation_name', type: 'string' },
+                { name: 'title', type: 'string' },
                 { name: 'details_button', type: 'string' }
-
             ],
             url: url,
             type: 'POST',
@@ -182,15 +179,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true,dataField: 'date',width:'110',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',pinned:true,dataField: 'division_name',width:'80',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',pinned:true,dataField: 'territory_name',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DEALER'); ?>',dataField: 'dealer',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_USERNAME'); ?>',dataField: 'username',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['username']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CREATED_TIME'); ?>',dataField: 'created_time',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['created_time']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE'); ?>',dataField: 'status_attendance',width: '75',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['status_attendance']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_ATTENDANCE_TAKEN_TIME'); ?>',dataField: 'attendance_taken_time',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['attendance_taken_time']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE'); ?>',dataField: 'employee',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['employee']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>',dataField: 'department_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>',dataField: 'designation_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['designation_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TITLE'); ?>',dataField: 'title',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
 
                 ]
