@@ -827,12 +827,9 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             $this->db->where('user_info_created.revision',1);
             $this->db->where('user_info_updated.revision',1);
             $this->db->where('user_info_attendance.revision',1);
-            $this->db->where('user_info_attendance_updated.revision',1);
             $this->db->where('cus_info.revision',1);
             $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
-//            print_r($data['item']);
-//            exit;
             $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
             if(!$data['item'])
             {

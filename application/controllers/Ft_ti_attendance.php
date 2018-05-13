@@ -558,7 +558,6 @@ class Ft_ti_attendance extends Root_Controller
             $this->db->where('user_info_created.revision',1);
             $this->db->where('user_info_updated.revision',1);
             $this->db->where('user_info_attendance.revision',1);
-            $this->db->where('user_info_attendance_updated.revision',1);
             $this->db->where('cus_info.revision',1);
             $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
