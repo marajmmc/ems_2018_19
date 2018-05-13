@@ -1,26 +1,39 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-$CI = & get_instance();
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+$CI=& get_instance();
 $action_buttons=array();
-if(isset($CI->permissions['action4'])&&($CI->permissions['action4']==1))
+
+if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_PRINT"),
-        'id'=>'button_action_print',
-        'data-title'=>'PO LIST'
+        'class'=>'button_action_download',
+        'data-title'=>"Print",
+        'data-print'=>true
     );
 }
-if(isset($CI->permissions['action5'])&&($CI->permissions['action5']==1))
+if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
     $action_buttons[]=array(
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
-        'id'=>'button_action_csv',
-        'data-title'=>'PO LIST'
+        'class'=>'button_action_download',
+        'data-title'=>"Download"
+    );
+}
+if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+{
+    $action_buttons[]=array
+    (
+        'label'=>'Preference',
+        'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+
 ?>
+
 <div class="row widget">
 
     <div class="widget-header">
@@ -49,25 +62,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
 
     <?php
-    if(isset($CI->permissions['action6'])&&($CI->permissions['action6']==1))
+    if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     {
-        ?>
-        <div class="col-xs-12" style="margin-bottom: 20px;">
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sl_no">Sl</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date">Date</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name">Division</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name">Zone</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name">Territory</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="dealer">Dealer</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="username">Username</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="created_time">Task Created Time </label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_attendance">Attendance</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="attendance_taken_time">Attendance Taken Time</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="details_button"><?php echo $CI->lang->line('ACTION_DETAILS'); ?></label>
-        </div>
-    <?php
+        $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
     }
     ?>
+
     <div class="col-xs-12" id="system_jqx_container">
 
     </div>
@@ -113,6 +113,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'string' },
+                { name: 'sl_no', type: 'string' },
                 { name: 'date', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
@@ -173,7 +174,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns: [
                     { text: 'ID',pinned:true,dataField: 'id',width:'110',cellsrenderer: cellsrenderer,rendered:tooltiprenderer, hidden: true},
                     {
-                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: 'sl_no',pinned:true,width:'30', columntype: 'number',cellsalign: 'right', sortable: false, menu: false,
+                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: 'sl_no',pinned:true,width:'30', hidden: <?php echo $system_preference_items['sl_no']?0:1;?>, columntype: 'number',cellsalign: 'right', sortable: false, menu: false,
                         cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
                         {
                             var element = $(defaultHtml);
@@ -181,16 +182,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true,dataField: 'date',width:'110',rendered:tooltiprenderer},
-                    { text: 'Division',pinned:true,dataField: 'division_name',width:'80',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Zone',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer},
-                    { text: 'Territory',pinned:true,dataField: 'territory_name',width:'130',rendered:tooltiprenderer},
-                    { text: 'Dealer',dataField: 'dealer',width:'130',rendered:tooltiprenderer},
-                    { text: 'Username',dataField: 'username',width:'230',filtertype: 'list',rendered:tooltiprenderer},
-                    { text: 'Task Created Time',dataField: 'created_time',width:'200',rendered:tooltiprenderer},
-                    { text: 'Attendance',dataField: 'status_attendance',width: '75',rendered:tooltiprenderer},
-                    { text: 'Attendance Taken Time',dataField: 'attendance_taken_time',width:'200',rendered:tooltiprenderer},
-                    { text: 'Details', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true,dataField: 'date',width:'110',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',pinned:true,dataField: 'division_name',width:'80',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',pinned:true,dataField: 'territory_name',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEALER'); ?>',dataField: 'dealer',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_USERNAME'); ?>',dataField: 'username',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['username']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CREATED_TIME'); ?>',dataField: 'created_time',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['created_time']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE'); ?>',dataField: 'status_attendance',width: '75',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['status_attendance']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_ATTENDANCE_TAKEN_TIME'); ?>',dataField: 'attendance_taken_time',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['attendance_taken_time']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DETAILS'); ?>', dataField: 'details',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,hidden: <?php echo $system_preference_items['details']?0:1;?>}
 
                 ]
             });

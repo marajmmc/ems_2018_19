@@ -2,7 +2,7 @@
 
 class Reports_field_visit_attendance extends Root_Controller
 {
-    private  $message;
+    public  $message;
     public $permissions;
     public $controller_url;
     public $locations;
@@ -37,6 +37,14 @@ class Reports_field_visit_attendance extends Root_Controller
         elseif($action=="details")
         {
             $this->system_details($id);
+        }
+        elseif($action=="set_preference")
+        {
+            $this->system_set_preference();
+        }
+        elseif($action=="save_preference")
+        {
+            System_helper::save_preference();
         }
         else
         {
@@ -120,6 +128,7 @@ class Reports_field_visit_attendance extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
+            $data['system_preference_items']= $this->get_preference();
             $reports=$this->input->post('report');
             if(!($reports['date_start']))
             {
@@ -331,32 +340,9 @@ class Reports_field_visit_attendance extends Root_Controller
                 {
                     $item['id']=0;
                     $item['date']=$date_string;
-                    if($searched_user[$j]['division_name'])
-                    {
-                        $item['division_name']=$searched_user[$j]['division_name'];
-                    }
-                    else
-                    {
-                        $item['division_name']='-';
-                    }
-                    if($searched_user[$j]['zone_name'])
-                    {
-                        $item['zone_name']=$searched_user[$j]['zone_name'];
-                    }
-                    else
-                    {
-                        $item['zone_name']='-';
-                    }
-
-                    if($searched_user[$j]['territory_name'])
-                    {
-                        $item['territory_name']=$searched_user[$j]['territory_name'];
-                    }
-                    else
-                    {
-                        $item['territory_name']='-';
-                    }
-
+                    $item['division_name']=$searched_user[$j]['division_name'];
+                    $item['zone_name']=$searched_user[$j]['zone_name'];
+                    $item['territory_name']=$searched_user[$j]['territory_name'];
                     $item['dealer']='-';
                     $item['username']=$searched_user[$j]['employee_id'].'-'.$searched_user[$j]['name'];
                     $item['created_time']='-';
@@ -400,6 +386,7 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->db->select('z.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' d','d.id = z.division_id','LEFT');
             $this->db->select('d.name division_name');
+            $this->db->where('user_area.revision',1);
             $this->db->where('dealer_farmer_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
             $data['title']="Dealer And Field Visit Task Details";
@@ -463,5 +450,60 @@ class Reports_field_visit_attendance extends Root_Controller
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
         $this->json_return($ajax);
+    }
+
+    private function system_set_preference()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference();
+            $data['preference_method_name']='search';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
+        $data['sl_no']= 1;
+        $data['date']= 1;
+        $data['division_name']= 1;
+        $data['zone_name']= 1;
+        $data['territory_name']= 1;
+        $data['dealer']= 1;
+        $data['username']= 1;
+        $data['created_time']= 1;
+        $data['status_attendance']= 1;
+        $data['attendance_taken_time']= 1;
+        $data['details']= 1;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
     }
 }

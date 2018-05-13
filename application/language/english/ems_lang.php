@@ -259,3 +259,6 @@ $lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO'] = 'Lead Farmer Visit Activities 
 $lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE'] = 'Lead Farmer Visit Activities (3)';
 $lang['LABEL_OTHER_ACTIVITIES'] = 'Other Activities';
 $lang['LABEL_OUTLET'] = 'Outlet';
+$lang['LABEL_CREATED_TIME'] = 'Created Time';
+$lang['LABEL_ATTENDANCE_TAKEN_TIME'] = 'Attendance taken time';
+$lang['LABEL_DETAILS'] = 'Details';
