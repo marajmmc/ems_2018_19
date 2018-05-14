@@ -103,15 +103,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Dealer Info File</label></td>
-                <td class="header_value"><label class="control-label"><?php if(sizeof($dealer_info_file)>0){?>
-                        <div class="row show-grid">
-                            <div id="dealer_info_file_id" class="col-sm-4 col-xs-8">
-                                <?php foreach($dealer_info_file as $key=>$file){$key++;?>
-                                    <a href="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$file['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$key;?></a>
-                                <?php } ?>
-                            </div>
-                        </div>
-                    <?php } ?></td>
+                <td class="header_value">
+                    <label class="control-label">
+                        <?php if(sizeof($dealer_info_file)>0){?>
+                           <?php foreach($dealer_info_file as $key=>$file){$key++;?>
+                               <a href="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$file['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$key;?></a>
+                           <?php } ?>
+
+                        <?php } ?>
+                    </label>
+                </td>
                 <td colspan="2">&nbsp;</td>
             </tr>
             <tr>

@@ -103,6 +103,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </tr>
 
             <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right">Dealer Info File</label></td>
+                <td class="header_value">
+                    <label class="control-label">
+                        <?php if(sizeof($dealer_info_file)>0){?>
+                            <?php foreach($dealer_info_file as $key=>$file){$key++;?>
+                                <a href="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$file['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$key;?></a>
+                            <?php } ?>
+
+                        <?php } ?>
+                    </label>
+                </td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+
+            <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE');?></label></td>
                 <td colspan="3" class=" header_value"><label class="control-label"><?php if($item['lead_farmer_visit_activities_one']){echo nl2br($item['lead_farmer_visit_activities_one']);}else{echo 'N/A';}?></label></td>
             </tr>
