@@ -29,3 +29,5 @@ $config['system_base_url_dealer_and_farmer_visit']='http://localhost/ems_2018_19
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
 
+/*-------------Added By Mahmud----------------*/
+$config['system_edit_others']='Edit Others';
