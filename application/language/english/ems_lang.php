@@ -9,6 +9,9 @@ $lang['MSG_CONFIRM_SAVE'] = 'Are You Sure to save?';
 $lang['MSG_SAVED_SUCCESS'] = 'Successfully Saved';
 $lang['MSG_SAVED_FAIL'] = 'Failed to Save!';
 $lang['MSG_CONFIRM_DELETE'] = 'Are You sure to delete?'; // added by maraj
+$lang['MSG_CONFIRM_FORWARD'] = 'Are You sure to Forward?'; // added by Mahmud
+$lang['MSG_CONFIRM_APPROVE'] = 'Are You sure to Approve?'; // added by Mahmud
+$lang['MSG_CONFIRM_ROLLBACK'] = 'Are You sure to Rollback?'; // added by Mahmud
 $lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
 $lang['MSG_FORWARD_SUCCESS'] = 'Successfully Forwarded';
 $lang['MSG_ROLE_ASSIGN_SUCCESS'] = 'Role Assign Successful.';
@@ -264,5 +267,8 @@ $lang['LABEL_ATTENDANCE_TAKEN_TIME'] = 'Attendance taken time';
 $lang['LABEL_DETAILS_BUTTON'] = 'Details';
 
 // Tour
-
 $lang['LABEL_TITLE'] = 'Title';
+
+// Added by Mahmud
+$lang['LABEL_IOU_AMOUNT']="IOU Amount";
+$lang['LABEL_IOU_DETAILS']="IOU Details";
