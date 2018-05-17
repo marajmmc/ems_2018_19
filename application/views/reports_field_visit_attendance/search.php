@@ -26,146 +26,140 @@ foreach($user_info as $user)
         </div>
 
         <div class="row show-grid">
-            <div class="col-xs-7">
-
-                <div style="" class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
-                    </div>
-                    <div class="col-xs-6">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if($CI->locations['division_id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo $CI->locations['division_name'];?></label>
+                    <input type="hidden" name="report[division_id]" value="<?php echo $CI->locations['division_id'];?>">
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="division_id" name="report[division_id]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
                         <?php
-                        if($CI->locations['division_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['division_name'];?></label>
-                            <input type="hidden" name="report[division_id]" value="<?php echo $CI->locations['division_id'];?>">
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="division_id" name="report[division_id]" class="form-control">
-                                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($divisions as $division)
-                                {?>
-                                    <option value="<?php echo $division['value']?>"><?php echo $division['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
+                        foreach($divisions as $division)
+                        {?>
+                            <option value="<?php echo $division['value']?>"><?php echo $division['text'];?></option>
                         <?php
                         }
                         ?>
-                    </div>
-                </div>
+                    </select>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
 
-                <div style="<?php if(!(sizeof($zones)>0)){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['zone_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['zone_name'];?></label>
-                            <input type="hidden" name="report[zone_id]" value="<?php echo $CI->locations['zone_id'];?>">
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="zone_id" class="form-control" name="report[zone_id]">
-                                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($zones as $zone)
-                                {?>
-                                    <option value="<?php echo $zone['value']?>"><?php echo $zone['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-
-                <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
-                    </div>
-
-                    <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['territory_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['territory_name'];?></label>
-                            <input type="hidden" name="report[territory_id]" value="<?php echo $CI->locations['territory_id'];?>">
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="territory_id" class="form-control" name="report[territory_id]">
-                                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($territories as $territory)
-                                {?>
-                                    <option value="<?php echo $territory['value']?>"><?php echo $territory['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-
-                <div style="" class="row show-grid">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EMPLOYEE');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <?php if($user_counter<2){?>
-                            <?php foreach($user_info as $user){?>
-                                <?php echo $user['text'];?>
-                                <input type="hidden" name="report[user_id]" value="<?php echo $user['value']?>">
-                            <?php } ?>
-                        <?php } else{?>
-                            <select id="employee_info_id" name="report[user_id]" class="form-control">
-                                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                <?php foreach($user_info as $user){?>
-                                    <option value="<?php echo $user['value']?>"><?php echo $user['text'];?></option>
-                                <?php } ?>
-
-                            </select>
-                        <?php } ?>
-                    </div>
-                </div>
+        <div style="<?php if(!(sizeof($zones)>0)){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
 
-            <div class="col-xs-5">
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-6">
-                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
-                    </div>
-                </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if($CI->locations['zone_id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo $CI->locations['zone_name'];?></label>
+                    <input type="hidden" name="report[zone_id]" value="<?php echo $CI->locations['zone_id'];?>">
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="zone_id" class="form-control" name="report[zone_id]">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($zones as $zone)
+                        {?>
+                            <option value="<?php echo $zone['value']?>"><?php echo $zone['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+
+        <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+            </div>
+
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if($CI->locations['territory_id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo $CI->locations['territory_name'];?></label>
+                    <input type="hidden" name="report[territory_id]" value="<?php echo $CI->locations['territory_id'];?>">
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="territory_id" class="form-control" name="report[territory_id]">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($territories as $territory)
+                        {?>
+                            <option value="<?php echo $territory['value']?>"><?php echo $territory['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EMPLOYEE');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php if($user_counter<2){?>
+                    <?php foreach($user_info as $user){?>
+                        <?php echo $user['text'];?>
+                        <input type="hidden" name="report[user_id]" value="<?php echo $user['value']?>">
+                    <?php } ?>
+                <?php } else{?>
+                    <select id="employee_info_id" name="report[user_id]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php foreach($user_info as $user){?>
+                            <option value="<?php echo $user['value']?>"><?php echo $user['text'];?></option>
+                        <?php } ?>
+
+                    </select>
+                <?php } ?>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
             </div>
         </div>
 
@@ -175,17 +169,15 @@ foreach($user_info as $user)
         <div class="row show-grid">
             <div class="col-xs-4">
             </div>
-            <div class="col-xs-5">
+            <div class="col-sm-4 col-xs-8">
                 <div class="action_button pull-right">
                     <button id="button_action_report" type="button" class="btn" data-form="#save_form"><?php echo $CI->lang->line("ACTION_REPORT_VIEW"); ?></button>
                 </div>
-
             </div>
             <div class="col-xs-3">
 
             </div>
         </div>
-
     </div>
 
     <div class="clearfix"></div>
