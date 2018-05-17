@@ -9,7 +9,48 @@ $CI = & get_instance();
         <div class="clearfix"></div>
     </div>
 
-    <div style="" class="row show-grid">
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Task Entry By:</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo $item['created_by'];?></label>
+        </div>
+
+    </div>
+
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Task Entry Time:</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label>
+        </div>
+
+    </div>
+
+    <?php if($item['date_updated']){?>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Task Updated By:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $item['updated_by'];?></label>
+            </div>
+
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Task Update Time:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label>
+            </div>
+
+        </div>
+    <?php } ?>
+
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE');?>:</label>
         </div>
@@ -19,7 +60,7 @@ $CI = & get_instance();
 
     </div>
 
-    <div style="" class="row show-grid">
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?>:</label>
         </div>
@@ -28,7 +69,7 @@ $CI = & get_instance();
         </div>
     </div>
 
-    <div style="" class="row show-grid">
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?>:</label>
         </div>
@@ -37,7 +78,7 @@ $CI = & get_instance();
         </div>
     </div>
 
-    <div style="" class="row show-grid">
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?>:</label>
         </div>
@@ -46,7 +87,7 @@ $CI = & get_instance();
         </div>
     </div>
 
-    <div style="" class="row show-grid">
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?>:</label>
         </div>
@@ -55,7 +96,7 @@ $CI = & get_instance();
         </div>
     </div>
 
-    <div style="" class="row show-grid">
+    <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right">Outlet:</label>
         </div>
@@ -64,7 +105,7 @@ $CI = & get_instance();
         </div>
     </div>
 
-    <div style="" class="row show-grid" id="farmer_id_container">
+    <div class="row show-grid" id="farmer_id_container">
         <div class="col-xs-4">
             <label class="control-label pull-right">Dealer:</label>
         </div>
@@ -73,7 +114,49 @@ $CI = & get_instance();
         </div>
     </div>
 
-    <div style="" class="row">
+    <?php if($item['date_created_attendance']){?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Attendance Taken By:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $item['attendance_taken_by'];?></label>
+            </div>
+
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Attendance Taken Time:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo System_helper::display_date_time($item['date_created_attendance']);?></label>
+            </div>
+
+        </div>
+    <?php } ?>
+
+    <?php if($item['date_updated_attendance']){?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Attendance Updated By:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $item['attendance_updated_by'];?></label>
+            </div>
+
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Attendance Updated Time:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_attendance']);?></label>
+            </div>
+
+        </div>
+    <?php } ?>
+
+    <div class="row">
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Lead Farmer Visit Activities (1)</label>
@@ -159,14 +242,38 @@ $CI = & get_instance();
             </div>
         </div>
 
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Other Activities</label>
+        <?php if($item['other_activities']){?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Other Activities</label>
+                </div>
+                <div class="col-xs-4">
+                    <label class="control-label"><?php echo $item['other_activities'];?></label>
+                </div>
             </div>
-            <div class="col-xs-4">
-                <label class="control-label"><?php echo $item['other_activities'];?></label>
+        <?php } ?>
+
+        <?php if($item['zsc_comment']){?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZSC_COMMENT');?></label>
+                </div>
+                <div class="col-xs-4">
+                    <label class="control-label"><?php echo nl2br($item['zsc_comment']);?></label></label>
+                </div>
             </div>
-        </div>
+        <?php } ?>
+
+        <?php if($item['status_attendance']!=$CI->config->item('system_status_pending')){?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE');?></label>
+                </div>
+                <div class="col-xs-4">
+                    <label class="control-label"><?php echo $item['status_attendance'];?></label></label>
+                </div>
+            </div>
+        <?php } ?>
     </div>
 </div>
 <div class="clearfix"></div>

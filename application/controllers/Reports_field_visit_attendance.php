@@ -370,13 +370,19 @@ class Reports_field_visit_attendance extends Root_Controller
             {
                 $item_id=$id;
             }
-            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_farmer_visit');
-            $this->db->select('dealer_farmer_visit.*');
-            $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id = dealer_farmer_visit.user_created','INNER');
-            $this->db->select('user_area.user_id');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_farmer_visit.farmer_id','INNER');
+            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
+            $this->db->select('dealer_field_visit.*');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_created','user_info_created.user_id=dealer_field_visit.user_created','INNER');
+            $this->db->select('user_info_created.name created_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_updated','user_info_updated.user_id=dealer_field_visit.user_updated','LEFT');
+            $this->db->select('user_info_updated.name updated_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance','user_info_attendance.user_id=dealer_field_visit.user_created_attendance','LEFT');
+            $this->db->select('user_info_attendance.name attendance_taken_by');
+            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance_updated','user_info_attendance_updated.user_id=dealer_field_visit.user_updated_attendance','LEFT');
+            $this->db->select('user_info_attendance_updated.name attendance_updated_by');
+            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
             $this->db->select('farmer.name dealer');
-            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_farmer_visit.customer_id','INNER');
+            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
             $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
             $this->db->select('cus_info.name outlet');
             $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','LEFT');
@@ -387,8 +393,8 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->db->select('z.name zone_name');
             $this->db->join($this->config->item('table_login_setup_location_divisions').' d','d.id = z.division_id','LEFT');
             $this->db->select('d.name division_name');
-            $this->db->where('user_area.revision',1);
-            $this->db->where('dealer_farmer_visit.id',$item_id);
+            $this->db->where('cus_info.revision',1);
+            $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
             $data['title']="Dealer And Field Visit Task Details";
             $ajax['status']=true;

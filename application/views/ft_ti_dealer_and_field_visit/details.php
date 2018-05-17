@@ -55,7 +55,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Updated By</label></td>
                     <td class="header_value"><label class="control-label"><?php echo $item['attendance_updated_by'];?></label></td>
-                    <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Taken Time</label></td>
+                    <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Updated Time</label></td>
                     <td class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_attendance']);?></label></td>
                 </tr>
             <?php } ?>
@@ -171,6 +171,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <tr>
                     <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES');?></label></td>
                     <td colspan="3" class=" header_value"><label class="control-label"><?php echo nl2br($item['other_activities']);?></label></td>
+                </tr>
+            <?php } ?>
+
+            <?php if($item['zsc_comment']){?>
+                <tr>
+                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZSC_COMMENT');?></label></td>
+                    <td colspan="3" class=" header_value"><label class="control-label"><?php echo nl2br($item['zsc_comment']);?></label></td>
+                </tr>
+            <?php } ?>
+
+            <?php if($item['status_attendance']!=$CI->config->item('system_status_pending')){?>
+                <tr>
+                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE');?></label></td>
+                    <td colspan="3" class=" header_value"><label class="control-label"><?php echo $item['status_attendance'];?></label></td>
                 </tr>
             <?php } ?>
             </tbody>
