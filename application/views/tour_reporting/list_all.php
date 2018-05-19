@@ -1,69 +1,12 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
+//pr($CI->permissions, 0);
 
 $action_buttons = array();
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => 'All List',
-        'href' => site_url($CI->controller_url . '/index/list_all')
-    );
-}
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_NEW"),
-        'href' => site_url($CI->controller_url . '/index/add')
-    );
-}
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line("ACTION_EDIT"),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit')
-    );
-}
-/* if(isset($CI->permissions['action2'] )&&($CI->permissions['action2'] ==1))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Reporting',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/list_reporting')
-    );
-} */
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'type' => 'button',
-        'label' => 'Forward',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/forward')
-    );
-}
-/* if(isset($CI->permissions['action2'] )&&($CI->permissions['action2'] ==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_DETAILS"),
-        'class'=>'button_action_batch',
-        'id'=>'button_action_edit',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details')
-    );
-}
-if(isset($CI->permissions['action4'] ) && ($CI->permissions['action4'] ==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>'Print View',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details_print')
-    );
-} */
+$action_buttons[] = array(
+    'label' => 'Pending List',
+    'href' => site_url($CI->controller_url . '/index/list')
+);
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
@@ -83,18 +26,24 @@ if (isset($CI->permissions['action5']) && ($CI->permissions['action5'] == 1))
         'data-title' => "Download"
     );
 }
-if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
+if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
-    $action_buttons[] = array
-    (
-        'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference')
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => $CI->lang->line("ACTION_DETAILS"),
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/details')
     );
 }
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
-    'href' => site_url($CI->controller_url . '/index/list')
+    'href' => site_url($CI->controller_url . '/index/list_all')
 
+);
+$action_buttons[] = array(
+    'type' => 'button',
+    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
+    'id' => 'button_jqx_load_more'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
@@ -118,7 +67,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo base_url($CI->controller_url.'/index/get_items'); ?>";
+        var url = "<?php echo base_url($CI->controller_url.'/index/get_items_all');?>";
 
         // prepare the data
         var source =
@@ -126,18 +75,16 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                 /* { name: 'name', type: 'string' },
-                 { name: 'employee_id', type: 'string' },
-                 { name: 'department_name', type: 'string' },
-                 { name: 'designation', type: 'string' },
-                 { name: 'title', type: 'string' },
-                 { name: 'date_from', type: 'string' },
-                 { name: 'date_to', type: 'string' },
-                 { name: 'amount_iou', type: 'string' },
-                 { name: 'iou_details', type: 'string' },
-                 { name: 'remarks', type: 'string' } */
-                <?php
-                foreach($system_preference_items as $key => $value){ ?>
+                /* { name: 'name', type: 'string' },
+                { name: 'employee_id', type: 'string' },
+                { name: 'department_name', type: 'string' },
+                { name: 'designation', type: 'string' },
+                { name: 'title', type: 'string' },
+                { name: 'date_from', type: 'string' },
+                { name: 'date_to', type: 'string' },
+                { name: 'remarks', type: 'string' },
+                { name: 'status_approve', type: 'string' } */
+                <?php foreach($system_preference_items as $key => $value){ ?>
                     { name: '<?php echo $key; ?>', type: 'string' },
                 <?php } ?>
             ],
@@ -174,9 +121,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: 'Title', dataField: 'title', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_IOU_AMOUNT'); ?>', dataField: 'amount_iou', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?>', dataField: 'iou_details', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['iou_details']?0:1;?>},
-                    { text: 'Remarks', dataField: 'remarks', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks']?0:1;?>}
+                    { text: 'Remarks', dataField: 'remarks', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks']?0:1;?>},
+                    { text: 'Approve Status', dataField: 'status_approve', filtertype: 'list', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approve']?0:1;?>}
                 ]
             });
     });
