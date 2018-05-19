@@ -61,7 +61,7 @@ class Reports_tour extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
             $this->db->select('user_info.name,user_info.ordering');
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
-            $this->db->select('designation.name designation_name');
+            $this->db->select('designation.name designation_name, designation.id designation_id');
             if($this->locations['division_id']>0)
             {
                 $this->db->where('user_area.division_id',$this->locations['division_id']);
@@ -99,6 +99,8 @@ class Reports_tour extends Root_Controller
 
                 }
             }
+            $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['designations']=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['user_info']=$all_user;
             $data['user_counter']=count($data['user_info']);
             $data['date_start']=System_helper::display_date(time());
@@ -180,13 +182,18 @@ class Reports_tour extends Root_Controller
         $division_id=$this->input->post('division_id');
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
+        $designation_id=$this->input->post('designation_id');
+        $user_id=$this->input->post('user_id');
+        $employee_id=$this->input->post('employee_id');
+        $status_approve=$this->input->post('status_approve');
+        $date_type=$this->input->post('date_type');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
-        $user_id=$this->input->post('user_id');
 
         //Data from source table
         $this->db->from($this->config->item('table_ems_tour_setup').' tour_setup');
         $this->db->select('tour_setup.*');
+        $this->db->join($this->config->item('table_ems_tour_setup_purpose').' tour_setup_purpose','tour_setup_purpose.tour_setup_id = tour_setup.id','INNER');
         $this->db->join($this->config->item('table_login_setup_user').' user','user.id = tour_setup.user_created','INNER');
         $this->db->select('user.id user_id, user.employee_id');
         $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
@@ -205,33 +212,69 @@ class Reports_tour extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_location_divisions').' d','d.id = z.division_id','LEFT');
         $this->db->select('d.name division_name');
         $this->db->order_by('d.id, z.id, t.id');
-        if(!$user_id)
+        if($employee_id)
         {
-            if($division_id>0)
+            $this->db->where('user.employee_id',$employee_id);
+        }
+        else
+        {
+            if(!$designation_id)
             {
-                $this->db->where('d.id',$division_id);
-                if($zone_id>0)
+                if(!$user_id)
                 {
-                    $this->db->where('z.id',$zone_id);
-                    if($territory_id>0)
+                    if($division_id>0)
                     {
-                        $this->db->where('t.id',$territory_id);
+                        $this->db->where('d.id',$division_id);
+                        if($zone_id>0)
+                        {
+                            $this->db->where('z.id',$zone_id);
+                            if($territory_id>0)
+                            {
+                                $this->db->where('t.id',$territory_id);
+                            }
+                        }
                     }
                 }
+                else
+                {
+                    $this->db->where('tour_setup.user_created',$user_id);
+                }
+            }
+            else
+            {
+                $this->db->where('designation.id',$designation_id);
             }
         }
-        if($user_id)
+
+        if($status_approve)
         {
-            $this->db->where('tour_setup.user_created',$user_id);
+            $this->db->where('tour_setup.status_approve',$status_approve);
         }
-        if($date_end>0)
+
+        if($date_type)
+        {
+            if($date_type=='tour_created_time')
+            {
+                $this->db->where('tour_setup.date_created <=',$date_end);
+                $this->db->where('tour_setup.date_created >=',$date_start);
+            }
+            elseif($date_type=='approve_date_time')
+            {
+                $this->db->where('tour_setup.date_approved <=',$date_end);
+                $this->db->where('tour_setup.date_approved >=',$date_start);
+            }
+            else
+            {
+                $this->db->where('tour_setup_purpose.date_reporting <=',$date_end);
+                $this->db->where('tour_setup_purpose.date_reporting >=',$date_start);
+            }
+        }
+        else
         {
             $this->db->where('tour_setup.date_to <=',$date_end);
-        }
-        if($date_start>0)
-        {
             $this->db->where('tour_setup.date_from >=',$date_start);
         }
+
         $this->db->where('user_info.revision',1);
         $this->db->where('tour_setup.status!=',$this->config->item('system_status_delete'));
         $this->db->order_by('tour_setup.id DESC');
@@ -286,7 +329,7 @@ class Reports_tour extends Root_Controller
                 }
             }
         }
-        $this->db->where('user_area.territory_id >',0);
+        //$this->db->where('user_area.territory_id >',0);
         $this->db->where('user_area.revision',1);
         $this->db->where('user.status',$this->config->item('system_status_active'));
         $this->db->where('user_info.revision',1);
