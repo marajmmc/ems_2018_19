@@ -78,28 +78,17 @@ class Tour_approval extends Root_Controller
     private function get_preference_headers($method = 'list')
     {
         $data = array();
+        $data['name'] = 1;
+        $data['employee_id'] = 1;
+        $data['department_name'] = 1;
+        $data['designation'] = 1;
+        $data['title'] = 1;
+        $data['date_from'] = 1;
+        $data['date_to'] = 1;
+        $data['remarks'] = 1;
         if ($method == 'list_all')
         {
-            $data['name'] = 1;
-            $data['employee_id'] = 1;
-            $data['department_name'] = 1;
-            $data['designation'] = 1;
-            $data['title'] = 1;
-            $data['date_from'] = 1;
-            $data['date_to'] = 1;
-            $data['remarks'] = 1;
             $data['status_approve'] = 1;
-        }
-        else
-        {
-            $data['name'] = 1;
-            $data['employee_id'] = 1;
-            $data['department_name'] = 1;
-            $data['designation'] = 1;
-            $data['title'] = 1;
-            $data['date_from'] = 1;
-            $data['date_to'] = 1;
-            $data['remarks'] = 1;
         }
         return $data;
     }

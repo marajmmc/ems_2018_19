@@ -56,14 +56,6 @@ class Tour_reporting extends Root_Controller
         {
             $this->system_save_reporting();
         }
-        /* elseif ($action == "approve")
-        {
-            $this->system_approve($id);
-        }
-        elseif ($action == "save_approve")
-        {
-            $this->system_save_approve();
-        } */
         elseif ($action == "set_preference")
         {
             $this->system_set_preference();
@@ -98,30 +90,22 @@ class Tour_reporting extends Root_Controller
     private function get_preference_headers($method = 'list')
     {
         $data = array();
+        $data['name'] = 1;
+        $data['employee_id'] = 1;
+        $data['department_name'] = 1;
+        $data['designation'] = 1;
+        $data['title'] = 1;
+        $data['date_from'] = 1;
+        $data['date_to'] = 1;
+        $data['remarks'] = 1;
         if ($method == 'list_all')
         {
-            $data['name'] = 1;
-            $data['employee_id'] = 1;
-            $data['department_name'] = 1;
-            $data['designation'] = 1;
-            $data['title'] = 1;
-            $data['date_from'] = 1;
-            $data['date_to'] = 1;
-            $data['remarks'] = 1;
             $data['status_approve'] = 1;
         }
         else
         {
-            $data['name'] = 1;
-            $data['employee_id'] = 1;
-            $data['department_name'] = 1;
-            $data['designation'] = 1;
-            $data['title'] = 1;
-            $data['date_from'] = 1;
-            $data['date_to'] = 1;
             $data['amount_iou'] = 1;
             $data['iou_details'] = 1;
-            $data['remarks'] = 1;
         }
         return $data;
     }
@@ -567,56 +551,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    /* private function system_details($id)
-    {
-        if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
-        {
-            if ($id > 0)
-            {
-                $item_id = $id;
-            }
-            else
-            {
-                $item_id = $this->input->post('id');
-            }
-
-
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
-            $this->db->select('tour_setup_purpose.*');
-            $this->db->join($this->config->item('table_ems_tour_setup') . ' tour_setup', 'tour_setup.id = tour_setup_purpose.tour_setup_id', 'INNER');
-            $this->db->select('tour_setup.title, tour_setup.date_from, tour_setup.date_to, tour_setup.user_id');
-            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
-            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            //------------USER PORTION---------------
-            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
-            $this->db->select('user.employee_id');
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
-            $this->db->select('user_info.name');
-            $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $this->db->select('designation.name AS designation');
-            $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-            $this->db->select('department.name AS department_name');
-            //---------------------------------------
-            $this->db->where('tour_setup_purpose.id', $item_id);
-            $data['item'] = $result = $this->db->get()->row_array();
-
-            $data['item']['name'] = $result['name'] . ' (' . $result['employee_id'] . ')';
-
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose_others'));
-            $this->db->select('*');
-            $this->db->where('tour_setup_purpose_id', $item_id);
-            $this->db->where('status', 'Active');
-            $data['items'] = $this->db->get()->result_array();
-
-            if (!($data['item']['date_reporting']))
-            {
-                $data['item']['date_reporting'] = time();
-            }
-
-            pr($data);
-        }
-    } */
 
     private function system_details($id)
     {
