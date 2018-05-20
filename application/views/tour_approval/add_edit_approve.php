@@ -181,10 +181,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                         <?php echo ($item['status_approve'] == 'Back_to_setup')? "selected='selected'":"";?> >
                         Roll Back
                     </option>
-                    <?php /* <option value="Deleted"
-                                <?php echo ($item['status_approve'] == 'Deleted')? "selected='selected'":"";?> >Cancel
-                    </option> */ ?>
-
                 </select>
             </div>
         </div>

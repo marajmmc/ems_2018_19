@@ -25,16 +25,6 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
         'data-action-link' => site_url($CI->controller_url . '/index/edit')
     );
 }
-/* if(isset($CI->permissions['action2'] )&&($CI->permissions['action2'] ==1))
-{
-    $action_buttons[]=array
-    (
-        'type'=>'button',
-        'label'=>'Reporting',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/list_reporting')
-    );
-} */
 if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
     $action_buttons[] = array
@@ -45,25 +35,6 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
         'data-action-link' => site_url($CI->controller_url . '/index/forward')
     );
 }
-/* if(isset($CI->permissions['action2'] )&&($CI->permissions['action2'] ==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_DETAILS"),
-        'class'=>'button_action_batch',
-        'id'=>'button_action_edit',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details')
-    );
-}
-if(isset($CI->permissions['action4'] ) && ($CI->permissions['action4'] ==1))
-{
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>'Print View',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/details_print')
-    );
-} */
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
@@ -118,7 +89,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo base_url($CI->controller_url.'/index/get_items'); ?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items'); ?>";
 
         // prepare the data
         var source =
@@ -126,16 +97,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                 /* { name: 'name', type: 'string' },
-                 { name: 'employee_id', type: 'string' },
-                 { name: 'department_name', type: 'string' },
-                 { name: 'designation', type: 'string' },
-                 { name: 'title', type: 'string' },
-                 { name: 'date_from', type: 'string' },
-                 { name: 'date_to', type: 'string' },
-                 { name: 'amount_iou', type: 'string' },
-                 { name: 'iou_details', type: 'string' },
-                 { name: 'remarks', type: 'string' } */
                 <?php
                 foreach($system_preference_items as $key => $value){ ?>
                     { name: '<?php echo $key; ?>', type: 'string' },
