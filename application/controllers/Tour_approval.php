@@ -2,7 +2,7 @@
 
 class Tour_approval extends Root_Controller
 {
-    private $message;
+    public $message;
     public $permissions;
     public $controller_url;
     public $locations;
@@ -459,52 +459,6 @@ class Tour_approval extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            /* $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
-            $this->db->select('tour_setup.*');
-            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
-            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            $this->db->where('user_area.revision', 1);
-            $this->db->where('tour_setup.id', $item_id);
-            $data['item'] = $this->db->get()->row_array();
-
-            $db_login = $this->load->database('armalik_login', TRUE);
-            $db_login->from($this->config->item('table_setup_user') . ' user');
-            $db_login->select('user.id,user.employee_id,user.user_name,user.status');
-            $db_login->select('user_info.name,user_info.ordering');
-            $db_login->join($this->config->item('table_setup_user_info') . ' user_info', 'user.id = user_info.user_id', 'INNER');
-            $db_login->join($this->config->item('table_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $db_login->select('designation.name designation');
-            $db_login->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-            $db_login->select('department.name department_name');
-            $db_login->where('user_info.revision', 1);
-            $db_login->where('user.id', $data['item']['user_created']);
-            $result = $db_login->get()->row_array();
-            $data['item']['name'] = $result['name'] . ' (' . $result['employee_id'] . ')';
-            $data['item']['designation'] = $result['designation'];
-            $data['item']['department_name'] = $result['department_name'];
-
-            //data from tour setup others table
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
-            $this->db->select('tour_setup_purpose.*');
-            $this->db->join($this->config->item('table_ems_tour_setup_purpose_others') . ' tour_setup_purpose_others', 'tour_setup_purpose_others.tour_setup_purpose_id = tour_setup_purpose.id', 'LEFT');
-            $this->db->select('tour_setup_purpose_others.id purpose_others_id, tour_setup_purpose_others.name, tour_setup_purpose_others.contact_no, tour_setup_purpose_others.profession, tour_setup_purpose_others.discussion,');
-            $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-            $results_purpose_others = $this->db->get()->result_array();
-            $other_info = array();
-            foreach ($results_purpose_others as $results_purpose_other)
-            {
-                $other_info[$results_purpose_other['id']]['purpose'] = $results_purpose_other['purpose'];
-                $other_info[$results_purpose_other['id']]['date_reporting'] = $results_purpose_other['date_reporting'];
-                $other_info[$results_purpose_other['id']]['report_description'] = $results_purpose_other['report_description'];
-                $other_info[$results_purpose_other['id']]['recommendation'] = $results_purpose_other['recommendation'];
-                $other_info[$results_purpose_other['id']]['purpose_others_id'] = $results_purpose_other['purpose_others_id'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['name'] = $results_purpose_other['name'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['contact_no'] = $results_purpose_other['contact_no'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['profession'] = $results_purpose_other['profession'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['discussion'] = $results_purpose_other['discussion'];
-            } */
-
-
             $user = User_helper::get_user();
             $data = array();
 
@@ -532,7 +486,7 @@ class Tour_approval extends Root_Controller
             $this->db->where('tour_purpose.status', 'Active');
             $data['items'] = $this->db->get()->result_array();
 
-            //data from tour setup others table
+            //Data from tour setup others table
             $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
             $this->db->join($this->config->item('table_ems_tour_setup_purpose_others') . ' tour_setup_purpose_others', 'tour_setup_purpose_others.tour_setup_purpose_id = tour_setup_purpose.id', 'LEFT');
@@ -554,9 +508,6 @@ class Tour_approval extends Root_Controller
                 $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['profession'] = $results_purpose_other['profession'];
                 $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['discussion'] = $results_purpose_other['discussion'];
             }
-
-//            pr($user,0);
-//            pr($data);
 
             if (!$data['item'])
             {
@@ -703,11 +654,11 @@ class Tour_approval extends Root_Controller
     {
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
-            $data['preference_method_name'] = 'list';
+            $data['preference_method_name'] = 'list_all';
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference('list_all');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
             $this->json_return($ajax);
         }
         else

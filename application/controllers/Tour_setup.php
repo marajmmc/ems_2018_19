@@ -81,33 +81,20 @@ class Tour_setup extends Root_Controller
     private function get_preference_headers($method = 'list')
     {
         $data = array();
+        $data['name'] = 1;
+        $data['employee_id'] = 1;
+        $data['department_name'] = 1;
+        $data['designation'] = 1;
+        $data['title'] = 1;
+        $data['date_from'] = 1;
+        $data['date_to'] = 1;
+        $data['amount_iou'] = 1;
+        $data['iou_details'] = 1;
+        $data['remarks'] = 1;
         if ($method == 'list_all')
         {
-            $data['name'] = 1;
-            $data['employee_id'] = 1;
-            $data['department_name'] = 1;
-            $data['designation'] = 1;
-            $data['title'] = 1;
-            $data['date_from'] = 1;
-            $data['date_to'] = 1;
-            $data['amount_iou'] = 1;
-            $data['iou_details'] = 1;
-            $data['remarks'] = 1;
             $data['status_forward'] = 1;
             $data['status_approve'] = 1;
-        }
-        else
-        {
-            $data['name'] = 1;
-            $data['employee_id'] = 1;
-            $data['department_name'] = 1;
-            $data['designation'] = 1;
-            $data['title'] = 1;
-            $data['date_from'] = 1;
-            $data['date_to'] = 1;
-            $data['amount_iou'] = 1;
-            $data['iou_details'] = 1;
-            $data['remarks'] = 1;
         }
         return $data;
     }
@@ -690,7 +677,6 @@ class Tour_setup extends Root_Controller
                 $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
                 $this->json_return($ajax);
             }
-
         }
     }
 
@@ -801,10 +787,10 @@ class Tour_setup extends Root_Controller
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
             $data['system_preference_items'] = $this->get_preference('list_all');
-            $data['preference_method_name'] = 'list';
+            $data['preference_method_name'] = 'list_all';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
             $this->json_return($ajax);
         }
         else

@@ -255,7 +255,6 @@ class Tour_reporting extends Root_Controller
 
     public function system_get_items_all()
     {
-
         $current_records = $this->input->post('total_records');
         if (!$current_records)
         {
@@ -337,8 +336,6 @@ class Tour_reporting extends Root_Controller
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
             $this->db->order_by('tour_setup.id', 'DESC');
             $result = $this->db->get()->row_array();
-
-            //pr($result);
 
             $data = array();
             if ($result)
@@ -436,7 +433,6 @@ class Tour_reporting extends Root_Controller
             //---------------------------------------
             $this->db->where('tour_setup_purpose.id', $item_id);
             $data['item'] = $result = $this->db->get()->row_array();
-
 
             $data['item']['name'] = $result['name'] . ' (' . $result['employee_id'] . ')';
 
@@ -656,7 +652,6 @@ class Tour_reporting extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            //$db_login = $this->load->database('armalik_login', TRUE);
             $this->db->from($this->config->item('table_login_setup_user') . ' user');
             $this->db->select('user.id,user.employee_id,user.user_name,user.status');
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user.id = user_info.user_id', 'INNER');
@@ -829,33 +824,7 @@ class Tour_reporting extends Root_Controller
             $this->db->where('tour_purpose.status', 'Active');
             $data['items'] = $this->db->get()->result_array();
 
-            //data from tour setup others table
-            /* $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
-            $this->db->select('tour_setup_purpose.*');
-            $this->db->join($this->config->item('table_ems_tour_setup_purpose_others') . ' tour_setup_purpose_others', 'tour_setup_purpose_others.tour_setup_purpose_id = tour_setup_purpose.id', 'LEFT');
-            $this->db->select('tour_setup_purpose_others.id purpose_others_id, tour_setup_purpose_others.name, tour_setup_purpose_others.contact_no, tour_setup_purpose_others.profession, tour_setup_purpose_others.discussion,');
-            $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-            $this->db->where('tour_setup_purpose.status', 'Active');
-            $results_purpose_others = $this->db->get()->result_array();
-
-            $other_info = array();
-            foreach ($results_purpose_others as $results_purpose_other)
-            {
-                $other_info[$results_purpose_other['id']]['purpose'] = $results_purpose_other['purpose'];
-                $other_info[$results_purpose_other['id']]['date_reporting'] = $results_purpose_other['date_reporting'];
-                $other_info[$results_purpose_other['id']]['report_description'] = $results_purpose_other['report_description'];
-                $other_info[$results_purpose_other['id']]['recommendation'] = $results_purpose_other['recommendation'];
-                $other_info[$results_purpose_other['id']]['purpose_others_id'] = $results_purpose_other['purpose_others_id'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['name'] = $results_purpose_other['name'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['contact_no'] = $results_purpose_other['contact_no'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['profession'] = $results_purpose_other['profession'];
-                $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['discussion'] = $results_purpose_other['discussion'];
-            }
-            $data['items_purpose_others'] = $other_info; */
-
             $data['title'] = 'Tour Setup And Reporting Print View:: ' . $data['item']['title'];
-
-            //pr($data);
 
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/requisition_print", $data, true));
@@ -873,179 +842,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    /* private function system_save_reporting()
-    {
-        $id = $this->input->post("id");
-        $user = User_helper::get_user();
-        $item_head = $this->input->post('item');
-        $items = $this->input->post('items');
-        $old_items = $this->input->post('old_items');
-
-        pr($this->input->post());
-
-        $results_old = array();
-        $time = time();
-        $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
-        $this->db->where('tour_setup_purpose.id', $id);
-        $data['item'] = $this->db->get()->row_array();
-
-        pr($data['item']);
-
-        $tour_setup_id = $data['item']['tour_setup_id'];
-        //--Start-- Permission Checking -----
-        if ($data['item']['date_reporting'])
-        {
-            if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-            $old_item = Query_helper::get_info($this->config->item('table_ems_tour_setup_purpose'), '*', array('id =' . $id), 1);
-            $results = Query_helper::get_info($this->config->item('table_ems_tour_setup_purpose_others'), '*', array('tour_setup_purpose_id =' . $id));
-            foreach ($results as $result)
-            {
-                $results_old[$result['id']]['name'] = $result['name'];
-                $results_old[$result['id']]['contact_no'] = $result['contact_no'];
-                $results_old[$result['id']]['profession'] = $result['profession'];
-                $results_old[$result['id']]['discussion'] = $result['discussion'];
-            }
-        }
-        else
-        {
-            if (!(isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)))
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-        }
-        if (!$this->check_validation_reporting())
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->message;
-            $this->json_return($ajax);
-        }
-
-        $old_tour_setup_item = Query_helper::get_info($this->config->item('table_ems_tour_setup'), '*', array('id =' . $data['item']['tour_setup_id']), 1);
-
-        if (System_helper::get_time($item_head['date_reporting']) < $old_tour_setup_item['date_from'])
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Reporting date can not be less than from date';
-            $this->json_return($ajax);
-        }
-
-        //--End-- Permission Checking ---
-        if ($items)
-        {
-
-            foreach ($items as $item)
-            {
-                if (empty($item['name']))
-                {
-                    $ajax['status'] = false;
-                    $ajax['system_message'] = 'Unfinished tour setup in entry.';
-                    $this->json_return($ajax);
-                }
-            }
-        }
-        $this->db->trans_start(); //DB Transaction Handle START
-        if ($data['item']['date_reporting'])
-        {
-            // --Start-- Item saving (In three table consequently)
-            $data = array();
-            $data['date_reporting'] = System_helper::get_time($item_head['date_reporting']);
-            $data['report_description'] = $item_head['report_description'];
-            $data['recommendation'] = $item_head['recommendation'];
-            $this->db->set('revision_count_reporting', 'revision_count_reporting+1', FALSE);
-            Query_helper::update($this->config->item('table_ems_tour_setup_purpose'), $data, array('id=' . $id));
-            if ($old_items)
-            {
-                foreach ($old_items as $key => $old_item)
-                {
-                    if (($results_old[$key]['name'] !== $old_item['name']) || ($results_old[$key]['contact_no'] !== $old_item['contact_no']) || ($results_old[$key]['profession'] !== $old_item['profession']) || ($results_old[$key]['discussion'] !== $old_item['discussion']))
-                    {
-                        $data = array();
-                        $data['name'] = $old_item['name'];
-                        $data['contact_no'] = $old_item['contact_no'];
-                        $data['profession'] = $old_item['profession'];
-                        $data['discussion'] = $old_item['discussion'];
-                        $data['date_updated'] = $time;
-                        $data['user_updated'] = $user->user_id;
-                        $this->db->set('revision_count', 'revision_count+1', FALSE);
-                        Query_helper::update($this->config->item('table_ems_tour_setup_purpose_others'), $data, array('id=' . $key));
-                    }
-                }
-            }
-            if ($items)
-            {
-                foreach ($items as $item)
-                {
-                    $data = array();
-                    $data['tour_setup_purpose_id'] = $id;
-                    $data['name'] = $item['name'];
-                    $data['contact_no'] = $item['contact_no'];
-                    $data['profession'] = $item['profession'];
-                    $data['discussion'] = $item['discussion'];
-                    $data['revision_count'] = 1;
-                    $data['user_created'] = $user->user_id;
-                    $data['date_created'] = $time;
-                    Query_helper::add($this->config->item('table_ems_tour_setup_purpose_others'), $data, false);
-                }
-            }
-            // --End-- Item saving (In three table consequently)
-        }
-        else
-        {
-            // --Start-- Item saving (In two table consequently)
-            $data = array();
-            $data['date_reporting'] = System_helper::get_time($item_head['date_reporting']);
-            $data['report_description'] = $item_head['report_description'];
-            $data['recommendation'] = $item_head['recommendation'];
-            $this->db->set('revision_count_reporting', 'revision_count_reporting+1', FALSE);
-            Query_helper::update($this->config->item('table_ems_tour_setup_purpose'), $data, array('id=' . $id));
-            if ($items)
-            {
-                foreach ($items as $item)
-                {
-                    $data = array();
-                    $data['tour_setup_purpose_id'] = $id;
-                    $data['name'] = $item['name'];
-                    $data['contact_no'] = $item['contact_no'];
-                    $data['profession'] = $item['profession'];
-                    $data['discussion'] = $item['discussion'];
-                    $data['revision_count'] = 1;
-                    $data['user_created'] = $user->user_id;
-                    $data['date_created'] = $time;
-                    Query_helper::add($this->config->item('table_ems_tour_setup_purpose_others'), $data, false);
-                }
-            }
-            // --End-- Item saving (In three table consequently)
-        }
-        $this->db->trans_complete(); //DB Transaction Handle END
-        if ($this->db->trans_status() === true)
-        {
-            $save_and_new = $this->input->post('system_save_new_status');
-            $this->message = $this->lang->line('MSG_SAVED_SUCCESS');
-            if ($save_and_new == 1)
-            {
-                $this->system_add();
-            }
-            else
-            {
-                $this->system_list_reporting($tour_setup_id);
-            }
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line('MSG_SAVED_FAIL');
-            $this->json_return($ajax);
-        }
-    } */
-
 
     private function check_my_editable($item)
     {
@@ -1142,7 +938,7 @@ class Tour_reporting extends Root_Controller
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference('list_all');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
             $this->json_return($ajax);
         }
         else
