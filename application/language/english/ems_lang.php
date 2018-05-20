@@ -18,9 +18,9 @@ $lang['MSG_ROLE_ASSIGN_SUCCESS'] = 'Role Assign Successful.';
 $lang['MSG_SELECT_ONE'] = 'Please Select At least one item';
 $lang['MSG_INVALID_INPUT'] = 'Invalid data entry';
 $lang['YOU_DONT_HAVE_ACCESS'] = 'You cannot access this page';
-$lang['NO_DATA_FOUND']='No Data Found';
-$lang['MSG_FILE_SIZE_ERROR']='File Size Error';
-$lang['MSG_FILE_TYPE_ERROR']='File Type Error';
+$lang['NO_DATA_FOUND'] = 'No Data Found';
+$lang['MSG_FILE_SIZE_ERROR'] = 'File Size Error';
+$lang['MSG_FILE_TYPE_ERROR'] = 'File Type Error';
 $lang['MSG_NO_FILE_UPLOADED'] = 'No file uploaded';
 
 $lang['MSG_ALREADY_FORWARDED'] = 'Already Forwarded.';
@@ -106,11 +106,11 @@ $lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
 $lang['LABEL_APPROVED_BY'] = 'Approved By';
 
 /* Status */
-$lang['LABEL_STATUS']='Status';
+$lang['LABEL_STATUS'] = 'Status';
 
-$lang['LABEL_STATUS_LC_PENDING']='Pending';
-$lang['LABEL_STATUS_LC_COMPLETE']='Completed';
-$lang['LABEL_STATUS_OPEN_FORWARD']='Forward Status';
+$lang['LABEL_STATUS_LC_PENDING'] = 'Pending';
+$lang['LABEL_STATUS_LC_COMPLETE'] = 'Completed';
+$lang['LABEL_STATUS_OPEN_FORWARD'] = 'Forward Status';
 
 
 // Common information related
@@ -123,7 +123,7 @@ $lang['LABEL_NAME'] = 'Name';
 $lang['LABEL_SHORT_NAME'] = 'Short Name';
 $lang['LABEL_FULL_NAME'] = 'Full Name';
 $lang['LABEL_CUSTOMER_NAME'] = 'Customer Name';
-$lang['LABEL_SUPPLIER_NAME']='Supplier Name';
+$lang['LABEL_SUPPLIER_NAME'] = 'Supplier Name';
 $lang['LABEL_OUTLET_NAME'] = 'Outlet';
 $lang['LABEL_OUTLET_CODE'] = 'Outlet Code';
 $lang['LABEL_SHOWROOM_NAME'] = 'Showroom Name';
@@ -133,8 +133,8 @@ $lang['LABEL_COMPANY_NAME'] = 'Company';
 $lang['LABEL_OFFICE_NAME'] = 'Office';
 $lang['LABEL_DESIGNATION_NAME'] = 'Designation';
 $lang['LABEL_DEPARTMENT_NAME'] = 'Department';
-$lang['LABEL_PRINCIPAL_NAME']='Principal';
-$lang['LABEL_COMPETITOR_NAME']='Competitor';
+$lang['LABEL_PRINCIPAL_NAME'] = 'Principal';
+$lang['LABEL_COMPETITOR_NAME'] = 'Competitor';
 
 // address, email, phone
 $lang['LABEL_ADDRESS'] = 'Address';
@@ -163,17 +163,17 @@ $lang['LABEL_SITE_REPLACE_TEXT'] = 'Url Replace text';
 $lang['LABEL_OTHER_SITES'] = 'Other Sites';
 
 //date & time
-$lang['LABEL_DATE']='Date';
+$lang['LABEL_DATE'] = 'Date';
 $lang['LABEL_DATE_START'] = 'Starting Date';
 $lang['LABEL_DATE_END'] = 'End Date';
-$lang['LABEL_DATE_CREATED']='Creation date';
+$lang['LABEL_DATE_CREATED'] = 'Creation date';
 $lang['LABEL_DATE_BIRTH'] = 'Date of Birth';
 $lang['LABEL_DATE_JOIN'] = 'Date of Joining';
-$lang['LABEL_DATE_CREATED_TIME']='Created Time';
-$lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
-$lang['LABEL_DATE_FORWARDED_TIME']='Forwarded Time';
-$lang['LABEL_DATE_APPROVED_TIME']='Approved Time';
-$lang['LABEL_DATE_COMPLETED_TIME']='Completed Time';
+$lang['LABEL_DATE_CREATED_TIME'] = 'Created Time';
+$lang['LABEL_DATE_UPDATED_TIME'] = 'Updated Time';
+$lang['LABEL_DATE_FORWARDED_TIME'] = 'Forwarded Time';
+$lang['LABEL_DATE_APPROVED_TIME'] = 'Approved Time';
+$lang['LABEL_DATE_COMPLETED_TIME'] = 'Completed Time';
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -207,12 +207,12 @@ $lang['LABEL_UPAZILLA_NAME'] = 'Upazila';
 $lang['LABEL_UNION_NAME'] = 'Union';
 
 //crop classification
-$lang['LABEL_CROP_NAME']='Crop';
-$lang['LABEL_CROP_TYPE_NAME']='Crop Type';
-$lang['LABEL_VARIETY_NAME']='Variety';
+$lang['LABEL_CROP_NAME'] = 'Crop';
+$lang['LABEL_CROP_TYPE_NAME'] = 'Crop Type';
+$lang['LABEL_VARIETY_NAME'] = 'Variety';
 $lang['LABEL_PACK_SIZE'] = 'Pack Size(gm)';
-$lang['LABEL_VARIETY_CATEGORY']='Variety Category';
-$lang['LABEL_HYBRID']='Hybrid';
+$lang['LABEL_VARIETY_CATEGORY'] = 'Variety Category';
+$lang['LABEL_HYBRID'] = 'Hybrid';
 
 
 // Office staff
@@ -250,7 +250,7 @@ $lang['LABEL_INCHARGE'] = 'In-charge';
 $lang['LABEL_EMPLOYEE'] = 'Employee';
 
 $lang['LABEL_ZSC_COMMENT'] = 'ZSC Comment';
-$lang['LABEL_STATUS_ATTENDANCE']="Attendance";
+$lang['LABEL_STATUS_ATTENDANCE'] = "Attendance";
 
 //Dealer And Field Visit
 $lang['LABEL_DEALER'] = 'Dealer';
@@ -270,5 +270,10 @@ $lang['LABEL_DETAILS_BUTTON'] = 'Details';
 $lang['LABEL_TITLE'] = 'Title';
 
 // Added by Mahmud
-$lang['LABEL_IOU_AMOUNT']="IOU Amount";
-$lang['LABEL_IOU_DETAILS']="IOU Details";
+$lang['LABEL_IOU_AMOUNT'] = $lang['LABEL_AMOUNT_IOU'] = "IOU Amount";
+$lang['LABEL_IOU_DETAILS'] = "IOU Details";
+$lang['LABEL_DESIGNATION'] = "Designation";
+$lang['LABEL_DATE_FROM'] = "Date From";
+$lang['LABEL_DATE_TO'] = "Date To";
+$lang['LABEL_STATUS_FORWARD'] = "Forwarded";
+$lang['LABEL_STATUS_APPROVE'] = "Approved";
