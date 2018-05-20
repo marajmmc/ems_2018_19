@@ -1,6 +1,5 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
-//pr($CI->permissions, 0);
 
 $action_buttons = array();
 $action_buttons[] = array(
@@ -67,7 +66,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo base_url($CI->controller_url.'/index/get_items_all');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
 
         // prepare the data
         var source =
@@ -75,15 +74,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                /* { name: 'name', type: 'string' },
-                { name: 'employee_id', type: 'string' },
-                { name: 'department_name', type: 'string' },
-                { name: 'designation', type: 'string' },
-                { name: 'title', type: 'string' },
-                { name: 'date_from', type: 'string' },
-                { name: 'date_to', type: 'string' },
-                { name: 'remarks', type: 'string' },
-                { name: 'status_approve', type: 'string' } */
                 <?php foreach($system_preference_items as $key => $value){ ?>
                     { name: '<?php echo $key; ?>', type: 'string' },
                 <?php } ?>
