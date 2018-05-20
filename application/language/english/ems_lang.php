@@ -174,6 +174,8 @@ $lang['LABEL_DATE_UPDATED_TIME'] = 'Updated Time';
 $lang['LABEL_DATE_FORWARDED_TIME'] = 'Forwarded Time';
 $lang['LABEL_DATE_APPROVED_TIME'] = 'Approved Time';
 $lang['LABEL_DATE_COMPLETED_TIME'] = 'Completed Time';
+$lang['LABEL_DATE_SETUP']="Setup Date";
+$lang['LABEL_DATE_APPROVE']="Approve Date";
 
 //months array
 $lang['LABEL_MONTH'] = 'Month';
@@ -277,3 +279,8 @@ $lang['LABEL_DATE_FROM'] = "Date From";
 $lang['LABEL_DATE_TO'] = "Date To";
 $lang['LABEL_STATUS_FORWARD'] = "Forwarded";
 $lang['LABEL_STATUS_APPROVE'] = "Approved";
+
+//Tour Report (Added by saiful)
+$lang['LABEL_NO_OF_PURPOSE']="No of purpose";
+$lang['LABEL_COMPLETE_REPORTING']="Complete Reporting";
+$lang['LABEL_INCOMPLETE_REPORTING']="Incomplete Reporting";

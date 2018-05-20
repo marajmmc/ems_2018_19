@@ -170,7 +170,7 @@ foreach($user_info as $user)
                     <label class="control-label"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
                 </div>
             </div>
-            <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
+            <div class="row show-grid">
                 <div class="col-xs-6">
                     <select id="department_id" name="report[department_id]" class="form-control">
                         <option value=""><?php echo $this->lang->line('SELECT');?></option>

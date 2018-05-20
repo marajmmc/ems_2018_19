@@ -19,6 +19,7 @@ class Reports_tour extends Root_Controller
             $this->json_return($ajax);
         }
         $this->controller_url = strtolower(get_class($this));
+        $this->lang->load('report_tour_lang');
     }
 
     public function index($action="search",$id=0)
@@ -182,6 +183,7 @@ class Reports_tour extends Root_Controller
         $division_id=$this->input->post('division_id');
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
+        $department_id=$this->input->post('department_id');
         $designation_id=$this->input->post('designation_id');
         $user_id=$this->input->post('user_id');
         $employee_id=$this->input->post('employee_id');
@@ -190,10 +192,47 @@ class Reports_tour extends Root_Controller
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
+        $this->db->from($this->config->item('table_ems_tour_setup').' tour_setup');
+        $this->db->join($this->config->item('table_ems_tour_setup_purpose').' tour_setup_purpose','tour_setup_purpose.tour_setup_id = tour_setup.id','INNER');
+        $this->db->select('tour_setup_purpose.*');
+        $this->db->where('tour_setup.status!=',$this->config->item('system_status_delete'));
+        $results=$this->db->get()->result_array();
+
+        //Calculation for finding total no of purpose, complete reporting and incomplete reporting number
+        $reporting_summary=array();
+        foreach($results as $result)
+        {
+            if(isset($reporting_summary[$result['tour_setup_id']]))
+            {
+                $reporting_summary[$result['tour_setup_id']]['no_of_purpose']++;
+                if($result['date_reporting']!=null)
+                {
+                    $reporting_summary[$result['tour_setup_id']]['complete_reporting']++;
+                }
+                else
+                {
+                    $reporting_summary[$result['tour_setup_id']]['incomplete_reporting']++;
+                }
+            }
+            else
+            {
+                $reporting_summary[$result['tour_setup_id']]['no_of_purpose']=1;
+                if($result['date_reporting']!=null)
+                {
+                    $reporting_summary[$result['tour_setup_id']]['complete_reporting']=1;
+                    $reporting_summary[$result['tour_setup_id']]['incomplete_reporting']=0;
+                }
+                else
+                {
+                    $reporting_summary[$result['tour_setup_id']]['incomplete_reporting']=1;
+                    $reporting_summary[$result['tour_setup_id']]['complete_reporting']=0;
+                }
+            }
+        }
+
         //Data from source table
         $this->db->from($this->config->item('table_ems_tour_setup').' tour_setup');
         $this->db->select('tour_setup.*');
-        $this->db->join($this->config->item('table_ems_tour_setup_purpose').' tour_setup_purpose','tour_setup_purpose.tour_setup_id = tour_setup.id','INNER');
         $this->db->join($this->config->item('table_login_setup_user').' user','user.id = tour_setup.user_created','INNER');
         $this->db->select('user.id user_id, user.employee_id');
         $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
@@ -218,31 +257,45 @@ class Reports_tour extends Root_Controller
         }
         else
         {
-            if(!$designation_id)
+            if($department_id)
             {
-                if(!$user_id)
+                if(!$designation_id)
                 {
-                    if($division_id>0)
-                    {
-                        $this->db->where('d.id',$division_id);
-                        if($zone_id>0)
-                        {
-                            $this->db->where('z.id',$zone_id);
-                            if($territory_id>0)
-                            {
-                                $this->db->where('t.id',$territory_id);
-                            }
-                        }
-                    }
+                    $this->db->where('department.id',$department_id);
                 }
                 else
                 {
-                    $this->db->where('tour_setup.user_created',$user_id);
+                    $this->db->where('designation.id',$designation_id);
                 }
             }
             else
             {
-                $this->db->where('designation.id',$designation_id);
+                if($designation_id)
+                {
+                    $this->db->where('designation.id',$designation_id);
+                }
+                else
+                {
+                    if(!$user_id)
+                    {
+                        if($division_id>0)
+                        {
+                            $this->db->where('d.id',$division_id);
+                            if($zone_id>0)
+                            {
+                                $this->db->where('z.id',$zone_id);
+                                if($territory_id>0)
+                                {
+                                    $this->db->where('t.id',$territory_id);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $this->db->where('tour_setup.user_created',$user_id);
+                    }
+                }
             }
         }
 
@@ -250,7 +303,6 @@ class Reports_tour extends Root_Controller
         {
             $this->db->where('tour_setup.status_approve',$status_approve);
         }
-
         if($date_type)
         {
             if($date_type=='tour_created_time')
@@ -281,6 +333,15 @@ class Reports_tour extends Root_Controller
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
+            $item['date_setup']=System_helper::display_date_time($item['date_created']);
+            if($item['date_approved'])
+            {
+                $item['date_approve']=System_helper::display_date_time($item['date_approved']);
+            }
+            else
+            {
+                $item['date_approve']='-';
+            }
             $item['employee']=$item['employee_id'].'-'.$item['username'];
             if(!$item['district_name'])
             {
@@ -297,6 +358,13 @@ class Reports_tour extends Root_Controller
             if(!$item['division_name'])
             {
                 $item['division_name']='N/A';
+            }
+
+            if(isset($reporting_summary[$item['id']]))
+            {
+                $item['no_of_purpose']=$reporting_summary[$item['id']]['no_of_purpose'];
+                $item['complete_reporting']=$reporting_summary[$item['id']]['complete_reporting'];
+                $item['incomplete_reporting']=$reporting_summary[$item['id']]['incomplete_reporting'];
             }
         }
         $this->json_return($items);
@@ -375,10 +443,17 @@ class Reports_tour extends Root_Controller
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
+        $data['date_setup']= 1;
+        $data['date_approve']= 1;
         $data['employee']= 1;
         $data['department_name']= 1;
         $data['designation_name']= 1;
         $data['title']= 1;
+        $data['iou_amount']= 1;
+        $data['status']= 1;
+        $data['no_of_purpose']= 1;
+        $data['complete_reporting']= 1;
+        $data['incomplete_reporting']= 1;
         $data['details_button']= 1;
         if($result)
         {
