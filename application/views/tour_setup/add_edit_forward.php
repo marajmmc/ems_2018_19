@@ -14,10 +14,6 @@ $action_buttons[] = array(
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 <style>
-    .datepicker {
-        cursor: pointer !important;
-    }
-
     .purpose-list table tr td:first-child {
         width: 50px
     }
@@ -189,8 +185,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        $(".datepicker").datepicker({dateFormat: display_date_format});
-
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
             if (options == 'Forwarded') {

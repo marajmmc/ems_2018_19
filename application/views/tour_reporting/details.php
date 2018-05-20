@@ -13,12 +13,6 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<style>
-    .datepicker
-    {
-        cursor: pointer !important;
-    }
-</style>
 
 <div class="row widget">
     <div class="widget-header">
@@ -176,10 +170,4 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     </div>
 </div>
 <div class="clearfix"></div>
-<script type="text/javascript">
 
-    jQuery(document).ready(function()
-    {
-        $(".datepicker").datepicker({dateFormat : display_date_format});
-    });
-</script>

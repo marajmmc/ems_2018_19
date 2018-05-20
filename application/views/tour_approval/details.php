@@ -74,8 +74,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
     </div>
 
-
-
     <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right">Purpose(s):</label>

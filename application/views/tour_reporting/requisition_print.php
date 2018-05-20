@@ -24,11 +24,7 @@ $row_per_page = 20;
 $header_image = base_url('images/print/header.jpg');
 $footer_image = base_url('images/print/footer.jpg');
 
-//$total_records=sizeof($items_purpose_others);
-//$num_pages=ceil($total_records/$row_per_page);
-
 $num_pages = 1;
-
 ?>
 
 <div id="system_print_container" style="width:<?php echo $width; ?>px;">
