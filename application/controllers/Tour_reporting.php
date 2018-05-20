@@ -194,8 +194,7 @@ class Tour_reporting extends Root_Controller
         $this->db->where('user_area.revision', 1);
         if ($user->user_group != 1 && $user->user_group != 2)
         {
-            $this->db->where('tour_setup.user_id!=', $user->user_id);
-            $this->db->where('designation.parent', $user->designation);
+            $this->db->where('tour_setup.user_id', $user->user_id);
         }
         $this->db->where('tour_setup.status!=', $this->config->item('system_status_delete'));
         //$this->db->where('tour_setup.status_forward!=', 'Pending');
