@@ -123,8 +123,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'department_name', type: 'string' },
                 { name: 'designation_name', type: 'string' },
                 { name: 'title', type: 'string' },
-                { name: 'iou_amount', type: 'string' },
-                { name: 'status', type: 'string' },
+                { name: 'amount_iou', type: 'string' },
+                { name: 'status_approve', type: 'string' },
                 { name: 'no_of_purpose', type: 'string' },
                 { name: 'complete_reporting', type: 'string' },
                 { name: 'incomplete_reporting', type: 'string' },
@@ -141,12 +141,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
             if(column=='details_button')
             {
-                element.html('');
-                if(record.id!=undefined && record.id!='')
-                {
-                    console.log(record.id);
-                    element.html('<div><button class="btn btn-primary pop_up" data-item-no="'+row+'">Details</button></div>');
-                }
+                element.html('<div><button class="btn btn-primary pop_up" data-item-no="'+row+'">Details</button></div>');
             }
 
             return element[0].outerHTML;
@@ -195,8 +190,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>',dataField: 'department_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>',dataField: 'designation_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['designation_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TITLE'); ?>',dataField: 'title',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['title']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_IOU_AMOUNT'); ?>',dataField: 'iou_amount',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['iou_amount']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>',dataField: 'status',width:'130',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['status']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>',dataField: 'amount_iou',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['amount_iou']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('STATUS_APPROVE'); ?>',dataField: 'status_approve',width:'130',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['status_approve']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_NO_OF_PURPOSE'); ?>',dataField: 'no_of_purpose',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['no_of_purpose']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_COMPLETE_REPORTING'); ?>',dataField: 'complete_reporting',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['complete_reporting']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_INCOMPLETE_REPORTING'); ?>',dataField: 'incomplete_reporting',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['incomplete_reporting']?0:1;?>},
