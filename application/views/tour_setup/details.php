@@ -5,12 +5,6 @@ $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
     'href'=>site_url($CI->controller_url.'/index/'.$method)
 );
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_CLEAR"),
-    'id'=>'button_action_clear',
-    'data-form'=>'#save_form'
-);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 

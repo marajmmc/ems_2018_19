@@ -845,7 +845,7 @@ class Tour_reporting extends Root_Controller
     {
         $items = $this->input->post('items');
         $old_items = $this->input->post('old_items');
-        
+
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[date_reporting]', 'Reporting Date', 'required');
         $this->form_validation->set_rules('item[report_description]', 'Report (Description)', 'required');
