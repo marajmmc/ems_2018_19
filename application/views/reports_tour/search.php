@@ -323,12 +323,7 @@ foreach($user_info as $user)
             <?php } ?>
             <div class="row show-grid">
                 <div class="col-xs-6">
-                    <?php if($user_counter<2){?>
-                        <?php foreach($user_info as $user){?>
-                    <label class="control-label"><?php echo $user['text'];?></label>
-                            <input type="hidden" name="report[user_id]" value="<?php echo $user['value']?>">
-                        <?php } ?>
-                    <?php } else{?>
+                    <?php if(sizeof($designations)>0){?>
                         <select id="employee_info_id" name="report[user_id]" class="form-control">
                             <option value=""><?php echo $this->lang->line('SELECT');?></option>
                             <?php foreach($user_info as $user){?>
@@ -336,6 +331,9 @@ foreach($user_info as $user)
                             <?php } ?>
 
                         </select>
+                    <?php }else{?>
+                        <label class="control-label"><?php echo $user['text'];?></label>
+                        <input type="hidden" name="report[user_id]" value="<?php echo $user['value']?>">
                     <?php } ?>
                 </div>
                 <div class="col-xs-6">
