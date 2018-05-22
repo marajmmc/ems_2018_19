@@ -707,7 +707,7 @@ class Tour_setup extends Root_Controller
         $this->form_validation->set_rules('item[title]', 'Title', 'required');
         $this->form_validation->set_rules('item[date_from]', $this->lang->line('LABEL_DATE') . ' From', 'required');
         $this->form_validation->set_rules('item[date_to]', $this->lang->line('LABEL_DATE') . ' To', 'required');
-        $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_IOU_AMOUNT'), 'required');
+        $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_AMOUNT_IOU'), 'required');
         $this->form_validation->set_rules('item[iou_details]', $this->lang->line('LABEL_IOU_DETAILS'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
