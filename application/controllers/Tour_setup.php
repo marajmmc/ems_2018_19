@@ -722,16 +722,6 @@ class Tour_setup extends Root_Controller
             return false;
         }
 
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[date_from]', $this->lang->line('LABEL_DATE') . ' From', 'required');
-        $this->form_validation->set_rules('item[date_to]', $this->lang->line('LABEL_DATE') . ' To', 'required');
-        $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_AMOUNT_IOU'), 'required');
-        $this->form_validation->set_rules('item[iou_details]', $this->lang->line('LABEL_IOU_DETAILS'), 'required');
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->message = validation_errors();
-            return false;
-        }
 
         /*
         --- Manual Validation for BLANK or EMPTY items checking ---
@@ -751,6 +741,17 @@ class Tour_setup extends Root_Controller
         else
         {
             $this->message = 'At least one purpose need to save.';
+            return false;
+        }
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[date_from]', $this->lang->line('LABEL_DATE') . ' From', 'required');
+        $this->form_validation->set_rules('item[date_to]', $this->lang->line('LABEL_DATE') . ' To', 'required');
+        $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_AMOUNT_IOU'), 'required');
+        $this->form_validation->set_rules('item[iou_details]', $this->lang->line('LABEL_IOU_DETAILS'), 'required');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
             return false;
         }
 
