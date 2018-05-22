@@ -703,20 +703,14 @@ class Tour_setup extends Root_Controller
 
     private function check_validation()
     {
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[title]', 'Title', 'required');
-        $this->form_validation->set_rules('item[date_from]', $this->lang->line('LABEL_DATE') . ' From', 'required');
-        $this->form_validation->set_rules('item[date_to]', $this->lang->line('LABEL_DATE') . ' To', 'required');
-        $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_AMOUNT_IOU'), 'required');
-        $this->form_validation->set_rules('item[iou_details]', $this->lang->line('LABEL_IOU_DETAILS'), 'required');
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->message = validation_errors();
-            return false;
-        }
-
         $item_head = $this->input->post('item');
         $items = $this->input->post('items');
+
+        if (!$item_head['title'])
+        {
+            $this->message = 'Title field is required';
+            return false;
+        }
         /*
         --- Manual Validation for FROM & TO date comparison ---
         */
@@ -727,6 +721,18 @@ class Tour_setup extends Root_Controller
             $this->message = 'From Date cannot be greater than To Date';
             return false;
         }
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[date_from]', $this->lang->line('LABEL_DATE') . ' From', 'required');
+        $this->form_validation->set_rules('item[date_to]', $this->lang->line('LABEL_DATE') . ' To', 'required');
+        $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_AMOUNT_IOU'), 'required');
+        $this->form_validation->set_rules('item[iou_details]', $this->lang->line('LABEL_IOU_DETAILS'), 'required');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
+            return false;
+        }
+
         /*
         --- Manual Validation for BLANK or EMPTY items checking ---
         */
