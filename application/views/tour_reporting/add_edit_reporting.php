@@ -10,7 +10,6 @@ $action_buttons[] = array(
     'id' => 'button_action_save',
     'data-form' => '#save_form'
 );
-
 $action_buttons[] = array(
     'type' => 'button',
     'label' => $CI->lang->line("ACTION_CLEAR"),

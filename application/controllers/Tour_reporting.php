@@ -72,6 +72,10 @@ class Tour_reporting extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif ($action == "details_all")
+        {
+            $this->system_details($id, "list_all");
+        }
         elseif ($action == "details_print")
         {
             $this->system_details_print($id);
@@ -553,7 +557,7 @@ class Tour_reporting extends Root_Controller
         }
     }
 
-    private function system_details($id)
+    private function system_details($id, $method="list")
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
@@ -566,49 +570,7 @@ class Tour_reporting extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            /*$this->db->from($this->config->item('table_login_setup_user') . ' user');
-            $this->db->select('user.id,user.employee_id,user.user_name,user.status');
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user.id = user_info.user_id', 'INNER');
-            $this->db->select('user_info.name,user_info.ordering');
-            $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $this->db->select('designation.name designation');
-            $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-            $this->db->select('department.name department_name');
-            $this->db->where('user_info.revision', 1);
-            $this->db->where('user.id', $data['item']['user_created']);
-            $result = $this->db->get()->row_array();
-
-            $data['item'] = array(
-                'name' => $result['name'] . ' (' . $result['employee_id'] . ')',
-                'designation' => $result['designation'],
-                'department_name' => $result['department_name']
-            );
-
-            $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
-            $this->db->select('tour_setup.*');
-            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
-            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            $this->db->where('user_area.revision', 1);
-            $this->db->where('tour_setup.id', $item_id);
-            $data['item'] = $this->db->get()->row_array();
-
-            if (!$data['item'])
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if (!$this->check_my_editable($data['item']))
-            {
-                System_helper::invalid_try('Details', $item_id, 'Trying to view details others tour setup');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'You are trying to view details others tour setup';
-                $this->json_return($ajax);
-            } */
-
-
             $data = array();
-
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*');
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
@@ -679,6 +641,7 @@ class Tour_reporting extends Root_Controller
             $data['items_purpose_others'] = $items;
 
             $data['title'] = 'Tour Setup And Reporting Details:: ' . $item['title'];
+            $data['method'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
             if ($this->message)
@@ -880,6 +843,9 @@ class Tour_reporting extends Root_Controller
 
     private function check_validation()
     {
+        $items = $this->input->post('items');
+        $old_items = $this->input->post('old_items');
+        
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[date_reporting]', 'Reporting Date', 'required');
         $this->form_validation->set_rules('item[report_description]', 'Report (Description)', 'required');
@@ -889,10 +855,6 @@ class Tour_reporting extends Root_Controller
             $this->message = validation_errors();
             return false;
         }
-
-        //$item_head = $this->input->post('item');
-        $items = $this->input->post('items');
-        $old_items = $this->input->post('old_items');
         /*
         --- Manual Validation for BLANK or EMPTY items checking ---
         */

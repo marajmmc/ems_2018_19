@@ -6,7 +6,7 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
     'href' => site_url($CI->controller_url)
 );
-if (isset($CI->permissions['print']) && ($CI->permissions['print'] == 1))
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
@@ -47,14 +47,16 @@ $num_pages = 1;
                             <td style="width: 15%"><strong>Name</strong></td>
                             <td><?php echo $item['name'] ?></td>
                             <td style="width: 15%"><strong>Designation</strong></td>
-                            <td><?php if ($item['designation'])
+                            <td>
+                                <?php if ($item['designation'])
                                 {
                                     echo $item['designation'];
                                 }
                                 else
                                 {
-                                    echo 'N/A';
-                                } ?></td>
+                                    echo '-';
+                                } ?>
+                            </td>
                         </tr>
                         <tr>
                             <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_DATE'); ?></strong></td>
@@ -67,8 +69,9 @@ $num_pages = 1;
                                 }
                                 else
                                 {
-                                    echo 'N/A';
-                                } ?></td>
+                                    echo '-';
+                                } ?>
+                            </td>
                         </tr>
                         <tr>
                             <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></strong></td>

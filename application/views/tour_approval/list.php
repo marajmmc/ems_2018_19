@@ -9,16 +9,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'href' => site_url($CI->controller_url . '/index/list_all')
     );
 }
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'type' => 'button',
-        'label' => 'Approve',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/approve')
-    );
-}
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(
@@ -45,6 +35,24 @@ if (isset($CI->permissions['action5']) && ($CI->permissions['action5'] == 1))
         'label' => $CI->lang->line("ACTION_DOWNLOAD"),
         'class' => 'button_action_download',
         'data-title' => "Download"
+    );
+}
+if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
+{
+    $action_buttons[] = array
+    (
+        'label' => 'Preference',
+        'href' => site_url($CI->controller_url . '/index/set_preference')
+    );
+}
+if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
+{
+    $action_buttons[] = array
+    (
+        'type' => 'button',
+        'label' => 'Approve',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/approve')
     );
 }
 $action_buttons[] = array(

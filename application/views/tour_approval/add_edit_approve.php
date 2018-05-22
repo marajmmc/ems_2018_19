@@ -173,8 +173,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                         <?php echo ($item['status_approve'] == 'Approved')? "selected='selected'":""; ?> >
                         Approve
                     </option>
-                    <option value="Back_to_setup"
-                        <?php echo ($item['status_approve'] == 'Back_to_setup')? "selected='selected'":"";?> >
+                    <option value="Rollback"
+                        <?php echo ($item['status_approve'] == 'Rollback')? "selected='selected'":"";?> >
                         Roll Back
                     </option>
                 </select>
@@ -206,7 +206,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             var options = $(this).val();
             if (options == 'Approved') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
-            } else if (options == 'Back_to_setup') {
+            } else if (options == 'Rollback') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');

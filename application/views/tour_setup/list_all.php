@@ -6,7 +6,15 @@ $action_buttons[] = array(
     'label' => 'Pending List',
     'href' => site_url($CI->controller_url . '/index/list')
 );
-
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => $CI->lang->line("ACTION_DETAILS"),
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/details_all')
+    );
+}
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
@@ -26,10 +34,17 @@ if (isset($CI->permissions['action5']) && ($CI->permissions['action5'] == 1))
         'data-title' => "Download"
     );
 }
+if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
+{
+    $action_buttons[] = array
+    (
+        'label' => 'Preference',
+        'href' => site_url($CI->controller_url . '/index/set_preference_all')
+    );
+}
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
     'href' => site_url($CI->controller_url . '/index/list_all')
-
 );
 $action_buttons[] = array(
     'type' => 'button',

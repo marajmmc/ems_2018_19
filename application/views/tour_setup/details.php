@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
-
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),

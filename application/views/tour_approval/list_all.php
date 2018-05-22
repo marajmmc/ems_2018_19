@@ -12,7 +12,7 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'type' => 'button',
         'label' => $CI->lang->line("ACTION_DETAILS"),
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/details')
+        'data-action-link' => site_url($CI->controller_url . '/index/details_all')
     );
 }
 if(isset($CI->permissions['action4'])&&($CI->permissions['action4']==1))
@@ -32,6 +32,14 @@ if(isset($CI->permissions['action5'])&&($CI->permissions['action5']==1))
         'label' => $CI->lang->line("ACTION_DOWNLOAD"),
         'class' => 'button_action_download',
         'data-title' => "Download"
+    );
+}
+if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
+{
+    $action_buttons[] = array
+    (
+        'label' => 'Preference',
+        'href' => site_url($CI->controller_url . '/index/set_preference_all')
     );
 }
 $action_buttons[]=array(

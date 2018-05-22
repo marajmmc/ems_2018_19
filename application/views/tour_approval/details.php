@@ -3,7 +3,8 @@ $CI = & get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url.'/index/list/'));
+    'href'=>site_url($CI->controller_url.'/index/'.$method)
+);
 
 $action_buttons[]=array(
     'type'=>'button',
