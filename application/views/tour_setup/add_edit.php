@@ -147,7 +147,7 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
     <!-----Added By Mahmud------>
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_AMOUNT');?><span style="color:#FF0000">*</span></label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU');?><span style="color:#FF0000">*</span></label>
         </div>
         <div class="col-xs-4">
             <input type="text" id="amount_iou" name="item[amount_iou]" value="<?php echo $item['amount_iou'] ?>" class="form-control float_type_positive price_unit_tk"  />

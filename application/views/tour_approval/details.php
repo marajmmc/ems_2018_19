@@ -82,7 +82,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <table class="table table-bordered table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>Slno.</th>
+                    <th><?php echo $this->lang->line('LABEL_SL_NO'); ?></th>
                     <th>Purpose</th>
                 </tr>
                 </thead>
@@ -117,7 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_AMOUNT'); ?>:</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label

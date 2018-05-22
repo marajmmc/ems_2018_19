@@ -71,12 +71,12 @@ $num_pages = 1;
                                 } ?></td>
                         </tr>
                         <tr>
-                            <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_IOU_AMOUNT'); ?></strong>
-                            </td>
-                            <td><?php echo $item['amount_iou']; ?></td>
-                            <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?></strong>
-                            </td>
-                            <td><?php echo $item['iou_details']; ?></td>
+                            <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></strong></td>
+                            <td colspan="3"><?php echo number_format($item['amount_iou'], 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?></strong></td>
+                            <td colspan="3"><?php echo $item['iou_details']; ?></td>
                         </tr>
                         </tbody>
                     </table>

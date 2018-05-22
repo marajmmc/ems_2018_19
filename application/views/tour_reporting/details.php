@@ -113,7 +113,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     </tbody>
                                 </table>
                                 <?php
-                                if($items_purpose_other['purpose_others_id'])
+                                if (isset($items_purpose_other['others']))
                                 {
                                     ?>
                                     <table class="table table-bordered">
@@ -122,10 +122,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                             <td colspan="21" class="text-center bg-danger"><strong>Other Information</strong></td>
                                         </tr>
                                         <tr>
-                                            <td>Name</td>
-                                            <td>Contact No</td>
-                                            <td>Profession</td>
-                                            <td>Discussion</td>
+                                            <th>Name</th>
+                                            <th>Contact No</th>
+                                            <th>Profession</th>
+                                            <th>Discussion</th>
                                         </tr>
                                         <?php
                                         foreach($items_purpose_other['others'] as $other)
