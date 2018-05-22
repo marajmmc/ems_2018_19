@@ -272,8 +272,9 @@ $lang['LABEL_DETAILS_BUTTON'] = 'Details';
 // Tour
 $lang['LABEL_TITLE'] = 'Title';
 
-// Added by Mahmud
-$lang['LABEL_IOU_AMOUNT'] = $lang['LABEL_AMOUNT_IOU'] = "IOU Amount";
+// Tour - Added by Mahmud
+$lang['LABEL_TITLE'] = 'Title';
+$lang['LABEL_AMOUNT_IOU'] = "IOU Amount";
 $lang['LABEL_IOU_DETAILS'] = "IOU Details";
 $lang['LABEL_DESIGNATION'] = "Designation";
 $lang['LABEL_DATE_FROM'] = "Date From";
