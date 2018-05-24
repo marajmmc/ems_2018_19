@@ -76,10 +76,6 @@ class Tour_setup extends Root_Controller
         {
             $this->system_details($id);
         }
-        elseif ($action == "details_all")
-        {
-            $this->system_details($id, "list_all");
-        }
         elseif ($action == "details_print")
         {
             $this->system_details_print($id);
@@ -101,8 +97,6 @@ class Tour_setup extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou'] = 1;
-        $data['iou_details'] = 1;
-        $data['remarks'] = 1;
         if ($method == 'list_all')
         {
             $data['status_forward'] = 1;
@@ -781,7 +775,7 @@ class Tour_setup extends Root_Controller
     }
 
 
-    private function system_details($id, $method="list")
+    private function system_details($id)
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
@@ -807,7 +801,16 @@ class Tour_setup extends Root_Controller
             $this->db->select('designation.name AS designation');
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('department.name AS department_name');
-            //$this->db->where('user.status', $this->config->item('system_status_active'));
+            //----------------Action User's Info---------------------------------------------------
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_created', 'user_info_created.user_id=tour_setup.user_created', 'LEFT');
+            $this->db->select('user_info_created.name AS create_user'); // Entry User
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_updated', 'user_info_updated.user_id=tour_setup.user_updated', 'LEFT');
+            $this->db->select('user_info_updated.name AS update_user'); // Update user
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_forwarded', 'user_info_forwarded.user_id=tour_setup.user_forwarded', 'LEFT');
+            $this->db->select('user_info_forwarded.name AS forward_user'); // Forward User
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_approved', 'user_info_approved.user_id=tour_setup.user_approved', 'LEFT');
+            $this->db->select('user_info_approved.name AS approve_user'); // Approve User
+            //--------------------------------------------------------------------------------------
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $item = $this->db->get()->row_array();
@@ -865,7 +868,6 @@ class Tour_setup extends Root_Controller
             $data['items_purpose_others'] = $items;
 
             $data['title'] = 'Tour Setup And Reporting Details:: ' . $item['title'];
-            $data['method'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
             if ($this->message)
@@ -910,7 +912,6 @@ class Tour_setup extends Root_Controller
             $this->db->select('designation.name AS designation');
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('department.name AS department_name');
-            //$this->db->where('user.status', $this->config->item('system_status_active'));
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $item = $this->db->get()->row_array();

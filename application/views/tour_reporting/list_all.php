@@ -19,6 +19,24 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
+        'label' => 'Print View',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/details_print')
+    );
+}
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'Print Requisition',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/requisition_print')
+    );
+}
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
         'label' => $CI->lang->line("ACTION_PRINT"),
         'class' => 'button_action_download',
         'data-title' => "Print",
@@ -119,7 +137,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: 'Title', dataField: 'title', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: 'Remarks', dataField: 'remarks', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>', dataField: 'amount_iou', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou']?0:1;?>},
                     { text: 'Approve Status', dataField: 'status_approve', filtertype: 'list', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approve']?0:1;?>}
                 ]
             });

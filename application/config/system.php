@@ -15,6 +15,7 @@ $config['system_status_inactive']='In-Active';
 $config['system_status_delete']='Deleted';
 $config['system_status_closed']='Closed';
 $config['system_status_pending']='Pending';
+$config['system_status_rollback']='Rollback';
 $config['system_status_forwarded']='Forwarded';
 $config['system_status_complete']='Complete';
 $config['system_status_approved']='Approved';

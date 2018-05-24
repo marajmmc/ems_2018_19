@@ -169,14 +169,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <div class="col-sm-4 col-xs-8">
                 <select name="item[status_approve]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="Approved"
-                        <?php echo ($item['status_approve'] == 'Approved')? "selected='selected'":""; ?> >
-                        Approve
-                    </option>
-                    <option value="Rollback"
-                        <?php echo ($item['status_approve'] == 'Rollback')? "selected='selected'":"";?> >
-                        Roll Back
-                    </option>
+                    <option value="<?php echo $CI->config->item('system_status_approved') ?>">Approve</option>
+                    <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
                 </select>
             </div>
         </div>

@@ -282,6 +282,16 @@ $lang['LABEL_DATE_TO'] = "Date To";
 $lang['LABEL_STATUS_FORWARD'] = "Forwarded";
 $lang['LABEL_STATUS_APPROVE'] = "Approved";
 
+$lang['LABEL_CREATED_BY'] = 'Created By';
+$lang['LABEL_UPDATED_BY'] = 'Updated By';
+$lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
+$lang['LABEL_APPROVED_BY'] = 'Approved By';
+
+$lang['LABEL_DATE_CREATED_TIME']='Created Time';
+$lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
+$lang['LABEL_DATE_FORWARDED_TIME']='Forwarded Time';
+$lang['LABEL_DATE_APPROVED_TIME']='Approved Time';
+
 //Tour Report (Added by saiful)
 $lang['LABEL_NO_OF_PURPOSE']="No of purpose";
 $lang['LABEL_COMPLETE_REPORTING']="Complete Reporting";
