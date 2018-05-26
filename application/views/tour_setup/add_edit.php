@@ -46,7 +46,7 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right">Name</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['name']?></label>
+            <label class="control-label"><?php echo $item['name']?> (<?php echo $item['employee_id']?>)</label>
         </div>
     </div>
 
