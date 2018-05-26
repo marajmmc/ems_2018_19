@@ -72,10 +72,6 @@ class Tour_reporting extends Root_Controller
         {
             $this->system_details($id);
         }
-        elseif ($action == "details_all")
-        {
-            $this->system_details($id, "list_all");
-        }
         elseif ($action == "details_print")
         {
             $this->system_details_print($id);
@@ -191,7 +187,7 @@ class Tour_reporting extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
         $this->db->where('user_area.revision', 1);
-        if ($user->user_group != 1 && $user->user_group != 2)
+        if ($user->user_group != 1)
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
         }
@@ -265,7 +261,7 @@ class Tour_reporting extends Root_Controller
         $this->db->select('department.name AS department_name');
         $this->db->where('user.status', $this->config->item('system_status_active'));
         $this->db->where('user_info.revision', 1);
-        if ($user->user_group != 1 && $user->user_group != 2)
+        if ($user->user_group != 1)
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
         }
@@ -311,7 +307,7 @@ class Tour_reporting extends Root_Controller
             $this->db->select('department.name AS department_name');
             $this->db->where('user_area.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
-            if ($user->user_group != 1 && $user->user_group != 2)
+            if ($user->user_group != 1)
             {
                 $this->db->where('tour_setup.user_id', $user->user_id);
             }
@@ -331,13 +327,7 @@ class Tour_reporting extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (!$this->check_my_editable($data['item']))
-            {
-                System_helper::invalid_try('List_reporting', $item_id, 'Trying to access others tour setup reporting list');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'You are trying to access others tour setup reporting list';
-                $this->json_return($ajax);
-            }
+
             $data['title'] = "Tour Purpose And Reporting (" . $data['item']['title'] . ')';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_reporting", $data, true));
@@ -428,13 +418,6 @@ class Tour_reporting extends Root_Controller
             if (!($data['item']['date_reporting']))
             {
                 $data['item']['date_reporting'] = time();
-            }
-            if (!$this->check_my_editable($data['item']))
-            {
-                System_helper::invalid_try('Reporting', $item_id, 'Trying to entry report others');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'You are trying to entry others report';
-                $this->json_return($ajax);
             }
 
             $data['title'] = 'Edit Reporting For:: ' . $data['item']['purpose'];
@@ -552,7 +535,7 @@ class Tour_reporting extends Root_Controller
         }
     }
 
-    private function system_details($id, $method="list")
+    private function system_details($id)
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
@@ -599,13 +582,6 @@ class Tour_reporting extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (!$this->check_my_editable($item))
-            {
-                System_helper::invalid_try('Details', $item_id, 'Trying to view others tour report details');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'You are trying to view details others tour report details';
-                $this->json_return($ajax);
-            }
             // Validation END
 
             //data from tour setup purpose
@@ -645,8 +621,6 @@ class Tour_reporting extends Root_Controller
             $data['items_purpose_others'] = $items;
 
             $data['title'] = 'Tour Setup And Reporting Details:: ' . $item['title'];
-            $data['method'] = $method;
-            //pr($data);
 
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
@@ -701,13 +675,6 @@ class Tour_reporting extends Root_Controller
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if (!$this->check_my_editable($item))
-            {
-                System_helper::invalid_try('Details', $item_id, 'Trying to view others tour report print page');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'You are trying to view details others tour report print page';
                 $this->json_return($ajax);
             }
             // Validation END
@@ -823,28 +790,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    private function check_my_editable($item)
-    {
-        if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
-        {
-            return false;
-        }
-        if (($this->locations['zone_id'] > 0) && ($this->locations['zone_id'] != $item['zone_id']))
-        {
-            return false;
-        }
-        if (($this->locations['territory_id'] > 0) && ($this->locations['territory_id'] != $item['territory_id']))
-        {
-            return false;
-        }
-        if (($this->locations['district_id'] > 0) && ($this->locations['district_id'] != $item['district_id']))
-        {
-            return false;
-        }
-        return true;
-    }
-
 
     private function check_validation()
     {
