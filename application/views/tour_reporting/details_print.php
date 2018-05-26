@@ -58,7 +58,7 @@ $num_pages = ceil($total_records / $row_per_page);
                                 }
                                 else
                                 {
-                                    echo '-';
+                                    echo 'N/A';
                                 } ?>
                             </td>
                         </tr>
@@ -75,7 +75,7 @@ $num_pages = ceil($total_records / $row_per_page);
                                 }
                                 else
                                 {
-                                    echo '-';
+                                    echo 'N/A';
                                 } ?>
                             </td>
                         </tr>
@@ -101,15 +101,15 @@ $num_pages = ceil($total_records / $row_per_page);
                                 </tr>
                                 <tr>
                                     <td style="width: 19%">Reporting Date</td>
-                                    <td colspan="3"><?php echo $items_purpose_other['date_reporting'] ? System_helper::display_date($items_purpose_other['date_reporting']) : '-'; ?></td>
+                                    <td colspan="3"><?php echo $items_purpose_other['date_reporting'] ? System_helper::display_date($items_purpose_other['date_reporting']) : 'N/A'; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="width: 19%">Report (Description)</td>
-                                    <td colspan="3"><?php echo nl2br($items_purpose_other['report_description']) ? $items_purpose_other['report_description'] : '-'; ?></td>
+                                    <td colspan="3"><?php echo nl2br($items_purpose_other['report_description']) ? $items_purpose_other['report_description'] : 'N/A'; ?></td>
                                 </tr>
                                 <tr>
                                     <td style="width: 19%">Recommendation</td>
-                                    <td colspan="3"><?php echo nl2br($items_purpose_other['recommendation']) ? $items_purpose_other['recommendation'] : '-'; ?></td>
+                                    <td colspan="3"><?php echo nl2br($items_purpose_other['recommendation']) ? $items_purpose_other['recommendation'] : 'N/A'; ?></td>
                                 </tr>
                                 <?php
                                 if (isset($items_purpose_other['others']))
@@ -170,7 +170,7 @@ $num_pages = ceil($total_records / $row_per_page);
                                     }
                                     else
                                     {
-                                        echo '-';
+                                        echo 'N/A';
                                     } ?>
                                 </td>
                                 <td style="width: 15%">
@@ -180,7 +180,7 @@ $num_pages = ceil($total_records / $row_per_page);
                                     }
                                     else
                                     {
-                                        echo '-';
+                                        echo 'N/A';
                                     } ?>
                                 </td>
                             </tr>

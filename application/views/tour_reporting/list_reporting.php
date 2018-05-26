@@ -58,18 +58,24 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <?php if ($item['designation'])
-    {
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Designation:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['designation'] ?></label>
-            </div>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Designation:</label>
         </div>
-    <?php } ?>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label">
+                <?php if ($item['designation'])
+                {
+                    echo $item['designation'];
+                }
+                else
+                {
+                    echo 'N/A';
+                }
+                ?>
+            </label>
+        </div>
+    </div>
 
     <div class="row show-grid">
         <div class="col-xs-4">
@@ -83,7 +89,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 }
                 else
                 {
-                    echo '-';
+                    echo 'N/A';
                 }
                 ?>
             </label>
@@ -115,17 +121,20 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     <!-------Data Table Here...------->
 </div>
 
-<div class="row widget" style="padding:15px 0 0">
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Remarks:</label>
+<?php if($item['remarks']){ ?>
+    <div class="row widget" style="padding:15px 0 0">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Remarks:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
+            </div>
         </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
-        </div>
+        <div class="clearfix"></div>
     </div>
-    <div class="clearfix"></div>
-</div>
+<?php } ?>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var url = "<?php echo site_url($CI->controller_url.'/index/get_reporting_items');?>";

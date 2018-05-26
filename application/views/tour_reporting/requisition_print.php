@@ -59,7 +59,7 @@ $num_pages = 1;
                                 }
                                 else
                                 {
-                                    echo '-';
+                                    echo 'N/A';
                                 } ?>
                             </td>
                         </tr>
@@ -74,7 +74,7 @@ $num_pages = 1;
                                 }
                                 else
                                 {
-                                    echo '-';
+                                    echo 'N/A';
                                 } ?>
                             </td>
                         </tr>
