@@ -42,12 +42,14 @@ class Reports_sale extends Root_Controller
         {
             $this->system_get_items_area_amount();
         }
-
-
-//        elseif($action=="get_items_outlets_sales")
-//        {
-//            $this->system_get_items_outlets_sales();
-//        }
+        elseif($action=="set_preference_outlets_amount")
+        {
+            $this->system_set_preference_outlets_amount();
+        }
+        elseif($action=="get_items_outlets_amount")
+        {
+            $this->system_get_items_outlets_amount();
+        }
 //        elseif($action=='get_items_variety_sale')
 //        {
 //            $this->system_get_items_variety_sale();
@@ -169,11 +171,10 @@ class Reports_sale extends Root_Controller
             }
             elseif($reports['report_name']=='outlets_amount')
             {
-                //$data['title']="Outlet Wise Sales Report";
-                //$ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_outlets_sales",$data,true));
-                $ajax['status']=false;
-                $ajax['system_message']="Under Development";
-                $this->json_return($ajax);
+                $data['title']="Outlet Wise Sales Report";
+                $data['system_preference_items']= $this->get_preference_outlets_amount();
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_outlets_amount",$data,true));
+
             }
             elseif($reports['report_name']=='variety_amount_quantity')
             {
@@ -407,6 +408,201 @@ class Reports_sale extends Root_Controller
         foreach($info as $key=>$r)
         {
             if($key!='area')
+            {
+                if($info[$key]==0)
+                {
+                    $row[$key]='';
+                }
+                else
+                {
+                    $row[$key]=number_format($info[$key],2);
+                }
+            }
+            else
+            {
+                $row[$key]=$info[$key];
+            }
+        }
+        return $row;
+    }
+
+    private function get_preference_headers_outlets_amount()
+    {
+        $data['sl_no']= 1;
+        $data['outlet']= 1;
+        $data['amount_total']= 1;
+        $data['amount_discount_variety']= 1;
+        $data['amount_discount_self']= 1;
+        $data['amount_discount_total']= 1;
+        $data['amount_payable_all']= 1;
+        $data['amount_payable_actual_all']= 1;
+        $data['amount_payable_cancel']= 1;
+        $data['amount_payable_actual_cancel']= 1;
+        $data['amount_payable_paid']= 1;
+        $data['amount_payable_actual_paid']= 1;
+        return $data;
+    }
+    private function get_preference_outlets_amount()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search_outlets_amount"'),1);
+        $data=$this->get_preference_headers_outlets_amount();
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+    private function system_set_preference_outlets_amount()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference_outlets_amount();
+            $data['preference_method_name']='search_outlets_amount';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_outlets_amount');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_get_items_outlets_amount()
+    {
+        $items=array();
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $outlet_id=$this->input->post('customer_id');
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+        $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
+        $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->order_by('outlet_info.customer_id');
+        $this->db->where('outlet_info.revision',1);
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
+
+        if($division_id>0)
+        {
+            $this->db->where('zone.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zones.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('territories.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('districts.id',$district_id);
+                        if($outlet_id>0)
+                        {
+                            $this->db->where('outlet_info.customer_id',$outlet_id);
+                        }
+                    }
+                }
+            }
+        }
+        $results=$this->db->get()->result_array();
+        $outlets=array();
+        $outlet_ids=array();
+        $outlet_ids[0]=0;
+        foreach($results as $result)
+        {
+            $outlets[$result['outlet_id']]=$this->initialize_row_outlets_amount($result['outlet_name']);
+            $outlet_ids[$result['outlet_id']]=$result['outlet_id'];
+        }
+
+        //total sales
+        $this->db->from($this->config->item('table_pos_sale').' sale');
+        $this->db->select('sale.outlet_id');
+
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then sale.amount_total ELSE 0 END) amount_total',false);
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then sale.amount_discount_variety ELSE 0 END) amount_discount_variety',false);
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then sale.amount_discount_self ELSE 0 END) amount_discount_self',false);
+
+
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then sale.amount_payable ELSE 0 END) amount_payable_all',false);
+        $this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then sale.amount_payable ELSE 0 END) amount_payable_cancel',false);
+
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then sale.amount_payable_actual ELSE 0 END) amount_payable_actual_all',false);
+        $this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then sale.amount_payable_actual ELSE 0 END) amount_payable_actual_cancel',false);
+
+        $this->db->where_in('sale.outlet_id',$outlet_ids);
+        $this->db->group_by('sale.outlet_id');
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $outlets[$result['outlet_id']]['amount_total']=$result['amount_total'];
+            $outlets[$result['outlet_id']]['amount_discount_variety']=$result['amount_discount_variety'];
+            $outlets[$result['outlet_id']]['amount_discount_self']=$result['amount_discount_self'];
+            $outlets[$result['outlet_id']]['amount_discount_total']=$result['amount_discount_variety']+$result['amount_discount_self'];
+            $outlets[$result['outlet_id']]['amount_payable_all']=$result['amount_payable_all'];
+            $outlets[$result['outlet_id']]['amount_payable_cancel']=$result['amount_payable_cancel'];
+            $outlets[$result['outlet_id']]['amount_payable_paid']=$result['amount_payable_all']-$result['amount_payable_cancel'];
+            $outlets[$result['outlet_id']]['amount_payable_actual_all']=$result['amount_payable_actual_all'];
+            $outlets[$result['outlet_id']]['amount_payable_actual_cancel']=$result['amount_payable_actual_cancel'];
+            $outlets[$result['outlet_id']]['amount_payable_actual_paid']=$result['amount_payable_actual_all']-$result['amount_payable_actual_cancel'];
+        }
+        $grand_total=$this->initialize_row_outlets_amount('Grand Total');
+        $headers=$this->get_preference_headers_outlets_amount();
+        foreach($outlets as $info)
+        {
+            foreach($headers  as $key=>$r)
+            {
+                if(!(($key=='outlet')||($key=='sl_no')))
+                {
+                    $grand_total[$key]+=$info[$key];
+                }
+            }
+
+            $items[]=$this->get_row_outlets_amount($info);
+            //$items[]=$item;
+        }
+        $items[]=$this->get_row_outlets_amount($grand_total);
+        $this->json_return($items);
+
+
+    }
+    private function initialize_row_outlets_amount($outlet_name)
+    {
+        $row=$this->get_preference_headers_outlets_amount();
+        foreach($row  as $key=>$r)
+        {
+            $row[$key]=0;
+        }
+        $row['outlet']=$outlet_name;
+        $row['sl_no']='';
+        return $row;
+    }
+    private function get_row_outlets_amount($info)
+    {
+        $row=array();
+        foreach($info as $key=>$r)
+        {
+            if(!(($key=='outlet')||($key=='sl_no')))
             {
                 if($info[$key]==0)
                 {
