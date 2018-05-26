@@ -116,7 +116,6 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
                             ?>
                             <tr>
                                 <td>
-                                    <!--<textarea rows="1" class="form-control purpose" name="items[--><?php //echo $item_purpose['id']; ?><!--]">--><?php //echo $item_purpose['purpose']; ?><!--</textarea>-->
                                     <input type="text" class="form-control purpose" name="items[<?php echo $item_purpose['id']; ?>]" value="<?php echo $item_purpose['purpose']; ?>" />
                                 </td>
                                 <td>
@@ -182,7 +181,6 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
         <tbody>
         <tr>
             <td>
-                <!-- <textarea rows="1" class="form-control purpose"></textarea>-->
                 <input type="text" class="form-control purpose" />
             </td>
             <td>
@@ -205,7 +203,7 @@ jQuery(document).ready(function()
     $(document).on("click", ".system_button_add_more", function(event)
     {
         var current_id=parseInt($(this).attr('data-current-id'));
-        current_id=current_id+1;
+        current_id=current_id-1;
         $(this).attr('data-current-id',current_id);
         var content_id='#system_content_add_more table tbody';
         $(content_id+' .purpose').attr('name','items['+current_id+']');

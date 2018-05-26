@@ -39,9 +39,8 @@ if (isset($CI->permissions['action3']) && ($CI->permissions['action3'] == 1))
     $action_buttons[] = array(
         'type' => 'button',
         'label' => $CI->lang->line("ACTION_DELETE"),
-        'class' => '',
-        'data-title' => "Delete",
-        'data-print' => true
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/delete')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))

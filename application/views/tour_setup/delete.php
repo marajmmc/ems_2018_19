@@ -149,17 +149,17 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     <?php } ?>
 
-    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_forward'); ?>" method="post">
+    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_delete'); ?>" method="post">
         <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Forward<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Delete<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select name="item[status_forward]" class="form-control status-combo">
+                <select name="item[status]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="Forwarded">Forward</option>
+                    <option value="Delete">Delete</option>
                 </select>
             </div>
         </div>
@@ -177,8 +177,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
             </div>
         </div>
-
     </form>
+
     <div class="clearfix"></div>
 </div>
 
@@ -186,8 +186,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     jQuery(document).ready(function () {
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == 'Forwarded') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_FORWARD'); ?>');
+            if (options == 'Delete') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_DELETE'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }
