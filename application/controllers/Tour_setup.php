@@ -498,7 +498,7 @@ class Tour_setup extends Root_Controller
             Query_helper::update($this->config->item('table_ems_tour_setup'), $data, array('id=' . $id));
 
             /*-----UPDATE old purposes `status` to `Delete`-----*/
-            Query_helper::update($this->config->item('table_ems_tour_setup_purpose'), array('status' => 'Delete', 'date_updated'=>$time, 'user_updated' => $user->user_id), array('tour_setup_id=' . $id));
+            Query_helper::update($this->config->item('table_ems_tour_setup_purpose'), array('status' => 'Delete', 'date_updated'=>$time, 'user_updated' => $user->user_id), array("tour_setup_id=" . $id, "status='Active'"));
 
             /*-----UPDATE old/INSERT new purpose-----*/
             foreach ($items as $key => $item)
