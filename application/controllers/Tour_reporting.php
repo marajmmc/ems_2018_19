@@ -470,7 +470,7 @@ class Tour_reporting extends Root_Controller
         //------Updating New Items------
         if ($existing_items)
         {
-            Query_helper::update($this->config->item('table_ems_tour_setup_purpose_others'), array('status' => 'Delete'), array('tour_setup_purpose_id =' . $id));
+            Query_helper::update($this->config->item('table_ems_tour_setup_purpose_others'), array('status' => 'Delete', 'date_updated' => $time, 'user_updated' => $user->user_id), array('tour_setup_purpose_id =' . $id));
             if ($old_items)
             {
                 foreach ($existing_items as $existing_item)
