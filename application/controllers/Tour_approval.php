@@ -195,6 +195,14 @@ class Tour_approval extends Root_Controller
         {
             $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
             $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
+            if ($item['designation'] == '')
+            {
+                $items[$key]['designation'] = '-';
+            }
+            if ($item['department_name'] == '')
+            {
+                $items[$key]['department_name'] = '-';
+            }
         }
 
         $this->json_return($items);
@@ -272,6 +280,14 @@ class Tour_approval extends Root_Controller
         {
             $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
             $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
+            if ($item['designation'] == '')
+            {
+                $items[$key]['designation'] = '-';
+            }
+            if ($item['department_name'] == '')
+            {
+                $items[$key]['department_name'] = '-';
+            }
         }
 
         $this->json_return($items);
