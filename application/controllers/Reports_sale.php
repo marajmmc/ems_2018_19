@@ -507,7 +507,7 @@ class Reports_sale extends Root_Controller
 
         if($division_id>0)
         {
-            $this->db->where('zone.division_id',$division_id);
+            $this->db->where('zones.division_id',$division_id);
             if($zone_id>0)
             {
                 $this->db->where('zones.id',$zone_id);
