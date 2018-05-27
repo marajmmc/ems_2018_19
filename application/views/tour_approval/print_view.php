@@ -37,8 +37,8 @@ if($result)
     $header_image=base_url($CI->config->item('system_base_url_picture_setup_print').$result['image_header_location']);
     $footer_image=base_url($CI->config->item('system_base_url_picture_setup_print').$result['image_footer_location']);
 }
-$total_records = sizeof($items_purpose_others);
-$num_pages = ceil($total_records / $row_per_page);
+$total_records=sizeof($items_purpose_others);
+$num_pages=ceil($total_records/$row_per_page);
 ?>
 
 <div id="system_print_container" style="width:<?php echo $width; ?>px;">
@@ -206,7 +206,11 @@ $num_pages = ceil($total_records / $row_per_page);
                     <?php } ?>
                 </div>
             </div>
-            <img src="<?php echo $footer_image; ?>" style="width: 100%;position: absolute;left 0px;bottom: 0px;">
+            <div class="row show-grid">
+                <div class="col-xs-12">
+                    <img src="<?php echo $footer_image; ?>" style="width: 100%;">
+                </div>
+            </div>
         </div>
     <?php
     }

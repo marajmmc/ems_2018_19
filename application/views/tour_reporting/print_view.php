@@ -206,7 +206,11 @@ $num_pages=ceil($total_records/$row_per_page);
                     <?php } ?>
                 </div>
             </div>
-            <img src="<?php echo $footer_image; ?>" style="width: 100%;position: absolute;left 0px;bottom: 0px;">
+            <div class="row show-grid">
+                <div class="col-xs-12">
+                    <img src="<?php echo $footer_image; ?>" style="width: 100%;">
+                </div>
+            </div>
         </div>
     <?php
     }
