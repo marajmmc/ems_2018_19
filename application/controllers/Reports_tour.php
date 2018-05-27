@@ -6,14 +6,12 @@ class Reports_tour extends Root_Controller
     public $permissions;
     public $controller_url;
     public $locations;
-    public $user;
     public function __construct()
     {
         parent::__construct();
         $this->message="";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->locations=User_helper::get_locations();
-        $this->user=User_helper::get_user();
         if(!($this->locations))
         {
             $ajax['status']=false;
@@ -59,7 +57,6 @@ class Reports_tour extends Root_Controller
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            $data['designations']=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('parent ='.$this->user->designation,'status ="'.$this->config->item('system_status_active').'"'));
             $data['title']="Tour Report";
             $ajax['status']=true;
 
@@ -70,7 +67,7 @@ class Reports_tour extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
             $this->db->select('user_info.name,user_info.ordering');
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
-            $this->db->select('designation.name designation_name, designation.id designation_id');
+            $this->db->select('designation.name designation_name');
             if($this->locations['division_id']>0)
             {
                 $this->db->where('user_area.division_id',$this->locations['division_id']);
@@ -82,18 +79,6 @@ class Reports_tour extends Root_Controller
                         $this->db->where('user_area.territory_id',$this->locations['territory_id']);
                     }
                 }
-            }
-            if($this->locations['division_id']==0 && !($this->user->user_group==1 || $this->user->user_group==2))
-            {
-                if(sizeof($data['designations'])>0)
-                {
-                    $this->db->where('designation.parent',$this->user->designation);
-                }
-                else
-                {
-                    $this->db->where('designation.id',$this->user->designation);
-                }
-
             }
             $this->db->where('user_area.revision',1);
             $this->db->where('user.status',$this->config->item('system_status_active'));
@@ -121,7 +106,6 @@ class Reports_tour extends Root_Controller
                 }
             }
             $data['departments']=Query_helper::get_info($this->config->item('table_login_setup_department'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['my_designation']=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id ='.$this->user->designation,'status ="'.$this->config->item('system_status_active').'"'),1);
             $data['user_info']=$all_user;
             $data['user_counter']=count($data['user_info']);
             $data['date_start']=System_helper::display_date(time());
@@ -215,41 +199,26 @@ class Reports_tour extends Root_Controller
             }
 
             //Getting subordinate employee for validation
-            $data['designations']=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('parent ='.$this->user->designation,'status ="'.$this->config->item('system_status_active').'"'));
 
             $this->db->from($this->config->item('table_login_setup_user').' user');
             $this->db->select('user.employee_id');
             $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
             $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
-            if($this->locations['division_id']==0 && !($this->user->user_group==1 || $this->user->user_group==2))
+            $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id=user.id','INNER');
+            if($this->locations['division_id']>0)
             {
-                if(sizeof($data['designations'])>0)
+                $this->db->where('user_area.division_id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
                 {
-                    $this->db->where('designation.parent',$this->user->designation);
-                }
-                else
-                {
-                    $this->db->where('designation.id',$this->user->designation);
-                }
-            }
-            else
-            {
-                $this->db->join($this->config->item('table_login_setup_user_area').' user_area','user_area.user_id=user.id','INNER');
-                if($this->locations['division_id']>0)
-                {
-                    $this->db->where('user_area.division_id',$this->locations['division_id']);
-                    if($this->locations['zone_id']>0)
+                    $this->db->where('user_area.zone_id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
                     {
-                        $this->db->where('user_area.zone_id',$this->locations['zone_id']);
-                        if($this->locations['territory_id']>0)
-                        {
-                            $this->db->where('user_area.territory_id',$this->locations['territory_id']);
-                        }
+                        $this->db->where('user_area.territory_id',$this->locations['territory_id']);
                     }
                 }
-                //$this->db->where('user_area.territory_id >',0);
-                $this->db->where('user_area.revision',1);
             }
+            //$this->db->where('user_area.territory_id >',0);
+            $this->db->where('user_area.revision',1);
             $this->db->where('user.status',$this->config->item('system_status_active'));
             $this->db->where('user_info.revision',1);
             $this->db->order_by('user_info.ordering','ASC');
@@ -296,7 +265,6 @@ class Reports_tour extends Root_Controller
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
         $department_id=$this->input->post('department_id');
-        $designation_id=$this->input->post('designation_id');
         $user_id=$this->input->post('user_id');
         $employee_id=$this->input->post('employee_id');
         $status_approve=$this->input->post('status_approve');
@@ -369,45 +337,24 @@ class Reports_tour extends Root_Controller
         }
         else
         {
-            if($department_id)
+            if(!$user_id)
             {
-                if(!$designation_id)
+                if($division_id>0)
                 {
-                    $this->db->where('department.id',$department_id);
-                }
-                else
-                {
-                    $this->db->where('designation.id',$designation_id);
+                    $this->db->where('d.id',$division_id);
+                    if($zone_id>0)
+                    {
+                        $this->db->where('z.id',$zone_id);
+                        if($territory_id>0)
+                        {
+                            $this->db->where('t.id',$territory_id);
+                        }
+                    }
                 }
             }
             else
             {
-                if($designation_id)
-                {
-                    $this->db->where('designation.id',$designation_id);
-                }
-                else
-                {
-                    if(!$user_id)
-                    {
-                        if($division_id>0)
-                        {
-                            $this->db->where('d.id',$division_id);
-                            if($zone_id>0)
-                            {
-                                $this->db->where('z.id',$zone_id);
-                                if($territory_id>0)
-                                {
-                                    $this->db->where('t.id',$territory_id);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $this->db->where('tour_setup.user_created',$user_id);
-                    }
-                }
+                $this->db->where('tour_setup.user_created',$user_id);
             }
         }
         if($status_approve)
@@ -525,37 +472,6 @@ class Reports_tour extends Root_Controller
         $this->json_return($ajax);
     }
 
-    public function get_employee_info_list_by_designation()
-    {
-        $html_container_id='#employee_info_id';
-        if($this->input->post('html_container_id'))
-        {
-            $html_container_id=$this->input->post('html_container_id');
-        }
-        $this->db->from($this->config->item('table_login_setup_user').' user');
-        $this->db->select('user.id,user.employee_id,user.user_name,user.status');
-        $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=user.id','INNER');
-        $this->db->select('user_info.name,user_info.ordering');
-        $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id = user_info.designation','LEFT');
-        $this->db->select('designation.name designation_name');
-        $this->db->where('designation.parent',$this->user->designation);
-        $this->db->where('user.status',$this->config->item('system_status_active'));
-        $this->db->where('user_info.revision',1);
-        $this->db->order_by('user_info.ordering','ASC');
-        $results=$this->db->get()->result_array();
-        $all_user=array();
-        foreach($results as &$result)
-        {
-            $result['value']=$result['id'];
-            $result['text']=$result['employee_id'].'-'.$result['name'].' ('.$result['designation_name'].')';
-            $all_user[]=$result;
-        }
-        $data['items']=$all_user;
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
-        $this->json_return($ajax);
-    }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -588,9 +504,7 @@ class Reports_tour extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $user = User_helper::get_user();
             $data = array();
-
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*');
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
@@ -603,11 +517,9 @@ class Reports_tour extends Root_Controller
             $this->db->select('designation.id AS designation_id, designation.parent AS parent_designation, designation.name AS designation');
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('department.name AS department_name');
-            //$this->db->where('user.status', $this->config->item('system_status_active'));
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $data['item'] = $this->db->get()->row_array();
-
 
             $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_purpose');
             $this->db->select('tour_purpose.*');
@@ -637,7 +549,6 @@ class Reports_tour extends Root_Controller
                 $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['profession'] = $results_purpose_other['profession'];
                 $other_info[$results_purpose_other['id']]['others'][$results_purpose_other['purpose_others_id']]['discussion'] = $results_purpose_other['discussion'];
             }
-
             if (!$data['item'])
             {
                 $ajax['status'] = false;
