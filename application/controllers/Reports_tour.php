@@ -107,8 +107,8 @@ class Reports_tour extends Root_Controller
             }
             $data['user_info']=$all_user;
             $data['user_counter']=count($data['user_info']);
-            $data['date_start']=System_helper::display_date(time());
-            $data['date_end']=System_helper::display_date(time());
+            $data['date_from']=System_helper::display_date(time());
+            $data['date_to']=System_helper::display_date(time());
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/search",$data,true));
             if($this->message)
             {
@@ -178,23 +178,29 @@ class Reports_tour extends Root_Controller
         {
             $data['system_preference_items']= $this->get_preference();
             $reports=$this->input->post('report');
-            if(!($reports['date_start']))
+            if(!($reports['date_from']))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Please Select a Starting Date';
+                $ajax['system_message']='Please Select From Date';
                 $this->json_return($ajax);
             }
-            if(!($reports['date_end']))
+            if(!($reports['date_to']))
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Please Select a Ending Date';
+                $ajax['system_message']='Please Select To Date';
                 $this->json_return($ajax);
             }
-            $reports['date_end']=System_helper::get_time($reports['date_end']);
-            $reports['date_start']=System_helper::get_time($reports['date_start']);
-            if($reports['date_end']>0)
+            $reports['date_to']=System_helper::get_time($reports['date_to']);
+            $reports['date_from']=System_helper::get_time($reports['date_from']);
+            if($reports['date_to']>0)
             {
-                $reports['date_end']=$reports['date_end']+3600*24-1;
+                $reports['date_to']=$reports['date_to']+3600*24-1;
+            }
+            if ($reports['date_from']>$reports['date_to'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='From Date cannot be greater than To Date.';
+                $this->json_return($ajax);
             }
 
             //Getting subordinate employee for validation
@@ -238,8 +244,8 @@ class Reports_tour extends Root_Controller
             }
 
             $data['options']=$reports;
-            $result['date_start']=System_helper::display_date($reports['date_start']);
-            $result['date_end']=System_helper::display_date($reports['date_end']);
+            $result['date_from']=System_helper::display_date($reports['date_from']);
+            $result['date_to']=System_helper::display_date($reports['date_to']);
             $data['employee_info']=$result;
             $ajax['status']=true;
             $data['title']="Tour Report";
@@ -267,8 +273,8 @@ class Reports_tour extends Root_Controller
         $employee_id=$this->input->post('employee_id');
         $status_approve=$this->input->post('status_approve');
         $date_type=$this->input->post('date_type');
-        $date_end=$this->input->post('date_end');
-        $date_start=$this->input->post('date_start');
+        $date_to=$this->input->post('date_to');
+        $date_from=$this->input->post('date_from');
 
         //Getting tour data to calculate total no of purpose, complete reporting and incomplete reporting number
         $this->db->from($this->config->item('table_ems_tour_setup').' tour_setup');
@@ -363,24 +369,24 @@ class Reports_tour extends Root_Controller
         {
             if($date_type=='tour_created_time')
             {
-                $this->db->where('tour_setup.date_created <=',$date_end);
-                $this->db->where('tour_setup.date_created >=',$date_start);
+                $this->db->where('tour_setup.date_created <=',$date_to);
+                $this->db->where('tour_setup.date_created >=',$date_from);
             }
             elseif($date_type=='approve_date_time')
             {
-                $this->db->where('tour_setup.date_approved <=',$date_end);
-                $this->db->where('tour_setup.date_approved >=',$date_start);
+                $this->db->where('tour_setup.date_approved <=',$date_to);
+                $this->db->where('tour_setup.date_approved >=',$date_from);
             }
             else
             {
-                $this->db->where('tour_setup_purpose.date_reporting <=',$date_end);
-                $this->db->where('tour_setup_purpose.date_reporting >=',$date_start);
+                $this->db->where('tour_setup_purpose.date_reporting <=',$date_to);
+                $this->db->where('tour_setup_purpose.date_reporting >=',$date_from);
             }
         }
         else
         {
-            $this->db->where('tour_setup.date_to <=',$date_end);
-            $this->db->where('tour_setup.date_from >=',$date_start);
+            $this->db->where('tour_setup.date_to <=',$date_to);
+            $this->db->where('tour_setup.date_from >=',$date_from);
         }
         $this->db->where('user_info.revision',1);
         $this->db->where('user_area.revision',1);
@@ -491,7 +497,6 @@ class Reports_tour extends Root_Controller
 
     private function system_details($id)
     {
-
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             if ($id > 0)

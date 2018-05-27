@@ -58,7 +58,7 @@ foreach($user_info as $user)
                     <label class="control-label pull-right">From Date</label>
                 </div>
                 <div class="col-xs-6">
-                    <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo $date_start; ?>">
+                    <input type="text" id="date_start" name="report[date_from]" class="form-control date_large" value="<?php echo $date_from; ?>">
                 </div>
             </div>
             <div class="row show-grid">
@@ -66,7 +66,7 @@ foreach($user_info as $user)
                     <label class="control-label pull-right">To Date</label>
                 </div>
                 <div class="col-xs-6">
-                    <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo $date_end; ?>">
+                    <input type="text" id="date_end" name="report[date_to]" class="form-control date_large" value="<?php echo $date_to; ?>">
                 </div>
             </div>
         </div>

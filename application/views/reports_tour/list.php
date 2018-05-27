@@ -48,7 +48,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right">From Date :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <?php echo $employee_info['date_start']?>
+            <?php echo $employee_info['date_from']?>
         </div>
     </div>
 
@@ -57,7 +57,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="control-label pull-right">To Date :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <?php echo $employee_info['date_end']?>
+            <?php echo $employee_info['date_to']?>
         </div>
     </div>
 
@@ -117,9 +117,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
+                { name: 'employee', type: 'string' },
                 { name: 'date_setup', type: 'string' },
                 { name: 'date_approve', type: 'string' },
-                { name: 'employee', type: 'string' },
                 { name: 'department_name', type: 'string' },
                 { name: 'designation_name', type: 'string' },
                 { name: 'title', type: 'string' },
@@ -184,9 +184,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',pinned:true,dataField: 'division_name',width:'80',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',pinned:true,dataField: 'territory_name',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE'); ?>',pinned:true,dataField: 'employee',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['employee']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SETUP'); ?>',dataField: 'date_setup',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_setup']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_APPROVE'); ?>',dataField: 'date_approve',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_approve']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE'); ?>',dataField: 'employee',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['employee']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>',dataField: 'department_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>',dataField: 'designation_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['designation_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TITLE'); ?>',dataField: 'title',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['title']?0:1;?>},
