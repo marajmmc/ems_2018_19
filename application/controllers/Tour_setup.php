@@ -320,8 +320,8 @@ class Tour_setup extends Root_Controller
                 'designation' => $result['designation_name'],
                 'department_name' => $result['department_name'],
                 'title' => '',
-                'date_from' => time(),
-                'date_to' => time(),
+                'date_from' => '',
+                'date_to' => '',
                 'amount_iou' => '',
                 'iou_details' => '',
                 'remarks' => ''
@@ -804,7 +804,6 @@ class Tour_setup extends Root_Controller
     {
         $item_head = $this->input->post('item');
         $items = $this->input->post('items');
-
         if (!$item_head['title'])
         {
             $this->message = 'The Title field is required.';
@@ -815,7 +814,17 @@ class Tour_setup extends Root_Controller
         */
         $date_from = System_helper::get_time($item_head['date_from']);
         $date_to = System_helper::get_time($item_head['date_to']);
-        if ($date_from > $date_to)
+        if ($date_from=='')
+        {
+            $this->message = 'The '.$this->lang->line('LABEL_DATE').' From field is required.';
+            return false;
+        }
+        else if ($date_to=='')
+        {
+            $this->message = 'The '.$this->lang->line('LABEL_DATE').' To field is required.';
+            return false;
+        }
+        else if ($date_from > $date_to)
         {
             $this->message = 'From Date cannot be greater than To Date.';
             return false;
@@ -842,8 +851,6 @@ class Tour_setup extends Root_Controller
         }
 
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[date_from]', $this->lang->line('LABEL_DATE') . ' From', 'required');
-        $this->form_validation->set_rules('item[date_to]', $this->lang->line('LABEL_DATE') . ' To', 'required');
         $this->form_validation->set_rules('item[amount_iou]', $this->lang->line('LABEL_AMOUNT_IOU'), 'required');
         $this->form_validation->set_rules('item[iou_details]', $this->lang->line('LABEL_IOU_DETAILS'), 'required');
         if ($this->form_validation->run() == FALSE)
