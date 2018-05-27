@@ -21,7 +21,6 @@ class Tour_reporting extends Root_Controller
         }
         $this->controller_url = strtolower(get_class($this));
     }
-
     public function index($action = "list", $id = 0)
     {
         if ($action == "list")
@@ -72,13 +71,13 @@ class Tour_reporting extends Root_Controller
         {
             $this->system_details($id);
         }
-        elseif ($action == "details_print")
+        elseif ($action == "print_view")
         {
-            $this->system_details_print($id);
+            $this->system_print_view($id);
         }
-        elseif ($action == "requisition_print")
+        elseif ($action == "print_requisition")
         {
-            $this->system_requisition_print($id);
+            $this->system_print_requisition($id);
         }
         else
         {
@@ -86,7 +85,6 @@ class Tour_reporting extends Root_Controller
         }
 
     }
-
     private function get_preference_headers($method = 'list')
     {
         $data = array();
@@ -104,7 +102,6 @@ class Tour_reporting extends Root_Controller
         }
         return $data;
     }
-
     private function get_preference($method = 'list')
     {
         $user = User_helper::get_user();
@@ -130,7 +127,6 @@ class Tour_reporting extends Root_Controller
         }
         return $data;
     }
-
     private function system_list()
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
@@ -154,8 +150,6 @@ class Tour_reporting extends Root_Controller
         }
 
     }
-
-
     private function system_get_items()
     {
         $current_records = $this->input->post('total_records');
@@ -214,8 +208,6 @@ class Tour_reporting extends Root_Controller
 
         $this->json_return($items);
     }
-
-
     private function system_list_all()
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
@@ -238,7 +230,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     public function system_get_items_all()
     {
         $current_records = $this->input->post('total_records');
@@ -294,8 +285,6 @@ class Tour_reporting extends Root_Controller
 
         $this->json_return($items);
     }
-
-
     private function system_list_reporting($id)
     {
         if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
@@ -344,7 +333,7 @@ class Tour_reporting extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['title'] = "Tour Purpose And Reporting (" . $data['item']['title'] . ')';
+            $data['title'] = "Tour Purpose And Reporting:: " . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_reporting", $data, true));
             if ($this->message)
@@ -361,7 +350,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_reporting_items()
     {
         $item_id = $this->input->post('id');
@@ -370,7 +358,7 @@ class Tour_reporting extends Root_Controller
         $this->db->join($this->config->item('table_ems_tour_setup') . ' tour_setup', 'tour_setup.id = tour_setup_purpose.tour_setup_id', 'LEFT');
         $this->db->select('tour_setup.title,tour_setup.date_from,tour_setup.date_to, tour_setup.user_id');
         $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-        $this->db->where('tour_setup_purpose.status !=', 'Delete');
+        $this->db->where('tour_setup_purpose.status', 'Active');
         $this->db->order_by('tour_setup_purpose.id', 'ASC');
         $items = $this->db->get()->result_array();
 
@@ -389,8 +377,6 @@ class Tour_reporting extends Root_Controller
 
         $this->json_return($items);
     }
-
-
     private function system_reporting($id)
     {
         if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
@@ -453,8 +439,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-
     private function system_save_reporting()
     {
         $id = $this->input->post("id");
@@ -550,7 +534,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_details($id)
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
@@ -589,10 +572,10 @@ class Tour_reporting extends Root_Controller
             //--------------------------------------------------------------------------------------
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
-            $item = $this->db->get()->row_array();
+            $data['item'] = $this->db->get()->row_array();
 
             // Validation START
-            if (!$item)
+            if (!$data['item'])
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
@@ -633,10 +616,8 @@ class Tour_reporting extends Root_Controller
                 );
             }
 
-            $data['item'] = $item;
             $data['items_purpose_others'] = $items;
-
-            $data['title'] = 'Tour Setup And Reporting Details:: ' . $item['title'];
+            $data['title'] = 'Tour Setup And Reporting Details:: ' . $data['item']['title'];
 
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
@@ -654,8 +635,7 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    private function system_details_print($id)
+    private function system_print_view($id)
     {
         if (isset($this->permissions['action4']) && ($this->permissions['action4'] == 1))
         {
@@ -684,13 +664,20 @@ class Tour_reporting extends Root_Controller
             $this->db->select('department.name AS department_name');
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
-            $item = $this->db->get()->row_array();
+            $data['item'] = $this->db->get()->row_array();
 
             // Validation START
-            if (!$item)
+            if (!$data['item'])
             {
+                System_helper::invalid_try('print_view', $item_id, 'Print View Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if ($data['item']['status_approve']!=$this->config->item('system_status_approved'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Selected tour is not approved yet.';
                 $this->json_return($ajax);
             }
             // Validation END
@@ -728,17 +715,16 @@ class Tour_reporting extends Root_Controller
                 );
             }
 
-            $data['item'] = $item;
             $data['items_purpose_others'] = $items;
 
-            $data['title'] = 'Tour Setup And Reporting Print View:: ' . $item['title'];
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details_print", $data, true));
+            $data['title'] = 'Tour Setup And Reporting Print View:: ' . $data['item']['title'];
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/print_view", $data, true));
             if ($this->message)
             {
                 $ajax['status'] = true;
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/details_print/' . $item_id);
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/print_view/' . $item_id);
             $this->json_return($ajax);
         }
         else
@@ -748,8 +734,7 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    private function system_requisition_print($id)
+    private function system_print_requisition($id)
     {
 
         if (isset($this->permissions['action4']) && ($this->permissions['action4'] == 1))
@@ -780,6 +765,19 @@ class Tour_reporting extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $data['item'] = $this->db->get()->row_array();
 
+            if (!$data['item'])
+            {
+                System_helper::invalid_try('print_requisition', $item_id, 'Print Requisition Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if ($data['item']['status_approve']!=$this->config->item('system_status_approved'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Selected tour is not approved yet.';
+                $this->json_return($ajax);
+            }
 
             $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
@@ -791,12 +789,12 @@ class Tour_reporting extends Root_Controller
             $data['title'] = 'Tour Setup And Reporting Print View:: ' . $data['item']['title'];
 
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/requisition_print", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/print_requisition", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/requisition_print/' . $item_id);
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/print_requisition/' . $item_id);
             $this->json_return($ajax);
         }
         else
@@ -806,7 +804,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function check_validation()
     {
         $items = $this->input->post('items');
@@ -851,7 +848,6 @@ class Tour_reporting extends Root_Controller
 
         return true;
     }
-
     private function system_set_preference()
     {
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
@@ -870,7 +866,6 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_set_preference_all()
     {
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
@@ -889,5 +884,4 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
 }

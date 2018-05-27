@@ -45,7 +45,7 @@ $num_pages = ceil($total_records / $row_per_page);
                     <table class="table table-bordered">
                         <tbody>
                         <tr>
-                            <td style="width: 10%" colspan="21"><strong>Tour Title:: <?php echo $item['title'] ?></strong></td>
+                            <td style="width: 10%" colspan="21"><strong>Tour title :: <?php echo $item['title'] ?></strong></td>
                         </tr>
                         <tr>
                             <td style="width: 10%"><strong>Name</strong></td>
@@ -78,6 +78,14 @@ $num_pages = ceil($total_records / $row_per_page);
                                     echo 'N/A';
                                 } ?>
                             </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></strong></td>
+                            <td colspan="3"><?php echo number_format($item['amount_iou'],2); ?></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15%"><strong><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?></strong></td>
+                            <td colspan="3"><?php echo $item['iou_details']; ?></td>
                         </tr>
                         </tbody>
                     </table>

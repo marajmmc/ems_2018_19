@@ -21,7 +21,7 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
         'type' => 'button',
         'label' => 'Print View',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/details_print')
+        'data-action-link' => site_url($CI->controller_url . '/index/print_view')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
@@ -30,7 +30,7 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
         'type' => 'button',
         'label' => 'Print Requisition',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/requisition_print')
+        'data-action-link' => site_url($CI->controller_url . '/index/print_requisition')
     );
 }
 if(isset($CI->permissions['action4'])&&($CI->permissions['action4']==1))

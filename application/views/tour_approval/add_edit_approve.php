@@ -36,27 +36,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <?php if ($item['designation'])
-    {
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Designation:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['designation'] ?></label>
-            </div>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Designation:</label>
         </div>
-    <?php } ?>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo ($item['designation'])? $item['designation'] :'N/A'; ?></label>
+        </div>
+    </div>
 
     <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right">Department:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label">
-                <?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?>
-            </label>
+            <label class="control-label"><?php echo ($item['department_name']) ? $item['department_name'] :'N/A'; ?></label>
         </div>
     </div>
 
@@ -110,7 +104,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 else
                 {
                     ?>
-                    <div class="alert alert-danger text-center"> Tour Purpose Not Setup</div>
+                    <div class="alert alert-danger text-center"> Tour purpose(s) has not been setup yet.</div>
                 <?php
                 }
                 ?>
@@ -126,7 +120,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
         <div class="col-sm-4 col-xs-8">
             <label
-                class="control-label"><?php echo ($item['amount_iou']) ? number_format($item['amount_iou']) : "N/A"; ?></label>
+                class="control-label"><?php echo ($item['amount_iou']) ? number_format($item['amount_iou'], 2) : "N/A"; ?></label>
         </div>
     </div>
 
@@ -140,6 +134,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
+    <?php if($item['remarks']){ ?>
     <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right">Remarks:</label>
@@ -148,19 +143,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
         </div>
     </div>
-
+    <?php } ?>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_approve'); ?>" method="post">
         <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Supervisors Comment<span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="item[superior_comment]" class="form-control"><?php echo $item['superior_comment'] ?></textarea>
-            </div>
-        </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -172,6 +158,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <option value="<?php echo $CI->config->item('system_status_approved') ?>">Approve</option>
                     <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
                 </select>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Supervisors Comment<span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="item[superior_comment]" class="form-control"><?php echo $item['superior_comment'] ?></textarea>
             </div>
         </div>
 

@@ -50,16 +50,14 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
         </div>
     </div>
 
-    <?php if($item['designation']){?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Designation</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['designation']?></label>
-            </div>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Designation</label>
         </div>
-    <?php } ?>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo ($item['designation'])? $item['designation']:'N/A'; ?></label>
+        </div>
+    </div>
 
     <div class="row show-grid">
         <div class="col-xs-4">
@@ -143,7 +141,6 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
         </div>
     </div>
 
-    <!-----Added By Mahmud------>
     <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU');?><span style="color:#FF0000">*</span></label>
@@ -161,7 +158,6 @@ $CI->load->view("action_buttons",array('action_buttons'=>$action_buttons));
             <textarea id="iou_details" name="item[iou_details]" class="form-control"><?php echo $item['iou_details'] ?></textarea>
         </div>
     </div>
-    <!-----Added By Mahmud(END)------>
 
     <div class="row show-grid">
         <div class="col-xs-4">

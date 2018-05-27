@@ -95,7 +95,7 @@ $num_pages = 1;
                     <table class="table table-bordered table-striped">
                         <thead>
                         <tr>
-                            <th colspan="2" class="text-center">Purposes</th>
+                            <th colspan="2" class="text-center">Purpose(s)</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -105,7 +105,7 @@ $num_pages = 1;
                         {
                             ?>
                             <tr>
-                                <td><?php echo ++$i; ?></td>
+                                <td style="width:7%"><?php echo ++$i; ?></td>
                                 <td><?php echo $row['purpose']; ?></td>
                             </tr>
                         <?php } ?>

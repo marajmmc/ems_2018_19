@@ -1121,6 +1121,7 @@ class Tour_setup extends Root_Controller
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $data['item'] = $this->db->get()->row_array();
+
             if (!$data['item'])
             {
                 System_helper::invalid_try('print_requisition', $item_id, 'Print Requisition Not Exists');

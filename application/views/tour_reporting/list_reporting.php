@@ -114,6 +114,25 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 To: <?php echo System_helper::display_date($item['date_to']) ?></label>
         </div>
     </div>
+
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo number_format($item['amount_iou'], 2); ?></label>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?>:</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo $item['iou_details']; ?></label>
+        </div>
+    </div>
+
     <div class="clearfix"></div>
 </div>
 

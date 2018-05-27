@@ -42,17 +42,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <th colspan="3"><label class="control-label"><?php echo $item['name']; ?></label></th>
             </tr>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right">Designation</label>
-                </th>
-                <th colspan="3">
-                    <label class="control-label"><?php echo ($item['designation']) ? $item['designation'] : 'N/A'; ?></label>
-                </th>
-            </tr>
-            <tr>
+                <th class="widget-header header_caption"><label class="control-label pull-right">Designation</label></th>
+                <th><label class="control-label"><?php echo ($item['designation']) ? $item['designation'] : 'N/A'; ?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Department</label></th>
-                <th colspan="3">
-                    <label class="control-label"><?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?></label>
-                </th>
+                <th><label class="control-label"><?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?></label></th>
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Title</label></th>
@@ -62,9 +55,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <th class="widget-header header_caption">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?></label></th>
                 <th colspan="3">
-                    <label class="control-label"> From: <?php echo System_helper::display_date($item['date_from']) ?>
-                        To: <?php echo System_helper::display_date($item['date_to']) ?>
-                    </label></th>
+                <label class="control-label"> From: <?php echo System_helper::display_date($item['date_from']) ?>
+                    To: <?php echo System_helper::display_date($item['date_to']) ?>
+                </label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></label>
+                </th>
+                <th colspan="3"><label class="control-label"><?php echo number_format($item['amount_iou'],2); ?></label></th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?></label>
+                </th>
+                <th colspan="3"><label class="control-label"><?php echo $item['iou_details']; ?></label></th>
             </tr>
             <?php
             if ($item['user_created'])
@@ -247,9 +252,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <?php if ($item['remarks'])
-    {
-        ?>
+    <?php if ($item['remarks']) { ?>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Remarks:</label>
