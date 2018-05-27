@@ -36,7 +36,7 @@ foreach($user_info as $user)
                         <option value=""><?php echo $this->lang->line('LABEL_SELECT_ALL');?></option>
                         <option value="<?php echo $CI->config->item('system_status_approved')?>">Approve</option>
                         <option value="<?php echo $CI->config->item('system_status_pending')?>">Pending</option>
-                        <option value="Back_to_setup">Reject</option>
+                        <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
                     </select>
                 </div>
             </div>
