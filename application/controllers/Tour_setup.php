@@ -348,14 +348,6 @@ class Tour_setup extends Root_Controller
     {
         if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
         {
-            /*if (($this->input->post('id')))
-            {
-                $item_id = $this->input->post('id');
-            }
-            else
-            {
-                $item_id = $id;
-            }*/
             if($id>0)
             {
                 $item_id=$id;
