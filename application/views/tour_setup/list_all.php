@@ -139,7 +139,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>', dataField: 'amount_iou', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou']?0:1;?>},
                     { text: 'Forward Status', dataField: 'status_forward', filtertype: 'list', width: '110', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_forward']?0:1;?>},
                     { text: 'Approve Status', dataField: 'status_approve', filtertype: 'list', width: '110', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approve']?0:1;?>}
-
                 ]
             });
     });

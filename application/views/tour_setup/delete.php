@@ -159,7 +159,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <div class="col-sm-4 col-xs-8">
                 <select name="item[status]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="Delete">Delete</option>
+                    <option value="<?php echo $this->config->item('system_status_delete')?>"><?php echo $this->config->item('system_status_delete')?></option>
                 </select>
             </div>
         </div>

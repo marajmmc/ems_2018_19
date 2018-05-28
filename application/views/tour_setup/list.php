@@ -124,9 +124,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             type: 'POST',
             url: url
         };
-        var tooltiprenderer = function (element) {
-            $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
-        };
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
         $("#system_jqx_container").jqxGrid(
@@ -146,14 +143,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 enablebrowserselection: true,
                 columnsreorder: true,
                 columns: [
-                    { text: 'Name', pinned: true, dataField: 'name', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['name']?0:1;?>},
-                    { text: 'Employee ID', pinned: true, dataField: 'employee_id', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['employee_id']?0:1;?>},
-                    { text: 'Department', pinned: true, dataField: 'department_name', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
-                    { text: 'Designation', pinned: true, dataField: 'designation', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['designation']?0:1;?>},
-                    { text: 'Title', dataField: 'title', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
-                    { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
-                    { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>', dataField: 'amount_iou', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', pinned: true, dataField: 'id', width: '50', hidden: <?php echo $system_preference_items['id']?0:1;?>},
+                    { text: 'Name', pinned: true, dataField: 'name', width: '180', hidden: <?php echo $system_preference_items['name']?0:1;?>},
+                    { text: 'Employee ID', pinned: true, dataField: 'employee_id', filtertype: 'list', width: '80', hidden: <?php echo $system_preference_items['employee_id']?0:1;?>},
+                    { text: 'Department', pinned: true, dataField: 'department_name', filtertype: 'list', width: '80', hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
+                    { text: 'Designation', pinned: true, dataField: 'designation', filtertype: 'list', width: '100', hidden: <?php echo $system_preference_items['designation']?0:1;?>},
+                    { text: 'Title', dataField: 'title', hidden: <?php echo $system_preference_items['title']?0:1;?>},
+                    { text: 'Date From', dataField: 'date_from', width: '100', hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
+                    { text: 'Date To', dataField: 'date_to', width: '100', hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>', dataField: 'amount_iou', width: '100', hidden: <?php echo $system_preference_items['amount_iou']?0:1;?>}
                 ]
             });
     });
