@@ -359,7 +359,7 @@ class Reports_field_visit_attendance extends Root_Controller
 
     private function system_details($id)
     {
-        if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $html_container_id=$this->input->post('html_container_id');
             if(($this->input->post('id')))
