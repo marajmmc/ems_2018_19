@@ -20,7 +20,6 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
     );
 }
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
-
 ?>
 
 <div class="row widget">
@@ -165,45 +164,74 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <?php
             if($items)
             {
-                ?>
-            <table class="table table-bordered table-responsive">
-                <tbody>
-                <?php
                 $serial=0;
                 foreach($items as $purpose)
                 {
-                    ++$serial;
-                    ?>
-                    <tr>
-                        <th colspan="21"><?php echo $serial?>. <?php echo $purpose['purpose']?></th>
-                    </tr>
-                    <?php
-                    foreach($purpose['others'] as $key=>$others)
-                    {
-                        if($key)
-                        {
+                ++$serial;
+                ?>
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background: green; color: #FFFFFF">
+                        <strong class="panel-title">
+                            <a class="accordion-toggle external" data-toggle="collapse" data-target="#collapse_<?php echo $serial; ?>" href="#"><?php echo $serial; ?>. Purpose: <?php echo $purpose['purpose']; ?> (+) </a>
+                        </strong>
+                    </div>
+                    <div id="collapse_<?php echo $serial; ?>" class="panel-collapse <?php echo ($serial == 1)? 'collapse-in':'collapse'; ?>">
+                        <div style="overflow-x: auto;" class="row show-grid">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td style="width: 15%"><strong>Reporting Date: </strong></td>
+                                    <td><?php echo $purpose['date_reporting'] ? System_helper::display_date($purpose['date_reporting']) : 'N/A'; ?></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 15%"><strong>Report (Description): </strong></td>
+                                    <td><?php echo nl2br($purpose['report_description']) ? $purpose['report_description'] : 'N/A'; ?></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 15%"><strong>Recommendation: </strong></td>
+                                    <td><?php echo nl2br($purpose['recommendation']) ? $purpose['recommendation'] : 'N/A'; ?></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <?php
+                            if (isset($purpose['others']))
+                            {
+                                ?>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <td colspan="21" class="text-center bg-danger">
+                                            <strong>Other Information</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact No</th>
+                                        <th>Profession</th>
+                                        <th>Discussion</th>
+                                    </tr>
+                                    <?php
+                                    foreach ($purpose['others'] as $key => $other)
+                                    {
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $other['name'] ?></td>
+                                            <td><?php echo $other['contact_no'] ?></td>
+                                            <td><?php echo $other['profession'] ?></td>
+                                            <td><?php echo $other['discussion'] ?></td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+                                    </tbody>
+                                </table>
+                            <?php
+                            }
                             ?>
-                            <tr>
-                                <th><?php echo $others['name']?></th>
-                            </tr>
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <tr>
-                                <th><?php echo $this->lang->line('NO_DATA_FOUND');?></th>
-                            </tr>
-                        <?php
-                        }
-                    }
-                    ?>
+                        </div>
+                    </div>
+                </div>
                 <?php
                 }
-                ?>
-                </tbody>
-            </table>
-            <?php
             }
             else
             {
