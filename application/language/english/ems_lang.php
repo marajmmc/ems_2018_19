@@ -81,7 +81,7 @@ $lang['LABEL_ACTION7'] = 'Forward';
 $lang['TOTAL_TASK'] = 'Number of Tasks';
 $lang['LABEL_TYPE'] = 'Type';
 
-//*****//
+//*********//
 
 //common
 $lang['ACTIVE'] = 'Active';
@@ -115,7 +115,6 @@ $lang['LABEL_STATUS_LC_PENDING'] = 'Pending';
 $lang['LABEL_STATUS_LC_COMPLETE'] = 'Completed';
 $lang['LABEL_STATUS_OPEN_FORWARD'] = 'Forward Status';
 $lang['STATUS_APPROVE'] = 'Approve Status';
-
 
 // Common information related
 // ID or Code
@@ -282,6 +281,8 @@ $lang['LABEL_IOU_DETAILS'] = "IOU Details";
 $lang['LABEL_DESIGNATION'] = "Designation";
 $lang['LABEL_DATE_FROM'] = "Date From";
 $lang['LABEL_DATE_TO'] = "Date To";
+$lang['LABEL_FORWARD'] = "Forward";
+$lang['LABEL_APPROVE'] = "Approve";
 $lang['LABEL_STATUS_FORWARD'] = "Forwarded";
 $lang['LABEL_STATUS_APPROVE'] = "Approved";
 

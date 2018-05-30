@@ -5,20 +5,12 @@ class Tour_approval extends Root_Controller
     public $message;
     public $permissions;
     public $controller_url;
-    public $locations;
 
     public function __construct()
     {
         parent::__construct();
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
-        $this->locations = User_helper::get_locations();
-        if (!($this->locations))
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
-            $this->json_return($ajax);
-        }
         $this->controller_url = strtolower(get_class($this));
     }
     public function index($action = "list", $id = 0)
@@ -143,26 +135,12 @@ class Tour_approval extends Root_Controller
     }
     private function system_get_items()
     {
-        $current_records = $this->input->post('total_records');
-        if (!$current_records)
-        {
-            $current_records = 0;
-        }
-        $pagesize = $this->input->post('pagesize');
-        if (!$pagesize)
-        {
-            $pagesize = 100;
-        }
-        else
-        {
-            $pagesize = $pagesize * 2;
-        }
-
         $user = User_helper::get_user();
+
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
-        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
-        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        /* $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id'); */
         /*-------------------USER PORTION--------------------*/
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
         $this->db->select('user.employee_id');
@@ -173,17 +151,16 @@ class Tour_approval extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
         /*---------------------------------------------------*/
-        $this->db->where('user_area.revision', 1);
+        //$this->db->where('user_area.revision', 1);
         if ($user->user_group != 1)
         {
             $this->db->where('tour_setup.user_id!=', $user->user_id);
             $this->db->where('designation.parent', $user->designation);
         }
         $this->db->where('tour_setup.status!=', $this->config->item('system_status_delete'));
-        $this->db->where('tour_setup.status_forward!=', 'Pending');
-        $this->db->where('tour_setup.status_approve!=', 'Approved');
+        $this->db->where('tour_setup.status_forward!=', $this->config->item('system_status_pending'));
+        $this->db->where('tour_setup.status_approve!=', $this->config->item('system_status_approved'));
         $this->db->order_by('tour_setup.id DESC');
-        $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
 
         foreach ($items as $key => $item)
@@ -245,8 +222,8 @@ class Tour_approval extends Root_Controller
         $user = User_helper::get_user();
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
-        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
-        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        /* $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id'); */
         /*-------------------USER PORTION--------------------*/
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
         $this->db->select('user.employee_id');
@@ -257,14 +234,14 @@ class Tour_approval extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
         /*---------------------------------------------------*/
-        $this->db->where('user_area.revision', 1);
+        //$this->db->where('user_area.revision', 1);
         if ($user->user_group != 1)
         {
             $this->db->where('tour_setup.user_id!=', $user->user_id);
             $this->db->where('designation.parent', $user->designation);
         }
         $this->db->where('tour_setup.status!=', $this->config->item('system_status_delete'));
-        $this->db->where('tour_setup.status_forward', 'Forwarded');
+        $this->db->where('tour_setup.status_forward', $this->config->item('system_status_forwarded'));
         $this->db->order_by('tour_setup.id DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
@@ -297,49 +274,42 @@ class Tour_approval extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-
             $data = array();
+
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
-            $this->db->select('tour_setup.*');
-            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
-            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            $this->db->where('tour_setup.id', $item_id);
-            $data['item'] = $this->db->get()->row_array();
-
-            if (!$data['item'])
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-
-            $this->db->from($this->config->item('table_login_setup_user') . ' user');
+            $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
+            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
+            $this->db->where('tour_setup.id', $item_id);
             $this->db->where('user_info.revision', 1);
-            $this->db->where('user.id', $data['item']['user_created']);
-            $result = $this->db->get()->row_array();
+            $data['item'] = $this->db->get()->row_array();
 
-            $data['item']['name'] = $result['name'] . ' (' . $result['employee_id'] . ')';
-            $data['item']['designation'] = $result['designation'];
-            $data['item']['department_name'] = $result['department_name'];
+            if (!$data['item'])
+            {
+                System_helper::invalid_try('Approve', $item_id, 'Approve Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['item']['name'] = $data['item']['name'] . ' (' . $data['item']['employee_id'] . ')';
 
             //data from tour setup others table
             $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
             $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-            $this->db->where('tour_setup_purpose.status', 'Active');
+            $this->db->where('tour_setup_purpose.status !="'.$this->config->item('system_status_delete').'"');
             $data['items'] = $this->db->get()->result_array();
 
             $data['title'] = 'Tour Setup And Reporting Approval:: ' . $data['item']['title'];
-
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_approve", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
@@ -364,6 +334,12 @@ class Tour_approval extends Root_Controller
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if(($item['status_approve']!=$this->config->item('system_status_approved')) && ($item['status_approve']!=$this->config->item('system_status_rollback')))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = ($this->lang->line('LABEL_APPROVE')).' field is required.';
             $this->json_return($ajax);
         }
         if (!$this->check_validation_approve())
@@ -399,18 +375,6 @@ class Tour_approval extends Root_Controller
             }
         }
     }
-    private function check_validation_approve()
-    {
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[superior_comment]', 'Supervisors Comment ', 'required');
-        $this->form_validation->set_rules('item[status_approve]', 'Approve ', 'required');
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->message = validation_errors();
-            return false;
-        }
-        return true;
-    }
     private function system_details($id)
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
@@ -423,78 +387,77 @@ class Tour_approval extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-
             $data = array();
+
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*');
-            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
-            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('department.name AS department_name');
-            //----------------Action User's Info---------------------------------------------------
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_created', 'user_info_created.user_id=tour_setup.user_created', 'LEFT');
-            $this->db->select('user_info_created.name AS create_user'); // Entry User
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_updated', 'user_info_updated.user_id=tour_setup.user_updated', 'LEFT');
-            $this->db->select('user_info_updated.name AS update_user'); // Update user
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_forwarded', 'user_info_forwarded.user_id=tour_setup.user_forwarded', 'LEFT');
-            $this->db->select('user_info_forwarded.name AS forward_user'); // Forward User
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info_approved', 'user_info_approved.user_id=tour_setup.user_approved', 'LEFT');
-            $this->db->select('user_info_approved.name AS approve_user'); // Approve User
-            //--------------------------------------------------------------------------------------
+
+            /* $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = user.id AND user_area.revision=1', 'INNER');
+            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id'); */
+
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $data['item'] = $this->db->get()->row_array();
-
-            // Validation START
             if (!$data['item'])
             {
+                System_helper::invalid_try('details',$item_id,'View Non Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            // Validation END
+
+            $user_ids=array();
+            $user_ids[$data['item']['user_created']]=$data['item']['user_created'];
+            $user_ids[$data['item']['user_updated']]=$data['item']['user_updated'];
+            $user_ids[$data['item']['user_forwarded']]=$data['item']['user_forwarded'];
+            $user_ids[$data['item']['user_approved']]=$data['item']['user_approved'];
+            $data['users']=System_helper::get_users_info($user_ids);
 
             //data from tour setup purpose
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
-            $this->db->select('tour_setup_purpose.*');
-            $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-            $this->db->where('tour_setup_purpose.status', 'Active');
-            $this->db->order_by('tour_setup_purpose.id', 'ASC');
-            $items = $this->db->get()->result_array();
+            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' purpose');
+            $this->db->select('purpose.*');
+            $this->db->join($this->config->item('table_ems_tour_setup_purpose_others').' others','others.tour_setup_purpose_id=purpose.id AND others.status = "'.$this->config->item('system_status_active').'"','LEFT');
+            $this->db->select('
+                others.id purpose_others_id,
+                others.name,
+                others.contact_no,
+                others.profession,
+                others.discussion
+            ');
+            $this->db->where('purpose.tour_setup_id', $item_id);
+            $this->db->where('purpose.status !="'.$this->config->item('system_status_delete').'"');
+            $this->db->order_by('purpose.id', 'ASC');
+            $results = $this->db->get()->result_array();
+            $items=array();
 
-            $tmp_arr = $purpose_ids = array();
-            foreach ($items as $row)
+            foreach ($results as $result)
             {
-                $purpose_ids[] = $row['id'];
-                $tmp_arr[$row['id']] = $row;
+                $items[$result['id']]['tour_setup_id']=$result['tour_setup_id'];
+                $items[$result['id']]['purpose']=$result['purpose'];
+                $items[$result['id']]['date_reporting']=$result['date_reporting'];
+                $items[$result['id']]['report_description']=$result['report_description'];
+                $items[$result['id']]['recommendation']=$result['recommendation'];
+                $items[$result['id']]['revision_count_reporting']=$result['revision_count_reporting'];
+                if($result['purpose_others_id']){
+                    $items[$result['id']]['others'][$result['purpose_others_id']]['name'] = $result['name'];
+                    $items[$result['id']]['others'][$result['purpose_others_id']]['contact_no'] = $result['contact_no'];
+                    $items[$result['id']]['others'][$result['purpose_others_id']]['profession'] = $result['profession'];
+                    $items[$result['id']]['others'][$result['purpose_others_id']]['discussion'] = $result['discussion'];
+                }
             }
-            $items = $tmp_arr;
-
-            //data from tour setup others table
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose_others') . ' tour_setup_purpose_others');
-            $this->db->select('tour_setup_purpose_others.id purpose_others_id, tour_setup_purpose_others.tour_setup_purpose_id, tour_setup_purpose_others.name, tour_setup_purpose_others.contact_no, tour_setup_purpose_others.profession, tour_setup_purpose_others.discussion');
-            $this->db->where_in('tour_setup_purpose_others.tour_setup_purpose_id', $purpose_ids);
-            $this->db->where('tour_setup_purpose_others.status', 'Active');
-            $results_purpose_others = $this->db->get()->result_array();
-
-            foreach ($results_purpose_others as $row)
-            {
-                $items[$row['tour_setup_purpose_id']]['others'][$row['purpose_others_id']] = array(
-                    'name' => $row['name'],
-                    'contact_no' => $row['contact_no'],
-                    'profession' => $row['profession'],
-                    'discussion' => $row['discussion']
-                );
-            }
-
-            $data['items_purpose_others'] = $items;
-
+            $data['items'] = $items;
             $data['title'] = 'Tour Setup And Reporting Details:: ' . $data['item']['title'];
 
             $ajax['status'] = true;
@@ -526,20 +489,25 @@ class Tour_approval extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $data = array();
-
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*');
+
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('department.name AS department_name');
+
+            $this->db->where('tour_setup.status !="'.$this->config->item('system_status_delete').'"');
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $data['item'] = $this->db->get()->row_array();
@@ -564,7 +532,7 @@ class Tour_approval extends Root_Controller
             $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
             $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-            $this->db->where('tour_setup_purpose.status', 'Active');
+            $this->db->where('tour_setup_purpose.status !="'.$this->config->item('system_status_delete').'"');
             $this->db->order_by('tour_setup_purpose.id', 'ASC');
             $items = $this->db->get()->result_array();
 
@@ -578,28 +546,23 @@ class Tour_approval extends Root_Controller
 
             //data from tour setup others table
             $this->db->from($this->config->item('table_ems_tour_setup_purpose_others') . ' tour_setup_purpose_others');
-            $this->db->select('tour_setup_purpose_others.id purpose_others_id, tour_setup_purpose_others.tour_setup_purpose_id, tour_setup_purpose_others.name, tour_setup_purpose_others.contact_no, tour_setup_purpose_others.profession, tour_setup_purpose_others.discussion');
             $this->db->where_in('tour_setup_purpose_others.tour_setup_purpose_id', $purpose_ids);
-            $this->db->where('tour_setup_purpose_others.status', 'Active');
-            $results_purpose_others = $this->db->get()->result_array();
+            $this->db->where('tour_setup_purpose_others.status !="'.$this->config->item('system_status_delete').'"');
+            $results = $this->db->get()->result_array();
 
-            foreach ($results_purpose_others as $row)
+            foreach ($results as $result)
             {
-                $items[$row['tour_setup_purpose_id']]['others'][$row['purpose_others_id']] = array(
-                    'name' => $row['name'],
-                    'contact_no' => $row['contact_no'],
-                    'profession' => $row['profession'],
-                    'discussion' => $row['discussion']
-                );
+                $items[$result['tour_setup_purpose_id']]['others'][$result['id']] = $result;
             }
+
 
             $data['items_purpose_others'] = $items;
 
             $data['title'] = 'Tour Setup And Reporting Print View:: ' . $data['item']['title'];
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/print_view", $data, true));
+            $ajax['status'] = true;
             if ($this->message)
             {
-                $ajax['status'] = true;
                 $ajax['system_message'] = $this->message;
             }
             $ajax['system_page_url'] = site_url($this->controller_url . '/index/print_view/' . $item_id);
@@ -638,12 +601,10 @@ class Tour_approval extends Root_Controller
             $this->db->select('designation.name AS designation');
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('department.name AS department_name');
-            //$this->db->where('user.status', $this->config->item('system_status_active'));
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $data['item'] = $this->db->get()->row_array();
 
-            // Validation START
             if (!$data['item'])
             {
                 System_helper::invalid_try('print_requisition', $item_id, 'Print Requisition Not Exists');
@@ -657,12 +618,11 @@ class Tour_approval extends Root_Controller
                 $ajax['system_message'] = 'Selected tour is not approved yet.';
                 $this->json_return($ajax);
             }
-            // Validation END
 
             $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
             $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
-            $this->db->where('tour_setup_purpose.status', 'Active');
+            $this->db->where('tour_setup_purpose.status !="'.$this->config->item('system_status_delete').'"');
             $this->db->order_by('tour_setup_purpose.id', 'ASC');
             $data['items'] = $this->db->get()->result_array();
 
@@ -719,5 +679,17 @@ class Tour_approval extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function check_validation_approve()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[superior_comment]', 'Supervisors Comment ', 'required');
+        $this->form_validation->set_rules('item[status_approve]', $this->lang->line('LABEL_APPROVE'), 'required');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
+            return false;
+        }
+        return true;
     }
 }

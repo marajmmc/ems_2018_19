@@ -103,7 +103,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             }
             ?>
             <tr>
-                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_FORWARD');?></label></th>
+                <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARD');?> Status</label></th>
                 <th><label class="control-label"><?php echo $item['status_forward']; ?></label></th>
                 <th class="widget-header header_caption"><label class="control-label pull-right">(Tour Setup) Number of Edit</label></th>
                 <th colspan="3"><label class="control-label"><?php echo ($item['revision_count']-1); ?></label></th>
@@ -114,20 +114,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 ?>
 
                 <tr>
-                    <th class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY'); ?></label>
-                    </th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY'); ?></label></th>
                     <th><label class="control-label"><?php echo $users[$item['user_forwarded']]['name']; ?></label></th>
-                    <th class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME'); ?></label>
-                    </th>
-                    <th>
-                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_forwarded']); ?></label>
-                    </th>
+                    <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME'); ?></label></th>
+                    <th><label class="control-label"><?php echo System_helper::display_date_time($item['date_forwarded']); ?></label></th>
                 </tr>
             <?php
             }
-            if ($item['user_approved'])
+            if ($item['status_approve']==$CI->config->item('system_status_approved'))
             {
                 ?>
                 <tr>
@@ -135,7 +129,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 </tr>
                 <tr>
                     <th class="widget-header header_caption">
-                        <label class="control-label pull-right">Approval Status</label></th>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVE');?> Status</label></th>
                     <th><label class="control-label"><?php echo $item['status_approve']; ?></label></th>
                     <th class="widget-header header_caption">
                         <label class="control-label pull-right">(Tour Setup) Number of Rollback</label>
