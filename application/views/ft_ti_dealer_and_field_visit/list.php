@@ -66,11 +66,6 @@ $action_buttons[]=array(
     'href'=>site_url($CI->controller_url.'/index/list')
 
 );
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_LOAD_MORE"),
-    'id'=>'button_jqx_load_more'
-);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <div class="row widget">
@@ -102,16 +97,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'date', type: 'string' },
-                { name: 'outlet', type: 'string' },
-                { name: 'farmer_name', type: 'string' },
-                { name: 'dealer_visit_activities', type: 'string' },
-                { name: 'lead_farmer_visit_activities_one', type: 'string' },
-                { name: 'lead_farmer_visit_activities_two', type: 'string' },
-                { name: 'lead_farmer_visit_activities_three', type: 'string' },
-                { name: 'farmer_visit_activities', type: 'string' },
-                { name: 'other_activities', type: 'string' }
-
+                <?php
+                foreach($system_preference_items as $key => $value){ ?>
+                { name: '<?php echo $key; ?>', type: 'string' },
+                <?php } ?>
             ],
             id: 'id',
             type: 'POST',
@@ -141,12 +130,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true, dataField: 'date',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>', dataField: 'outlet',filtertype: 'list',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>', dataField: 'farmer_name',width:'160',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES'); ?>', dataField: 'dealer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer_visit_activities']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEALER'); ?>', dataField: 'dealer',width:'160',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE'); ?>', dataField: 'lead_farmer_visit_activities_one',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_one']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO'); ?>', dataField: 'lead_farmer_visit_activities_two',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_two']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE'); ?>', dataField: 'lead_farmer_visit_activities_three',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_three']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES'); ?>', dataField: 'farmer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_visit_activities']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES'); ?>', dataField: 'dealer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer_visit_activities']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES'); ?>', dataField: 'other_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['other_activities']?0:1;?>}
                 ]
             });

@@ -10,7 +10,7 @@ class Reports_field_visit_attendance extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Reports_field_visit_attendance');
+        $this->permissions = User_helper::get_permission(get_class($this));
         $this->locations=User_helper::get_locations();
         if(!($this->locations))
         {
@@ -18,9 +18,8 @@ class Reports_field_visit_attendance extends Root_Controller
             $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->controller_url='reports_field_visit_attendance';
+        $this->controller_url = strtolower(get_class($this));
     }
-
     public function index($action="search",$id=0)
     {
         if($action=="search")
@@ -51,7 +50,6 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->system_search();
         }
     }
-
     private function system_search()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
@@ -78,9 +76,6 @@ class Reports_field_visit_attendance extends Root_Controller
                     }
                 }
             }
-
-            //$this->db->where('user_area.territory_id >',0);
-
             $this->db->where('user_area.revision',1);
             $this->db->where('user.status',$this->config->item('system_status_active'));
             $this->db->where('user_info.revision',1);
@@ -124,7 +119,46 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
+    private function get_preference_headers()
+    {
+        $data['sl_no']= 1;
+        $data['date']= 1;
+        $data['division_name']= 1;
+        $data['zone_name']= 1;
+        $data['territory_name']= 1;
+        $data['dealer']= 1;
+        $data['username']= 1;
+        $data['created_time']= 1;
+        $data['status_attendance']= 1;
+        $data['attendance_taken_time']= 1;
+        $data['details_button']= 1;
+        return $data;
+    }
+    private function get_preference()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
+        $data=$this->get_preference_headers();
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
     private function system_list()
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
@@ -180,7 +214,6 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items()
     {
         $division_id=$this->input->post('division_id');
@@ -290,7 +323,6 @@ class Reports_field_visit_attendance extends Root_Controller
                     }
                 }
             }
-            //$this->db->where('user_area.territory_id >',0);
         }
         if($user_id)
         {
@@ -356,30 +388,21 @@ class Reports_field_visit_attendance extends Root_Controller
         }
         $this->json_return($items);
     }
-
     private function system_details($id)
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $html_container_id=$this->input->post('html_container_id');
-            if(($this->input->post('id')))
-            {
-                $item_id=$this->input->post('id');
-            }
-            else
+            if($id>0)
             {
                 $item_id=$id;
             }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
             $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
             $this->db->select('dealer_field_visit.*');
-            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_created','user_info_created.user_id=dealer_field_visit.user_created','INNER');
-            $this->db->select('user_info_created.name created_by');
-            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_updated','user_info_updated.user_id=dealer_field_visit.user_updated','LEFT');
-            $this->db->select('user_info_updated.name updated_by');
-            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance','user_info_attendance.user_id=dealer_field_visit.user_created_attendance','LEFT');
-            $this->db->select('user_info_attendance.name attendance_taken_by');
-            $this->db->join($this->config->item('table_login_setup_user_info').' user_info_attendance_updated','user_info_attendance_updated.user_id=dealer_field_visit.user_updated_attendance','LEFT');
-            $this->db->select('user_info_attendance_updated.name attendance_updated_by');
             $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
             $this->db->select('farmer.name dealer');
             $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
@@ -396,6 +419,14 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->db->where('cus_info.revision',1);
             $this->db->where('dealer_field_visit.id',$item_id);
             $data['item']=$this->db->get()->row_array();
+
+            $user_ids=array();
+            $user_ids[$data['item']['user_created']]=$data['item']['user_created'];
+            $user_ids[$data['item']['user_updated']]=$data['item']['user_updated'];
+            $user_ids[$data['item']['user_created_attendance']]=$data['item']['user_created_attendance'];
+            $user_ids[$data['item']['user_updated_attendance']]=$data['item']['user_updated_attendance'];
+            $data['users']=System_helper::get_users_info($user_ids);
+
             $data['title']="Dealer And Field Visit Task Details";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view($this->controller_url."/details",$data,true));
@@ -412,7 +443,6 @@ class Reports_field_visit_attendance extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     public function get_employee_info_list()
     {
         $html_container_id='#employee_info_id';
@@ -440,7 +470,6 @@ class Reports_field_visit_attendance extends Root_Controller
                 }
             }
         }
-        //$this->db->where('user_area.territory_id >',0);
         $this->db->where('user_area.revision',1);
         $this->db->where('user.status',$this->config->item('system_status_active'));
         $this->db->where('user_info.revision',1);
@@ -458,7 +487,6 @@ class Reports_field_visit_attendance extends Root_Controller
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
         $this->json_return($ajax);
     }
-
     private function system_set_preference()
     {
         if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
@@ -476,41 +504,5 @@ class Reports_field_visit_attendance extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-    }
-
-    private function get_preference()
-    {
-        $user = User_helper::get_user();
-        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search"'),1);
-        $data['sl_no']= 1;
-        $data['date']= 1;
-        $data['division_name']= 1;
-        $data['zone_name']= 1;
-        $data['territory_name']= 1;
-        $data['dealer']= 1;
-        $data['username']= 1;
-        $data['created_time']= 1;
-        $data['status_attendance']= 1;
-        $data['attendance_taken_time']= 1;
-        $data['details_button']= 1;
-        if($result)
-        {
-            if($result['preferences']!=null)
-            {
-                $preferences=json_decode($result['preferences'],true);
-                foreach($data as $key=>$value)
-                {
-                    if(isset($preferences[$key]))
-                    {
-                        $data[$key]=$value;
-                    }
-                    else
-                    {
-                        $data[$key]=0;
-                    }
-                }
-            }
-        }
-        return $data;
     }
 }

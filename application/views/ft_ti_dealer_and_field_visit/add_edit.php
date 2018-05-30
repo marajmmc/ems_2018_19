@@ -211,7 +211,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div style="<?php if(!($item['customer_id'])){echo 'display:none';} ?>" class="row show-grid" id="customer_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right">Outlet<span style="color:#FF0000">*</span></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET');?><span style="color:#FF0000">*</span></label>
     </div>
     <?php if($item['customer_id']){?>
         <div class="col-sm-4 col-xs-8">
@@ -235,7 +235,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div style="<?php if(!($item['farmer_id'])){echo 'display:none';} ?>" class="row show-grid" id="farmer_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right">Dealer<span style="color:#FF0000">*</span></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER');?><span style="color:#FF0000">*</span></label>
     </div>
     <?php if($item['farmer_id']){?>
         <div class="col-sm-4 col-xs-8">
@@ -273,7 +273,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Lead Farmer Visit Activities (1)</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE');?></label>
         </div>
         <div class="col-xs-4">
             <textarea id="lead_farmer_visit_activities_one" name="item[lead_farmer_visit_activities_one]" class="form-control"><?php echo $item['lead_farmer_visit_activities_one'] ?></textarea>
@@ -298,7 +298,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Lead Farmer Visit Activities (2)</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO');?></label>
         </div>
         <div class="col-xs-4">
             <textarea id="lead_farmer_visit_activities_two" name="item[lead_farmer_visit_activities_two]" class="form-control"><?php echo $item['lead_farmer_visit_activities_two'] ?></textarea>
@@ -323,7 +323,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Lead Farmer Visit Activities (3)</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE');?></label>
         </div>
         <div class="col-xs-4">
             <textarea id="lead_farmer_visit_activities_three" name="item[lead_farmer_visit_activities_three]" class="form-control"><?php echo $item['lead_farmer_visit_activities_three'] ?></textarea>
@@ -348,7 +348,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Farmer Visit Activities</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES');?></label>
         </div>
         <div class="col-xs-4">
             <textarea id="farmer_visit_activities" name="item[farmer_visit_activities]" class="form-control"><?php echo $item['farmer_visit_activities'] ?></textarea>
@@ -373,7 +373,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Dealer Visit Activities</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES');?></label>
         </div>
         <div class="col-xs-4">
             <textarea id="dealer_visit_activities" name="item[dealer_visit_activities]" class="form-control"><?php echo $item['dealer_visit_activities'] ?></textarea>
@@ -398,7 +398,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Other Activities</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES');?></label>
         </div>
         <div class="col-xs-4">
             <textarea id="other_activities" name="item[other_activities]" class="form-control"><?php echo $item['other_activities'] ?></textarea>

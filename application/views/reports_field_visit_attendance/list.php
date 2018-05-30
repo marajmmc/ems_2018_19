@@ -112,19 +112,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'string' },
-                { name: 'sl_no', type: 'string' },
-                { name: 'date', type: 'string' },
-                { name: 'division_name', type: 'string' },
-                { name: 'zone_name', type: 'string' },
-                { name: 'territory_name', type: 'string' },
-                { name: 'dealer', type: 'string' },
-                { name: 'username', type: 'string' },
-                { name: 'created_time', type: 'string' },
-                { name: 'status_attendance', type: 'string' },
-                { name: 'attendance_taken_time', type: 'string' },
-                { name: 'details_button', type: 'string' }
-
+                { name: 'id', type: 'int' },
+                <?php
+                foreach($system_preference_items as $key => $value){ ?>
+                { name: '<?php echo $key; ?>', type: 'string' },
+                <?php } ?>
             ],
             url: url,
             type: 'POST',

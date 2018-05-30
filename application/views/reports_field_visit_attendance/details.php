@@ -14,7 +14,7 @@ $CI = & get_instance();
             <label class="control-label pull-right">Task Entry By:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['created_by'];?></label>
+            <label class="control-label"><?php echo $users[$item['user_created']]['name']; ?></label>
         </div>
 
     </div>
@@ -35,7 +35,7 @@ $CI = & get_instance();
                 <label class="control-label pull-right">Task Updated By:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['updated_by'];?></label>
+                <label class="control-label"><?php echo $users[$item['user_updated']]['name']; ?></label>
             </div>
 
         </div>
@@ -98,7 +98,7 @@ $CI = & get_instance();
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Outlet:</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['outlet'];?></label>
@@ -107,7 +107,7 @@ $CI = & get_instance();
 
     <div class="row show-grid" id="farmer_id_container">
         <div class="col-xs-4">
-            <label class="control-label pull-right">Dealer:</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER');?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <label class="control-label"><?php echo $item['dealer'];?></label>
@@ -120,7 +120,7 @@ $CI = & get_instance();
                 <label class="control-label pull-right">Attendance Taken By:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['attendance_taken_by'];?></label>
+                <label class="control-label"><?php echo $users[$item['user_created_attendance']]['name']; ?></label>
             </div>
 
         </div>
@@ -159,7 +159,7 @@ $CI = & get_instance();
     <div class="row">
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Lead Farmer Visit Activities (1)</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE');?></label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $item['lead_farmer_visit_activities_one'];?></label>
@@ -176,7 +176,7 @@ $CI = & get_instance();
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Lead Farmer Visit Activities (2)</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO');?></label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $item['lead_farmer_visit_activities_two'];?></label>
@@ -193,7 +193,7 @@ $CI = & get_instance();
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Lead Farmer Visit Activities (3)</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE');?></label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $item['lead_farmer_visit_activities_three'];?></label>
@@ -210,7 +210,7 @@ $CI = & get_instance();
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Farmer Visit Activities</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES');?></label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $item['farmer_visit_activities'];?></label>
@@ -227,7 +227,7 @@ $CI = & get_instance();
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Dealer Visit Activities</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES');?></label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $item['dealer_visit_activities'];?></label>
@@ -245,7 +245,7 @@ $CI = & get_instance();
         <?php if($item['other_activities']){?>
             <div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right">Other Activities</label>
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES');?></label>
                 </div>
                 <div class="col-xs-4">
                     <label class="control-label"><?php echo $item['other_activities'];?></label>

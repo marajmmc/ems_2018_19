@@ -1,12 +1,25 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-$CI=& get_instance();
-$action_buttons=array();
-$action_buttons[]=array
-(
-    'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url)
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+$CI =& get_instance();
+
+$action_buttons = array();
+$action_buttons[] = array(
+    'label' => $CI->lang->line("ACTION_BACK") . ' to Pending List',
+    'href' => site_url($CI->controller_url)
 );
-$CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+$action_buttons[] = array(
+    'label' => $CI->lang->line("ACTION_BACK") . ' to All list',
+    'href' => site_url($CI->controller_url . '/index/list_all')
+);
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => $CI->lang->line("ACTION_PRINT"),
+        'onClick' => "window.print()"
+    );
+}
+$CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 
 <style>
@@ -28,14 +41,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <tbody>
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Task Entry By</label></td>
-                <td class="header_value"><label class="control-label"><?php echo $item['created_by'];?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $users[$item['user_created']]['name']; ?></label></td>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Task Entry Time</label></td>
                 <td class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></td>
             </tr>
             <?php if($item['date_updated']){?>
                 <tr>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Task Updated By</label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['updated_by'];?></label></td>
+                    <td class="header_value"><label class="control-label"><?php echo $users[$item['user_updated']]['name']; ?></label></td>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Task Update Time</label></td>
                     <td class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated']);?></label></td>
                 </tr>
@@ -44,7 +57,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php if($item['date_created_attendance']){?>
                 <tr>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Taken By</label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['attendance_taken_by'];?></label></td>
+                    <td class="header_value"><label class="control-label"><?php echo $users[$item['user_created_attendance']]['name']; ?></label></td>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Taken Time</label></td>
                     <td class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_created_attendance']);?></label></td>
                 </tr>
@@ -53,7 +66,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php if($item['date_updated_attendance']){?>
                 <tr>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Updated By</label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['attendance_updated_by'];?></label></td>
+                    <td class="header_value"><label class="control-label"><?php echo $users[$item['user_updated_attendance']]['name']; ?></label></td>
                     <td class="widget-header header_caption"><label class="control-label pull-right">Attendance Updated Time</label></td>
                     <td class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_attendance']);?></label></td>
                 </tr>
@@ -91,13 +104,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label></td>
-                <td class="header_value"><label class="control-label"><?php echo $item['customer_name'];?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['outlet'];?></label></td>
                 <td colspan="2">&nbsp;</td>
             </tr>
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER');?></label></td>
-                <td class="header_value"><label class="control-label"><?php echo $item['farmer_name'];?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['dealer'];?></label></td>
                 <td colspan="2">&nbsp;</td>
             </tr>
 

@@ -122,12 +122,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true, dataField: 'date',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>', dataField: 'outlet',filtertype: 'list',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>', dataField: 'farmer_name',width:'160',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES'); ?>', dataField: 'dealer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer_visit_activities']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEALER'); ?>', dataField: 'dealer',width:'160',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE'); ?>', dataField: 'lead_farmer_visit_activities_one',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_one']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO'); ?>', dataField: 'lead_farmer_visit_activities_two',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_two']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE'); ?>', dataField: 'lead_farmer_visit_activities_three',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['lead_farmer_visit_activities_three']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES'); ?>', dataField: 'farmer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_visit_activities']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES'); ?>', dataField: 'dealer_visit_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['dealer_visit_activities']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES'); ?>', dataField: 'other_activities',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['other_activities']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE'); ?>', dataField: 'status_attendance',width:'150',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['status_attendance']?0:1;?>}
                 ]
