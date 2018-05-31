@@ -76,11 +76,11 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         $data['date']= 1;
         $data['outlet']= 1;
         $data['dealer']= 1;
-        $data['dealer_visit_activities']= 1;
         $data['lead_farmer_visit_activities_one']= 1;
         $data['lead_farmer_visit_activities_two']= 1;
         $data['lead_farmer_visit_activities_three']= 1;
         $data['farmer_visit_activities']= 1;
+        $data['dealer_visit_activities']= 1;
         $data['other_activities']= 1;
         return $data;
     }
@@ -287,7 +287,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
     {
         if(isset($this->permissions['action1'])&&($this->permissions['action1']==1))
         {
-            $data['title']="New Dealer And Farmer Visit";
+            $data['title']="New Dealer And Field Visit";
             $data["item"] = Array(
                 'id'=>0,
                 'date'=>time(),

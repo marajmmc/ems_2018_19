@@ -112,23 +112,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'string' },
-                { name: 'sl_no', type: 'string' },
-                { name: 'division_name', type: 'string' },
-                { name: 'zone_name', type: 'string' },
-                { name: 'territory_name', type: 'string' },
-                { name: 'employee', type: 'string' },
-                { name: 'date_setup', type: 'string' },
-                { name: 'date_approve', type: 'string' },
-                { name: 'department_name', type: 'string' },
-                { name: 'designation_name', type: 'string' },
-                { name: 'title', type: 'string' },
-                { name: 'amount_iou', type: 'string' },
-                { name: 'status_approve', type: 'string' },
-                { name: 'no_of_purpose', type: 'string' },
-                { name: 'complete_reporting', type: 'string' },
-                { name: 'incomplete_reporting', type: 'string' },
-                { name: 'details_button', type: 'string' }
+                { name: 'id', type: 'int' },
+                <?php
+                foreach($system_preference_items as $key => $value){ ?>
+                { name: '<?php echo $key; ?>', type: 'string' },
+                <?php } ?>
             ],
             url: url,
             type: 'POST',
@@ -195,7 +183,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_NO_OF_PURPOSE'); ?>',dataField: 'no_of_purpose',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['no_of_purpose']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_COMPLETE_REPORTING'); ?>',dataField: 'complete_reporting',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['complete_reporting']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_INCOMPLETE_REPORTING'); ?>',dataField: 'incomplete_reporting',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['incomplete_reporting']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,hidden: <?php echo $system_preference_items['details_button']?0:1;?>}
 
                 ]
             });

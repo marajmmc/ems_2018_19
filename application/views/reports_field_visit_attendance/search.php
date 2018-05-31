@@ -198,8 +198,10 @@ foreach($user_info as $user)
         $(document).on('change','#division_id',function()
         {
             $('#zone_id').val('');
+            $('#territory_id').val('');
             var division_id=$('#division_id').val();
             $('#zone_id_container').hide();
+            $('#territory_id_container').hide();
             if(division_id>0)
             {
                 if(system_zones[division_id]!==undefined)

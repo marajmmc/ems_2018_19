@@ -84,7 +84,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'id', type: 'int' },
                 { name: 'date', type: 'string' },
                 { name: 'outlet', type: 'string' },
-                { name: 'farmer_name', type: 'string' },
+                { name: 'dealer', type: 'string' },
                 { name: 'dealer_visit_activities', type: 'string' },
                 { name: 'lead_farmer_visit_activities_one', type: 'string' },
                 { name: 'lead_farmer_visit_activities_two', type: 'string' },

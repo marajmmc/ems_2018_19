@@ -128,9 +128,9 @@ class Reports_tour extends Root_Controller
         $data['division_name']= 1;
         $data['zone_name']= 1;
         $data['territory_name']= 1;
+        $data['employee']= 1;
         $data['date_setup']= 1;
         $data['date_approve']= 1;
-        $data['employee']= 1;
         $data['department_name']= 1;
         $data['designation_name']= 1;
         $data['title']= 1;

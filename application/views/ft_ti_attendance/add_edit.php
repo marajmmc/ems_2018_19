@@ -28,7 +28,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div style="" class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo $item['division_name'];?></label>
@@ -37,7 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo $item['zone_name'];?></label>
@@ -46,7 +46,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo $item['territory_name'];?></label>
@@ -55,7 +55,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo $item['district_name'];?></label>
@@ -64,7 +64,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET');?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo $item['outlet'];?></label>
@@ -73,7 +73,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER');?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo $item['dealer'];?></label>
@@ -83,7 +83,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <?php if(isset($dealer_info_file) && sizeof($dealer_info_file)>0){?>
     <div class="row show-grid" id="dealer_info_file_container">
         <div class="col-xs-4">
-            <label for="dealer_info_file_id" class="control-label pull-right">Dealer Info File:</label>
+            <label for="dealer_info_file_id" class="control-label pull-right">Dealer Info File</label>
         </div>
         <div class="col-sm-4 col-xs-8">
             <?php foreach($dealer_info_file as $key=>$file){$key++;?>
@@ -95,7 +95,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE');?></label>
     </div>
     <div class="col-xs-4 col-xs-8">
         <?php if($item['lead_farmer_visit_activities_one']){echo $item['lead_farmer_visit_activities_one'];}else{echo 'N/A';} ?>
@@ -112,7 +112,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO');?></label>
     </div>
     <div class="col-xs-4 col-xs-8">
         <?php if($item['lead_farmer_visit_activities_two']){echo $item['lead_farmer_visit_activities_two'];}else{echo 'N/A';} ?>
@@ -129,7 +129,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE');?></label>
     </div>
     <div class="col-xs-4 col-xs-8">
         <?php if($item['lead_farmer_visit_activities_three']){echo $item['lead_farmer_visit_activities_three'];}else{echo 'N/A';} ?>
@@ -146,7 +146,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FARMER_VISIT_ACTIVITIES');?></label>
     </div>
     <div class="col-xs-4 col-xs-8">
         <?php if($item['farmer_visit_activities']){echo $item['farmer_visit_activities'];}else{echo 'N/A';} ?>
@@ -163,7 +163,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALER_VISIT_ACTIVITIES');?></label>
     </div>
     <div class="col-xs-4 col-xs-8">
         <?php if($item['dealer_visit_activities']){echo $item['dealer_visit_activities'];}else{echo 'N/A';} ?>
@@ -180,7 +180,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES');?>:</label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OTHER_ACTIVITIES');?></label>
     </div>
     <div class="col-xs-4 col-xs-8">
         <?php if($item['other_activities']){echo $item['other_activities'];}else{echo 'N/A';} ?>

@@ -72,13 +72,13 @@ class Ft_ti_attendance extends Root_Controller
         $data['employee_id']= 1;
         $data['name']= 1;
         $data['date']= 1;
-        $data['customer_name']= 1;
+        $data['outlet']= 1;
         $data['dealer']= 1;
-        $data['dealer_visit_activities']= 1;
         $data['lead_farmer_visit_activities_one']= 1;
         $data['lead_farmer_visit_activities_two']= 1;
         $data['lead_farmer_visit_activities_three']= 1;
         $data['farmer_visit_activities']= 1;
+        $data['dealer_visit_activities']= 1;
         $data['other_activities']= 1;
         $data['status_attendance']= 1;
         return $data;
@@ -155,7 +155,7 @@ class Ft_ti_attendance extends Root_Controller
         $this->db->select('farmer.name dealer');
         $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-        $this->db->select('cus_info.name customer_name');
+        $this->db->select('cus_info.name outlet');
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = cus_info.district_id','INNER');
         $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
@@ -289,7 +289,7 @@ class Ft_ti_attendance extends Root_Controller
         $this->db->select('farmer.name dealer');
         $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
         $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-        $this->db->select('cus_info.name customer_name');
+        $this->db->select('cus_info.name outlet');
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = cus_info.district_id','INNER');
         $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
@@ -383,7 +383,7 @@ class Ft_ti_attendance extends Root_Controller
                 $this->json_return($ajax);
             }
             $data['dealer_info_file']=Query_helper::get_info($this->config->item('table_ems_setup_ft_dealer_file'),array('*'),array('farmer_id ='.$data['item']['farmer_id']));
-            $data['title']='TI Attendance';
+            $data['title']='TI Attendance (Dealer And Field visit)';
 
             $this->db->from($this->config->item('table_pos_setup_farmer_outlet').' farmer_outlet');
             $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = farmer_outlet.farmer_id','INNER');
