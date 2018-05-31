@@ -36,27 +36,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <?php if ($item['designation'])
-    {
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Designation:</label>
-            </div>
-            <div class="col-sm-5 col-xs-8">
-                <label class="control-label"><?php echo $item['designation'] ?></label>
-            </div>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Designation:</label>
         </div>
-    <?php } ?>
+        <div class="col-sm-5 col-xs-8">
+            <label class="control-label"><?php echo ($item['designation']) ? $item['designation'] : 'N/A'; ?></label>
+        </div>
+    </div>
 
     <div class="row show-grid">
         <div class="col-xs-4">
             <label class="control-label pull-right">Department:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label">
-                <?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?>
-            </label>
+            <label class="control-label"><?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?></label>
         </div>
     </div>
 
