@@ -270,7 +270,7 @@ class Reports_sale extends Root_Controller
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
         $district_id=$this->input->post('district_id');
-        $outlet_id=$this->input->post('customer_id');
+        $outlet_id=$this->input->post('outlet_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
         if($outlet_id>0)
@@ -492,7 +492,7 @@ class Reports_sale extends Root_Controller
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
         $district_id=$this->input->post('district_id');
-        $outlet_id=$this->input->post('customer_id');
+        $outlet_id=$this->input->post('outlet_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
