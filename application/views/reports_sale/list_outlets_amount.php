@@ -62,9 +62,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php
                  foreach($system_preference_items as $key=>$item)
                  {
-                    ?>
+                 if($key=='outlet')
+                 {
+                 ?>
                 { name: '<?php echo $key ?>', type: 'string' },
                 <?php
+                 }
+                 else
+                 {
+                    ?>
+                { name: '<?php echo $key ?>', type: 'number' },
+                <?php
+                }
              }
             ?>
             ],
@@ -86,6 +95,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
+            if((column!='outlet'))
+            {
+                if(value==0)
+                {
+                    element.html('');
+                }
+                else
+                {
+                    element.html(number_format(value,2));
+                }
+            }
             return element[0].outerHTML;
 
         };
@@ -105,7 +125,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         };
         var aggregatesrenderer=function (aggregates)
         {
-            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +aggregates['total']+'</div>';
+            var text=aggregates['total'];
+            if(text!="Grand Total")
+            {
+                if((aggregates['total']=='0.00')||(aggregates['total']==''))
+                {
+                    text='';
+                }
+                else
+                {
+                    text=number_format(aggregates['total'],2);
+                }
+            }
+            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+system_report_color_grand+';">' +text+'</div>';
 
         };
 
@@ -116,6 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 width: '100%',
                 height:'350px',
                 source: dataAdapter,
+                sortable: true,
                 columnsresize: true,
                 columnsreorder: true,
                 altrows: true,
@@ -129,11 +162,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
                         {
                             var element = $(defaultHtml);
-                            element.html(value+1);
+                            element.html(value);
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>', dataField: 'outlet',pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>', dataField: 'outlet',sortable: false,pinned:true,width:'200',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_TOTAL'); ?>', dataField: 'amount_total',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_total']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_DISCOUNT_VARIETY'); ?>', dataField: 'amount_discount_variety',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_discount_variety']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_DISCOUNT_SELF'); ?>', dataField: 'amount_discount_self',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_discount_self']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},

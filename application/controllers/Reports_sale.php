@@ -50,10 +50,14 @@ class Reports_sale extends Root_Controller
         {
             $this->system_get_items_outlets_amount();
         }
-//        elseif($action=='get_items_variety_sale')
-//        {
-//            $this->system_get_items_variety_sale();
-//        }
+        elseif($action=="set_preference_variety_amount_quantity")
+        {
+            $this->system_set_preference_variety_amount_quantity();
+        }
+        elseif($action=="get_items_variety_amount_quantity")
+        {
+            $this->system_get_items_variety_amount_quantity();
+        }
         elseif($action=="save_preference")
         {
             System_helper::save_preference();
@@ -69,6 +73,7 @@ class Reports_sale extends Root_Controller
         {
             $data['title']="Outlets Sale Report";
             $ajax['status']=true;
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
             $data['territories']=array();
@@ -178,11 +183,10 @@ class Reports_sale extends Root_Controller
             }
             elseif($reports['report_name']=='variety_amount_quantity')
             {
-                //$data['title']="Product Sales Report";
-                //$ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_variety_sale",$data,true));
-                $ajax['status']=false;
-                $ajax['system_message']='Under Development';
-                $this->json_return($ajax);
+                $data['title']="Product Sales Report";
+                $data['system_preference_items']= $this->get_preference_variety_amount_quantity();
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_variety_amount_quantity",$data,true));
+
             }
             else
             {
@@ -206,6 +210,7 @@ class Reports_sale extends Root_Controller
     }
     private function get_preference_headers_area_amount()
     {
+        $data['sl_no']= 1;
         $data['area']= 1;
         $data['amount_total']= 1;
         $data['amount_discount_variety']= 1;
@@ -262,7 +267,6 @@ class Reports_sale extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
     private function system_get_items_area_amount()
     {
         $items=array();
@@ -378,16 +382,16 @@ class Reports_sale extends Root_Controller
         {
             foreach($headers  as $key=>$r)
             {
-                if(!($key=='area'))
+                if(!(($key=='area')||($key=='sl_no')))
                 {
                     $grand_total[$key]+=$info[$key];
                 }
             }
 
-            $items[]=$this->get_row_area_amount($info);
+            $items[]=$info;
             //$items[]=$item;
         }
-        $items[]=$this->get_row_area_amount($grand_total);
+        $items[]=$grand_total;
         $this->json_return($items);
 
 
@@ -400,31 +404,10 @@ class Reports_sale extends Root_Controller
             $row[$key]=0;
         }
         $row['area']=$area_name;
+        $row['sl_no']='';
         return $row;
     }
-    private function get_row_area_amount($info)
-    {
-        $row=array();
-        foreach($info as $key=>$r)
-        {
-            if($key!='area')
-            {
-                if($info[$key]==0)
-                {
-                    $row[$key]='';
-                }
-                else
-                {
-                    $row[$key]=number_format($info[$key],2);
-                }
-            }
-            else
-            {
-                $row[$key]=$info[$key];
-            }
-        }
-        return $row;
-    }
+
 
     private function get_preference_headers_outlets_amount()
     {
@@ -501,7 +484,7 @@ class Reports_sale extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
         $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
         $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->order_by('outlet_info.customer_id');
+        $this->db->order_by('outlet_info.ordering');
         $this->db->where('outlet_info.revision',1);
         $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
 
@@ -578,10 +561,10 @@ class Reports_sale extends Root_Controller
                 }
             }
 
-            $items[]=$this->get_row_outlets_amount($info);
+            $items[]=$info;
             //$items[]=$item;
         }
-        $items[]=$this->get_row_outlets_amount($grand_total);
+        $items[]=$grand_total;
         $this->json_return($items);
 
 
@@ -597,12 +580,300 @@ class Reports_sale extends Root_Controller
         $row['sl_no']='';
         return $row;
     }
-    private function get_row_outlets_amount($info)
+
+    private function get_preference_headers_variety_amount_quantity()
+    {
+        $data['crop_name']= 1;
+        $data['crop_type_name']= 1;
+        $data['variety_name']= 1;
+        $data['pack_size']= 1;
+        $data['quantity_total_pkt']= 1;
+        $data['quantity_total_kg']= 1;
+        $data['quantity_cancel_pkt']= 1;
+        $data['quantity_cancel_kg']= 1;
+        $data['quantity_actual_pkt']= 1;
+        $data['quantity_actual_kg']= 1;
+        $data['amount_total']= 1;
+        $data['amount_discount_variety']= 1;
+        $data['amount_discount_self']= 1;
+        $data['amount_discount_total']= 1;
+        $data['amount_payable_all']= 1;
+        $data['amount_payable_cancel']= 1;
+        $data['amount_payable_paid']= 1;
+        return $data;
+    }
+    private function get_preference_variety_amount_quantity()
+    {
+        $user = User_helper::get_user();
+        $result=Query_helper::get_info($this->config->item('table_system_user_preference'),'*',array('user_id ='.$user->user_id,'controller ="' .$this->controller_url.'"','method ="search_variety_amount_quantity"'),1);
+        $data=$this->get_preference_headers_variety_amount_quantity();
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+    private function system_set_preference_variety_amount_quantity()
+    {
+        if(isset($this->permissions['action6']) && ($this->permissions['action6']==1))
+        {
+            $data['system_preference_items']= $this->get_preference_variety_amount_quantity();
+            $data['preference_method_name']='search_variety_amount_quantity';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_variety_amount_quantity');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_get_items_variety_amount_quantity()
+    {
+        $items=array();
+
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $outlet_id=$this->input->post('outlet_id');
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+        $crop_id=$this->input->post('crop_id');
+        $crop_type_id=$this->input->post('crop_type_id');
+        $variety_id=$this->input->post('variety_id');
+        $pack_size_id=$this->input->post('pack_size_id');
+
+
+        $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
+        $this->db->select('outlet_info.customer_id outlet_id, outlet_info.name outlet_name');
+        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = outlet_info.district_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
+        $this->db->order_by('outlet_info.ordering');
+        $this->db->where('outlet_info.revision',1);
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
+
+        if($division_id>0)
+        {
+            $this->db->where('zones.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zones.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('territories.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('districts.id',$district_id);
+                        if($outlet_id>0)
+                        {
+                            $this->db->where('outlet_info.customer_id',$outlet_id);
+                        }
+                    }
+                }
+            }
+        }
+        $results=$this->db->get()->result_array();
+        //$outlets=array();
+        $outlet_ids=array();
+        $outlet_ids[0]=0;
+        foreach($results as $result)
+        {
+            //$outlets[$result['outlet_id']]=$this->initialize_row_outlets_amount($result['outlet_name']);
+            $outlet_ids[$result['outlet_id']]=$result['outlet_id'];
+        }
+
+        //total sales
+        $this->db->from($this->config->item('table_pos_sale_details').' details');
+        //$this->db->from($this->config->item('table_pos_sale').' sale');
+        $this->db->select('details.variety_id,details.pack_size_id,details.pack_size');
+
+        $this->db->join($this->config->item('table_pos_sale').' sale','sale.id = details.sale_id','INNER');
+
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then details.quantity ELSE 0 END) quantity_total',false);
+        $this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then details.quantity ELSE 0 END) quantity_cancel',false);
+
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then details.amount_total ELSE 0 END) amount_total',false);
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then details.amount_discount_variety ELSE 0 END) amount_discount_variety',false);
+        $this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then (details.amount_payable_actual*sale.discount_self_percentage/100) ELSE 0 END) amount_discount_self',false);
+
+
+
+        $this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then details.amount_total ELSE 0 END) amount_total_cancel',false);
+        $this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then details.amount_discount_variety ELSE 0 END) amount_discount_variety_cancel',false);
+        $this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then (details.amount_payable_actual*sale.discount_self_percentage/100) ELSE 0 END) amount_discount_self_cancel',false);
+
+        //$this->db->select('SUM(CASE WHEN sale.date_sale>='.$date_start.' and sale.date_sale<='.$date_end.' then sale.amount_payable_actual ELSE 0 END) amount_payable_actual_all',false);
+        //$this->db->select('SUM(CASE WHEN sale.date_cancel>='.$date_start.' and sale.date_cancel<='.$date_end.' and sale.status="'.$this->config->item('system_status_inactive').'" then sale.amount_payable_actual ELSE 0 END) amount_payable_actual_cancel',false);
+
+
+        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id=details.variety_id','INNER');
+        $this->db->select('v.name variety_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id=v.crop_type_id','INNER');
+        $this->db->select('crop_type.name crop_type_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id=crop_type.crop_id','INNER');
+        $this->db->select('crop.name crop_name');
+        if($crop_id>0)
+        {
+            $this->db->where('crop.id',$crop_id);
+            if($crop_type_id>0)
+            {
+                $this->db->where('crop_type.id',$crop_type_id);
+                if($variety_id>0)
+                {
+                    $this->db->where('v.id',$variety_id);
+                }
+            }
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('details.pack_size_id',$pack_size_id);
+        }
+        $this->db->order_by('crop.id','ASC');
+        $this->db->order_by('crop_type.id','ASC');
+        $this->db->order_by('v.id','ASC');
+        $this->db->where_in('sale.outlet_id',$outlet_ids);
+        $this->db->group_by('details.variety_id');
+        $this->db->group_by('details.pack_size_id');
+        $results=$this->db->get()->result_array();
+
+        $type_total=$this->initialize_row_variety_amount_quantity('','','Total Type','');
+        $crop_total=$this->initialize_row_variety_amount_quantity('','Total Crop','','');
+        $grand_total=$this->initialize_row_variety_amount_quantity('Grand Total','','','');
+        $prev_crop_name='';
+        $prev_type_name='';
+        $first_row=true;
+        foreach($results as $result)
+        {
+            $info=$this->initialize_row_variety_amount_quantity($result['crop_name'],$result['crop_type_name'],$result['variety_name'],$result['pack_size']);
+            if(!$first_row)
+            {
+                if($prev_crop_name!=$result['crop_name'])
+                {
+                    $items[]=$this->get_row_variety_amount_quantity($type_total);
+                    $items[]=$this->get_row_variety_amount_quantity($crop_total);
+                    $type_total=$this->reset_row_variety_amount_quantity($type_total);
+                    $crop_total=$this->reset_row_variety_amount_quantity($crop_total);
+                    $prev_crop_name=$result['crop_name'];
+                    $prev_type_name=$result['crop_type_name'];
+                }
+                elseif($prev_type_name!=$result['crop_type_name'])
+                {
+                    $items[]=$this->get_row_variety_amount_quantity($type_total);
+                    $type_total=$this->reset_row_variety_amount_quantity($type_total);
+                    $info['crop_name']='';
+                    $prev_type_name=$result['crop_type_name'];
+                }
+                else
+                {
+                    $info['crop_name']='';
+                    $info['crop_type_name']='';
+                }
+            }
+            else
+            {
+                $prev_crop_name=$result['crop_name'];
+                $prev_type_name=$result['crop_type_name'];
+                $first_row=false;
+            }
+            $result['quantity_actual']=$result['quantity_total']-$result['quantity_cancel'];
+            $result['amount_discount_total']=$result['amount_discount_variety']+$result['amount_discount_self'];
+            $result['amount_payable_all']=$result['amount_total']-$result['amount_discount_total'];
+            $result['amount_payable_cancel']=$result['amount_total_cancel']-$result['amount_discount_variety_cancel']-$result['amount_discount_self_cancel'];
+            $result['amount_payable_paid']=$result['amount_payable_all']-$result['amount_payable_cancel'];
+            foreach($info  as $key=>$r)
+            {
+                if(substr($key,-3)=='pkt')
+                {
+                    $info[$key]=$result[substr($key, 0, -4)];
+                }
+                elseif(substr($key,-2)=='kg')
+                {
+                    $info[$key]=$result[substr($key, 0, -3)]*$result['pack_size']/1000;
+                }
+                elseif(substr($key,0,6)=='amount')
+                {
+                    $info[$key]=$result[$key];
+                }
+            }
+            foreach($info  as $key=>$r)
+            {
+                if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+                {
+                    $type_total[$key]+=$info[$key];
+                    $crop_total[$key]+=$info[$key];
+                    $grand_total[$key]+=$info[$key];
+                }
+            }
+            $items[]=$this->get_row_variety_amount_quantity($info);
+        }
+        $items[]=$this->get_row_variety_amount_quantity($type_total);
+        $items[]=$this->get_row_variety_amount_quantity($crop_total);
+        $items[]=$this->get_row_variety_amount_quantity($grand_total);
+        $this->json_return($items);
+
+
+    }
+    private function initialize_row_variety_amount_quantity($crop_name,$crop_type_name,$variety_name,$pack_size)
+    {
+        $row=$this->get_preference_headers_variety_amount_quantity();
+        foreach($row  as $key=>$r)
+        {
+            $row[$key]=0;
+        }
+        $row['crop_name']=$crop_name;
+        $row['crop_type_name']=$crop_type_name;
+        $row['variety_name']=$variety_name;
+        $row['pack_size']=$pack_size;
+        return $row;
+    }
+    private function get_row_variety_amount_quantity($info)
     {
         $row=array();
-        foreach($info as $key=>$r)
+        foreach($info  as $key=>$r)
         {
-            if(!(($key=='outlet')||($key=='sl_no')))
+            if(substr($key,-3)=='pkt')
+            {
+                if($info[$key]==0)
+                {
+                    $row[$key]='';
+                }
+                else
+                {
+                    $row[$key]=$info[$key];
+                }
+            }
+            elseif(substr($key,-2)=='kg')
+            {
+                if($info[$key]==0)
+                {
+                    $row[$key]='';
+                }
+                else
+                {
+                    $row[$key]=number_format($info[$key],3,'.','');
+                }
+            }
+            elseif(substr($key,0,6)=='amount')
             {
                 if($info[$key]==0)
                 {
@@ -617,7 +888,21 @@ class Reports_sale extends Root_Controller
             {
                 $row[$key]=$info[$key];
             }
+
         }
         return $row;
+
+
+    }
+    private function reset_row_variety_amount_quantity($info)
+    {
+        foreach($info  as $key=>$r)
+        {
+            if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+            {
+                $info[$key]=0;
+            }
+        }
+        return $info;
     }
 }

@@ -90,6 +90,23 @@ $CI = & get_instance();
                                 </select>
                             </div>
                         </div>
+                        <div class="row show-grid" id="pack_size_id_container">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_SIZE');?></label>
+                            </div>
+                            <div class="col-xs-6">
+                                <select id="pack_size_id" name="report[pack_size_id]" class="form-control">
+                                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                                    <?php
+                                    foreach($pack_sizes as $pack_size)
+                                    {?>
+                                        <option value="<?php echo $pack_size['value']?>"><?php echo $pack_size['text'];?></option>
+                                    <?php
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xs-6">

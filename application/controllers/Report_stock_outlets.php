@@ -49,6 +49,7 @@ class Report_stock_outlets extends Root_Controller
         {
             $data['title']="Showrooms Stock Report";
             $ajax['status']=true;
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_login_setup_classification_pack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
             $data['divisions']=Query_helper::get_info($this->config->item('table_login_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
             $data['territories']=array();
