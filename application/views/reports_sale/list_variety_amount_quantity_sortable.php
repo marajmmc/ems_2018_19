@@ -25,7 +25,7 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     $action_buttons[]=array
     (
         'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference_area_amount')
+        'href'=>site_url($CI->controller_url.'/index/set_preference_variety_amount_quantity_sortable')
     );
 }
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
@@ -52,7 +52,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script type="text/javascript">
     $(document).ready(function ()
     {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_area_amount');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_variety_amount_quantity_sortable');?>";
 
         // prepare the data
         var source =
@@ -62,7 +62,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php
                  foreach($system_preference_items as $key=>$item)
                  {
-                 if($key=='area')
+                 if($key=='variety_name')
                  {
                  ?>
                 { name: '<?php echo $key ?>', type: 'string' },
@@ -84,8 +84,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
-           // console.log(defaultHtml);
-            if (record.area=="Grand Total")
+            // console.log(defaultHtml);
+            if (record.variety_name=="Grand Total")
             {
 
                 element.css({ 'background-color': system_report_color_grand,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
@@ -95,7 +95,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
-            if((column!='area'))
+            if((column!='variety_name'))
             {
                 if(value==0)
                 {
@@ -107,21 +107,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 }
             }
             return element[0].outerHTML;
-
         };
+
+
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
         };
         var aggregates=function (total, column, element, record)
         {
-            if(record.area=="Grand Total")
+            //console.log(record);
+            //console.log(record['warehouse_5_pkt']);
+            if(record.variety_name=="Grand Total")
             {
-                //console.log(element);
                 return record[element];
 
             }
             return total;
-            //return grand_starting_stock;
         };
         var aggregatesrenderer=function (aggregates)
         {
@@ -166,17 +167,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $areas; ?>', dataField: 'area',pinned:true,width:'200',sortable: false,menu: false,cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['area']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',pinned:true,width:'100',sortable: false,menu: false,cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['variety_name']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',sortable: false,menu: false,cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['pack_size']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_PKT'); ?>', dataField: 'quantity_total_pkt',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_TOTAL_KG'); ?>', dataField: 'quantity_total_kg',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_total_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_CANCEL_PKT'); ?>', dataField: 'quantity_cancel_pkt',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_cancel_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_CANCEL_KG'); ?>', dataField: 'quantity_cancel_kg',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_cancel_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_ACTUAL_PKT'); ?>', dataField: 'quantity_actual_pkt',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_actual_pkt']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_ACTUAL_KG'); ?>', dataField: 'quantity_actual_kg',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['quantity_actual_kg']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_TOTAL'); ?>', dataField: 'amount_total',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_total']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_DISCOUNT_VARIETY'); ?>', dataField: 'amount_discount_variety',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_discount_variety']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_DISCOUNT_SELF'); ?>', dataField: 'amount_discount_self',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_discount_self']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_DISCOUNT_TOTAL'); ?>', dataField: 'amount_discount_total',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_discount_total']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_ALL'); ?>', dataField: 'amount_payable_all',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_all']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_ACTUAL_ALL'); ?>', dataField: 'amount_payable_actual_all',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_actual_all']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_CANCEL'); ?>', dataField: 'amount_payable_cancel',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_cancel']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_ACTUAL_CANCEL'); ?>', dataField: 'amount_payable_actual_cancel',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_actual_cancel']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_PAID'); ?>', dataField: 'amount_payable_paid',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_paid']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_ACTUAL_PAID'); ?>', dataField: 'amount_payable_actual_paid',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_actual_paid']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PAYABLE_PAID'); ?>', dataField: 'amount_payable_paid',width:'120',cellsalign: 'right',cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['amount_payable_paid']?0:1;?>,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
 
 
                 ]
