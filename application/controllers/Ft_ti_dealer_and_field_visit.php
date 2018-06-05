@@ -406,7 +406,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit',$item_id,$this->config->item('system_edit_others'));
+                System_helper::invalid_try('Edit',$item_id,'Trying to edit others task');
                 $ajax['status']=false;
                 $ajax['system_message']='You are trying to edit others file';
                 $this->json_return($ajax);

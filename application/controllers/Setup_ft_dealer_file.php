@@ -160,7 +160,7 @@ class Setup_ft_dealer_file extends Root_Controller
             }
             if(!$this->check_my_editable($data['item_head']))
             {
-                System_helper::invalid_try('Edit',$item_id,$this->config->item('system_edit_others'));
+                System_helper::invalid_try('Edit','Trying to edit others file');
                 $ajax['status']=false;
                 $ajax['system_message']='You are trying to edit others file';
                 $this->json_return($ajax);
@@ -369,4 +369,5 @@ class Setup_ft_dealer_file extends Root_Controller
         }
         return true;
     }
+
 }

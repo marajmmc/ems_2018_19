@@ -377,7 +377,7 @@ class Ft_ti_attendance extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Attendance',$item_id,$this->config->item('system_edit_others'));
+                System_helper::invalid_try('Edit',$item_id,'Trying to take attendance others');
                 $ajax['status']=false;
                 $ajax['system_message']='You are trying to take attendance of employee who is not assigned to you.';
                 $this->json_return($ajax);
