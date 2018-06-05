@@ -27,3 +27,7 @@ $config['system_base_url_dealer_and_farmer_visit']='http://localhost/ems_2018_19
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
+
+//System Configuration
+$config['system_purpose_ems_menu_odd_color']='ems_menu_odd_color';
+$config['system_purpose_ems_menu_even_color']='ems_menu_even_color';
