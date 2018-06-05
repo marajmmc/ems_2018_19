@@ -60,13 +60,13 @@ foreach($results as $result)
     $system_all_customers[]=$result;
 }
 $menu_odd_color='#fee3b4';
-$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('config_value'),array('purpose ="' .$CI->config->item('system_purpose_sms_menu_odd_color').'"','status ="'.$CI->config->item('system_status_active').'"'),1);
+$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('config_value'),array('purpose ="' .$CI->config->item('system_purpose_ems_menu_odd_color').'"','status ="'.$CI->config->item('system_status_active').'"'),1);
 if($result)
 {
     $menu_odd_color=$result['config_value'];
 }
 $menu_even_color='#e0dff6';
-$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('config_value'),array('purpose ="' .$CI->config->item('system_purpose_sms_menu_even_color').'"','status ="'.$CI->config->item('system_status_active').'"'),1);
+$result=Query_helper::get_info($this->config->item('table_login_setup_system_configures'),array('config_value'),array('purpose ="' .$CI->config->item('system_purpose_ems_menu_even_color').'"','status ="'.$CI->config->item('system_status_active').'"'),1);
 if($result)
 {
     $menu_even_color=$result['config_value'];
