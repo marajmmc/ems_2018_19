@@ -319,6 +319,7 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             $data['territories']=array();
             $data['districts']=array();
             $data['customers']=array();
+            $data['farmers']=array();
             $data['dealer_info_file']=array();
             if($this->locations['division_id']>0)
             {
@@ -698,12 +699,16 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
     }
     public function get_dropdown_farmers_by_customer_id()
     {
+        $date=$this->input->post('date');
+        $date=System_helper::get_time($date);
         $outlet_id = $this->input->post('customer_id');
         $html_container_id='#farmer_id';
         if($this->input->post('html_container_id'))
         {
             $html_container_id=$this->input->post('html_container_id');
         }
+
+        //Getting Dealer list
         $this->db->from($this->config->item('table_pos_setup_farmer_outlet').' farmer_outlet');
         $this->db->select('farmer_outlet.farmer_id value');
         $this->db->select('CONCAT(farmer.name," - ",farmer.mobile_no) text');
@@ -714,19 +719,9 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         $this->db->where('farmer_outlet.outlet_id',$outlet_id);
         $this->db->order_by('farmer.id ASC');
         $data['items']=$this->db->get()->result_array();
-        if($data['items'])
-        {
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
-            $this->json_return($ajax);
-        }
-    }
-    public function duplicate_entry_validation()
-    {
-        $date=$this->input->post('date');
-        $date=System_helper::get_time($date);
-        $customer_id=$this->input->post('customer_id');
-        $result=Query_helper::get_info($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),array('id'),array('date ='.$date,'customer_id ='.$customer_id));
+
+        //Duplicate entry validation
+        $result=Query_helper::get_info($this->config->item('table_ems_ft_ti_dealer_and_field_visit'),array('id'),array('date ='.$date,'customer_id ='.$outlet_id));
         if($result)
         {
             $ajax['status']=false;
@@ -736,8 +731,12 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         }
         else
         {
-            $data['status']=true;
-            $this->json_return($data);
+            if($data['items'])
+            {
+                $ajax['status']=true;
+                $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+                $this->json_return($ajax);
+            }
         }
     }
     public function get_dealer_info_file()

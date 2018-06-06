@@ -441,7 +441,7 @@ jQuery(document).ready(function()
         if(date && customer_id>0)
         {
             $.ajax({
-                url:"<?php echo site_url($CI->controller_url.'/duplicate_entry_validation/');?>",
+                url:"<?php echo site_url($CI->controller_url.'/get_dropdown_farmers_by_customer_id/');?>",
                 type: 'POST',
                 datatype: "JSON",
                 data:{date:date,customer_id:customer_id},
@@ -572,7 +572,7 @@ jQuery(document).ready(function()
     });
     $(document).on('change','#customer_id',function()
     {
-        $('#farmer_id').val('');
+        $('#farmer_id').html('');
         $('#dealer_visit_activities').val('');
         $('#lead_farmer_visit_activities_one').val('');
         $('#lead_farmer_visit_activities_two').val('');
@@ -588,22 +588,6 @@ jQuery(document).ready(function()
         {
             $.ajax({
                 url:"<?php echo site_url($CI->controller_url.'/get_dropdown_farmers_by_customer_id/');?>",
-                type: 'POST',
-                datatype: "JSON",
-                data:{customer_id:customer_id},
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-                    console.log("error");
-
-                }
-            });
-
-            $.ajax({
-                url:"<?php echo site_url($CI->controller_url.'/duplicate_entry_validation/');?>",
                 type: 'POST',
                 datatype: "JSON",
                 data:{date:date,customer_id:customer_id},
