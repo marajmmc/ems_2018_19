@@ -572,7 +572,7 @@ jQuery(document).ready(function()
     });
     $(document).on('change','#customer_id',function()
     {
-        $('#farmer_id').html('');
+        $('#farmer_id').val('');
         $('#dealer_visit_activities').val('');
         $('#lead_farmer_visit_activities_one').val('');
         $('#lead_farmer_visit_activities_two').val('');
