@@ -141,7 +141,7 @@ $CI = & get_instance();
                 <label class="control-label pull-right">Attendance Updated By:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['attendance_updated_by'];?></label>
+                <label class="control-label"><?php echo $users[$item['user_updated_attendance']]['name']; ?></label>
             </div>
 
         </div>
