@@ -19,7 +19,7 @@ class Reports_tour extends Root_Controller
             $this->json_return($ajax);
         }
         $this->controller_url = strtolower(get_class($this));
-        $this->lang->load('report_tour_lang');
+        $this->lang->load('report_tour');
     }
     public function index($action="search",$id=0)
     {

@@ -20,7 +20,7 @@ class Report_payment extends Root_Controller
             $this->json_return($ajax);
         }
         $this->controller_url = strtolower(get_class($this));
-        $this->lang->load('report_payment_lang');
+        $this->lang->load('report_payment');
     }
 
 
