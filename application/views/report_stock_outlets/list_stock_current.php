@@ -70,15 +70,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'crop_type_name', type: 'string' },
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size', type: 'string' },
+                { name: 'amount_price_unit', type: 'string' },
                     <?php
                         foreach($areas as $area)
                         {?>{ name: '<?php echo 'stock_'.$area['value'].'_pkt';?>', type: 'string' },
                         { name: '<?php echo 'stock_'.$area['value'].'_kg';?>', type: 'string' },
+                        { name: '<?php echo 'amount_'.$area['value'].'_price';?>', type: 'string' },
                 <?php
                     }
                 ?>
                 { name: 'stock_total_pkt', type: 'string' },
-                { name: 'stock_total_kg', type: 'string' }
+                { name: 'stock_total_kg', type: 'string' },
+                { name: 'amount_price_total', type: 'string' }
             ],
             url: url,
             type: 'POST',
@@ -156,12 +159,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name',pinned:true,width:'100',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',pinned:true,width:'100',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_PACK_SIZE'); ?>', dataField: 'pack_size',pinned:true,width:'100',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { columngroup: 'Total',text: 'CS(pkt)',dataField: '<?php echo 'stock_total_pkt';?>',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { columngroup: 'Total',text: 'CS(kg)', dataField: '<?php echo 'stock_total_kg';?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_PRICE_UNIT'); ?>', dataField: 'amount_price_unit',pinned:true,width:'100',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { columngroup: 'Total',text: 'CS(pkt)',dataField: '<?php echo 'stock_total_pkt';?>',align:'center',cellsalign: 'right',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { columngroup: 'Total',text: 'CS(kg)', dataField: '<?php echo 'stock_total_kg';?>',align:'center',cellsalign: 'right',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { columngroup: 'Total',text: 'Total Price', dataField: '<?php echo 'amount_price_total';?>',align:'center',cellsalign: 'right',width:'120',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     <?php
                         foreach($areas as $area)
-                        {   ?>{ columngroup: '<?php echo $area['text']; ?>',text: 'CS(pkt)',dataField: '<?php echo 'stock_'.$area['value'].'_pkt';?>',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                            { columngroup: '<?php echo $area['text']; ?>',text: 'CS(kg)', dataField: '<?php echo 'stock_'.$area['value'].'_kg';?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                        {   ?>{ columngroup: '<?php echo $area['text']; ?>',text: 'CS(pkt)',dataField: '<?php echo 'stock_'.$area['value'].'_pkt';?>',align:'center',cellsalign: 'right',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                            { columngroup: '<?php echo $area['text']; ?>',text: 'CS(kg)', dataField: '<?php echo 'stock_'.$area['value'].'_kg';?>',align:'center',cellsalign: 'right',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                            { columngroup: '<?php echo $area['text']; ?>',text: 'Price', dataField: '<?php echo 'amount_'.$area['value'].'_price';?>',align:'center',cellsalign: 'right',width:'120',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                             <?php
                         }
                     ?>

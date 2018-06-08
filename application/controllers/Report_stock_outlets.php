@@ -269,6 +269,16 @@ class Report_stock_outlets extends Root_Controller
             $pack_sizes[$result['value']]=$result['text'];
         }
 
+        $this->db->from($this->config->item('table_login_setup_classification_variety_price').' price');
+        $this->db->select('price.variety_id,price.pack_size_id,price.price_net');
+        $results=$this->db->get()->result_array();
+        $price_units=array();
+        foreach($results as $result)
+        {
+            $price_units[$result['variety_id']][$result['pack_size_id']]=$result['price_net'];
+        }
+
+
 
         $this->db->from($this->config->item('table_pos_stock_summary_variety').' stock_summary_variety');
         $this->db->select('stock_summary_variety.variety_id,stock_summary_variety.pack_size_id');
@@ -330,6 +340,10 @@ class Report_stock_outlets extends Root_Controller
                 foreach($stocks[$variety['variety_id']] as $pack_size_id=>$stock_in_details)
                 {
                     $info=$this->initialize_row_stock_current($areas,$variety['crop_name'],$variety['crop_type_name'],$variety['variety_name'],$pack_sizes[$pack_size_id]);
+                    if(isset($price_units[$variety['variety_id']][$pack_size_id]))
+                    {
+                        $info['amount_price_unit']=$price_units[$variety['variety_id']][$pack_size_id];
+                    }
                     if(!$first_row)
                     {
                         if($prev_crop_name!=$variety['crop_name'])
@@ -365,13 +379,16 @@ class Report_stock_outlets extends Root_Controller
                     foreach($stock_in_details as  $area_id=>$quantity)
                     {
                         $info['stock_'.$area_id.'_pkt']=$quantity;
-                        $info['stock_total_pkt']+=$quantity;
                         $info['stock_'.$area_id.'_kg']=$quantity*$pack_sizes[$pack_size_id]/1000;
+                        $info['amount_'.$area_id.'_price']=$quantity*$info['amount_price_unit'];
+
+                        $info['stock_total_pkt']+=$quantity;
                         $info['stock_total_kg']+=($quantity*$pack_sizes[$pack_size_id]/1000);
                     }
+                    $info['amount_price_total']=$info['stock_total_pkt']*$info['amount_price_unit'];
                     foreach($info as $key=>$r)
                     {
-                        if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')))
+                        if(!(($key=='crop_name')||($key=='crop_type_name')||($key=='variety_name')||($key=='pack_size')||($key=='amount_price_unit')))
                         {
                             $type_total[$key]+=$info[$key];
                             $crop_total[$key]+=$info[$key];
@@ -398,12 +415,15 @@ class Report_stock_outlets extends Root_Controller
         $row['crop_type_name']=$crop_type_name;
         $row['variety_name']=$variety_name;
         $row['pack_size']=$pack_size;
+        $row['amount_price_unit']=0;
         $row['stock_total_pkt']=0;
         $row['stock_total_kg']=0;
+        $row['amount_price_total']=0;
         foreach($areas as $area)
         {
             $row['stock_'.$area['value'].'_pkt']=0;
             $row['stock_'.$area['value'].'_kg']=0;
+            $row['amount_'.$area['value'].'_price']=0;
         }
         return $row;
     }
@@ -443,6 +463,17 @@ class Report_stock_outlets extends Root_Controller
                 else
                 {
                     $row[$key]=number_format($info[$key],3,'.','');
+                }
+            }
+            elseif(substr($key,0,6)=='amount')
+            {
+                if($info[$key]==0)
+                {
+                    $row[$key]='';
+                }
+                else
+                {
+                    $row[$key]=number_format($info[$key],2);
                 }
             }
             else

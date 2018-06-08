@@ -17,3 +17,5 @@ $lang['LABEL_QUANTITY_CANCEL_PKT']="Cancel(pkt)";
 $lang['LABEL_QUANTITY_CANCEL_KG']="Cancel(kg)";
 $lang['LABEL_QUANTITY_ACTUAL_PKT']="Actual(pkt)";
 $lang['LABEL_QUANTITY_ACTUAL_KG']="Actual(kg)";
+$lang['LABEL_AMOUNT_PRICE_UNIT']="Unit Price";
+$lang['LABEL_AMOUNT_PRICE_TOTAL']="Total Price";
