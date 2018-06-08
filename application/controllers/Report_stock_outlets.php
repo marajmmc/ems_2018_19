@@ -693,7 +693,7 @@ class Report_stock_outlets extends Root_Controller
         $this->db->where('ow.status !=',$this->config->item('system_status_delete'));
         $this->db->where('ow.status_delivery',$this->config->item('system_status_delivered'));
         $this->db->where_in('details.variety_id',$variety_ids);
-        $this->db->where('ow.outlet_id',$outlet_id);
+        $this->db->where_in('ow.outlet_id',$outlet_ids);
         if($pack_size_id>0)
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
@@ -721,7 +721,7 @@ class Report_stock_outlets extends Root_Controller
 
         $this->db->join($this->config->item('table_pos_sale').' sale','sale.id=details.sale_id','INNER');
         $this->db->where('sale.status !=',$this->config->item('system_status_delete'));
-        $this->db->where('sale.outlet_id',$outlet_id);
+        $this->db->where_in('sale.outlet_id',$outlet_ids);
         if($pack_size_id>0)
         {
             $this->db->where('details.pack_size_id',$pack_size_id);
