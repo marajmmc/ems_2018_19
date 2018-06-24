@@ -76,6 +76,7 @@ class Reports_field_visit_attendance extends Root_Controller
                     }
                 }
             }
+            $this->db->where('user_area.territory_id >',0);
             $this->db->where('user_area.revision',1);
             $this->db->where('user.status',$this->config->item('system_status_active'));
             $this->db->where('user_info.revision',1);
@@ -323,6 +324,7 @@ class Reports_field_visit_attendance extends Root_Controller
                     }
                 }
             }
+            $this->db->where('user_area.territory_id >',0);
         }
         if($user_id)
         {
@@ -470,6 +472,7 @@ class Reports_field_visit_attendance extends Root_Controller
                 }
             }
         }
+        $this->db->where('user_area.territory_id >',0);
         $this->db->where('user_area.revision',1);
         $this->db->where('user.status',$this->config->item('system_status_active'));
         $this->db->where('user_info.revision',1);
