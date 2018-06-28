@@ -194,6 +194,7 @@ foreach($user_info as $user)
         $(document).off('change', '#division_id');
         $(document).off('change', '#zone_id');
         $(document).off('change', '#territory_id');
+        $(document).off('change', '#employee_info_id');
 
         $(document).on('change','#division_id',function()
         {

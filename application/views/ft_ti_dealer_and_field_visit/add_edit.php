@@ -417,6 +417,7 @@ jQuery(document).ready(function()
     system_preset({controller:'<?php echo $CI->router->class; ?>'});
     $(".datepicker").datepicker({dateFormat : display_date_format});
     $(".browse_button").filestyle({input: false,icon: false,buttonText: "Upload Picture",buttonName: "btn-primary"});
+    $(document).off('change', '#date');
     $(document).off('change', '#division_id');
     $(document).off('change', '#zone_id');
     $(document).off('change', '#territory_id');
