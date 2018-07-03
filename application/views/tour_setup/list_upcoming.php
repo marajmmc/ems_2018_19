@@ -12,24 +12,8 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(
-        'label' => 'Upcoming List',
-        'href' => site_url($CI->controller_url . '/index/list_upcoming')
-    );
-}
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_NEW"),
-        'href' => site_url($CI->controller_url . '/index/add')
-    );
-}
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line("ACTION_EDIT"),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit')
+        'label' => 'Pending List',
+        'href' => site_url($CI->controller_url . '/index/list')
     );
 }
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
@@ -41,13 +25,22 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'data-action-link' => site_url($CI->controller_url . '/index/details')
     );
 }
-if (isset($CI->permissions['action3']) && ($CI->permissions['action3'] == 1))
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
-        'label' => $CI->lang->line("ACTION_DELETE"),
+        'label' => 'Print View',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/delete')
+        'data-action-link' => site_url($CI->controller_url . '/index/print_view')
+    );
+}
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'Print Requisition',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/print_requisition')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
@@ -74,23 +67,17 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     $action_buttons[] = array
     (
         'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference')
-    );
-}
-if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'type' => 'button',
-        'label' => 'Forward',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/forward')
+        'href' => site_url($CI->controller_url . '/index/set_preference_all')
     );
 }
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
-    'href' => site_url($CI->controller_url . '/index/list')
-
+    'href' => site_url($CI->controller_url . '/index/list_upcoming')
+);
+$action_buttons[] = array(
+    'type' => 'button',
+    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
+    'id' => 'button_jqx_load_more'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
@@ -114,7 +101,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items'); ?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_upcoming'); ?>";
 
         // prepare the data
         var source =

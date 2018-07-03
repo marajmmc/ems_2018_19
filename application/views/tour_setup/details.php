@@ -61,15 +61,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </tr>
             <tr>
                 <th class="widget-header header_caption">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></label>
+                    <label class="control-label pull-right">Total <?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></label>
                 </th>
-                <th colspan="3"><label class="control-label"><?php echo number_format($item['amount_iou'],2); ?></label></th>
-            </tr>
-            <tr>
-                <th class="widget-header header_caption">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?></label>
-                </th>
-                <th colspan="3"><label class="control-label"><?php echo $item['iou_details']; ?></label></th>
+                <th colspan="3"><label class="control-label"><?php echo System_helper::get_string_amount($item['amount_iou']); ?></label></th>
             </tr>
             <tr>
                 <th class="widget-header header_caption">

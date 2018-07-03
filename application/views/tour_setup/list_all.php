@@ -2,10 +2,20 @@
 $CI = & get_instance();
 
 $action_buttons = array();
-$action_buttons[] = array(
-    'label' => 'Pending List',
-    'href' => site_url($CI->controller_url . '/index/list')
-);
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+{
+    $action_buttons[] = array(
+        'label' => 'Pending List',
+        'href' => site_url($CI->controller_url . '/index/list')
+    );
+}
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+{
+    $action_buttons[] = array(
+        'label' => 'Upcoming List',
+        'href' => site_url($CI->controller_url . '/index/list_upcoming')
+    );
+}
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(

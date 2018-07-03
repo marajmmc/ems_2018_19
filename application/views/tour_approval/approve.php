@@ -17,6 +17,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     .purpose-list table tr td:first-child {
         width: 50px
     }
+    label{margin-top:5px}
+    label.normal{font-weight:normal !important}
 </style>
 
 <div class="row widget">
@@ -68,8 +70,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label">From: <?php echo System_helper::display_date($item['date_from']) ?>
-                To: <?php echo System_helper::display_date($item['date_to']) ?></label>
+            From &nbsp;<label class="control-label"><?php echo System_helper::display_date($item['date_from']) ?></label> &nbsp;
+            To &nbsp;<label class="control-label"><?php echo System_helper::display_date($item['date_to']) ?></label>
         </div>
     </div>
 
@@ -114,25 +116,59 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <div class="row show-grid">
+    <?php
+    if ($iou_items)
+    {
+        $i = 0;
+        $amount_iou_items = array();
+        $total_iou_amount = 0.0;
+        if($item['amount_iou_items'] && ($item['amount_iou_items'] != '')){
+            $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+        }
+        foreach ($iou_items as $iou_item)
+        {
+            ?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <?php if ($i == 0)
+                    {
+                    ?>
+                        <label class="control-label pull-right"><?php echo 'IOU Items'; ?>:</label>
+                    <?php
+                    }
+                    else
+                    {
+                        echo '';
+                    }
+                    ?>
+                </div>
+                <div class="col-xs-3">
+                    <label class="control-label pull-right normal"><?php echo to_label($iou_item); ?>:</label>
+                </div>
+                <div class="col-xs-1" style="padding-left:0;">
+                    <label class="control-label pull-right"><?php echo System_helper::get_string_amount( (isset($amount_iou_items[$iou_item]))? $amount_iou_items[$iou_item]: 0 ); ?></label>
+                </div>
+            </div>
+            <?php
+            $total_iou_amount += $amount_iou_items[$iou_item];
+            $i++;
+        }
+    }
+    ?>
+
+
+    <div class="row show-grid" style="margin-bottom:30px">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
+            &nbsp;
         </div>
-        <div class="col-sm-4 col-xs-8">
-            <label
-                class="control-label"><?php echo ($item['amount_iou']) ? number_format($item['amount_iou'], 2) : "N/A"; ?></label>
+        <div class="col-xs-3" style="border-top:1px solid #000; padding-top:5px">
+            <label class="control-label pull-right">Total <?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
+        </div>
+        <div class="col-xs-1" style="border-top:1px solid #000; padding-top:5px; padding-left:0; text-align:right">
+            <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>
         </div>
     </div>
 
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?>:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label
-                class="control-label"><?php echo ($item['iou_details']) ? nl2br($item['iou_details']) : "N/A"; ?></label>
-        </div>
-    </div>
 
     <?php if($item['remarks']){ ?>
     <div class="row show-grid">
@@ -172,7 +208,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-
+                &nbsp;
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button pull-right">

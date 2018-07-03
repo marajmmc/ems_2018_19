@@ -13,5 +13,8 @@ $config['table_ems_system_assigned_area'] = 'ems_system_assigned_area';
 
 //Tour Setup
 $config['table_ems_tour_setup'] = 'arm_ems_2018_19.ems_tour_setup';
-$config['table_ems_tour_setup_purpose'] = 'arm_ems_2018_19.ems_tour_setup_purpose';
+$config['table_ems_tour_purpose'] = 'arm_ems_2018_19.ems_tour_purpose';
+$config['table_ems_tour_reporting'] = 'arm_ems_2018_19.ems_tour_reporting';
+
+
 $config['table_ems_tour_setup_purpose_others'] = 'arm_ems_2018_19.ems_tour_setup_purpose_others';

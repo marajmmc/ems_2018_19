@@ -13,7 +13,7 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
         'type' => 'button',
         'label' => 'Report Entry',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/reporting/'.$item['tour_id'])
+        'data-action-link' => site_url($CI->controller_url . '/index/reporting')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
@@ -47,24 +47,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 </style>
 
 <div class="row widget">
-    <div class="widget-header" style="margin-bottom:5px">
+    <div class="widget-header">
         <div class="title">
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
     </div>
 
-
     <div class="row show-grid">
-        <div class="col-xs-12" id="system_jqx_container">
-        <!--
-         -------------- DATA TABLE LOADS HERE ----------------
-        -->
-        </div>
-    </div>
-
-
-    <div class="row show-grid" style="margin-top:30px">
         <div class="col-xs-4">
             <label class="control-label pull-right">Name:</label>
         </div>
@@ -130,47 +120,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Purpose(s):</label>
-        </div>
-        <div class="col-sm-4 col-xs-8 purpose-list">
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                <tr>
-                    <th><?php echo $this->lang->line('LABEL_SL_NO'); ?></th>
-                    <th>Purpose</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-                if ($item['purposes'])
-                {
-                    $serial = 0;
-                    foreach ($item['purposes'] as $row)
-                    {
-                        ++$serial;
-                        ?>
-                        <tr>
-                            <td><?php echo $serial . '.'; ?></td>
-                            <td><?php echo $row['purpose']; ?></td>
-                        </tr>
-                    <?php
-                    }
-                }
-                else
-                {
-                    ?>
-                    <div class="alert alert-danger text-center"> Tour purpose has not been Setup</div>
-                <?php
-                }
-                ?>
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-
     <?php
     if ($iou_items)
     {
@@ -197,7 +146,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     }
                     ?>
                 </div>
-                <div class="col-xs-3">
+                <div class="col-xs-2">
                     <label class="control-label pull-right normal"><?php echo to_label($iou_item); ?>:</label>
                 </div>
                 <div class="col-xs-1" style="padding-left:0;">
@@ -211,11 +160,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     }
     ?>
 
-    <div class="row show-grid" style="margin-bottom:20px">
+    <div class="row show-grid" style="margin-bottom:30px">
         <div class="col-xs-4">
             &nbsp;
         </div>
-        <div class="col-xs-3" style="border-top:1px solid #000; padding-top:5px">
+        <div class="col-xs-2" style="border-top:1px solid #000; padding-top:5px">
             <label class="control-label pull-right">Total <?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
         </div>
         <div class="col-xs-1" style="border-top:1px solid #000; padding-top:5px; padding-left:0; text-align:right">
@@ -223,7 +172,17 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <?php if($item['remarks']){ ?>
+    <div class="clearfix"></div>
+</div>
+
+<div class="col-xs-12" id="system_jqx_container">
+    <!--
+     ---------- Data Table Here -----------
+    -->
+</div>
+
+<?php if($item['remarks']){ ?>
+    <div class="row widget" style="padding:15px 0 0">
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Remarks:</label>
@@ -233,11 +192,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </div>
         </div>
         <div class="clearfix"></div>
-    <?php } ?>
-
-    <div class="clearfix"></div>
-</div>
-
+    </div>
+<?php } ?>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -247,15 +203,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'string' },
+                { name: 'id', type: 'int' },
                 { name: 'sl_no', type: 'string' },
-                { name: 'date_reporting', type: 'string' },
-                { name: 'purpose', type: 'string' }
+                { name: 'purpose', type: 'string' },
+                { name: 'date_reporting', type: 'string' }
             ],
-            /* id: 'id', */
+            id: 'id',
             type: 'POST',
             url: url,
-            data: {id:<?php echo $item['id']; ?> } // id sent to `get_reporting_items()`
+            data: {id:<?php echo $item['id']; ?>}
         };
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
@@ -279,9 +235,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 enablebrowserselection: true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $this->lang->line('LABEL_SL_NO'); ?>', pinned: true, dataField: 'sl_no', width: '80', rendered: tooltiprenderer },
-                    { text: 'Reporting Date', dataField: 'date_reporting', filtertype: 'list', width: '150', rendered: tooltiprenderer },
-                    { text: 'Purpose', dataField: 'purpose', rendered: tooltiprenderer }
+                    { text: '<?php echo $this->lang->line('LABEL_SL_NO'); ?>', pinned: true, dataField: 'sl_no', width: '80', rendered: tooltiprenderer},
+                    { text: 'Purpose', dataField: 'purpose', rendered: tooltiprenderer},
+                    { text: 'Reporting Date', dataField: 'date_reporting', filtertype: 'list', width: '150', rendered: tooltiprenderer}
                 ]
             });
     });

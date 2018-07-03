@@ -17,6 +17,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     .purpose-list table tr td:first-child {
         width: 50px
     }
+    label{margin-top:5px}
+    label.normal{font-weight:normal !important}
 </style>
 
 <div class="row widget">
@@ -68,8 +70,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?>:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label">From: <?php echo System_helper::display_date($item['date_from']) ?>
-                To: <?php echo System_helper::display_date($item['date_to']) ?></label>
+            From &nbsp;<label class="control-label"><?php echo System_helper::display_date($item['date_from']) ?></label> &nbsp;
+            To &nbsp;<label class="control-label"><?php echo System_helper::display_date($item['date_to']) ?></label>
         </div>
     </div>
 
@@ -114,24 +116,58 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <div class="row show-grid">
+
+    <?php
+    if ($iou_items)
+    {
+        $i = 0;
+        $amount_iou_items = array();
+        $total_iou_amount = 0.0;
+        if($item['amount_iou_items'] && ($item['amount_iou_items'] != '')){
+            $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+        }
+        foreach ($iou_items as $iou_item)
+        {
+            ?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <?php if ($i == 0)
+                    {
+                        ?>
+                        <label class="control-label pull-right"><?php echo 'IOU Items'; ?>:</label>
+                    <?php
+                    }
+                    else
+                    {
+                        echo '';
+                    }
+                    ?>
+                </div>
+                <div class="col-xs-3">
+                    <label class="control-label pull-right normal"><?php echo to_label($iou_item); ?>:</label>
+                </div>
+                <div class="col-xs-1" style="padding-left:0">
+                    <label class="control-label pull-right"><?php echo System_helper::get_string_amount( (isset($amount_iou_items[$iou_item]))? $amount_iou_items[$iou_item]: 0 ); ?></label>
+                </div>
+            </div>
+            <?php
+            $total_iou_amount += $amount_iou_items[$iou_item];
+            $i++;
+        }
+    }
+    ?>
+
+    <div class="row show-grid" style="margin-bottom:30px">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
+            &nbsp;
         </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo ($item['amount_iou']) ? number_format($item['amount_iou'], 2) : "N/A"; ?></label>
+        <div class="col-xs-3" style="border-top:1px solid #000; padding-top:5px">
+            <label class="control-label pull-right">Total <?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
+        </div>
+        <div class="col-xs-1" style="border-top:1px solid #000; padding-top:5px; padding-left:0; text-align:right">
+            <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>
         </div>
     </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?>:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo ($item['iou_details']) ? nl2br($item['iou_details']) : "N/A"; ?></label>
-        </div>
-    </div>
-
     <?php if (($item['remarks'])) { ?>
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -144,7 +180,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     <?php } ?>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_delete'); ?>" method="post">
-        <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
+        <input type="hidden" id="id" name="id" value="<?php echo $item['tour_id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -153,7 +189,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <div class="col-sm-4 col-xs-8">
                 <select name="item[status]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $this->config->item('system_status_delete')?>"><?php echo $this->config->item('system_status_delete')?></option>
+                    <option value="<?php echo $this->config->item('system_status_delete'); ?>">Delete</option>
                 </select>
             </div>
         </div>
@@ -180,7 +216,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     jQuery(document).ready(function () {
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == 'Delete') {
+            if (options == '<?php echo $this->config->item('system_status_delete'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_DELETE'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');

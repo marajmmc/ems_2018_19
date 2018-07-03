@@ -43,7 +43,12 @@ class Task_helper
     }
 }
 
-
+// Added by Mahmud (Converting INDEX type text into LABEL type text)
+if(!function_exists('to_label')){
+    function to_label($input){
+        return ucwords(str_replace('_', ' ', trim($input)));
+    }
+}
 
 // Added by Mahmud (Temporarily just for debugging ARRAY)
 if(!function_exists('pr')){
@@ -56,6 +61,7 @@ if(!function_exists('pr')){
 
     }
 }
+
 // Added by Mahmud (Temporarily just for debugging QUERY)
 if(!function_exists('show_query')){
     function show_query($die=1){

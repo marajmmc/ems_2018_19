@@ -85,6 +85,15 @@ class Tour_approval extends Root_Controller
         }
         return $data;
     }
+    private function get_iou_items()
+    {
+        return array(
+            'accommodation',
+            'transportation',
+            'food_allowance',
+            'miscellaneous'
+        );
+    }
     private function get_preference($method = 'list')
     {
         $user = User_helper::get_user();
@@ -301,12 +310,13 @@ class Tour_approval extends Root_Controller
             $data['item']['name'] = $data['item']['name'] . ' (' . $data['item']['employee_id'] . ')';
 
             //data from tour setup others table
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
+            $this->db->from($this->config->item('table_ems_tour_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
-            $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
+            $this->db->where('tour_setup_purpose.tour_id', $item_id);
             $this->db->where('tour_setup_purpose.status !="'.$this->config->item('system_status_delete').'"');
             $data['items'] = $this->db->get()->result_array();
 
+            $data['iou_items'] = $this->get_iou_items();
             $data['title'] = 'Tour Setup And Reporting Approval:: ' . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
@@ -426,7 +436,7 @@ class Tour_approval extends Root_Controller
             $data['users']=System_helper::get_users_info($user_ids);
 
             //data from tour setup purpose
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' purpose');
+            $this->db->from($this->config->item('table_ems_tour_purpose') . ' purpose');
             $this->db->select('purpose.*');
             $this->db->join($this->config->item('table_ems_tour_setup_purpose_others').' others','others.tour_setup_purpose_id=purpose.id AND others.status = "'.$this->config->item('system_status_active').'"','LEFT');
             $this->db->select('
@@ -436,7 +446,7 @@ class Tour_approval extends Root_Controller
                 others.profession,
                 others.discussion
             ');
-            $this->db->where('purpose.tour_setup_id', $item_id);
+            $this->db->where('purpose.tour_id', $item_id);
             $this->db->where('purpose.status !="'.$this->config->item('system_status_delete').'"');
             $this->db->order_by('purpose.id', 'ASC');
             $results = $this->db->get()->result_array();
@@ -444,7 +454,7 @@ class Tour_approval extends Root_Controller
 
             foreach ($results as $result)
             {
-                $items[$result['id']]['tour_setup_id']=$result['tour_setup_id'];
+                $items[$result['id']]['tour_setup_id']=$result['tour_id'];
                 $items[$result['id']]['purpose']=$result['purpose'];
                 $items[$result['id']]['date_reporting']=$result['date_reporting'];
                 $items[$result['id']]['report_description']=$result['report_description'];
@@ -529,9 +539,9 @@ class Tour_approval extends Root_Controller
             // Validation END
 
             //data from tour setup purpose
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
+            $this->db->from($this->config->item('table_ems_tour_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
-            $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
+            $this->db->where('tour_setup_purpose.tour_id', $item_id);
             $this->db->where('tour_setup_purpose.status !="'.$this->config->item('system_status_delete').'"');
             $this->db->order_by('tour_setup_purpose.id', 'ASC');
             $items = $this->db->get()->result_array();
@@ -619,9 +629,9 @@ class Tour_approval extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $this->db->from($this->config->item('table_ems_tour_setup_purpose') . ' tour_setup_purpose');
+            $this->db->from($this->config->item('table_ems_tour_purpose') . ' tour_setup_purpose');
             $this->db->select('tour_setup_purpose.*');
-            $this->db->where('tour_setup_purpose.tour_setup_id', $item_id);
+            $this->db->where('tour_setup_purpose.tour_id', $item_id);
             $this->db->where('tour_setup_purpose.status !="'.$this->config->item('system_status_delete').'"');
             $this->db->order_by('tour_setup_purpose.id', 'ASC');
             $data['items'] = $this->db->get()->result_array();
