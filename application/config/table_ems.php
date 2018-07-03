@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+//Field Task Setup
+$config['table_ems_setup_ft_seasons'] = 'arm_ems_2018_19.ems_setup_ft_seasons';
+$config['table_ems_ft_rnd_demo_setup_fruit_picture'] = 'arm_ems_2018_19.ems_ft_rnd_demo_setup_fruit_picture';
+
 //Dealer And Farmer Visit Task --- Added by saiful
 
 $config['table_ems_setup_ft_dealer_file'] = 'arm_ems_2018_19.ems_setup_ft_dealer_file';

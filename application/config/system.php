@@ -24,6 +24,7 @@ $config['system_status_rejected']='Rejected';
 $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
 
 $config['system_base_url_dealer_and_farmer_visit']='http://localhost/ems_2018_19/';
+$config['system_base_url_ft_rnd_demo_setup_fruit_picture']='http://localhost/ems_2018_19/';
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
