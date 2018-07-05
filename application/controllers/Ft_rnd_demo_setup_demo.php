@@ -338,7 +338,7 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
             }
 
             $previous_varieties=array();//active and inactive
-            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_varieties'),'*',array('setup_id ='.$item_id,'revision ='.'1'));
+            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_varieties'),'*',array('setup_id ='.$id,'revision ='.'1'));
             foreach($results as $result)
             {
                 $previous_varieties[$result['variety_id']]=$result;
