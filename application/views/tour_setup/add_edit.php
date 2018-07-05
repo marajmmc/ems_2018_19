@@ -114,7 +114,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                     ?>
                                     <tr>
                                         <td>
-                                            <input type="text" class="form-control purpose" name="items[<?php echo $item_purpose['id']; ?>]" value="<?php echo $item_purpose['purpose']; ?>"/>
+                                            <input type="text" class="form-control purpose" name="old_items[<?php echo $item_purpose['id']; ?>]" value="<?php echo $item_purpose['purpose']; ?>"/>
                                         </td>
                                         <td>
                                             <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -173,7 +173,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         } ?>
                     </div>
                     <div class="col-xs-2">
-                        <label class="control-label pull-right"><?php echo to_label($iou_item); ?>:</label>
+                        <label class="control-label pull-right"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
                     </div>
                     <div class="col-xs-2">
                         <input type="text" name="items_iou[<?php echo $iou_item; ?>]" value="<?php echo (isset($amount_iou_items[$iou_item]))? $amount_iou_items[$iou_item]: 0; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
@@ -191,9 +191,8 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <?php /* <input type="text" id="amount_iou" name="item[amount_iou]" value="<?php echo $item['amount_iou'] ?>" class="form-control float_type_positive price_unit_tk"/> */ ?>
-                BDT. <label class="amount_iou_label"><?php echo System_helper::get_string_amount($item['amount_iou']); ?></label>
-                <input type="hidden" id="amount_iou" name="item[amount_iou]" value="<?php echo $item['amount_iou'] ?>">
+                BDT. <label class="amount_iou_label"><?php echo System_helper::get_string_amount($item['amount_iou_request']); ?></label>
+                <input type="hidden" id="amount_iou" name="item[amount_iou_request]" value="<?php echo $item['amount_iou_request'] ?>">
             </div>
         </div>
 
@@ -245,7 +244,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         $(document).on("click", ".system_button_add_more", function (event) {
             var current_id = parseInt($(this).attr('data-current-id'));
-            current_id = current_id - 1;
+            current_id = current_id + 1;
             $(this).attr('data-current-id', current_id);
             var content_id = '#system_content_add_more table tbody';
             $(content_id + ' .purpose').attr('name', 'items[' + current_id + ']');

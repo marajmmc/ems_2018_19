@@ -43,32 +43,3 @@ class Task_helper
     }
 }
 
-// Added by Mahmud (Converting INDEX type text into LABEL type text)
-if(!function_exists('to_label')){
-    function to_label($input){
-        return ucwords(str_replace('_', ' ', trim($input)));
-    }
-}
-
-// Added by Mahmud (Temporarily just for debugging ARRAY)
-if(!function_exists('pr')){
-    function pr($arr, $die=1){
-        echo '<pre>';
-        print_r($arr);
-        echo '</pre>';
-        if($die)
-            die();
-
-    }
-}
-
-// Added by Mahmud (Temporarily just for debugging QUERY)
-if(!function_exists('show_query')){
-    function show_query($die=1){
-        $CI=& get_instance();
-        echo $CI->db->last_query().'<br/>';
-        if($die)
-            die();
-
-    }
-}
