@@ -109,6 +109,8 @@ $lang['LABEL_UPDATED_BY'] = 'Updated By';
 $lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
 $lang['LABEL_APPROVED_BY'] = 'Approved By';
 
+$lang['LABEL_SEASON'] = 'Season';
+
 /* Status */
 $lang['LABEL_STATUS'] = 'Status';
 
@@ -302,3 +304,10 @@ $lang['LABEL_DATE_APPROVED_TIME']='Approved Time';
 $lang['LABEL_NO_OF_PURPOSE']="No of purpose";
 $lang['LABEL_COMPLETE_REPORTING']="Complete Reporting";
 $lang['LABEL_INCOMPLETE_REPORTING']="Incomplete Reporting";
+
+//R&D Demo Variety Setup
+$lang['LABEL_PRI_NAME']="PRI Name";
+$lang['LABEL_DATE_SOWING'] = 'Sowing Date';
+$lang['LABEL_NUM_VISITS'] = 'Number of Visits';
+$lang['LABEL_INTERVAL'] = 'Interval (Days)';
+$lang['LABEL_DATE_TRANSPLANT'] = 'Transplanting date';
