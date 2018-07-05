@@ -540,6 +540,8 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[year]',$this->lang->line('LABEL_YEAR'),'required|numeric');
         $this->form_validation->set_rules('item[season_id]',$this->lang->line('LABEL_SEASON'),'required|numeric');
+        $this->form_validation->set_rules('crop_id',$this->lang->line('LABEL_CROP_NAME'),'required');
+        $this->form_validation->set_rules('crop_type_id',$this->lang->line('LABEL_CROP_TYPE_NAME'),'required');
         $this->form_validation->set_rules('item[name]',"PRI's Name",'required');
         $this->form_validation->set_rules('item[date_sowing]',$this->lang->line('LABEL_DATE_SOWING'),'required');
         $this->form_validation->set_rules('item[num_visits]',$this->lang->line('LABEL_NUM_VISITS'),'required|numeric');
@@ -549,12 +551,15 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
             $this->message=validation_errors();
             return false;
         }
+
         $variety_ids=$this->input->post('variety_ids');
         if(!((sizeof($variety_ids)>0)))
         {
             $this->message="Please Select at lease One Variety";
             return false;
         }
+
+
         return true;
     }
     private function system_set_preference()

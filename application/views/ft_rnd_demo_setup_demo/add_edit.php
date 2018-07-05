@@ -52,7 +52,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select id="season_id" name="item[season_id]" class="form-control">
@@ -72,7 +72,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_id" class="form-control">
+                <select id="crop_id" name="crop_id" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($crops as $crop)
@@ -89,7 +89,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_type_id" class="form-control">
+                <select id="crop_type_id" name="crop_type_id" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($types as $type)
