@@ -114,7 +114,7 @@ class Ft_rnd_demo_setup_fruit_picture extends Root_Controller
             if(!$data['item'])
             {
                 $ajax['status']=false;
-                $ajax['system_message']='Invalid Fruit Picture Setup.';
+                $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             $data['title']="Edit Fruit Picture Setup (".$data['item']['name'].')';
