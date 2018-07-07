@@ -558,6 +558,7 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
             $this->message="Please Select at least One Variety";
             return false;
         }
+        
         return true;
     }
     private function system_set_preference()
