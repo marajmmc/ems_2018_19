@@ -3,8 +3,8 @@ $CI = & get_instance();
 $action_buttons = array();
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
-    'href' => site_url($CI->controller_url . '/index/list/')
-);
+    'href' => site_url($CI->controller_url . '/index/list/'));
+
 $action_buttons[] = array(
     'type' => 'button',
     'label' => $CI->lang->line("ACTION_CLEAR"),
@@ -34,7 +34,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right">Name:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['name'] ?> (<?php echo $item['employee_id'] ?>)</label>
+            <label class="control-label"><?php echo $item['name'] ?></label>
         </div>
     </div>
 
@@ -52,9 +52,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right">Department:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label">
-                <?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?>
-            </label>
+            <label class="control-label"><?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?></label>
         </div>
     </div>
 
@@ -77,7 +75,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <?php echo Tour_helper::tour_purpose_view($item['tour_setup_id']); ?>
+    <?php echo Tour_helper::tour_purpose_view($item['tour_id']); ?>
 
     <?php echo Tour_helper::iou_items_summary_view('', $item); ?>
 
@@ -92,24 +90,24 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     <?php } ?>
 
-    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_forward'); ?>" method="post">
-        <input type="hidden" id="id" name="id" value="<?php echo $item['tour_setup_id']; ?>"/>
+    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_delete'); ?>" method="post">
+        <input type="hidden" id="id" name="id" value="<?php echo $item['tour_id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Forward<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Delete<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select name="item[status_forwarded_tour]" class="form-control status-combo">
+                <select name="item[status]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $this->config->item('system_status_forwarded'); ?>">Forward</option>
+                    <option value="<?php echo $this->config->item('system_status_delete'); ?>">Delete</option>
                 </select>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                &nbsp;
+
             </div>
             <div class="col-sm-4 col-xs-4">
                 <div class="action_button pull-right">
@@ -117,10 +115,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 </div>
             </div>
             <div class="col-sm-4 col-xs-4">
-                &nbsp;
+
             </div>
         </div>
     </form>
+
     <div class="clearfix"></div>
 </div>
 
@@ -128,8 +127,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     jQuery(document).ready(function () {
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == '<?php echo $this->config->item('system_status_forwarded'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_FORWARD'); ?>');
+            if (options == '<?php echo $this->config->item('system_status_delete'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_DELETE'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }
