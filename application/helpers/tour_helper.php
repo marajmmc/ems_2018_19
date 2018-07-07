@@ -3,6 +3,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Tour_helper
 {
+    public function get_child_ids_designation($designation_id)
+    {
+        $CI=& get_instance();
+        $CI->db->from($CI->config->item('table_login_setup_designation'));
+        $CI->db->order_by('ordering');
+        $results=$CI->db->get()->result_array();
+
+        $child_ids[0]=0;
+        $parents=array();
+        foreach($results as $result)
+        {
+            $parents[$result['parent']][]=$result;
+        }
+        $this->get_sub_child_ids_designation($designation_id, $parents,$child_ids);
+        return $child_ids;
+    }
+
+    public function get_sub_child_ids_designation($id, $parents, &$child_ids)
+    {
+        if(isset($parents[$id]))
+        {
+            foreach($parents[$id] as $child)
+            {
+                $child_ids[$child['id']]=$child['id'];
+                if(isset($parents[$child['id']]) && sizeof($parents[$child['id']])>0 )
+                {
+                    $this->get_sub_child_ids_designation($child['id'], $parents,$child_ids);
+                }
+            }
+        }
+    }
+    
     public static function to_label($input) // Converts INDEX type text into LABEL type text
     {
         return ucwords(str_replace('_', ' ', trim($input)));
