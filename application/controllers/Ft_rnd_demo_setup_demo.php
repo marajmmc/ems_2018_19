@@ -555,11 +555,9 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
         $variety_ids=$this->input->post('variety_ids');
         if(!((sizeof($variety_ids)>0)))
         {
-            $this->message="Please Select at lease One Variety";
+            $this->message="Please Select at least One Variety";
             return false;
         }
-
-
         return true;
     }
     private function system_set_preference()

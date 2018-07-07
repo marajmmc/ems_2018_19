@@ -313,3 +313,8 @@ $lang['LABEL_DATE_SOWING'] = 'Sowing Date';
 $lang['LABEL_NUM_VISITS'] = 'Number of Visits';
 $lang['LABEL_INTERVAL'] = 'Interval (Days)';
 $lang['LABEL_DATE_TRANSPLANT'] = 'Transplanting date';
+
+//R&D Demo Picture
+$lang['LABEL_NUM_VISIT_DONE'] = 'Number of visits done';
+$lang['LABEL_NUM_FRUIT_PICTURE'] = 'Number of Fruit Picture';
+$lang['LABEL_NUM_DISEASE_PICTURE'] = 'Number Of Disease Picture';
