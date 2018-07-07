@@ -146,7 +146,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     ?>
                 </div>
                 <div class="col-xs-3">
-                    <label class="control-label pull-right normal"><?php echo to_label($iou_item); ?>:</label>
+                    <label class="control-label pull-right normal"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
                 </div>
                 <div class="col-xs-1" style="padding-left:0">
                     <label class="control-label pull-right"><?php echo System_helper::get_string_amount( (isset($amount_iou_items[$iou_item]))? $amount_iou_items[$iou_item]: 0 ); ?></label>
@@ -164,7 +164,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
            &nbsp;
         </div>
         <div class="col-xs-3" style="border-top:1px solid #000; padding-top:5px">
-            <label class="control-label pull-right">Total <?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?>:</label>
+            <label class="control-label pull-right">Total <?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>:</label>
         </div>
         <div class="col-xs-1" style="border-top:1px solid #000; padding-top:5px; padding-left:0; text-align:right">
             <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>

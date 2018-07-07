@@ -279,7 +279,7 @@ $lang['LABEL_TITLE'] = 'Title';
 
 // Tour - Added by Mahmud
 $lang['LABEL_TITLE'] = 'Title';
-$lang['LABEL_AMOUNT_IOU'] = "IOU Amount";
+$lang['LABEL_AMOUNT_IOU_REQUEST'] = "IOU Amount Requested";
 $lang['LABEL_AMOUNT_TOTAL_IOU'] = "Total IOU Amount";
 /* $lang['LABEL_IOU_DETAILS'] = "IOU Details"; */
 $lang['LABEL_DESIGNATION'] = "Designation";
@@ -289,11 +289,13 @@ $lang['LABEL_FORWARD'] = "Forward";
 $lang['LABEL_APPROVE'] = "Approve";
 $lang['LABEL_STATUS_FORWARD'] = "Forwarded";
 $lang['LABEL_STATUS_APPROVE'] = "Approved";
+$lang['LABEL_STATUS_FORWARDED_TOUR'] = "Tour Forwarded";
+$lang['LABEL_STATUS_APPROVED_TOUR'] = "Tour Approved";
 
-$lang['LABEL_CREATED_BY'] = 'Created By';
+/* $lang['LABEL_CREATED_BY'] = 'Created By';
 $lang['LABEL_UPDATED_BY'] = 'Updated By';
 $lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
-$lang['LABEL_APPROVED_BY'] = 'Approved By';
+$lang['LABEL_APPROVED_BY'] = 'Approved By'; */
 
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
