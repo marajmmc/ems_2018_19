@@ -47,9 +47,9 @@ $CI=& get_instance();
             </tr>
             <tr>
                 <th class="widget-header header_caption">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU'); ?></label>
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?></label>
                 </th>
-                <th colspan="3"><label class="control-label"><?php echo number_format($item['amount_iou'],2); ?></label></th>
+                <th colspan="3"><label class="control-label"><?php echo number_format($item['amount_iou_request'],2); ?></label></th>
             </tr>
             <tr>
                 <th class="widget-header header_caption">
