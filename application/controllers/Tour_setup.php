@@ -12,14 +12,6 @@ class Tour_setup extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
-        $this->locations = User_helper::get_locations();
-        /* if (!($this->locations))
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
-            $this->json_return($ajax);
-        } */
-
         $this->load->helper('tour');
     }
 
@@ -84,6 +76,10 @@ class Tour_setup extends Root_Controller
         elseif ($action == "set_preference_all")
         {
             $this->system_set_preference_all();
+        }
+        elseif ($action == "set_preference_upcoming")
+        {
+            $this->system_set_preference_upcoming();
         }
         elseif ($action == "save_preference")
         {
@@ -852,7 +848,6 @@ class Tour_setup extends Root_Controller
 //            $data['items'] = $this->db->get()->result_array();
 
             $data['title'] = 'Forward Tour Setup And Reporting:: ' . $data['item']['title'];
-
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/forward", $data, true));
             if ($this->message)
@@ -939,6 +934,63 @@ class Tour_setup extends Root_Controller
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference()
+    {
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
+        {
+            $data['system_preference_items'] = $this->get_preference();
+            $data['preference_method_name'] = 'list';
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference_all()
+    {
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
+        {
+            $data['system_preference_items'] = $this->get_preference('list_all');
+            $data['preference_method_name'] = 'list_all';
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference_upcoming()
+    {
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
+        {
+            $data['system_preference_items'] = $this->get_preference('list_upcoming');
+            $data['preference_method_name'] = 'list_upcoming';
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_upcoming');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
     }
@@ -1032,13 +1084,13 @@ class Tour_setup extends Root_Controller
             }
             if ($total_amount_iou_request <= 0.0)
             {
-                $this->message = 'Total ' . $this->lang->line('LABEL_AMOUNT_IOU_REQUEST') . ' cannot be 0 or, negative.';
+                $this->message = $this->lang->line('LABEL_AMOUNT_TOTAL_IOU') . ' cannot be 0 or, negative.';
                 return false;
             }
         }
         else
         {
-            $this->message = $this->lang->line('LABEL_AMOUNT_IOU_REQUEST') . ' is required.';
+            $this->message = $this->lang->line('LABEL_AMOUNT_TOTAL_IOU') . ' is required.';
             return false;
         }
 
