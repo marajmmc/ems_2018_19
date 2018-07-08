@@ -260,7 +260,7 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
             $data['types']=Query_helper::get_info($this->config->item('table_login_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['item']['crop_id'],'status !="'.$this->config->item('system_status_delete').'"'));
             $data['varieties']=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),array('id value','name text','whose'),array('crop_type_id ='.$data['item']['type_id'],'status !="'.$this->config->item('system_status_delete').'"'),0,0,array('whose ASC','ordering ASC'));
             $data['seasons']=Query_helper::get_info($this->config->item('table_ems_setup_seasons'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
-            $data['title']="Edit R&N Demo Variety Setup";
+            $data['title']="Edit R&D Demo Variety Setup";
             $ajax['status']=true;
             if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
             {

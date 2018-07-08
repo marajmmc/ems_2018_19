@@ -168,7 +168,7 @@ class Ft_rnd_demo_setup_fruit_picture extends Root_Controller
         }
         else
         {
-            $path='images/ft_rnd_demo_setup_fruit_picture/';
+            $path='images/ft_rnd_demo_setup_fruit_picture';
             $dir=(FCPATH).$path;
             if(!is_dir($dir))
             {
