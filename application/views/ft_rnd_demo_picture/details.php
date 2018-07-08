@@ -25,7 +25,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="col-md-12">
+
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_basic_info" href="#">+ Basic Information</a></label>
+        </h4>
+    </div>
+    <div id="collapse_basic_info" class="panel-collapse collapse">
         <table class="table table-bordered table-responsive system_table_details_view">
             <tbody>
             <tr>
@@ -104,6 +111,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </tbody>
         </table>
     </div>
+    </div>
 </div>
 <div class="panel-group" id="accordion">
 <div class="panel panel-default">
@@ -163,7 +171,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_created']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_created']);
-                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
+                                        $text.='<br><b>Remarks</b>:'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
                                     }
                                     echo $text;
                                     ?>
@@ -175,7 +183,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_feedback']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['feedback']);
+                                        $text.='<br><b>Feedback</b>:'.nl2br($visits_picture[$i][$variety['variety_id']]['feedback']);
                                     }
                                     else
                                     {
@@ -264,7 +272,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_created']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_created']);
-                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['remarks']);
+                                        $text.='<br><b>Remarks</b>:'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['remarks']);
                                     }
                                     echo $text;
                                     ?>
@@ -276,7 +284,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:<br>'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['feedback']);
+                                        $text.='<br><b>Feedback</b>:'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['feedback']);
                                     }
                                     else
                                     {
@@ -358,7 +366,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         $text.='<b>Entry By</b>:'.$users[$disease_info['user_created']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($disease_info['date_created']);
-                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($disease_info['remarks']);
+                                        $text.='<br><b>Remarks</b>:'.nl2br($disease_info['remarks']);
                                     }
                                     echo $text;
                                     ?>
@@ -370,7 +378,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         $text.='<b>Entry By</b>:'.$users[$disease_info['user_feedback']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($disease_info['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:<br>'.nl2br($disease_info['feedback']);
+                                        $text.='<br><b>Feedback</b>:'.nl2br($disease_info['feedback']);
                                     }
                                     else
                                     {

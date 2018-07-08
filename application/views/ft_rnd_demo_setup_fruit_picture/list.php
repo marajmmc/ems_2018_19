@@ -105,10 +105,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns:
                     [
-                        { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id',width:'70',cellsalign: 'right'},
+                        { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id',width:'50',cellsalign: 'right'},
                         { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name'},
                         { text: 'Picture', dataField: 'picture',width:'200',cellsrenderer: cellsrenderer},
-                        { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'100',cellsalign: 'right'}
+                        { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'70',cellsalign: 'right'}
                     ]
             });
     });
