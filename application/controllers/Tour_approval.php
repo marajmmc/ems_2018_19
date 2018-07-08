@@ -5,6 +5,7 @@ class Tour_approval extends Root_Controller
     public $message;
     public $permissions;
     public $controller_url;
+    public $locations;
 
     public function __construct()
     {
@@ -147,7 +148,7 @@ class Tour_approval extends Root_Controller
     private function system_get_items()
     {
         $user = User_helper::get_user();
-
+        $designation_child_ids=Tour_helper::get_child_ids_designation($user->designation);
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
@@ -158,18 +159,35 @@ class Tour_approval extends Root_Controller
         $this->db->select('designation.name AS designation');
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
-        /* $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
-        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id'); */
-        //$this->db->where('user_area.revision', 1);
+         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('user_area.revision', 1);
         if ($user->user_group != 1) // If not SuperAdmin, Then Only child's Tour list will appear; Not even own tour list.
         {
-            $this->db->where('tour_setup.user_id !=', $user->user_id);
-            $this->db->where('designation.parent', $user->designation);
+            //$this->db->where('tour_setup.user_id !=', $user->user_id);
+            //$this->db->where('designation.parent', $user->designation);
+            $this->db->where_in('designation.id', $designation_child_ids);
         }
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
         $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_pending'));
         $this->db->order_by('tour_setup.id DESC');
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('divisions.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zones.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('territories.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('districts.id',$this->locations['district_id']);
+                    }
+                }
+            }
+        }
         $items = $this->db->get()->result_array();
 
         foreach ($items as $key => $item)
