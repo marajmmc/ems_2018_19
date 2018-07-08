@@ -16,13 +16,12 @@ class Tour_helper
         {
             $parents[$result['parent']][] = $result;
         }
-        $CI->get_sub_child_ids_designation($designation_id, $parents, $child_ids);
+        Tour_helper::get_sub_child_ids_designation($designation_id, $parents, $child_ids);
         return $child_ids;
     }
 
     public static function get_sub_child_ids_designation($id, $parents, &$child_ids)
     {
-        $CI =& get_instance();
         if (isset($parents[$id]))
         {
             foreach ($parents[$id] as $child)
@@ -30,7 +29,7 @@ class Tour_helper
                 $child_ids[$child['id']] = $child['id'];
                 if (isset($parents[$child['id']]) && sizeof($parents[$child['id']]) > 0)
                 {
-                    $CI->get_sub_child_ids_designation($child['id'], $parents, $child_ids);
+                    Tour_helper::get_sub_child_ids_designation($child['id'], $parents, $child_ids);
                 }
             }
         }
