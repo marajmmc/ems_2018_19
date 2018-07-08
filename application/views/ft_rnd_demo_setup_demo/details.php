@@ -96,7 +96,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </tr>
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CONTACT_NO');?></label></td>
-                <td class="header_value"><label class="control-label"><?php echo $item['address'];?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['contact_no'];?></label></td>
                 <td colspan="2">&nbsp;</td>
             </tr>
             <tr>

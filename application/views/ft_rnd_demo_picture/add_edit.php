@@ -18,91 +18,91 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
 <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
 <div class="row widget">
+
     <div class="widget-header">
         <div class="title">
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label><?php echo $item['year'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label><?php echo $item['season'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['crop_name'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['crop_type_name'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">PRI's Name</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['name'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['address'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo System_helper::display_date($item['date_sowing']); ?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSPLANT');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php if($item['date_transplant']>0){echo System_helper::display_date($item['date_transplant']); }?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['num_visits'];?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['interval'];?></label>
-        </div>
+    <div class="col-md-12">
+        <table class="table table-bordered table-responsive system_table_details_view">
+            <tbody>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['year'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['season'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['crop_name'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['crop_type_name'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label></td>
+                <td class="header_value">
+                    <label class="control-label">
+                        <?php
+                        foreach($previous_varieties as $variety)
+                        {
+                            ?>
+                            <div class="">
+                                <label><?php  echo $variety['variety_name'].' ('.$variety['whose'].')';?></label>
+                            </div>
+                        <?php
+                        }
+                        ?>
+                    </label>
+                </td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right">PRI's Name</label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['name'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['address'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CONTACT_NO');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['address'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_sowing']);?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSPLANT');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_transplant']);?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['num_visits'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['interval'];?></label></td>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 <div class="panel-group" id="accordion">
