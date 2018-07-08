@@ -103,7 +103,7 @@ class Setup_seasons extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
-            $data['item']=Query_helper::get_info($this->config->item('table_ems_setup_seasons'),'*',array('id ='.$item_id),1);
+            $data['item']=Query_helper::get_info($this->config->item('table_ems_setup_seasons'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$data['item'])
             {
                 $ajax['status']=false;

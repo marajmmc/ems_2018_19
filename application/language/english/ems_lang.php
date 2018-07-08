@@ -318,3 +318,5 @@ $lang['LABEL_DATE_TRANSPLANT'] = 'Transplanting date';
 $lang['LABEL_NUM_VISIT_DONE'] = 'Number of visits done';
 $lang['LABEL_NUM_FRUIT_PICTURE'] = 'Number of Fruit Picture';
 $lang['LABEL_NUM_DISEASE_PICTURE'] = 'Number Of Disease Picture';
+$lang['LABEL_FEEDBACK_NOT_GIVEN'] = 'Pending';
+$lang['LABEL_FEEDBACK'] = 'Feedback';

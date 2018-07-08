@@ -13,13 +13,6 @@ $action_buttons[]=array
     'id'=>'button_action_save',
     'data-form'=>'#save_form'
 );
-$action_buttons[]=array
-(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_CLEAR"),
-    'id'=>'button_action_clear',
-    'data-form'=>'#save_form'
-);
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">

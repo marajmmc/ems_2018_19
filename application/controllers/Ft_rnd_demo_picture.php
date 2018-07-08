@@ -181,7 +181,7 @@ class Ft_rnd_demo_picture extends Root_Controller
             $this->db->select('seasons.name season');
             $this->db->join($this->config->item('table_ems_setup_seasons').' seasons','seasons.id =rnd_demo_setup_demo.season_id','INNER');
             $this->db->where('rnd_demo_setup_demo.id',$item_id);
-            $this->db->where('rnd_demo_setup_demo.status',$this->config->item('system_status_active'));
+            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -196,14 +196,14 @@ class Ft_rnd_demo_picture extends Root_Controller
             {
                 $data['visits_picture'][$result['day_no']][$result['variety_id']]=$result;
             }
-            $data['fruits_picture_headers']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['fruits_picture_headers']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),'*',array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering ASC'));
             $data['fruits_picture']=array();
             $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_fruit_picture'),'*',array('setup_id ='.$item_id));
             foreach($results as $result)
             {
                 $data['fruits_picture'][$result['picture_id']][$result['variety_id']]=$result;
             }
-            $data['disease_picture']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_disease_picture'),'*',array('setup_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('id'));
+            $data['disease_picture']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_disease_picture'),'*',array('setup_id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),0,0,array('id'));
             $data['title']="Edit R&D Demo Picture";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
@@ -226,8 +226,6 @@ class Ft_rnd_demo_picture extends Root_Controller
         $id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
-
-
         if(!((isset($this->permissions['action2'])&&($this->permissions['action2']==1))||(isset($this->permissions['action1'])&&($this->permissions['action1']==1))))
         {
             $ajax['status']=false;
@@ -236,7 +234,7 @@ class Ft_rnd_demo_picture extends Root_Controller
             die();
         }
 
-        $result_setup_demo=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_demo'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$id),1);
+        $result_setup_demo=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_demo'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$id),1);
         if(!$result_setup_demo)
         {
             System_helper::invalid_try('Save',$id,'Non-existing');
@@ -279,7 +277,7 @@ class Ft_rnd_demo_picture extends Root_Controller
         }
         $visit_remarks=$this->input->post('visit_remarks');
 
-        $fruits_picture_headers=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
+        $fruits_picture_headers=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),'*',array('status !="'.$this->config->item('system_status_delete').'"'));
         $fruits_picture=array();
         $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_fruit_picture'),'*',array('setup_id ='.$id));
         foreach($results as $result)
@@ -418,6 +416,97 @@ class Ft_rnd_demo_picture extends Root_Controller
         {
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_details($id)
+    {
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $data['previous_varieties']=array();
+            $this->db->from($this->config->item('table_ems_ft_rnd_demo_varieties').' rnd_demo_varieties');
+            $this->db->select('rnd_demo_varieties.*');
+            $this->db->select('v.name variety_name,v.whose');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id =rnd_demo_varieties.variety_id','INNER');
+            $this->db->where('rnd_demo_varieties.setup_id',$item_id);
+            $this->db->where('rnd_demo_varieties.revision',1);
+            $this->db->order_by('v.whose ASC');
+            $this->db->order_by('v.ordering ASC');
+            $results=$this->db->get()->result_array();
+            if(!$results)
+            {
+                System_helper::invalid_try('Details',$item_id,'Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try';
+                $this->json_return($ajax);
+            }
+            $variety_id=0;
+            foreach($results as $key=>$result)
+            {
+                if($key==0)
+                {
+                    $variety_id=$result['variety_id'];
+                }
+                $data['previous_varieties'][$result['variety_id']]=$result;
+            }
+
+            $this->db->from($this->config->item('table_ems_ft_rnd_demo_setup_demo').' rnd_demo_setup_demo');
+            $this->db->select('rnd_demo_setup_demo.*');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id ='.$variety_id,'INNER');
+            $this->db->select('crop_types.id type_id,crop_types.name crop_type_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_types','crop_types.id =v.crop_type_id','INNER');
+            $this->db->select('crops.name crop_name');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crops','crops.id =crop_types.crop_id','INNER');
+            $this->db->select('seasons.name season');
+            $this->db->join($this->config->item('table_ems_setup_seasons').' seasons','seasons.id =rnd_demo_setup_demo.season_id','INNER');
+            $this->db->where('rnd_demo_setup_demo.id',$item_id);
+            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['visits_picture']=array();
+            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_picture'),'*',array('setup_id ='.$item_id));
+            foreach($results as $result)
+            {
+                $data['visits_picture'][$result['day_no']][$result['variety_id']]=$result;
+            }
+            $data['fruits_picture_headers']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),'*',array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering ASC'));
+            $data['fruits_picture']=array();
+            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_fruit_picture'),'*',array('setup_id ='.$item_id));
+            foreach($results as $result)
+            {
+                $data['fruits_picture'][$result['picture_id']][$result['variety_id']]=$result;
+            }
+            $data['disease_picture']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_disease_picture'),'*',array('setup_id ='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),0,0,array('id'));
+            $data['users']=System_helper::get_users_info(array());
+            $data['title']="Details R&D Demo Picture";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
     }

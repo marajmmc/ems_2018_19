@@ -218,34 +218,44 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
             {
                 $item_id=$this->input->post('id');
             }
+            $data['previous_varieties']=array();
+            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_varieties'),'*',array('setup_id ='.$item_id,'revision ='.'1'));
+            if(!$results)
+            {
+                System_helper::invalid_try('Edit',$item_id,'Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try';
+                $this->json_return($ajax);
+            }
+            $variety_id=0;
+            foreach($results as $key=>$result)
+            {
+                if($key==0)
+                {
+                    $variety_id=$result['variety_id'];
+                }
+                $data['previous_varieties'][$result['variety_id']]=$result;
+            }
+
             $this->db->from($this->config->item('table_ems_ft_rnd_demo_setup_demo').' rnd_demo_setup_demo');
             $this->db->select('rnd_demo_setup_demo.*');
-            $this->db->join($this->config->item('table_ems_ft_rnd_demo_varieties').' rnd_demo_varieties','rnd_demo_varieties.setup_id =rnd_demo_setup_demo.id','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id =rnd_demo_varieties.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id ='.$variety_id,'INNER');
             $this->db->select('crop_types.id type_id,crop_types.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_types','crop_types.id =v.crop_type_id','INNER');
             $this->db->select('crops.id crop_id,crops.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crops','crops.id =crop_types.crop_id','INNER');
             $this->db->select('seasons.name season');
             $this->db->join($this->config->item('table_ems_setup_seasons').' seasons','seasons.id =rnd_demo_setup_demo.season_id','INNER');
-            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('rnd_demo_varieties.revision',1);
             $this->db->where('rnd_demo_setup_demo.id',$item_id);
+            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
+                System_helper::invalid_try('Edit',$item_id,'Id Not Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-
-            $data['previous_varieties']=array();
-            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_varieties'),'*',array('setup_id ='.$item_id,'revision ='.'1'));
-            foreach($results as $result)
-            {
-                $data['previous_varieties'][$result['variety_id']]=$result;
-            }
-
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['types']=Query_helper::get_info($this->config->item('table_login_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['item']['crop_id'],'status !="'.$this->config->item('system_status_delete').'"'));
             $data['varieties']=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),array('id value','name text','whose'),array('crop_type_id ='.$data['item']['type_id'],'status !="'.$this->config->item('system_status_delete').'"'),0,0,array('whose ASC','ordering ASC'));
@@ -438,22 +448,40 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
                 $item_id=$this->input->post('id');
             }
 
+            $data['previous_varieties']=array();
+            $results=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_varieties'),'*',array('setup_id ='.$item_id,'revision ='.'1'));
+            if(!$results)
+            {
+                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try';
+                $this->json_return($ajax);
+            }
+            $variety_id=0;
+            foreach($results as $key=>$result)
+            {
+                if($key==0)
+                {
+                    $variety_id=$result['variety_id'];
+                }
+                $data['previous_varieties'][$result['variety_id']]=$result;
+            }
+
             $this->db->from($this->config->item('table_ems_ft_rnd_demo_setup_demo').' rnd_demo_setup_demo');
             $this->db->select('rnd_demo_setup_demo.*');
-            $this->db->join($this->config->item('table_ems_ft_rnd_demo_varieties').' rnd_demo_varieties','rnd_demo_varieties.setup_id =rnd_demo_setup_demo.id','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id =rnd_demo_varieties.variety_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id ='.$variety_id,'INNER');
             $this->db->select('crop_types.id type_id,crop_types.name crop_type_name');
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_types','crop_types.id =v.crop_type_id','INNER');
             $this->db->select('crops.name crop_name');
             $this->db->join($this->config->item('table_login_setup_classification_crops').' crops','crops.id =crop_types.crop_id','INNER');
             $this->db->select('seasons.name season');
             $this->db->join($this->config->item('table_ems_setup_seasons').' seasons','seasons.id =rnd_demo_setup_demo.season_id','INNER');
-            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('rnd_demo_varieties.revision',1);
             $this->db->where('rnd_demo_setup_demo.id',$item_id);
+            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
+                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
@@ -505,6 +533,7 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
             $item_head=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_demo'),'*',array('status !="'.$this->config->item('system_status_delete').'"','id ='.$item_id),1);
             if(!$item_head)
             {
+                System_helper::invalid_try('Delete',$item_id,'Id Not Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
