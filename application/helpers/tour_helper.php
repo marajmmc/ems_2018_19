@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Tour_helper
 {
-    public function get_child_ids_designation($designation_id)
+    public static function get_child_ids_designation($designation_id)
     {
         $CI =& get_instance();
         $CI->db->from($CI->config->item('table_login_setup_designation'));
@@ -16,12 +16,13 @@ class Tour_helper
         {
             $parents[$result['parent']][] = $result;
         }
-        $this->get_sub_child_ids_designation($designation_id, $parents, $child_ids);
+        $CI->get_sub_child_ids_designation($designation_id, $parents, $child_ids);
         return $child_ids;
     }
 
-    public function get_sub_child_ids_designation($id, $parents, &$child_ids)
+    public static function get_sub_child_ids_designation($id, $parents, &$child_ids)
     {
+        $CI =& get_instance();
         if (isset($parents[$id]))
         {
             foreach ($parents[$id] as $child)
@@ -29,7 +30,7 @@ class Tour_helper
                 $child_ids[$child['id']] = $child['id'];
                 if (isset($parents[$child['id']]) && sizeof($parents[$child['id']]) > 0)
                 {
-                    $this->get_sub_child_ids_designation($child['id'], $parents, $child_ids);
+                    $CI->get_sub_child_ids_designation($child['id'], $parents, $child_ids);
                 }
             }
         }
