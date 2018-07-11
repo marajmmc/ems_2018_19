@@ -320,3 +320,6 @@ $lang['LABEL_NUM_FRUIT_PICTURE'] = 'Number of Fruit Picture';
 $lang['LABEL_NUM_DISEASE_PICTURE'] = 'Number Of Disease Picture';
 $lang['LABEL_FEEDBACK_NOT_GIVEN'] = 'Pending';
 $lang['LABEL_FEEDBACK'] = 'Feedback';
+
+//R&D Demo Report
+$lang['LABEL_LOAD_VARIETY'] = 'Load Variety';

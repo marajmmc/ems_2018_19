@@ -144,7 +144,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                             <th style="min-width: 250px;">Picture</th>
                             <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_FEEDBACK');?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -172,22 +171,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                         $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_created']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_created']);
                                         $text.='<br><b>Remarks</b>:'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if((isset($visits_picture[$i][$variety['variety_id']]['user_feedback']))&&(($visits_picture[$i][$variety['variety_id']]['user_feedback'])>0))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_feedback']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:'.nl2br($visits_picture[$i][$variety['variety_id']]['feedback']);
-                                    }
-                                    else
-                                    {
-                                        $text=$CI->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
                                     }
                                     echo $text;
                                     ?>
@@ -245,7 +228,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                             <th style="min-width: 250px;">Picture</th>
                             <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_FEEDBACK');?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -273,22 +255,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                         $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_created']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_created']);
                                         $text.='<br><b>Remarks</b>:'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['remarks']);
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if((isset($fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback']))&&(($fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback'])>0))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['feedback']);
-                                    }
-                                    else
-                                    {
-                                        $text=$CI->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
                                     }
                                     echo $text;
                                     ?>
@@ -338,7 +304,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
                             <th style="min-width: 250px;">Picture</th>
                             <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_FEEDBACK');?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -355,7 +320,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     $image_location='images/no_image.jpg';
                                     if(strlen($disease_info['image_location'])>0)
                                     {
-                                        $image=$disease_info['image_location'];
+                                        $image_location=$disease_info['image_location'];
                                     }
                                     ?>
                                     <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_rnd_demo_picture').$image_location; ?>">
@@ -367,22 +332,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                         $text.='<b>Entry By</b>:'.$users[$disease_info['user_created']]['name'];
                                         $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($disease_info['date_created']);
                                         $text.='<br><b>Remarks</b>:'.nl2br($disease_info['remarks']);
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if((isset($disease_info['user_feedback']))&&(($disease_info['user_feedback'])>0))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$disease_info['user_feedback']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($disease_info['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:'.nl2br($disease_info['feedback']);
-                                    }
-                                    else
-                                    {
-                                        $text=$CI->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
                                     }
                                     echo $text;
                                     ?>

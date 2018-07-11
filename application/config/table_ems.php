@@ -11,6 +11,7 @@ $config['table_ems_ft_rnd_demo_varieties'] = 'arm_ems_2018_19.ems_ft_rnd_demo_va
 $config['table_ems_ft_rnd_demo_picture'] = 'arm_ems_2018_19.ems_ft_rnd_demo_picture';
 $config['table_ems_ft_rnd_demo_disease_picture'] = 'arm_ems_2018_19.ems_ft_rnd_demo_disease_picture';
 $config['table_ems_ft_rnd_demo_fruit_picture'] = 'arm_ems_2018_19.ems_ft_rnd_demo_fruit_picture';
+$config['table_ems_ft_farmers'] = 'arm_ems_2018_19.ems_ft_farmers';
 
 //Dealer And Farmer Visit Task --- Added by saiful
 
