@@ -173,6 +173,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             var element = $(defaultHtml);
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
+            if(column.substr(0,6)=='image_')
+            {
+                var key=column.substr(6);
+                if(record['details']!==undefined)
+                {
+                    element.html(record['details'][key]['image_url']);
+                }
+
+            }
+
+
             return element[0].outerHTML;
         };
         var tooltiprenderer = function (element) {

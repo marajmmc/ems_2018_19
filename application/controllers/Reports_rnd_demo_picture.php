@@ -291,9 +291,8 @@ class Reports_rnd_demo_picture extends Root_Controller
             $item['setup_id']=$result['id'];
             $item['variety_id']=$result['variety_id'];
             $setup_ids[$result['id']]=$result['id'];
-            $item['year_season']=$result['year'].'<br>'.$result['season_name'].'<br>'.$this->lang->line('LABEL_DATE_SOWING').':'.System_helper::display_date($result['date_sowing']);
+            $item['year_season']=$result['year'].'<br>'.$result['season_name'].'<br>'.System_helper::display_date($result['date_sowing']);
             $item['crop_info']=$result['variety_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['crop_name'];
-            $item['location']='';
             $item['date_sowing']=$result['date_sowing'];
             $item['interval']=$result['interval'];
             $items[]=$item;
@@ -338,95 +337,86 @@ class Reports_rnd_demo_picture extends Root_Controller
         }
         $users=System_helper::get_users_info($user_ids);
 
-//        foreach($items as $i=>&$item)
-//        {
-//            if(isset($visit_infos[$item['setup_id']][$item['variety_id']]))
-//            {
-//                foreach($visit_infos[$item['setup_id']][$item['variety_id']] as $visit)
-//                {
-//                    $image=base_url().'images/no_image.jpg';
-//                    if(strlen($visit['picture_url'])>0)
-//                    {
-//                        $image=$visit['picture_url'];
-//                    }
-//                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-key="visit_pictures_'.$visit['day_no'].'" style="height: 125px;width: 133px;cursor:pointer;">';
-//                    $html_row.='<div style="height:100px;"><img src="'.$image.'" style="max-height: 100px;max-width: 133px;"></div>';
-//                    $html_row.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($item['date_sowing']+24*3600*$visit['day_no']*$item['interval']).'</div>';
-//                    $html_row.='</div>';
-//                    $item['visit_pictures_'.$visit['day_no']]=$html_row;
-//                    $html_tooltip='';
-//                    $html_tooltip.='<div>';
-//                    $html_tooltip.='<div><img src="'.$image.'" style="max-width: 100%;"></div>';
-//                    $html_tooltip.='<div style="text-align:center;margin-bottom:5px;">Date: '.System_helper::display_date($item['date_sowing']+24*3600*$visit['day_no']*$item['interval']).'</div>';
-//                    $html_tooltip.='<div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.System_helper::display_date_time($visit['date_created']).'</div></div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' By: <div>'.$users[$visit['user_created']]['name'].'</div></div>';
-//                    $html_tooltip.='</div>';
-//
-//                    $html_tooltip.='</div>';
-//                    $item['details']['visit_pictures_'.$visit['day_no']]=$html_tooltip;
-//                }
-//            }
-//            if(isset($fruit_infos[$item['setup_id']][$item['variety_id']]))
-//            {
-//                foreach($fruit_infos[$item['setup_id']][$item['variety_id']] as $visit)
-//                {
-//                    $image=base_url().'images/no_image.jpg';
-//                    if(strlen($visit['picture_url'])>0)
-//                    {
-//                        $image=$visit['picture_url'];
-//                    }
-//                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-key="fruit_pictures_'.$visit['picture_id'].'" style="height: 125px;width: 133px;cursor:pointer;">';
-//                    $html_row.='<div style="height:100px;"><img src="'.$image.'" style="max-height: 100px;max-width: 133px;"></div>';
-//                    $html_row.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($visit['date_created']).'</div>';
-//                    $html_row.='</div>';
-//                    $item['fruit_pictures_'.$visit['picture_id']]=$html_row;
-//                    $html_tooltip='';
-//                    $html_tooltip.='<div>';
-//                    $html_tooltip.='<div><img src="'.$image.'" style="max-width: 100%;"></div>';
-//                    $html_tooltip.='<div style="text-align:center;margin-bottom:5px;">Date: '.System_helper::display_date($visit['date_created']).'</div>';
-//                    $html_tooltip.='<div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.System_helper::display_date_time($visit['date_created']).'</div></div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' By: <div>'.$users[$visit['user_created']]['name'].'</div></div>';
-//                    $html_tooltip.='</div>';
-//
-//                    $html_tooltip.='</div>';
-//                    $item['details']['fruit_pictures_'.$visit['picture_id']]=$html_tooltip;
-//                }
-//            }
-//            if(isset($disease_infos[$item['setup_id']][$item['variety_id']]))
-//            {
-//                foreach($disease_infos[$item['setup_id']][$item['variety_id']] as $index=>$visit)
-//                {
-//                    $image=base_url().'images/no_image.jpg';
-//                    if(strlen($visit['picture_url'])>0)
-//                    {
-//                        $image=$visit['picture_url'];
-//                    }
-//                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-key="disease_pictures_'.$index.'" style="height: 125px;width: 133px;cursor:pointer;">';
-//                    $html_row.='<div style="height:100px;"><img src="'.$image.'" style="max-height: 100px;max-width: 133px;"></div>';
-//                    $html_row.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($visit['date_created']).'</div>';
-//                    $html_row.='</div>';
-//                    $item['disease_pictures_'.$index]=$html_row;
-//                    $html_tooltip='';
-//                    $html_tooltip.='<div>';
-//                    $html_tooltip.='<div><img src="'.$image.'" style="max-width: 100%;"></div>';
-//                    $html_tooltip.='<div style="text-align:center;margin-bottom:5px;">Date: '.System_helper::display_date($visit['date_created']).'</div>';
-//                    $html_tooltip.='<div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.System_helper::display_date_time($visit['date_created']).'</div></div>';
-//                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' By: <div>'.$users[$visit['user_created']]['name'].'</div></div>';
-//                    $html_tooltip.='</div>';
-//
-//                    $html_tooltip.='</div>';
-//                    $item['details']['disease_pictures_'.$index]=$html_tooltip;
-//                }
-//            }
-//        }
+        foreach($items as $i=>&$item)
+        {
+            if(isset($visit_infos[$item['setup_id']][$item['variety_id']]))
+            {
+                foreach($visit_infos[$item['setup_id']][$item['variety_id']] as $visit)
+                {
+                    $image_url=base_url().'images/no_image.jpg';
+                    if(strlen($visit['image_location'])>0)
+                    {
+                        $image_url=$this->config->item('system_base_url_ft_rnd_demo_picture').$visit['image_location'];
+                    }
+                    $day_visit=System_helper::display_date($item['date_sowing']+24*3600*$visit['day_no']*$item['interval']);
+                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-details-key="visit_pictures_'.$visit['day_no'].'" style="height: 125px;width: 133px;cursor:pointer;">';
+                    $html_row.='<div style="height:100px;"><img src="'.$image_url.'" style="max-height: 100px;max-width: 133px;"></div>';
+                    $html_row.='<div style="height: 25px;text-align: center; ">'.$day_visit.'</div>';
+                    $html_row.='</div>';
+                    $item['visit_pictures_'.$visit['day_no']]=$html_row;
 
-        $items=array();
+                    $details=array();
+                    $details['image_url']=$image_url;
+                    $details['day_visit']=$day_visit;
+                    $details['remarks']=$visit['remarks'];
+                    $details['remarks_time']=System_helper::display_date_time($visit['date_created']);
+                    $details['remarks_by']=$users[$visit['user_created']]['name'];
+
+                    $item['details']['visit_pictures_'.$visit['day_no']]=$details;
+                }
+            }
+            if(isset($fruit_infos[$item['setup_id']][$item['variety_id']]))
+            {
+                foreach($fruit_infos[$item['setup_id']][$item['variety_id']] as $visit)
+                {
+                    $image_url=base_url().'images/no_image.jpg';
+                    if(strlen($visit['image_location'])>0)
+                    {
+                        $image_url=$this->config->item('system_base_url_ft_rnd_demo_picture').$visit['image_location'];
+                    }
+                    $day_visit=System_helper::display_date($visit['date_created']);
+                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-details-key="fruit_pictures_'.$visit['picture_id'].'" style="height: 125px;width: 133px;cursor:pointer;">';
+                    $html_row.='<div style="height:100px;"><img src="'.$image_url.'" style="max-height: 100px;max-width: 133px;"></div>';
+                    $html_row.='<div style="height: 25px;text-align: center; ">'.$day_visit.'</div>';
+                    $html_row.='</div>';
+                    $item['fruit_pictures_'.$visit['picture_id']]=$html_row;
+
+                    $details=array();
+                    $details['image_url']=$image_url;
+                    $details['day_visit']=$day_visit;
+                    $details['remarks']=$visit['remarks'];
+                    $details['remarks_time']=System_helper::display_date_time($visit['date_created']);
+                    $details['remarks_by']=$users[$visit['user_created']]['name'];
+                    $item['details']['fruit_pictures_'.$visit['picture_id']]=$details;
+                }
+            }
+            if(isset($disease_infos[$item['setup_id']][$item['variety_id']]))
+            {
+                foreach($disease_infos[$item['setup_id']][$item['variety_id']] as $index=>$visit)
+                {
+                    $image_url=base_url().'images/no_image.jpg';
+                    if(strlen($visit['image_location'])>0)
+                    {
+                        $image_url=$this->config->item('system_base_url_ft_rnd_demo_picture').$visit['image_location'];
+                    }
+
+                    $day_visit=System_helper::display_date($visit['date_created']);
+                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-details-key="disease_pictures_'.$index.'" style="height: 125px;width: 133px;cursor:pointer;">';
+                    $html_row.='<div style="height:100px;"><img src="'.$image_url.'" style="max-height: 100px;max-width: 133px;"></div>';
+                    $html_row.='<div style="height: 25px;text-align: center; ">'.$day_visit.'</div>';
+                    $html_row.='</div>';
+                    $item['disease_pictures_'.$index]=$html_row;
+
+                    $details=array();
+                    $details['image_url']=$image_url;
+                    $details['day_visit']=$day_visit;
+                    $details['remarks']=$visit['remarks'];
+                    $details['remarks_time']=System_helper::display_date_time($visit['date_created']);
+                    $details['remarks_by']=$users[$visit['user_created']]['name'];
+                    $item['details']['disease_pictures_'.$index]=$details;
+                }
+            }
+        }
         $this->json_return($items);
     }
 }

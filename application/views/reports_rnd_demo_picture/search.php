@@ -125,12 +125,25 @@ $CI = & get_instance();
             var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
             var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
             //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
-            $("#popup_window").jqxWindow({position: { x: left, y: top  }});
+            $('#popup_window').jqxWindow({position: { x: left, y: top  }});
             var row=$(this).attr('data-item-no');
-            var key=$(this).attr('data-key');
+            var key=$(this).attr('data-details-key');
             var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
-            $('#popup_content').html(row_info.details[key]);
-            $("#popup_window").jqxWindow('open');
+            var pop_up_content='';
+
+            pop_up_content+='<div>';
+            pop_up_content+='<div><img src="'+row_info['details'][key]['image_url']+'" style="max-width: 100%;"></div>';
+            pop_up_content+='<div style="text-align:center;margin-bottom:5px;">Date: '+row_info['details'][key]['day_visit']+'</div>';
+            pop_up_content+='<div>';
+            pop_up_content+='<div> Remarks: <div  style="font-size: 15px;font-weight:bold;">'+row_info['details'][key]['remarks']+'</div></div>';
+            pop_up_content+='<div>Remarks Entry time: <div>'+row_info['details'][key]['remarks_time']+'</div></div>';
+            pop_up_content+='<div>Remarks By: <div>'+row_info['details'][key]['remarks_by']+'</div></div>';
+            pop_up_content+='</div>';
+
+            pop_up_content+='</div>';
+
+            $('#popup_content').html(pop_up_content);
+            $('#popup_window').jqxWindow('open');
         });
         $(document).on("change","#select_all_arm",function()
         {
