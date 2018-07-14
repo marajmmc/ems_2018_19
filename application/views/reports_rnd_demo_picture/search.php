@@ -1,5 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
+$action_buttons=array();
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_REFRESH"),
+    'href'=>site_url($CI->controller_url.'/index')
+);
+$CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+
 ?>
 <form class="form_valid" id="search_form" action="<?php echo site_url($CI->controller_url.'/index/list_variety');?>" method="post">
     <div class="row widget">
@@ -11,81 +18,87 @@ $CI = & get_instance();
         </div>
 
         <div class="row show-grid">
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_YEAR');?></label>
+            <div class="col-xs-8">
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select id="year" name="report[year]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($years as $year)
+                            {?>
+                                <option value="<?php echo $year['year'];?>"><?php echo $year['year'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-sm-4 col-xs-8">
-                    <select id="year" name="report[year]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($years as $year)
-                        {?>
-                            <option value="<?php echo $year['year'];?>"><?php echo $year['year'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select id="season_id" name="report[season_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($seasons as $season)
+                            {?>
+                                <option value="<?php echo $season['value'];?>"><?php echo $season['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="action_button pull-right">
+                            <button type="button" class="btn" id="but_load_crop">Load Crop</button>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+
+                    </div>
+                </div>
+                <div class="row show-grid" id="crop_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select id="crop_id" name="report[crop_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($crops as $crop)
+                            {?>
+                                <option value="<?php echo $crop['value']?>"><?php echo $crop['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: none;" class="row show-grid" id="crop_type_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SEASON');?></label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <select id="season_id" name="report[season_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($seasons as $season)
-                        {?>
-                            <option value="<?php echo $season['value'];?>"><?php echo $season['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-            <div class="row show-grid" id="crop_id_container">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <select id="crop_id" name="report[crop_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($crops as $crop)
-                        {?>
-                            <option value="<?php echo $crop['value']?>"><?php echo $crop['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-            <div style="display: none;" class="row show-grid" id="crop_type_id_container">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label>
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="row show-grid">
             <div class="col-xs-4">
 
             </div>
-            <div class="col-xs-4">
-                <div class="action_button pull-right">
-                    <button type="button" class="btn" id="but_load_crop">Load Crop</button>
-                </div>
-            </div>
-            <div class="col-xs-4">
-
-            </div>
         </div>
+
         <div class="row show-grid">
             <div class="col-xs-4">
 

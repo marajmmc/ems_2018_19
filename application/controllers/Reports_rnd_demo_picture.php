@@ -174,7 +174,7 @@ class Reports_rnd_demo_picture extends Root_Controller
             $data['max_diseases']=1;
             $this->db->from($this->config->item('table_ems_ft_rnd_demo_setup_demo').' rnd_demo_setup_demo');
             $this->db->join($this->config->item('table_ems_setup_seasons').' season','season.id =rnd_demo_setup_demo.season_id','INNER');
-            $this->db->select('Max(rnd_demo_picture.day_no) num_visit_done');
+            $this->db->select('MAX(rnd_demo_picture.day_no) num_visit_done');
             $this->db->join($this->config->item('table_ems_ft_rnd_demo_picture').' rnd_demo_picture','rnd_demo_setup_demo.id =rnd_demo_picture.setup_id','LEFT');
             if($reports['season_id']>0)
             {
@@ -197,36 +197,29 @@ class Reports_rnd_demo_picture extends Root_Controller
 
             }
 
-            $this->db->from($this->config->item('table_ems_ft_rnd_demo_setup_demo').' rnd_demo_setup_demo');
-            $this->db->join($this->config->item('table_ems_setup_seasons').' season','season.id =rnd_demo_setup_demo.season_id','INNER');
-            $this->db->join($this->config->item('table_ems_ft_rnd_demo_disease_picture').' rnd_demo_disease_picture','rnd_demo_setup_demo.id =rnd_demo_disease_picture.setup_id','LEFT');
+            $this->db->from($this->config->item('table_ems_ft_rnd_demo_disease_picture').' disease_picture');
+            $this->db->select('COUNT(disease_picture.variety_id) max_diseases');
+            $this->db->join($this->config->item('table_ems_ft_rnd_demo_setup_demo').' setup_demo','setup_demo.id=disease_picture.setup_id','INNER');
             if($reports['season_id']>0)
             {
-                $this->db->where('rnd_demo_setup_demo.season_id',$reports['season_id']);
-
+                $this->db->where('setup_demo.season_id',$reports['season_id']);
             }
             if($reports['year']>0)
             {
-                $this->db->where('rnd_demo_setup_demo.year',$reports['year']);
-
+                $this->db->where('setup_demo.year',$reports['year']);
             }
-            $this->db->where('rnd_demo_setup_demo.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('rnd_demo_disease_picture.status',$this->config->item('system_status_active'));
-            $this->db->where_in('rnd_demo_disease_picture.variety_id',$variety_ids);
-            $results=$this->db->get()->result_array();
-
-            $demo_disease_picture=array();
-            foreach($results as $result)
+            $this->db->where_in('disease_picture.variety_id',$variety_ids);
+            $this->db->group_by('disease_picture.setup_id,disease_picture.variety_id');
+            $this->db->order_by('COUNT(disease_picture.variety_id)','DESC');
+            $this->db->limit(1);
+            $result=$this->db->get()->row_array();
+            if($result)
             {
-                $demo_disease_picture[$result['setup_id']][]=$result;
-            }
-            foreach($demo_disease_picture as $picture)
-            {
-                $counter=count($picture);
-                if(count($picture)>$data['max_diseases'])
+                if($result['max_diseases']>0)
                 {
-                    $data['max_diseases']=$counter;
+                    $data['max_diseases']=$result['max_diseases'];
                 }
+
             }
 
             $data['title']="R&D Demo Picture Report";
@@ -253,8 +246,6 @@ class Reports_rnd_demo_picture extends Root_Controller
         $user_ids=array();
         $year=$this->input->post('year');
         $season_id=$this->input->post('season_id');
-        $crop_id=$this->input->post('crop_id');
-        $crop_type_id=$this->input->post('crop_type_id');
         $variety_ids=$this->input->post('variety_ids');
 
         //Getting setup demo data

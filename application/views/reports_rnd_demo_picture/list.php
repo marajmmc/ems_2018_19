@@ -35,17 +35,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="clearfix"></div>
     </div>
     <?php
-    if(isset($CI->permissions['column_headers'])&&($CI->permissions['column_headers']==1))
+    if(isset($CI->permissions['action6'])&&($CI->permissions['action6']==1))
     {
 
         ?>
-        <div class="col-xs-12" style="margin-bottom: 20px;">
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="year_season">Time Info</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_info">Crop Info</label>
-            <label class="checkbox-inline"><input type="checkbox" checked id="visit_images">Visit Images</label>
-            <label class="checkbox-inline"><input type="checkbox" checked id="fruit_images">Fruit Images</label>
-            <label class="checkbox-inline"><input type="checkbox" checked id="disease_images">Disease Images</label>
-        </div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="year_season" checked><span class="">Time Info</span></label></div></div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="crop_info" checked><span class="">Crop Info</span></label></div></div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" id="visit_images" checked><span class="">Visit Images</span></label></div></div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" id="fruit_images" checked><span class="">Fruit Images</span></label></div></div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" id="disease_images" checked><span class="">Disease Images</span></label></div></div>
     <?php
     }
     ?>
