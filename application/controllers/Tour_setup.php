@@ -840,13 +840,6 @@ class Tour_setup extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            //data from tour setup others table
-//            $this->db->from($this->config->item('table_ems_tour_purpose') . ' tour_setup_purpose');
-//            $this->db->select('tour_setup_purpose.*');
-//            $this->db->where('tour_setup_purpose.tour_id', $item_id);
-//            $this->db->where('tour_setup_purpose.status !="' . $this->config->item('system_status_delete') . '"');
-//            $data['items'] = $this->db->get()->result_array();
-
             $data['title'] = 'Forward Tour Setup And Reporting:: ' . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/forward", $data, true));

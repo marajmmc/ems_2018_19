@@ -319,8 +319,10 @@ class Tour_approval extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $data = array();
+            $user = User_helper::get_user();
+            $designation_child_ids = Tour_helper::get_child_ids_designation($user->designation);
 
+            $data = array();
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
@@ -334,6 +336,10 @@ class Tour_approval extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
             $this->db->where('user_area.revision', 1);
+            if ($user->user_group != 1) // If not SuperAdmin, Then Only child's Tour list will appear.
+            {
+                $this->db->where_in('designation.id', $designation_child_ids);
+            }
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
             $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
@@ -380,6 +386,100 @@ class Tour_approval extends Root_Controller
         }
     }
 
+    private function system_save_approve()
+    {
+        $item_id = $this->input->post("id");
+        $item = $this->input->post('item');
+        $user = User_helper::get_user();
+        $designation_child_ids = Tour_helper::get_child_ids_designation($user->designation);
+        $time = time();
+        /*-------------------------------VALIDATION CHECKING------------------------------------*/
+        if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
+        $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
+        $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
+        $this->db->select('user.id, user.employee_id, user.user_name, user.status');
+        $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
+        $this->db->select('user_info.name, user_info.ordering');
+        $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
+        $this->db->select('designation.name AS designation');
+        $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
+        $this->db->select('department.name AS department_name');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('user_area.revision', 1);
+        if ($user->user_group != 1) // If not SuperAdmin, Then Only child's Tour list will appear.
+        {
+            $this->db->where_in('designation.id', $designation_child_ids);
+        }
+        $this->db->where('tour_setup.id', $item_id);
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
+        $this->db->where('user_info.revision', 1);
+        $data = $this->db->get()->row_array();
+        if (!$data)
+        {
+            System_helper::invalid_try('Approve', $item_id, 'Approve Not Exists');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($data))
+        {
+            System_helper::invalid_try('Edit', $item_id, 'Trying to edit others Tour');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'You are trying to approve others Tour';
+            $this->json_return($ajax);
+        }
+        if ($data['status_approved_tour'] == $this->config->item('system_status_approved'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Already Approved.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_validation_approve())
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->message;
+            $this->json_return($ajax);
+        }
+        /*------------------------------VALIDATION CHECKING (END)---------------------------------*/
+
+        $this->db->trans_start(); //DB Transaction Handle START
+        if ($item['status_approved_tour'] == $this->config->item('system_status_rollback'))
+        {
+            $item['status_approved_tour'] = $this->config->item('system_status_pending');
+            $item['status_forwarded_tour'] = $this->config->item('system_status_pending');
+            $item['date_rollback_tour'] = $time;
+            $item['user_rollback_tour'] = $user->user_id;
+            $this->db->set('revision_count_rollback_tour', 'revision_count_rollback_tour + 1', FALSE);
+        }
+        else
+        {
+            $item['date_approved_tour'] = $time;
+            $item['user_approved_tour'] = $user->user_id;
+        }
+        Query_helper::update($this->config->item('table_ems_tour_setup'), $item, array("id = " . $item_id));
+        $this->db->trans_complete(); //DB Transaction Handle END
+
+        if ($this->db->trans_status() === TRUE)
+        {
+            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+
     private function check_my_editable($item)
     {
         if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
@@ -405,7 +505,7 @@ class Tour_approval extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[supervisors_comment]', 'Supervisors Comment ', 'required');
-        $this->form_validation->set_rules('item[status_approve]', $this->lang->line('LABEL_APPROVE'), 'required');
+        $this->form_validation->set_rules('item[status_approved_tour]', 'Approve ', 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
