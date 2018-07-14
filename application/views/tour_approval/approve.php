@@ -95,23 +95,23 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Approve<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Supervisors Comment <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select name="item[status_approve]" class="form-control status-combo">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $CI->config->item('system_status_approved') ?>">Approve</option>
-                    <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
-                </select>
+                <textarea name="item[supervisors_comment]" class="form-control"><?php echo $item['supervisors_comment'] ?></textarea>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Supervisors Comment<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Approve <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[superior_comment]" class="form-control"><?php echo $item['supervisors_comment'] ?></textarea>
+                <select name="item[status_approved_tour]" class="form-control status-combo">
+                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_approved') ?>">Approve</option>
+                    <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
+                </select>
             </div>
         </div>
 
