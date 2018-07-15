@@ -179,12 +179,12 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
                 'crop_id'=>'',
                 'type_id'=>'',
                 'name'=>'',
-                'address' => '',
+                'address' => 'Makiks Farm - Birganj',
                 'contact_no' => '',
                 'date_sowing' => time(),
                 'date_transplant' => '',
-                'num_visits' => 1,
-                'interval' => 2
+                'num_visits' => 10,
+                'interval' => 10
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['types']=array();

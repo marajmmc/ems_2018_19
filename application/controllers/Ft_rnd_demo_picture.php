@@ -54,12 +54,12 @@ class Ft_rnd_demo_picture extends Root_Controller
         $data['season']= 1;
         $data['crop_name']= 1;
         $data['crop_type_name']= 1;
-        $data['contact_no']= 1;
+//        $data['contact_no']= 1;
         $data['date_sowing']= 1;
         $data['num_visits']= 1;
         $data['interval']= 1;
         $data['num_visit_done']= 1;
-        $data['num_fruit_picture']= 1;
+//        $data['num_fruit_picture']= 1;
         $data['num_disease_picture']= 1;
         return $data;
     }

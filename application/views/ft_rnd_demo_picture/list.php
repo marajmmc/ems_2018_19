@@ -118,18 +118,16 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_PRI_NAME'); ?>',pinned:true, dataField: 'pri_name',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['pri_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',filtertype: 'list',width:'80',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['year']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season',filtertype: 'list',width:'80',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['season']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CONTACT_NO'); ?>', dataField: 'contact_no',width:'110',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['contact_no']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'110',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_sowing']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visits']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['interval']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT_DONE'); ?>', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visit_done']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_FRUIT_PICTURE'); ?>', dataField: 'num_fruit_picture',width:'50',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_fruit_picture']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_DISEASE_PICTURE'); ?>', dataField: 'num_disease_picture',width:'50',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_disease_picture']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>',pinned:true,dataField: 'crop_type_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>',pinned:true,dataField: 'crop_name',width:'130',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>',pinned:true,dataField: 'season',width:'90',filtertype: 'list',width:'80',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['season']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>',dataField: 'year',filtertype: 'list',width:'80',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['year']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_PRI_NAME'); ?>',dataField: 'pri_name',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['pri_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_sowing']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visits']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['interval']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT_DONE'); ?>', dataField: 'num_visit_done',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visit_done']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_DISEASE_PICTURE'); ?>', dataField: 'num_disease_picture',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_disease_picture']?0:1;?>}
                 ]
             });
     });
