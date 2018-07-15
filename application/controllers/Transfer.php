@@ -23,7 +23,6 @@ class Transfer extends CI_Controller
                 $result['revision']=2;
             }
             unset($result['status']);
-            unset($result['id']);
         }
         $this->db->trans_start();  //DB Transaction Handle START
         foreach($results as $result)
