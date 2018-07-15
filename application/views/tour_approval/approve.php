@@ -133,14 +133,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 
 <script type="text/javascript">
-
     jQuery(document).ready(function () {
-
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == 'Approved') {
+            if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
-            } else if (options == 'Rollback') {
+            } else if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');

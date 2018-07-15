@@ -2,35 +2,20 @@
 $CI = & get_instance();
 
 $action_buttons = array();
-$action_buttons[] = array(
-    'label' => 'Pending List',
-    'href' => site_url($CI->controller_url . '/index/list')
-);
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+{
+    $action_buttons[] = array(
+        'label' => 'All List',
+        'href' => site_url($CI->controller_url . '/index/list_all')
+    );
+}
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
         'label' => $CI->lang->line("ACTION_DETAILS"),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/details')
-    );
-}
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Print View',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/print_view')
-    );
-}
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Print Requisition',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/print_requisition')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
@@ -57,18 +42,23 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     $action_buttons[] = array
     (
         'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference_all')
+        'href' => site_url($CI->controller_url . '/index/set_preference')
+    );
+}
+if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
+{
+    $action_buttons[] = array
+    (
+        'type' => 'button',
+        'label' => 'Approve',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/approve')
     );
 }
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
-    'href' => site_url($CI->controller_url . '/index/list_all')
+    'href' => site_url($CI->controller_url . '/index/list')
 
-);
-$action_buttons[] = array(
-    'type' => 'button',
-    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
-    'id' => 'button_jqx_load_more'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
@@ -92,7 +82,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
 
         // prepare the data
         var source =
@@ -100,7 +90,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                <?php foreach($system_preference_items as $key => $value){ ?>
+                <?php
+                foreach($system_preference_items as $key => $value){ ?>
                     { name: '<?php echo $key; ?>', type: 'string' },
                 <?php } ?>
             ],
@@ -137,10 +128,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: 'Designation', pinned: true, dataField: 'designation', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['designation']?0:1;?>},
                     { text: 'Title', dataField: 'title', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
-                    { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
-                    { text: 'Report Forward Status', dataField: 'status_forwarded_reporting', filtertype: 'list', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_forwarded_reporting']?0:1;?>},
-                    { text: 'Report Approve Status', dataField: 'status_approved_reporting', filtertype: 'list', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_reporting']?0:1;?>}
+                    { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>}
                 ]
             });
     });

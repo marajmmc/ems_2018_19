@@ -27,11 +27,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         font-weight: normal !important
     }
 
-    .tour-list span {
-        display: inline-block;
-        padding: 5px;
-        margin-right: 8px;
-        background: #d7d7d7;
+    td > span {
+        color: #a94442;
+        font-weight: bold;
+        font-style: italic;
     }
 </style>
 
@@ -50,7 +49,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse1" href="#"> + Tour Information</a></label>
         </h4>
     </div>
-    <div id="collapse1" class="panel-collapse collapse in">
+    <div id="collapse1" class="panel-collapse collapse">
         <table class="table table-bordered table-responsive system_table_details_view">
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Name</label></th>
@@ -182,70 +181,87 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     <div class="clearfix"></div>
 </div>
 
-<div class="row show-grid">
-    <div class="col-xs-12">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th><?php echo $this->lang->line('LABEL_SL_NO'); ?></th>
-                <th>Reporting Date</th>
-                <th>Purpose(s)</th>
-            </tr>
-            </thead>
-            <tbody class="tour-list">
-            <?php
-            if ($items)
-            {
-                $i = 0;
-                foreach ($items as $row)
-                {
-                    ?>
-                    <tr>
-                        <td><?php echo ++$i; ?></td>
-                        <td><?php echo $row['date_reporting']; ?></td>
-                        <td>
-                            <?php
-                            $purpose_list = explode(';', $row['purpose']);
-                            foreach ($purpose_list AS $key => $purpose)
-                            {
-                                if (trim($purpose) != "-")
-                                {
-                                    $purpose = '<span>' . $purpose . '</span>';
-                                }
-                                echo $purpose;
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                <?php
-                }
-            } ?>
-            </tbody>
-        </table>
-    </div>
-</div>
 
-<div class="row">
-    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_forward'); ?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_approve'); ?>" method="post">
+
+    <div class="row show-grid">
+        <div class="col-xs-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th><?php echo $this->lang->line('LABEL_SL_NO'); ?></th>
+                    <th>Purpose(s)</th>
+                    <th>Reporting Date</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if ($items)
+                {
+                    //pr($items, 0);
+                    $i = 0;
+                    foreach ($items as $row)
+                    {
+                        ?>
+                        <tr>
+                            <td><?php echo ++$i; ?></td>
+                            <td>
+                                <?php
+                                echo $row['purpose'];
+                                if ($row['purpose_type'] && ($row['purpose_type'] == $this->config->item('system_status_additional')))
+                                {
+                                    echo '&nbsp; <span>(Additional)</span>';
+                                }?>
+                            </td>
+                            <td>
+                                <?php
+                                if ($row['reporting_dates'])
+                                {
+                                    $reporting_dates = explode(', ', $row['reporting_dates']);
+                                    foreach ($reporting_dates as $reporting_date)
+                                    {
+                                        echo '<button title="Click for details" class="btn btn-sm btn-info pop_up" data-purpose="' . $row['p_id'] . '" data-date="' . $reporting_date . '">' . (System_helper::display_date($reporting_date)) . '</button> &nbsp;';
+                                    }
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <select name="items[<?php echo $row['p_id']; ?>]" class="form-control">
+                                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                                    <option value="<?php echo $this->config->item('system_status_pending'); ?>">Pending</option>
+                                    <option value="<?php echo $this->config->item('system_status_complete'); ?>">Complete</option>
+                                </select>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
         <input type="hidden" id="id" name="id" value="<?php echo $item['tour_setup_id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks</label>
+                <label class="control-label pull-right">Remarks <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks_forward_reporting]" class="form-control"><?php echo $item['remarks_forwarded_reporting'] ?></textarea>
+                <textarea name="item[remarks_approved_reporting]" class="form-control"><?php echo $item['remarks_approved_reporting'] ?></textarea>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Forward <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Approve <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <select name="item[status_forwarded_tour]" class="form-control status-combo">
+                <select name="item[status_approved_reporting]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $this->config->item('system_status_forwarded'); ?>">Forward</option>
+                    <option value="<?php echo $this->config->item('system_status_approved'); ?>">Approve</option>
+                    <option value="<?php echo $this->config->item('system_status_rollback'); ?>">Rollback</option>
                 </select>
             </div>
             <div class="col-xs-4">
@@ -256,17 +272,47 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
 
         <div class="clearfix"></div>
-    </form>
-</div>
+    </div>
+
+</form>
 
 </div>
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        $(document).off("click", ".pop_up");
+        $(document).on("click", ".pop_up", function (event) {
+            event.preventDefault();
+            var id =<?php echo $item['tour_setup_id']; ?>;
+            var p_id = $(this).attr('data-purpose');
+            var r_date = $(this).attr('data-date');
+            $.ajax(
+                {
+                    url: "<?php echo site_url($CI->controller_url.'/index/reporting_details') ?>",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data: {
+                        html_container_id: '#popup_content',
+                        id: id,
+                        p_id: p_id,
+                        r_date: r_date
+                    },
+                    success: function (data, status) {
+
+                    },
+                    error: function (xhr, desc, err) {
+                        console.log("error");
+                    }
+                });
+            $("#popup_window").jqxWindow('open');
+        });
+
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == '<?php echo $this->config->item('system_status_forwarded'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_FORWARD'); ?>');
+            if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
+            } else if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }

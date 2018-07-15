@@ -13,6 +13,15 @@ $CI = & get_instance();
 
     <div class="row show-grid">
         <div class="col-xs-4">
+            <label class="control-label pull-right" style="text-align:right">Reporting Date:</label>
+        </div>
+        <div class="col-xs-8">
+            <label class="normal"><?php echo System_helper::display_date($item['date_reporting']); ?></label>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="col-xs-4">
             <label class="control-label pull-right" style="text-align:right">Report:<br/>(Description)</label>
         </div>
         <div class="col-xs-8">
