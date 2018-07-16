@@ -222,13 +222,11 @@ $lang['LABEL_PACK_SIZE'] = 'Pack Size(gm)';
 $lang['LABEL_VARIETY_CATEGORY'] = 'Variety Category';
 $lang['LABEL_HYBRID'] = 'Hybrid';
 
-
 // Office staff
 $lang['LABEL_NUMBER_OF_SUBORDINATE'] = 'Number Of Subordinate';
 $lang['LABEL_NUMBER_OF_COWORKER'] = 'Number Of Co-worker';
 $lang['LABEL_CHANGE_SUBORDINATE'] = 'Change Subordinate';
 $lang['LABEL_CHANGE_COWORKER'] = 'Change Coworker';
-
 
 //users
 $lang['LABEL_RE_USERNAME'] = 'Re-type User name';
@@ -265,6 +263,7 @@ $lang['LABEL_DEALER'] = 'Dealer';
 $lang['LABEL_DEALER_VISIT_ACTIVITIES'] = 'Dealer Visit Activities';
 $lang['LABEL_FARMER_NAME'] = 'Farmer';
 $lang['LABEL_FARMER_VISIT_ACTIVITIES'] = 'Farmer Visit Activities';
+$lang['LABEL_FARMER_VISIT_ACTIVITIES'] = 'Farmer Visit Activities';
 $lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE'] = 'Lead Farmer Visit Activities (1)';
 $lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_TWO'] = 'Lead Farmer Visit Activities (2)';
 $lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_THREE'] = 'Lead Farmer Visit Activities (3)';
@@ -276,12 +275,8 @@ $lang['LABEL_DETAILS_BUTTON'] = 'Details';
 
 // Tour
 $lang['LABEL_TITLE'] = 'Title';
-
-// Tour - Added by Mahmud
-$lang['LABEL_TITLE'] = 'Title';
-$lang['LABEL_AMOUNT_IOU_REQUEST'] = "IOU Amount Requested";
+$lang['LABEL_AMOUNT_IOU_REQUEST'] = "IOU Amount Request";
 $lang['LABEL_AMOUNT_TOTAL_IOU'] = "Total IOU Amount";
-/* $lang['LABEL_IOU_DETAILS'] = "IOU Details"; */
 $lang['LABEL_DESIGNATION'] = "Designation";
 $lang['LABEL_DATE_FROM'] = "Date From";
 $lang['LABEL_DATE_TO'] = "Date To";
@@ -291,11 +286,8 @@ $lang['LABEL_STATUS_FORWARD'] = "Forwarded";
 $lang['LABEL_STATUS_APPROVE'] = "Approved";
 $lang['LABEL_STATUS_FORWARDED_TOUR'] = "Tour Forwarded";
 $lang['LABEL_STATUS_APPROVED_TOUR'] = "Tour Approved";
-
-/* $lang['LABEL_CREATED_BY'] = 'Created By';
-$lang['LABEL_UPDATED_BY'] = 'Updated By';
-$lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
-$lang['LABEL_APPROVED_BY'] = 'Approved By'; */
+$lang['LABEL_STATUS_FORWARDED_REPORTING'] = "Report Forwarded";
+$lang['LABEL_STATUS_APPROVED_REPORTING'] = "Report Approved";
 
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';

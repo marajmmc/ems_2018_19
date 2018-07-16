@@ -29,7 +29,8 @@ class Reports_field_visit_attendance extends Root_Controller
         elseif($action=="list")
         {
             $this->system_list();
-        }elseif($action=="get_items")
+        }
+        elseif($action=="get_items")
         {
             $this->system_get_items();
         }
