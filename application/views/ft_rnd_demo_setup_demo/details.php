@@ -47,7 +47,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label></td>
                 <td class="header_value"><label class="control-label"><?php echo $item['year'];?></label></td>
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS');?></label></td>
-                <td class="header_value"><label class="control-label"><?php echo System_helper::display_date_time($item['date_created']);?></label></td>
+                <td class="header_value"><label class="control-label"><?php echo $item['address'];?></label></td>
             </tr>
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label></td>
