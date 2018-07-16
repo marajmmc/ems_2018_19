@@ -66,11 +66,11 @@ class Ft_rnd_demo_setup_demo extends Root_Controller
     private function get_preference_headers()
     {
         $data['id']= 1;
-        $data['pri_name']= 1;
-        $data['year']= 1;
-        $data['season']= 1;
-        $data['crop_name']= 1;
         $data['crop_type_name']= 1;
+        $data['crop_name']= 1;
+        $data['season']= 1;
+        $data['year']= 1;
+        $data['pri_name']= 1;
         $data['contact_no']= 1;
         $data['date_sowing']= 1;
         $data['num_visits']= 1;
