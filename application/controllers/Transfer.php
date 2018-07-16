@@ -73,7 +73,6 @@ class Transfer extends CI_Controller
             unset($result['picture_file_name']);
             unset($result['picture_file_full']);
             unset($result['picture_url']);
-            unset($result['id']);
         }
         $this->db->trans_start();  //DB Transaction Handle START
         foreach($results as $result)
