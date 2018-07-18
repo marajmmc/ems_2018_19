@@ -85,7 +85,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right">Remarks:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['remarks']; ?></label>
+                <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
             </div>
         </div>
     <?php } ?>

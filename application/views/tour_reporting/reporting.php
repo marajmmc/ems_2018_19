@@ -55,6 +55,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         top: 35px;
         left: 20px;
     }
+    .no-padding-left{padding-left:0 !important;}
+    .no-padding-right{padding-right:0 !important;}
 </style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
 
@@ -236,7 +238,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <div class="col-xs-4">
                     <label class="control-label pull-right">Purpose <span style="color:#FF0000">*</span></label>
                 </div>
-                <div class="col-xs-3">
+                <div class="col-xs-3 no-padding-right">
                     <select class="form-control content-purpose" name="items[0][purpose]">
                         <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
                         <?php
@@ -254,7 +256,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <div class="col-xs-1" style="text-align:center">
                     <label class="control-label">- OR -</label>
                 </div>
-                <div class="col-xs-3 wrap-additional">
+                <div class="col-xs-3 no-padding-left wrap-additional">
                     <input type="text" class="form-control content-purpose-additional" name="items[0][purpose_additional]" placeholder="Enter New Purpose"/>
                     <span>Already in Purpose List.</span>
                 </div>
@@ -346,7 +348,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <div class="col-xs-4">
                 <label class="control-label pull-right">Purpose <span style="color:#FF0000">*</span></label>
             </div>
-            <div class="col-xs-3">
+            <div class="col-xs-3 no-padding-right">
                 <select class="form-control content-purpose">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
                     <?php
@@ -364,7 +366,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <div class="col-xs-1" style="text-align:center">
                 <label class="control-label">- OR -</label>
             </div>
-            <div class="col-xs-3 wrap-additional">
+            <div class="col-xs-3 no-padding-left wrap-additional">
                 <input type="text" class="form-control content-purpose-additional" placeholder="Enter New Purpose"/>
                 <span>Already in Purpose List.</span>
             </div>

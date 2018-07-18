@@ -32,6 +32,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         font-weight: bold;
         font-style: italic;
     }
+
+    .remarks-req {
+        color: #FF0000;
+        display: none;
+    }
 </style>
 
 <div class="row widget">
@@ -124,7 +129,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 </th>
                 <th><label class="control-label"><?php echo $item['status_forwarded_tour']; ?></label></th>
                 <th class="widget-header header_caption">
-                    <label class="control-label pull-right">(Tour Setup) Number of Edit</label></th>
+                    <label class="control-label pull-right">(Tour) Number of Edit</label></th>
                 <th colspan="3"><label class="control-label"><?php echo($item['revision_count'] - 1); ?></label></th>
             </tr>
             <?php
@@ -158,7 +163,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     </th>
                     <th><label class="control-label"><?php echo $item['status_approved_tour']; ?></label></th>
                     <th class="widget-header header_caption">
-                        <label class="control-label pull-right">(Tour Setup) Number of Rollback</label>
+                        <label class="control-label pull-right">(Tour) Number of Rollback</label>
                     </th>
                     <th><label class="control-label"><?php echo $item['revision_count_rollback_tour']; ?></label></th>
                 </tr>
@@ -173,6 +178,39 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     </th>
                     <th>
                         <label class="control-label"><?php echo System_helper::display_date_time($item['date_approved_tour']); ?></label>
+                    </th>
+                </tr>
+            <?php
+            }
+            if ($item['status_forwarded_reporting'] == $CI->config->item('system_status_forwarded'))
+            {
+                ?>
+                <tr>
+                    <th colspan="4" class="bg-info">Tour Reporting Forward Information</th>
+                </tr>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARD'); ?> Status</label>
+                    </th>
+                    <th><label class="control-label"><?php echo $item['status_forwarded_reporting']; ?></label></th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right">(Reporting) Number of Rollback</label>
+                    </th>
+                    <th><label class="control-label"><?php echo $item['revision_count_rollback_reporting']; ?></label>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY'); ?></label>
+                    </th>
+                    <th>
+                        <label class="control-label"><?php echo $users[$item['user_forwarded_reporting']]['name']; ?></label>
+                    </th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME'); ?></label>
+                    </th>
+                    <th>
+                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_forwarded_reporting']); ?></label>
                     </th>
                 </tr>
             <?php } ?>
@@ -198,7 +236,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <tbody>
                 <?php if ($items)
                 {
-                    //pr($items, 0);
                     $i = 0;
                     foreach ($items as $row)
                     {
@@ -228,8 +265,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <td>
                                 <select name="items[<?php echo $row['p_id']; ?>]" class="form-control">
                                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                                    <option value="<?php echo $this->config->item('system_status_pending'); ?>">Pending</option>
-                                    <option value="<?php echo $this->config->item('system_status_complete'); ?>">Complete</option>
+                                    <option value="<?php echo $this->config->item('system_status_incomplete'); ?>"><?php echo $this->config->item('system_status_incomplete'); ?></option>
+                                    <option value="<?php echo $this->config->item('system_status_complete'); ?>"><?php echo $this->config->item('system_status_complete'); ?></option>
                                 </select>
                             </td>
                         </tr>
@@ -246,10 +283,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Remarks <span class="remarks-req">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[remarks_approved_reporting]" class="form-control"><?php echo $item['remarks_approved_reporting'] ?></textarea>
+            </div>
+            <div class="col-xs-4">
+                <label class="control-label normal remarks-req">Remarks field is required for Rollback</label>
             </div>
         </div>
 
@@ -264,8 +304,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <option value="<?php echo $this->config->item('system_status_rollback'); ?>">Rollback</option>
                 </select>
             </div>
-            <div class="col-xs-4">
-                <div class="action_button" style="margin:0">
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-8">
+                <div class="action_button pull-right" style="margin:0">
                     <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
                 </div>
             </div>
@@ -280,6 +323,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
+        var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
+        $("#popup_window").jqxWindow({position: { x: left, y: top  }});
+        
         $(document).off("click", ".pop_up");
         $(document).on("click", ".pop_up", function (event) {
             event.preventDefault();
@@ -308,10 +355,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         });
 
         $(".status-combo").on('change', function (event) {
+            $(".remarks-req").css('display','none');
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
             } else if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {
+                $(".remarks-req").css('display','inline');
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');

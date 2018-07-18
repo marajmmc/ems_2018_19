@@ -6,7 +6,7 @@ $CI = & get_instance();
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
-            <?php echo 'Tour Purpose :: ' . $item['purpose']; ?>
+            <?php echo $title.' :: ' . $item['purpose']; ?>
         </div>
         <div class="clearfix"></div>
     </div>

@@ -6,6 +6,14 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
     'href' => site_url($CI->controller_url . '/index/list')
 );
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'View',
+        'class' => 'scroll_down'
+    );
+}
 if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
     $action_buttons[] = array
@@ -48,7 +56,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <div class="row widget">
     <div class="widget-header" style="margin-bottom:5px">
-        <div class="title">
+        <div class="title tour-title">
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
@@ -140,7 +148,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right">Remarks:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
+                <label class="control-label normal"><?php echo nl2br($item['remarks']); ?></label>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -192,8 +200,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columns: [
                     { text: '<?php echo $this->lang->line('LABEL_SL_NO'); ?>', pinned: true, dataField: 'sl_no', width: '80', rendered: tooltiprenderer },
                     { text: 'Reporting Date', dataField: 'date_reporting', filtertype: 'list', width: '150', rendered: tooltiprenderer },
-                    { text: 'Reported Purpose', dataField: 'purpose', rendered: tooltiprenderer }
+                    { text: 'Reported Purpose(s)', dataField: 'purpose', rendered: tooltiprenderer }
                 ]
-            });
+            }
+        );
+    });
+
+    $(document).on('click', '.scroll_down', function(){
+        $("html, body").stop().animate(
+            { scrollTop: $(document).height() }, { duration: "slow" }
+        );
     });
 </script>

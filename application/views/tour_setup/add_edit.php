@@ -164,7 +164,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         <?php if ($i == 0)
                         {
                         ?>
-                            <label class="control-label pull-right"><?php echo 'IOU Items'; ?><span style="color:#FF0000">*</span></label>
+                            <label class="control-label pull-right"><?php echo 'IOU Items'; ?> <span style="color:#FF0000">*</span></label>
                         <?php
                         }
                         else
@@ -187,8 +187,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_TOTAL_IOU'); ?>
-                    <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_TOTAL_IOU'); ?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
                 BDT. <label class="amount_iou_label"><?php echo System_helper::get_string_amount($item['amount_iou_request']); ?></label>
@@ -196,22 +195,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             </div>
         </div>
 
-        <?php /* <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_IOU_DETAILS'); ?>
-                    <span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-xs-4">
-                <textarea id="iou_details" name="item[iou_details]" class="form-control"><?php echo $item['iou_details'] ?></textarea>
-            </div>
-        </div> */ ?>
-
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Remarks</label>
             </div>
             <div class="col-xs-4">
-                <textarea id="remarks" name="item[remarks]" class="form-control"><?php echo $item['remarks'] ?></textarea>
+                <textarea id="remarks" name="item[remarks]" class="form-control" rows="4"><?php echo $item['remarks'] ?></textarea>
             </div>
         </div>
     </div>
@@ -241,7 +230,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         $(document).off("click", ".system_button_add_more");
         $(document).off("click", ".system_button_add_delete");
-
         $(document).on("click", ".system_button_add_more", function (event) {
             var current_id = parseInt($(this).attr('data-current-id'));
             current_id = current_id + 1;
@@ -251,10 +239,10 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             var html = $(content_id).html();
             $("#tour_setup_container tbody tr.purpose-addMore").before(html);
         });
+
         $(document).on("click", ".system_button_add_delete", function (event) {
             $(this).closest('tr').remove();
         });
-
 
         $(document).on("change keyup", ".iou_item_input", function (event) {
             var sum = parseFloat(0);
@@ -277,57 +265,3 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     });
 
 </script>
-
-
-
-
-<!-- <script type="text/javascript">
-
-    jQuery(document).ready(function () {
-        $(".datepicker").datepicker({dateFormat: display_date_format});
-
-        $(document).off("click", ".system_button_add_more");
-        $(document).off("click", ".system_button_add_delete");
-
-        $(document).on("click", ".system_button_add_more", function (event) {
-            var current_id = parseInt($(this).attr('data-current-id'));
-            current_id = current_id - 1;
-            $(this).attr('data-current-id', current_id);
-            var content_id = '#system_content_add_more table tbody';
-            $(content_id + ' .purpose').attr('name', 'items[' + current_id + ']');
-            var html = $(content_id).html();
-            $("#tour_setup_container tbody").append(html);
-        });
-        $(document).on("click", ".system_button_add_delete", function (event) {
-            $(this).closest('tr').remove();
-        });
-
-        $(document).on("change keyup", ".iou_item_input", function (event) {
-            var sum = parseFloat(0);
-            var item_amount = parseFloat(0);
-            $(".iou_item_input").each(function (e) {
-                item_amount = parseFloat($(this).val());
-                if (!isNaN(item_amount) && (item_amount > 0)) {
-                    sum += item_amount;
-                }
-            });
-            $("#amount_iou").val(sum);
-            $(".amount_iou_label").text(CurrencyFormat(sum));
-        });
-    });
-
-    function CurrencyFormat(n) {
-        var val = Math.round(Number(n) * 100) / 100;
-        var parts = val.toString().split(".");
-        var num = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
-        s = new String(num);
-        if (s.indexOf('.') < 0) {
-            s += '.00';
-        }
-        if (s.indexOf('.') == (s.length - 2)) {
-            s += '0';
-        }
-        return s;
-    }
-
-</script> -->
