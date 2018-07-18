@@ -326,7 +326,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
         var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
         $("#popup_window").jqxWindow({position: { x: left, y: top  }});
-        
+
         $(document).off("click", ".pop_up");
         $(document).on("click", ".pop_up", function (event) {
             event.preventDefault();

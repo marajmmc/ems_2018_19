@@ -97,7 +97,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Forward<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Forward <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select name="item[status_forwarded_tour]" class="form-control status-combo">

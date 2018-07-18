@@ -19,6 +19,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     }
     label{margin-top:5px}
     label.normal{font-weight:normal !important}
+    .sup-comm-req {
+        color: #FF0000;
+        display: none;
+    }
 </style>
 
 <div class="row widget">
@@ -95,10 +99,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Supervisors Comment <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Supervisors Comment <span class="sup-comm-req">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[supervisors_comment]" class="form-control"><?php echo $item['supervisors_comment'] ?></textarea>
+            </div>
+            <div class="col-xs-4">
+                <label class="control-label normal sup-comm-req">Supervisors Comment field is required for Rollback</label>
             </div>
         </div>
 
@@ -135,10 +142,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     jQuery(document).ready(function () {
         $(".status-combo").on('change', function (event) {
+            $(".sup-comm-req").css('display','none');
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
             } else if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {
+                $(".sup-comm-req").css('display','inline');
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
