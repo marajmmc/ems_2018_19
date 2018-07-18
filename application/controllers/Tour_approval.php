@@ -389,9 +389,10 @@ class Tour_approval extends Root_Controller
     {
         $item_id = $this->input->post("id");
         $item = $this->input->post('item');
+
+        $time = time();
         $user = User_helper::get_user();
         $designation_child_ids = Tour_helper::get_child_ids_designation($user->designation);
-        $time = time();
         /*-------------------------------VALIDATION CHECKING------------------------------------*/
         if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
         {
@@ -540,9 +541,13 @@ class Tour_approval extends Root_Controller
 
     private function check_validation_approve()
     {
+        $item_head = $this->input->post('item');
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[supervisors_comment]', 'Supervisors Comment ', 'required');
-        $this->form_validation->set_rules('item[status_approved_tour]', 'Approve ', 'required');
+        if ($item_head['status_approved_tour'] == $this->config->item('system_status_rollback')) // `Supervisors Comment` is mandatory if only Rollback.
+        {
+            $this->form_validation->set_rules('item[supervisors_comment]', 'Supervisors Comment', 'required');
+        }
+        $this->form_validation->set_rules('item[status_approved_tour]', 'Approve', 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
