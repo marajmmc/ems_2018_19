@@ -150,7 +150,7 @@ class Tour_reporting extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Pending List for Tour Reporting";
+            $data['title'] = "Tour Pending List for Reporting";
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference();
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
@@ -190,6 +190,7 @@ class Tour_reporting extends Root_Controller
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
         $this->db->where('tour_setup.status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
+        $this->db->where('user_info.revision', 1);
         $this->db->order_by('tour_setup.id DESC');
         $items = $this->db->get()->result_array();
 
@@ -214,7 +215,7 @@ class Tour_reporting extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "All Tour List";
+            $data['title'] = "Tour All List for Reporting";
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference('list_all');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
@@ -261,13 +262,13 @@ class Tour_reporting extends Root_Controller
         $this->db->select('designation.name AS designation');
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
-        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
-        $this->db->where('user_info.revision', 1);
         if ($user->user_group != 1)
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
         }
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
+        $this->db->where('user_info.revision', 1);
         $this->db->order_by('tour_setup.id', 'DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
@@ -337,7 +338,7 @@ class Tour_reporting extends Root_Controller
             }
 
             $data['item']['name'] = $data['item']['name'] . ' (' . $data['item']['employee_id'] . ')';
-            $data['title'] = "Tour Purpose And Reporting :: " . $data['item']['title'];
+            $data['title'] = "Tour Dates for Reporting :: " . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_reporting", $data, true));
             if ($this->message)
@@ -491,7 +492,7 @@ class Tour_reporting extends Root_Controller
             $data['items'] = $this->db->get()->result_array();
 
             $data['item']['name'] = $result['name'] . ' (' . $result['employee_id'] . ')';
-            $data['title'] = 'Edit Tour Reporting For :: ' . $result['title'];
+            $data['title'] = 'Edit Tour Reporting :: ' . $result['title'];
             $data['reporting_date'] = $reporting_date;
 
             $ajax['status'] = true;
@@ -759,6 +760,7 @@ class Tour_reporting extends Root_Controller
             $user_ids[$data['item']['user_rollback_reporting']] = $data['item']['user_rollback_reporting'];
             $data['users'] = System_helper::get_users_info($user_ids);
 
+            $data['purposes'] = $this->db->get_where($this->config->item('table_ems_tour_purpose'), array('tour_id'=>$item_id))->result_array();
 
             $items = $temp_dates = array();
             $reporting_dates = array(0);
@@ -843,6 +845,7 @@ class Tour_reporting extends Root_Controller
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.id', $item_id);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status_approved_tour !=', $this->config->item('system_status_pending'));
         if ($user->user_group != 1)
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
@@ -853,13 +856,19 @@ class Tour_reporting extends Root_Controller
         {
             System_helper::invalid_try('forward', $item_id, 'Forward Not Exists');
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
+            $ajax['system_message'] = 'IIInvalid Try.';
             $this->json_return($ajax);
         }
         if ($data['item']['status_forwarded_reporting'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = 'Already Forwarded.';
+            $this->json_return($ajax);
+        }
+        if ($data['item']['status_approved_reporting'] == $this->config->item('system_status_approved'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Already Approved.';
             $this->json_return($ajax);
         }
         /*------------------Check Validation--------------------*/
@@ -893,93 +902,6 @@ class Tour_reporting extends Root_Controller
         }
     }
 
-    /* private function system_forward($id)
-    {
-        if (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1))
-        {
-            if ($id > 0)
-            {
-                $item_id = $id;
-            }
-            else
-            {
-                $item_id = $this->input->post('id');
-            }
-
-            $user = User_helper::get_user();
-
-            $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
-            $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
-            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
-            $this->db->select('user.id, user.employee_id, user.user_name, user.status');
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
-            $this->db->select('user_info.name, user_info.ordering');
-            $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $this->db->select('designation.name AS designation');
-            $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-            $this->db->select('department.name AS department_name');
-            $this->db->where('user_info.revision', 1);
-            $this->db->where('tour_setup.id', $item_id);
-            $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-            if ($user->user_group != 1)
-            {
-                $this->db->where('tour_setup.user_id', $user->user_id);
-            }
-            $data['item'] = $this->db->get()->row_array();
-
-            if (!$data['item'])
-            {
-                System_helper::invalid_try('forward', $id, 'Forward Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if ($data['item']['status_forwarded_reporting'] == $this->config->item('system_status_forwarded'))
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Already Forwarded.';
-                $this->json_return($ajax);
-            }
-
-            $user_ids = array();
-            $user_ids[$data['item']['user_created']] = $data['item']['user_created'];
-            $user_ids[$data['item']['user_updated']] = $data['item']['user_updated'];
-            $user_ids[$data['item']['user_forwarded_tour']] = $data['item']['user_forwarded_tour'];
-            $user_ids[$data['item']['user_approved_tour']] = $data['item']['user_approved_tour'];
-            $user_ids[$data['item']['user_rollback_tour']] = $data['item']['user_rollback_tour'];
-            $user_ids[$data['item']['user_forwarded_payment']] = $data['item']['user_forwarded_payment'];
-            $user_ids[$data['item']['user_forwarded_reporting']] = $data['item']['user_forwarded_reporting'];
-            $user_ids[$data['item']['user_approved_reporting']] = $data['item']['user_approved_reporting'];
-            $user_ids[$data['item']['user_rollback_reporting']] = $data['item']['user_rollback_reporting'];
-            $data['users'] = System_helper::get_users_info($user_ids);
-
-            $this->db->from($this->config->item('table_ems_tour_purpose') . ' tour_purpose');
-            $this->db->select('tour_purpose.purpose, tour_purpose.id AS p_id');
-            $this->db->join($this->config->item('table_ems_tour_reporting') . ' tour_reporting', 'tour_reporting.purpose_id = tour_purpose.id', 'LEFT');
-            $this->db->select("GROUP_CONCAT( tour_reporting.date_reporting SEPARATOR ', ' ) AS reporting_dates");
-            $this->db->where('tour_purpose.tour_id', $item_id);
-            $this->db->group_by('p_id');
-            $data['items'] = $this->db->get()->result_array();
-
-
-            $data['title'] = 'Forward Tour Setup And Reporting :: ' . $data['item']['title'];
-            $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/forward_reporting", $data, true));
-            if ($this->message)
-            {
-                $ajax['system_message'] = $this->message;
-            }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/forward/' . $item_id);
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    } */
-
     private function system_reporting_details()
     {
         $html_container_id = $this->input->post('html_container_id');
@@ -997,8 +919,6 @@ class Tour_reporting extends Root_Controller
         $this->db->where('tour_reporting.date_reporting', $report_date);
         $data['item'] = $this->db->get()->row_array();
 
-        //pr($data['item']);
-
         $data['title'] = "Tour Report Details";
         $ajax['status'] = true;
         $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view($this->controller_url . "/report_details", $data, true));
@@ -1008,66 +928,6 @@ class Tour_reporting extends Root_Controller
         }
         $this->json_return($ajax);
     }
-
-    /*
-
-    private function system_details($id)
-    {
-        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
-        {
-            $html_container_id=$this->input->post('html_container_id');
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-            $this->db->from($this->config->item('table_ems_ft_ti_dealer_and_field_visit').' dealer_field_visit');
-            $this->db->select('dealer_field_visit.*');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealer_field_visit.farmer_id','INNER');
-            $this->db->select('farmer.name dealer');
-            $this->db->join($this->config->item('table_login_csetup_customer').' customer','customer.id = dealer_field_visit.customer_id','INNER');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' cus_info','cus_info.customer_id = customer.id','INNER');
-            $this->db->select('cus_info.name outlet');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = cus_info.district_id','LEFT');
-            $this->db->select('districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = districts.territory_id','LEFT');
-            $this->db->select('t.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' z','z.id = t.zone_id','LEFT');
-            $this->db->select('z.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' d','d.id = z.division_id','LEFT');
-            $this->db->select('d.name division_name');
-            $this->db->where('cus_info.revision',1);
-            $this->db->where('dealer_field_visit.id',$item_id);
-            $data['item']=$this->db->get()->row_array();
-
-            $user_ids=array();
-            $user_ids[$data['item']['user_created']]=$data['item']['user_created'];
-            $user_ids[$data['item']['user_updated']]=$data['item']['user_updated'];
-            $user_ids[$data['item']['user_created_attendance']]=$data['item']['user_created_attendance'];
-            $user_ids[$data['item']['user_updated_attendance']]=$data['item']['user_updated_attendance'];
-            $data['users']=System_helper::get_users_info($user_ids);
-
-            $data['title']="Dealer And Field Visit Task Details";
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view($this->controller_url."/details",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
-    */
 
     private function system_set_preference()
     {

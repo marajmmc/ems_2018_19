@@ -153,7 +153,7 @@ class Tour_setup extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Tour Setup Pending List";
+            $data['title'] = "Tour Pending List";
             $data['system_preference_items'] = $this->get_preference();
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
             $ajax['status'] = true;
@@ -216,7 +216,7 @@ class Tour_setup extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Tour Setup All List";
+            $data['title'] = "Tour All List";
             $data['system_preference_items'] = $this->get_preference('list_all');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
             $ajax['status'] = true;
@@ -294,7 +294,7 @@ class Tour_setup extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Tour Setup Upcoming List";
+            $data['title'] = "Tour Upcoming List";
             $data['system_preference_items'] = $this->get_preference('list_upcoming');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_upcoming", $data, true));
             $ajax['status'] = true;
@@ -315,6 +315,20 @@ class Tour_setup extends Root_Controller
 
     private function system_get_items_upcoming()
     {
+        $current_records = $this->input->post('total_records');
+        if (!$current_records)
+        {
+            $current_records = 0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if (!$pagesize)
+        {
+            $pagesize = 100;
+        }
+        else
+        {
+            $pagesize = $pagesize * 2;
+        }
         $user = User_helper::get_user();
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
@@ -336,6 +350,7 @@ class Tour_setup extends Root_Controller
         $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
         $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_pending'));
         $this->db->order_by('tour_setup.id', 'DESC');
+        $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
 
         foreach ($items as $key => &$item)
@@ -358,8 +373,6 @@ class Tour_setup extends Root_Controller
     {
         if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
-            $data['title'] = "New Tour Setup";
-
             $user = User_helper::get_user();
             $this->db->from($this->config->item('table_login_setup_user') . ' user');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
@@ -396,6 +409,7 @@ class Tour_setup extends Root_Controller
             $data['items'] = array();
             $data['iou_items'] = Tour_helper::get_iou_items();
 
+            $data['title'] = "New Tour";
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));
             $ajax['status'] = true;
             if ($this->message)
@@ -476,7 +490,8 @@ class Tour_setup extends Root_Controller
             $data['items'] = $this->db->get()->result_array();
 
             $data['iou_items'] = Tour_helper::get_iou_items();
-            $data['title'] = 'Edit Tour Setup';
+
+            $data['title'] = 'Tour Edit';
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));
             $ajax['status'] = true;
             if ($this->message)
@@ -676,11 +691,10 @@ class Tour_setup extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-
             $user = User_helper::get_user();
 
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
-            $this->db->select('tour_setup.*, tour_setup.id AS tour_id');
+            $this->db->select('tour_setup.*, tour_setup.id AS tour_id, tour_setup.status AS tour_status');
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
@@ -691,7 +705,11 @@ class Tour_setup extends Root_Controller
             $this->db->select('department.name AS department_name');
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
-            $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+            $this->db->where('tour_setup.status_forwarded_tour !=', $this->config->item('system_status_forwarded'));
+            $this->db->where('tour_setup.status_approved_tour !=', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_forwarded_payment !=', $this->config->item('system_status_forwarded'));
+            $this->db->where('tour_setup.status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
+            $this->db->where('tour_setup.status_approved_reporting !=', $this->config->item('system_status_approved'));
             if ($user->user_group != 1)
             {
                 $this->db->where('tour_setup.user_id', $user->user_id);
@@ -705,21 +723,14 @@ class Tour_setup extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status'] == $this->config->item('system_status_delete'))
+            if ($data['item']['tour_status'] == $this->config->item('system_status_delete'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Already Deleted.';
                 $this->json_return($ajax);
             }
 
-            //data from tour setup purpose table
-//            $this->db->from($this->config->item('table_ems_tour_purpose') . ' tour_setup_purpose');
-//            $this->db->select('tour_setup_purpose.*');
-//            $this->db->where('tour_setup_purpose.tour_id', $item_id);
-//            $this->db->where('tour_setup_purpose.status !=', $this->config->item('system_status_delete'));
-//            $data['items'] = $this->db->get()->result_array();
-
-            $data['title'] = 'Delete Tour :: ' . $data['item']['title'];
+            $data['title'] = 'Tour Delete :: ' . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/delete", $data, true));
             if ($this->message)
@@ -739,55 +750,62 @@ class Tour_setup extends Root_Controller
 
     private function system_save_delete()
     {
-        $id = $this->input->post("id");
-        $user = User_helper::get_user();
-        $time = time();
+        $item_id = $this->input->post("id");
         $item = $this->input->post('item');
+
+        $time = time();
+        $user = User_helper::get_user();
+
         if (!(isset($this->permissions['action3']) && ($this->permissions['action3'] == 1)))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        if ($item['status'] != $this->config->item('system_status_delete'))
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Delete field is required.';
-            $this->json_return($ajax);
-        }
 
-        $delete_condition = array(
-            'id =' . $id,
-            'status !="' . $this->config->item('system_status_delete') . '"'
-        );
+        $this->db->from($this->config->item('table_ems_tour_setup'));
+        $this->db->select('*');
+        $this->db->where('id', $item_id);
+        $this->db->where('status_forwarded_tour !=', $this->config->item('system_status_forwarded'));
+        $this->db->where('status_approved_tour !=', $this->config->item('system_status_approved'));
+        $this->db->where('status_forwarded_payment !=', $this->config->item('system_status_forwarded'));
+        $this->db->where('status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
+        $this->db->where('status_approved_reporting !=', $this->config->item('system_status_approved'));
         if ($user->user_group != 1)
         {
-            $delete_condition[] = 'user_id =' . $user->user_id;
+            $this->db->where('user_id', $user->user_id);
         }
+        $data = $this->db->get()->row_array();
 
-        $result = Query_helper::get_info($this->config->item('table_ems_tour_setup'), array('*'), $delete_condition, 1);
-        if (!$result)
+        if (!$data)
         {
-            System_helper::invalid_try('save_delete', $id, 'Save Delete Not Exists');
+            System_helper::invalid_try('delete', $item_id, 'Delete Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if ($data['status'] == $this->config->item('system_status_delete'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Already Deleted.';
             $this->json_return($ajax);
         }
 
         $this->db->trans_start(); //DB Transaction Handle START
         $item['user_updated'] = $user->user_id;
         $item['date_updated'] = $time;
-        Query_helper::update($this->config->item('table_ems_tour_setup'), $item, array("id = " . $id));
+        Query_helper::update($this->config->item('table_ems_tour_setup'), $item, array("id = " . $item_id));
         $this->db->trans_complete(); //DB Transaction Handle END
+
         if ($this->db->trans_status() === TRUE)
         {
-            $this->message = $this->lang->line("MSG_SAVED_DELETE");
+            $this->message = $this->lang->line("MSG_DELETED_SUCCESS");
             $this->system_list();
         }
         else
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL_DELETE");
+            $ajax['system_message'] = $this->lang->line("MSG_DELETED_FAIL");
             $this->json_return($ajax);
         }
     }
@@ -840,7 +858,7 @@ class Tour_setup extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['title'] = 'Forward Tour Setup And Reporting:: ' . $data['item']['title'];
+            $data['title'] = 'Tour Forward :: ' . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/forward", $data, true));
             if ($this->message)
@@ -920,7 +938,7 @@ class Tour_setup extends Root_Controller
 
         if ($this->db->trans_status() === TRUE)
         {
-            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
+            $this->message = $this->lang->line("MSG_FORWARD_SUCCESS");
             $this->system_list();
         }
         else

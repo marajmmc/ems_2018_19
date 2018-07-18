@@ -90,6 +90,7 @@ class Tour_approval extends Root_Controller
         $data['title'] = 1;
         $data['date_from'] = 1;
         $data['date_to'] = 1;
+        $data['amount_iou_request'] = 1;
         if ($method == 'list_all')
         {
             $data['status_approved_tour'] = 1;
@@ -127,7 +128,7 @@ class Tour_approval extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Pending Tour List For Approval";
+            $data['title'] = "Tour Pending List For Approval";
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference();
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
@@ -167,8 +168,6 @@ class Tour_approval extends Root_Controller
         if ($user->user_group != 1) // If not SuperAdmin, Then Only child's Tour list will appear.
         {
             $this->db->where_in('designation.id', $designation_child_ids);
-            /* $this->db->where('tour_setup.user_id !=', $user->user_id);
-            $this->db->where('designation.parent', $user->designation); */
         }
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
@@ -213,7 +212,7 @@ class Tour_approval extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "All Tour List For Approval";
+            $data['title'] = "Tour All List For Approval";
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference('list_all');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
@@ -368,7 +367,7 @@ class Tour_approval extends Root_Controller
             }
 
             $data['item']['name'] = $data['item']['name'] . ' (' . $data['item']['employee_id'] . ')';
-            $data['title'] = 'Tour Setup And Reporting Approval:: ' . $data['item']['title'];
+            $data['title'] = 'Tour Approval :: ' . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
             if ($this->message)
@@ -476,6 +475,44 @@ class Tour_approval extends Root_Controller
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference()
+    {
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
+        {
+            $data['system_preference_items'] = $this->get_preference();
+            $data['preference_method_name'] = 'list';
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_set_preference_all()
+    {
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
+        {
+            $data['system_preference_items'] = $this->get_preference('list_all');
+            $data['preference_method_name'] = 'list_all';
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
     }

@@ -94,9 +94,9 @@ class Tour_reporting_approval extends Root_Controller
         $data['title'] = 1;
         $data['date_from'] = 1;
         $data['date_to'] = 1;
+        $data['amount_iou_request'] = 1;
         if ($method == 'list_all')
         {
-            $data['status_forwarded_reporting'] = 1;
             $data['status_approved_reporting'] = 1;
         }
         return $data;
@@ -132,7 +132,7 @@ class Tour_reporting_approval extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Pending Tour list for Reporting Approval";
+            $data['title'] = "Tour Pending list for Reporting Approval";
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference();
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
@@ -216,7 +216,7 @@ class Tour_reporting_approval extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "All Tour list For Reporting Approval";
+            $data['title'] = "Tour All list For Reporting Approval";
             $ajax['status'] = true;
             $data['system_preference_items'] = $this->get_preference('list_all');
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
@@ -579,6 +579,13 @@ class Tour_reporting_approval extends Root_Controller
         $this->db->trans_start(); //DB Transaction Handle START
         if ($item['status_approved_reporting'] == $this->config->item('system_status_rollback'))
         {
+            foreach ($items as $key => $row)
+            {
+                $update_items = array(
+                    'status_completed' => $row
+                );
+                Query_helper::update($this->config->item('table_ems_tour_purpose'), $update_items, array("id = " . $key));
+            }
             $item['status_approved_reporting'] = $this->config->item('system_status_pending');
             $item['status_forwarded_reporting'] = $this->config->item('system_status_pending');
             $item['date_rollback_reporting'] = $time;
@@ -632,7 +639,7 @@ class Tour_reporting_approval extends Root_Controller
         $this->db->where('tour_reporting.date_reporting', $report_date);
         $data['item'] = $this->db->get()->row_array();
 
-        $data['title'] = "Tour Report Details";
+        $data['title'] = "Tour Report Purpose";
         $ajax['status'] = true;
         $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view($this->controller_url . "/report_details", $data, true));
         if ($this->message)
@@ -704,6 +711,7 @@ class Tour_reporting_approval extends Root_Controller
     private function check_validation_approve()
     {
         $item_id = $this->input->post('id');
+        $item_head = $this->input->post('item');
         $items = $this->input->post('items');
         if ($items)
         {
@@ -740,7 +748,10 @@ class Tour_reporting_approval extends Root_Controller
         }
 
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[remarks_approved_reporting]', 'Remarks ', 'required');
+        if ($item_head['status_approved_reporting'] == $this->config->item('system_status_rollback')) // `Remarks` is mandatory if only Rollback.
+        {
+            $this->form_validation->set_rules('item[remarks_approved_reporting]', 'Remarks ', 'required');
+        }
         $this->form_validation->set_rules('item[status_approved_reporting]', 'Approve ', 'required');
         if ($this->form_validation->run() == FALSE)
         {
@@ -749,57 +760,4 @@ class Tour_reporting_approval extends Root_Controller
         }
         return true;
     }
-
-    /* private function check_validation_approve()
-    {
-        $item_id = $this->input->post('id');
-        $items = $this->input->post('items');
-        if ($items)
-        {
-            $item_ids = array();
-            foreach ($items as $key => $item)
-            {
-                if (!trim($item))
-                {
-                    $this->message = 'Unfinished Status selection.';
-                    return false;
-                }
-                $item_ids[] = $key;
-            }
-            $this->db->from($this->config->item('table_ems_tour_reporting'));
-            $this->db->select("GROUP_CONCAT(id SEPARATOR ',') AS report_ids");
-            $this->db->where('tour_id', $item_id);
-            $this->db->where('status !=', $this->config->item('system_status_delete'));
-            $this->db->order_by('purpose_id', 'ASC');
-            $this->db->order_by('date_reporting', 'ASC');
-            $report_ids = explode(',', $this->db->get()->row('report_ids'));
-
-            $item_ids = array_map('trim', $item_ids);
-            $report_ids = array_map('trim', $report_ids);
-
-
-            $diff = array_diff($report_ids, $item_ids);
-            if (!empty($diff))
-            {
-                System_helper::invalid_try('Reporting_Approve', $item_id, 'Approve others Tour Report');
-                $this->message = 'You are trying to approve others Tour Report';
-                return false;
-            }
-        }
-        else
-        {
-            $this->message = 'Status fields are required';
-            return false;
-        }
-
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[remarks_approved_reporting]', 'Remarks ', 'required');
-        $this->form_validation->set_rules('item[status_approved_reporting]', 'Approve ', 'required');
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->message = validation_errors();
-            return false;
-        }
-        return true;
-    }  */
 }
