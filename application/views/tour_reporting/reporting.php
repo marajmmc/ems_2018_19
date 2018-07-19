@@ -326,13 +326,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 </div>
 
 <div class="row show-grid" style="margin:5px 0 0">
-    <div class="col-xs-11" style="padding-right:5px">
-        <div class="action_button pull-right" style="margin:0">
+    <div class="col-xs-12">
+        <div class="pull-right" style="margin:5px;display:inline-block">
+            <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
+        </div>
+        <div class="action_button pull-right">
             <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
         </div>
-    </div>
-    <div class="col-xs-1">
-        <button type="button" class="btn btn-warning system_button_add_more pull-right" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
     </div>
 </div>
 </div>
