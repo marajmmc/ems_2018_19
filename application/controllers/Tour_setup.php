@@ -71,21 +71,21 @@ class Tour_setup extends Root_Controller
         }
         elseif ($action == "set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
         }
         elseif ($action == "set_preference_all")
         {
-            $this->system_set_preference_all();
+            $this->system_set_preference('list_all');
         }
         elseif ($action == "set_preference_upcoming")
         {
-            $this->system_set_preference_upcoming();
+            $this->system_set_preference('list_upcoming');
         }
         elseif ($action == "save_preference")
         {
             System_helper::save_preference();
         }
-        elseif ($action == "details")
+        /* elseif ($action == "details")
         {
             $this->system_details($id);
         }
@@ -96,7 +96,7 @@ class Tour_setup extends Root_Controller
         elseif ($action == "print_requisition")
         {
             $this->system_print_requisition($id);
-        }
+        } */
         else
         {
             $this->system_list($id);
@@ -123,38 +123,34 @@ class Tour_setup extends Root_Controller
         return $data;
     }
 
-    private function get_preference($method = 'list')
+    private function system_set_preference($method = 'list')
     {
         $user = User_helper::get_user();
-        $result = Query_helper::get_info($this->config->item('table_system_user_preference'), '*', array('user_id =' . $user->user_id, 'controller ="' . $this->controller_url . '"', 'method ="' . $method . '"'), 1);
-        $data = $this->get_preference_headers($method);
-        if ($result)
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
-            if ($result['preferences'] != null)
-            {
-                $preferences = json_decode($result['preferences'], true);
-                foreach ($data as $key => $value)
-                {
-                    if (isset($preferences[$key]))
-                    {
-                        $data[$key] = $value;
-                    }
-                    else
-                    {
-                        $data[$key] = 0;
-                    }
-                }
-            }
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
+            $data['preference_method_name'] = $method;
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $this->json_return($ajax);
         }
-        return $data;
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
     }
 
     private function system_list()
     {
+        $user = User_helper::get_user();
+        $method = 'list';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['title'] = "Tour Pending List";
-            $data['system_preference_items'] = $this->get_preference();
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
             $ajax['status'] = true;
             if ($this->message)
@@ -214,10 +210,12 @@ class Tour_setup extends Root_Controller
 
     private function system_list_all()
     {
+        $user = User_helper::get_user();
+        $method = 'list_all';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['title'] = "Tour All List";
-            $data['system_preference_items'] = $this->get_preference('list_all');
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
             $ajax['status'] = true;
             if ($this->message)
@@ -292,10 +290,12 @@ class Tour_setup extends Root_Controller
 
     private function system_list_upcoming()
     {
+        $user = User_helper::get_user();
+        $method = 'list_upcoming';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['title'] = "Tour Upcoming List";
-            $data['system_preference_items'] = $this->get_preference('list_upcoming');
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_upcoming", $data, true));
             $ajax['status'] = true;
             if ($this->message)
@@ -477,9 +477,8 @@ class Tour_setup extends Root_Controller
             }
             if ($data['item']['status_forwarded_tour'] != $this->config->item('system_status_pending'))
             {
-                //System_helper::invalid_try('Edit', $item_id, 'Invalid try to edit after forward');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Tour Already Forwarded. Cannot Edit it.';
+                $ajax['system_message'] = 'This Tour is already Forwarded.';
                 $this->json_return($ajax);
             }
 
@@ -527,7 +526,7 @@ class Tour_setup extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        if ($id > 0) // for EDIT
+        if ($id > 0) //for EDIT
         {
             $check_condition = array('id =' . $id, 'status ="' . $this->config->item('system_status_active') . '"');
             if ($user->user_group != 1)
@@ -562,7 +561,7 @@ class Tour_setup extends Root_Controller
         $item_head['amount_iou_request'] = $total_amount_iou_request; // Common for both INSERT & UPDATE
         $item_head['amount_iou_items'] = json_encode($items_iou); // Common for both INSERT & UPDATE
 
-        if ($id > 0) // EDIT
+        if ($id > 0) //EDIT
         {
             // UPDATE Tour Setup data
             $item_head['date_from'] = System_helper::get_time($item_head['date_from']);
@@ -636,7 +635,7 @@ class Tour_setup extends Root_Controller
                 }
             }
         }
-        else /* ADD */
+        else //ADD
         {
             $item_head['user_id'] = $user->user_id;
             $item_head['date_from'] = System_helper::get_time($item_head['date_from']);
@@ -945,63 +944,6 @@ class Tour_setup extends Root_Controller
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
-            $this->json_return($ajax);
-        }
-    }
-
-    private function system_set_preference()
-    {
-        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
-        {
-            $data['system_preference_items'] = $this->get_preference();
-            $data['preference_method_name'] = 'list';
-            $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
-    private function system_set_preference_all()
-    {
-        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
-        {
-            $data['system_preference_items'] = $this->get_preference('list_all');
-            $data['preference_method_name'] = 'list_all';
-            $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
-    private function system_set_preference_upcoming()
-    {
-        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
-        {
-            $data['system_preference_items'] = $this->get_preference('list_upcoming');
-            $data['preference_method_name'] = 'list_upcoming';
-            $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_upcoming');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
     }

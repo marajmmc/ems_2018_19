@@ -71,17 +71,17 @@ class Tour_reporting extends Root_Controller
         }
         elseif ($action == "set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
         }
         elseif ($action == "set_preference_all")
         {
-            $this->system_set_preference_all();
+            $this->system_set_preference('list_all');
         }
         elseif ($action == "save_preference")
         {
             System_helper::save_preference();
         }
-        elseif ($action == "details")
+        /* elseif ($action == "details")
         {
             $this->system_details($id);
         }
@@ -92,7 +92,7 @@ class Tour_reporting extends Root_Controller
         elseif ($action == "print_requisition")
         {
             $this->system_print_requisition($id);
-        }
+        } */
         else
         {
             $this->system_list($id);
@@ -120,39 +120,35 @@ class Tour_reporting extends Root_Controller
         return $data;
     }
 
-    private function get_preference($method = 'list')
+    private function system_set_preference($method = 'list')
     {
         $user = User_helper::get_user();
-        $result = Query_helper::get_info($this->config->item('table_system_user_preference'), '*', array('user_id =' . $user->user_id, 'controller ="' . $this->controller_url . '"', 'method ="' . $method . '"'), 1);
-        $data = $this->get_preference_headers($method);
-        if ($result)
+        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
-            if ($result['preferences'] != null)
-            {
-                $preferences = json_decode($result['preferences'], true);
-                foreach ($data as $key => $value)
-                {
-                    if (isset($preferences[$key]))
-                    {
-                        $data[$key] = $value;
-                    }
-                    else
-                    {
-                        $data[$key] = 0;
-                    }
-                }
-            }
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
+            $data['preference_method_name'] = $method;
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $this->json_return($ajax);
         }
-        return $data;
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
     }
 
     private function system_list()
     {
+        $user = User_helper::get_user();
+        $method = 'list';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['title'] = "Tour Pending List for Reporting";
             $ajax['status'] = true;
-            $data['system_preference_items'] = $this->get_preference();
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
             if ($this->message)
             {
@@ -213,11 +209,13 @@ class Tour_reporting extends Root_Controller
 
     private function system_list_all()
     {
+        $user = User_helper::get_user();
+        $method = 'list_all';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['title'] = "Tour All List for Reporting";
             $ajax['status'] = true;
-            $data['system_preference_items'] = $this->get_preference('list_all');
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
             if ($this->message)
             {
@@ -927,44 +925,6 @@ class Tour_reporting extends Root_Controller
             $ajax['system_message'] = $this->message;
         }
         $this->json_return($ajax);
-    }
-
-    private function system_set_preference()
-    {
-        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
-        {
-            $data['preference_method_name'] = 'list';
-            $ajax['status'] = true;
-            $data['system_preference_items'] = $this->get_preference();
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
-    private function system_set_preference_all()
-    {
-        if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
-        {
-            $data['preference_method_name'] = 'list_all';
-            $ajax['status'] = true;
-            $data['system_preference_items'] = $this->get_preference('list_all');
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_all');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
     }
 
     private function check_validation()
