@@ -46,7 +46,7 @@ class Reports_rnd_demo_picture extends Root_Controller
         {
             $data['title']="Search";
             $ajax['status']=true;
-            $data['years']=Query_helper::get_info($this->config->item('table_ems_ft_farmers'),array('Distinct(year)'),array());
+            $data['years']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_demo'),array('Distinct(year)'),array());
             $data['crops']=array();
             $data['seasons']=Query_helper::get_info($this->config->item('table_ems_setup_seasons'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/search",$data,true));
