@@ -81,6 +81,32 @@ class System_helper
         $data['date_created_string']=System_helper::display_date_time($time);
         $CI->db->insert($CI->config->item('table_system_history_hack'), $data);
     }
+    //fetch preference
+    public static function get_preference($user_id,$controller,$method,$headers)
+    {
+        $CI = & get_instance();
+        $result=Query_helper::get_info($CI->config->item('table_system_user_preference'),'*',array('user_id ='.$user_id,'controller ="' .$controller.'"','method ="'.$method.'"'),1);
+        $data=$headers;
+        if($result)
+        {
+            if($result['preferences']!=null)
+            {
+                $preferences=json_decode($result['preferences'],true);
+                foreach($data as $key=>$value)
+                {
+                    if(isset($preferences[$key]))
+                    {
+                        $data[$key]=$value;
+                    }
+                    else
+                    {
+                        $data[$key]=0;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
     //saving preference
     public static function save_preference()
     {

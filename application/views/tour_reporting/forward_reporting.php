@@ -29,10 +29,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
     .tour-list span {
         display: inline-block;
-        padding: 5px;
+        padding: 0 5px;
         margin-right: 8px;
         background: #d7d7d7;
     }
+    .text-danger{font-style:italic;font-weight:bold}
 </style>
 
 <div class="row widget">
@@ -195,7 +196,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     $status = '';
                                     if ($purpose['status_completed'] != $CI->config->item('system_status_complete'))
                                     {
-                                        $status = ' (<i style="color:#FF0000">' . $CI->config->item('system_status_incomplete') . '</i>)';
+                                        $status = ' (<span class="text-danger">' . $CI->config->item('system_status_incomplete') . '</span>)';
                                     }
                                     echo '<li>' . $purpose['purpose'] . $status . '</li>';
                                 } ?>
