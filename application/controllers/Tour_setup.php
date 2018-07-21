@@ -850,6 +850,18 @@ class Tour_setup extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if ($data['item']['status_approved_tour'] == $this->config->item('system_status_approved'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Already Approved.';
+                $this->json_return($ajax);
+            }
+            if ($data['item']['status_approved_tour'] == $this->config->item('system_status_rejected'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Has been Rejected Already.';
+                $this->json_return($ajax);
+            }
             if ($data['item']['status_forwarded_tour'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -918,6 +930,18 @@ class Tour_setup extends Root_Controller
             System_helper::invalid_try('save_forward', $id, 'Save Forward Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if ($data['item']['status_approved_tour'] == $this->config->item('system_status_approved'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Already Approved.';
+            $this->json_return($ajax);
+        }
+        if ($data['item']['status_approved_tour'] == $this->config->item('system_status_rejected'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Has been Rejected Already.';
             $this->json_return($ajax);
         }
         if ($data['item']['status_forwarded_tour'] == $this->config->item('system_status_forwarded'))

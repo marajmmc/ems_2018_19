@@ -440,6 +440,12 @@ class Tour_approval extends Root_Controller
             $ajax['system_message'] = 'Already Approved.';
             $this->json_return($ajax);
         }
+        if ($data['status_approved_tour'] == $this->config->item('system_status_rejected'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Has been Rejected Already.';
+            $this->json_return($ajax);
+        }
         if (!$this->check_validation_approve())
         {
             $ajax['status'] = false;
@@ -453,9 +459,16 @@ class Tour_approval extends Root_Controller
         {
             $item['status_approved_tour'] = $this->config->item('system_status_pending');
             $item['status_forwarded_tour'] = $this->config->item('system_status_pending');
+            $item['remarks_rollback_tour'] = $item['remarks_approve_reject'];
+            unset($item['remarks_approve_reject']);
             $item['date_rollback_tour'] = $time;
             $item['user_rollback_tour'] = $user->user_id;
             $this->db->set('revision_count_rollback_tour', 'revision_count_rollback_tour + 1', FALSE);
+        }
+        elseif ($item['status_approved_tour'] == $this->config->item('system_status_rejected'))
+        {
+            $item['date_rejected_tour'] = $time;
+            $item['user_rejected_tour'] = $user->user_id;
         }
         else
         {
@@ -503,9 +516,10 @@ class Tour_approval extends Root_Controller
     {
         $item_head = $this->input->post('item');
         $this->load->library('form_validation');
-        if ($item_head['status_approved_tour'] == $this->config->item('system_status_rollback')) // `Supervisors Comment` is mandatory if only Rollback.
+        if (($item_head['status_approved_tour'] == $this->config->item('system_status_rollback'))
+            || ($item_head['status_approved_tour'] == $this->config->item('system_status_rejected'))) // `Supervisor Remarks` is mandatory for Rollback & Reject.
         {
-            $this->form_validation->set_rules('item[supervisors_comment]', 'Supervisors Comment', 'required');
+            $this->form_validation->set_rules('item[remarks_approve_reject]', 'Supervisor Remarks', 'required');
         }
         $this->form_validation->set_rules('item[status_approved_tour]', 'Approve', 'required');
         if ($this->form_validation->run() == FALSE)
