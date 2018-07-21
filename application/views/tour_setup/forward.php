@@ -104,10 +104,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right text-danger">Supervisors Comment:</label>
+                <label class="control-label pull-right text-danger">Supervisors Remarks:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label normal text-danger"><?php echo nl2br($item['supervisors_comment']); ?></label>
+                <label class="control-label normal text-danger"><?php echo nl2br($item['remarks_rollback_tour']); ?></label>
             </div>
         </div>
     <?php } ?>

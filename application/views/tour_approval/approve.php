@@ -19,9 +19,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     }
     label{margin-top:5px}
     label.normal{font-weight:normal !important}
-    .sup-comm-req {
+    .remarks-req {
         color: #FF0000;
         display: none;
+        font-style:italic;
     }
 </style>
 
@@ -84,14 +85,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     <?php echo Tour_helper::iou_items_summary_view('', $item); ?>
 
     <?php if($item['remarks']){ ?>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Remarks:</label>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Remarks:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label normal"><?php echo nl2br($item['remarks']); ?></label>
+            </div>
         </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label normal"><?php echo nl2br($item['remarks']); ?></label>
-        </div>
-    </div>
     <?php } ?>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_approve'); ?>" method="post">
@@ -99,13 +100,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Supervisors Comment <span class="sup-comm-req">*</span></label>
+                <label class="control-label pull-right">Supervisors Remarks <span class="remarks-req">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[supervisors_comment]" class="form-control"><?php echo $item['supervisors_comment'] ?></textarea>
+                <textarea name="item[remarks_approve_reject]" class="form-control"></textarea>
             </div>
             <div class="col-xs-4">
-                <label class="control-label normal sup-comm-req">Supervisors Comment field is required for Rollback</label>
+                <label class="control-label normal remarks-req"> </label>
             </div>
         </div>
 
@@ -118,6 +119,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
                     <option value="<?php echo $CI->config->item('system_status_approved') ?>">Approve</option>
                     <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
+                    <option value="<?php echo $CI->config->item('system_status_rejected') ?>">Reject</option>
                 </select>
             </div>
         </div>
@@ -142,13 +144,18 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     jQuery(document).ready(function () {
         $(".status-combo").on('change', function (event) {
-            $(".sup-comm-req").css('display','none');
+            $(".remarks-req").css('display','none');
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
             } else if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {
-                $(".sup-comm-req").css('display','inline');
+                $("label.remarks-req").text('This field is required for Rollback');
+                $(".remarks-req").css('display','inline-block');
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
+            } else if (options == '<?php echo $this->config->item('system_status_rejected'); ?>') {
+                $("label.remarks-req").text('This field is required for Reject');
+                $(".remarks-req").css('display','inline-block');
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_REJECT'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }
