@@ -13,6 +13,7 @@ $lang['MSG_DELETED_FAIL'] = 'Failed to Delete!';
 $lang['MSG_CONFIRM_DELETE'] = 'Are you sure to delete?'; // added by Maraj
 $lang['MSG_CONFIRM_FORWARD'] = 'Are you sure to Forward?';
 $lang['MSG_CONFIRM_APPROVE'] = 'Are you sure to Approve?';
+$lang['MSG_CONFIRM_REJECT'] = 'Are you sure to Reject?';
 $lang['MSG_CONFIRM_ROLLBACK'] = 'Are you sure to Rollback?';
 $lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
 $lang['MSG_FORWARD_SUCCESS'] = 'Successfully Forwarded';
