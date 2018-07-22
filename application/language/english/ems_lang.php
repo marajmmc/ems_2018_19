@@ -114,11 +114,7 @@ $lang['LABEL_SEASON'] = 'Season';
 
 /* Status */
 $lang['LABEL_STATUS'] = 'Status';
-
-$lang['LABEL_STATUS_LC_PENDING'] = 'Pending';
-$lang['LABEL_STATUS_LC_COMPLETE'] = 'Completed';
-$lang['LABEL_STATUS_OPEN_FORWARD'] = 'Forward Status';
-$lang['STATUS_APPROVE'] = 'Approve Status';
+$lang['LABEL_STATUS_COMPLETE']="Complete";
 
 // Common information related
 // ID or Code

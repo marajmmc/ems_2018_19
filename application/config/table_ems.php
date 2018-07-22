@@ -23,3 +23,7 @@ $config['table_ems_system_assigned_area'] = 'ems_system_assigned_area';
 $config['table_ems_tour_setup'] = 'arm_ems_2018_19.ems_tour_setup';
 $config['table_ems_tour_purpose'] = 'arm_ems_2018_19.ems_tour_purpose';
 $config['table_ems_tour_reporting'] = 'arm_ems_2018_19.ems_tour_reporting';
+
+// Farmer And Field Visit
+$config['table_ems_ft_field_visit_setup_farmer'] = 'arm_ems_2018_19.ems_ft_field_visit_setup_farmer';
+$config['table_ems_ft_field_visit_setup_farmer_varieties'] = 'arm_ems_2018_19.ems_ft_field_visit_setup_farmer_varieties';
