@@ -33,7 +33,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         margin-right: 8px;
         background: #d7d7d7;
     }
-    .text-danger{font-style:italic;font-weight:bold}
+    span.text-danger{font-style:italic;color:#FF0000}
 </style>
 
 <div class="row widget">

@@ -5,12 +5,6 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
     'href' => site_url($CI->controller_url . '/index/list_reporting/' . $item['tour_id'])
 );
-/* $action_buttons[] = array(
-    'type' => 'button',
-    'label' => $CI->lang->line("ACTION_SAVE"),
-    'id' => 'button_action_save',
-    'data-form' => '#save_form'
-); */
 $action_buttons[] = array(
     'type' => 'button',
     'label' => $CI->lang->line("ACTION_CLEAR"),
@@ -57,6 +51,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     }
     .no-padding-left{padding-left:0 !important;}
     .no-padding-right{padding-right:0 !important;}
+
 </style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
 
@@ -144,11 +139,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div id="tour_setup_container" style="overflow-x: auto;">
+<div id="tour_setup_container" style="overflow-x:auto;">
     <div class="col-xs-12 widget-header" style="font-size:1.2em; margin-bottom:0; border-top:1px solid #cfcfcf">
         <label class="control-label" style="margin:0">Reporting ( <?php echo System_helper::display_date($reporting_date); ?> )</label>
     </div>
-
 
     <?php
     if ($items) // OLD ITEMS
@@ -333,6 +327,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         <div class="action_button pull-right">
             <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
         </div>
+        <div class="clearfix"></div>
     </div>
 </div>
 </div>

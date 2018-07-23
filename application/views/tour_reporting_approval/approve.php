@@ -247,7 +247,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                 echo $row['purpose'];
                                 if ($row['purpose_type'] && ($row['purpose_type'] == $this->config->item('system_status_additional')))
                                 {
-                                    echo '&nbsp; <span>(Additional)</span>';
+                                    echo '&nbsp; (<span>Additional</span>)';
                                 }?>
                             </td>
                             <td>
@@ -286,7 +286,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right">Remarks <span class="remarks-req">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks_approved_reporting]" class="form-control"><?php echo $item['remarks_approved_reporting'] ?></textarea>
+                <textarea name="item[remarks_approved_reporting]" class="form-control"> </textarea>
             </div>
             <div class="col-xs-4">
                 <label class="control-label normal remarks-req">Remarks field is required for Rollback</label>

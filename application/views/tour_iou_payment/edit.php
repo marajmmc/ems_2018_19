@@ -99,28 +99,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     <?php } ?>
 
-    <?php if ($item['revision_count_rollback_tour'] > 0)
-    {
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right text-danger">Total Rollback:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label normal text-danger"><?php echo $item['revision_count_rollback_tour']; ?> Time(s)</label>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right text-danger">Supervisors Remarks:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label normal text-danger"><?php echo nl2br($item['remarks_rollback_tour']); ?></label>
-            </div>
-        </div>
-    <?php } ?>
-
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
         <input type="hidden" id="id" name="id" value="<?php echo $item['tour_setup_id']; ?>"/>
 
