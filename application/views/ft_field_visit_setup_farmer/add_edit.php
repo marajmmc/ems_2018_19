@@ -426,7 +426,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 $('#upazilla_id_container').show();
                 $.ajax({
-                    url: base_url+"common_controller/get_dropdown_upazillas_by_districtid/",
+                    url:"<?php echo site_url('/common_controller/get_dropdown_upazillas_by_districtid/');?>",
                     type: 'POST',
                     datatype: "JSON",
                     data:{district_id:district_id},

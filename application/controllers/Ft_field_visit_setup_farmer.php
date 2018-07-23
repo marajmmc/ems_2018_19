@@ -518,7 +518,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
         $result=$this->db->get()->row_array();
         if(!$result)
         {
-            System_helper::invalid_try('Save',$item['upazilla_id'],'Not Assigned');
+            System_helper::invalid_try('Save',$item['upazilla_id'],'Not Found');
             $ajax['status']=false;
             $ajax['system_message']='Invalid Try';
             $this->json_return($ajax);
@@ -565,7 +565,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $data['date_updated']=$time;
             $data['user_updated']=$user->user_id;
             $this->db->set('revision', 'revision+1', FALSE);
-            Query_helper::update($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),$data,array('setup_id='.$id));
+            Query_helper::update($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),$data,array('setup_id='.$id),false);
             $variety_ids=$this->input->post('variety_ids');
             foreach($variety_ids as $variety_id)
             {
@@ -575,7 +575,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
                 $data['revision']=1;
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] =$time;
-                Query_helper::add($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),$data);
+                Query_helper::add($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),$data,false);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)

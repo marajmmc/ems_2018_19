@@ -27,3 +27,7 @@ $config['table_ems_tour_reporting'] = 'arm_ems_2018_19.ems_tour_reporting';
 // Farmer And Field Visit
 $config['table_ems_ft_field_visit_setup_farmer'] = 'arm_ems_2018_19.ems_ft_field_visit_setup_farmer';
 $config['table_ems_ft_field_visit_setup_farmer_varieties'] = 'arm_ems_2018_19.ems_ft_field_visit_setup_farmer_varieties';
+
+$config['table_ems_ft_field_visit_visits_picture'] = 'arm_ems_2018_19.ems_ft_field_visit_visits_picture';
+$config['table_ems_ft_field_visit_fruit_picture'] = 'arm_ems_2018_19.ems_ft_field_visit_fruit_picture';
+$config['table_ems_ft_field_visit_disease_picture'] = 'arm_ems_2018_19.ems_ft_field_visit_disease_picture';
