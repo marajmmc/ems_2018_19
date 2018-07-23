@@ -495,8 +495,14 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             }
         }
 
-        /*--Start-- Valid Upazilla Id checking*/
+        if(!$this->check_validation())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->json_return($ajax);
+        }
 
+        /*--Start-- Valid Upazilla Id checking*/
         $this->db->from($this->config->item('table_login_setup_location_upazillas').' upazillas');
         $this->db->select('upazillas.id');
         $this->db->select('districts.id district_id');
@@ -517,23 +523,13 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $ajax['system_message']='Invalid Try';
             $this->json_return($ajax);
         }
-        else
-        {
-            if(!$this->check_my_editable($result))
-            {
-                System_helper::invalid_try('Save',$item['upazilla_id'],'Not Assigned');
-                $ajax['status']=false;
-                $ajax['system_message']='You are trying to setup field visit for an upazilla which is not assigned to you';
-                $this->json_return($ajax);
-            }
-        }
-
         /*--End-- Valid Upazilla Id checking*/
 
-        if(!$this->check_validation())
+        if(!$this->check_my_editable($result))
         {
+            System_helper::invalid_try('Save',$item['upazilla_id'],'Not Assigned');
             $ajax['status']=false;
-            $ajax['system_message']=$this->message;
+            $ajax['system_message']='You are trying to setup field visit for an upazilla which is not assigned to you';
             $this->json_return($ajax);
         }
         else
