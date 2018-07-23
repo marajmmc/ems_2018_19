@@ -285,7 +285,6 @@ class Tour_iou_payment extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
             $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
-            $this->db->where('tour_setup.status_forwarded_payment', $this->config->item('system_status_pending'));
             $data['item'] = $this->db->get()->row_array();
 
             if (!$data['item'])
@@ -405,12 +404,11 @@ class Tour_iou_payment extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
             $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
-            $this->db->where('tour_setup.status_forwarded_payment', $this->config->item('system_status_pending'));
             $data['item'] = $this->db->get()->row_array();
 
             if (!$data['item'])
             {
-                System_helper::invalid_try('edit', $id, 'Edit Payment Not Exists');
+                System_helper::invalid_try('approve', $id, 'Approve Payment Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);

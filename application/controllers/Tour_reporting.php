@@ -624,10 +624,12 @@ class Tour_reporting extends Root_Controller
                 }
                 elseif ((trim($item['purpose']) == "") && (trim($item['purpose_additional']) != "")) // IF New Purpose Entered
                 {
-                    $result = $this->db->query("SELECT *
-                                  FROM " . $this->config->item('table_ems_tour_purpose') . "
-                                  WHERE `tour_id` = '" . $item_id . "'
-                                  AND `purpose` LIKE '" . trim($item['purpose_additional']) . "'")->row_array();
+                    $this->db->from($this->config->item('table_ems_tour_purpose'));
+                    $this->db->select('*');
+                    $this->db->where('tour_id', $item_id);
+                    $this->db->like('purpose', trim($item['purpose_additional']), 'none');
+                    $result = $this->db->get()->row_array();
+
                     if ($result)
                     {
                         $purpose_id = $result['id'];
@@ -758,7 +760,7 @@ class Tour_reporting extends Root_Controller
             $user_ids[$data['item']['user_rollback_reporting']] = $data['item']['user_rollback_reporting'];
             $data['users'] = System_helper::get_users_info($user_ids);
 
-            $data['purposes'] = $this->db->get_where($this->config->item('table_ems_tour_purpose'), array('tour_id'=>$item_id))->result_array();
+            $data['purposes'] = $this->db->get_where($this->config->item('table_ems_tour_purpose'), array('tour_id' => $item_id))->result_array();
 
             $items = $temp_dates = array();
             $reporting_dates = array(0);
