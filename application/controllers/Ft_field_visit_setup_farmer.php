@@ -569,7 +569,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $data['date_updated']=$time;
             $data['user_updated']=$user->user_id;
             $this->db->set('revision', 'revision+1', FALSE);
-            Query_helper::update($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),$data,array('revision=1','setup_id='.$id));
+            Query_helper::update($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),$data,array('setup_id='.$id));
             $variety_ids=$this->input->post('variety_ids');
             foreach($variety_ids as $variety_id)
             {
