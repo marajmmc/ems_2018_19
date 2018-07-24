@@ -285,6 +285,8 @@ $lang['LABEL_STATUS_FORWARD'] = "Forwarded";
 $lang['LABEL_STATUS_APPROVE'] = "Approved";
 $lang['LABEL_STATUS_FORWARDED_TOUR'] = "Tour Forwarded";
 $lang['LABEL_STATUS_APPROVED_TOUR'] = "Tour Approved";
+$lang['LABEL_STATUS_FORWARDED_PAYMENT'] = "Payment Forwarded";
+$lang['LABEL_STATUS_APPROVED_PAYMENT'] = "Payment Approved";
 $lang['LABEL_STATUS_FORWARDED_REPORTING'] = "Report Forwarded";
 $lang['LABEL_STATUS_APPROVED_REPORTING'] = "Report Approved";
 
