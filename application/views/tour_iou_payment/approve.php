@@ -103,7 +103,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">IOU to Pay:</label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT_IOU_PAYMENT'); ?>:</label>
             </div>
             <div class="col-xs-4">
                 <?php $iou_payment = ($item['amount_iou_payment'] > 0) ? $item['amount_iou_payment'] : $item['amount_iou_request']; ?>

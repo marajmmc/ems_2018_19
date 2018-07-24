@@ -104,7 +104,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">IOU to Pay <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT_IOU_PAY'); ?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
                 <input type="text" name="item[amount_iou_payment]" value="<?php echo ($item['amount_iou_payment'] > 0) ? $item['amount_iou_payment'] : $item['amount_iou_request']; ?>" class="form-control float_type_positive price_unit_tk iou_payment_input"/>

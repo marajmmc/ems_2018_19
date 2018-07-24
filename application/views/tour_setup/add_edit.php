@@ -28,6 +28,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 <style>
     .datepicker {cursor: pointer !important;}
     label{margin-top:5px}
+    #purpose-wrap tr td:last-child{width:1% !important;}
 </style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
@@ -104,7 +105,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <label class="control-label pull-right"> Purpose <span style="color:#FF0000">*</span></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" id="purpose-wrap">
                         <tbody>
                             <?php
                             if($items)

@@ -274,6 +274,8 @@ $lang['LABEL_DETAILS_BUTTON'] = 'Details';
 // Tour
 $lang['LABEL_TITLE'] = 'Title';
 $lang['LABEL_AMOUNT_IOU_REQUEST'] = "IOU Amount Request";
+$lang['LABEL_AMOUNT_IOU_PAY'] = "IOU to Pay";
+$lang['LABEL_AMOUNT_IOU_PAYMENT'] = "IOU Amount Paid";
 $lang['LABEL_AMOUNT_TOTAL_IOU'] = "Total IOU Amount";
 $lang['LABEL_DESIGNATION'] = "Designation";
 $lang['LABEL_DATE_FROM'] = "Date From";

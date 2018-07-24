@@ -155,7 +155,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             {
                 ?>
                 <tr>
-                    <th colspan="4" class="bg-info">Tour Approval Information</th>
+                    <th colspan="4" class="bg-info text-info">Tour Approval Information</th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption">
@@ -186,7 +186,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             {
                 ?>
                 <tr>
-                    <th colspan="4" class="bg-info">Tour Reporting Forward Information</th>
+                    <th colspan="4" class="bg-info text-info">Tour Reporting Forward Information</th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption">
