@@ -617,7 +617,7 @@ class Tour_reporting extends Root_Controller
                     );
                     $this->db->set('revision_count_reporting', 'revision_count_reporting + 1', FALSE);
                     $Query = Query_helper::update($this->config->item('table_ems_tour_reporting'), $update_item, array('tour_id=' . $item_id, 'date_reporting=' . $reporting_date, 'purpose_id=' . $purpose_id));
-                    if ($Query) //IF found in Reporting table, then UPDATE
+                    if ($Query) //IF found in Reporting table, then UPDATE and continue for next.
                     {
                         continue;
                     }
@@ -646,7 +646,7 @@ class Tour_reporting extends Root_Controller
                         );
                         $this->db->set('revision_count_reporting', 'revision_count_reporting + 1', FALSE);
                         $Query = Query_helper::update($this->config->item('table_ems_tour_reporting'), $update_item, array('tour_id=' . $item_id, 'date_reporting=' . $reporting_date, 'purpose_id=' . $purpose_id));
-                        if ($Query) // IF New Purpose Already exist in Reporting Table, THEN Activate & UPDATE
+                        if ($Query) // IF New Purpose Already exist in Reporting Table, THEN Activate & UPDATE and continue for next.
                         {
                             continue;
                         }
