@@ -32,7 +32,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     }
 
     .reporting {
-        background: lightgrey;
+        background: #d3d3d3;
         padding-top: 15px;
         padding-bottom: 15px;
         margin-bottom: 10px
