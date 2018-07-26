@@ -385,7 +385,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $results=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),'*',array('setup_id ='.$item_id,'revision =1'));
             if(!$results)
             {
-                System_helper::invalid_try('Edit',$item_id,'Non-Exists');
+                System_helper::invalid_try('Edit',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -423,7 +423,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Edit',$item_id,'Id Non-Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);

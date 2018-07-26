@@ -210,7 +210,7 @@ class Ft_field_visit_field_visit extends Root_Controller
             $results=$this->db->get()->result_array();
             if(!$results)
             {
-                System_helper::invalid_try('Edit',$item_id,'Non-Exists');
+                System_helper::invalid_try('Reporting',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -249,14 +249,14 @@ class Ft_field_visit_field_visit extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Reporting',$item_id,'Id Non-Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit',$item_id,'Trying to report on others field visit setup');
+                System_helper::invalid_try('Reporting',$item_id,'Trying to report on others field visit setup');
                 $ajax['status']=false;
                 $ajax['system_message']='You are trying to report on others field visit setup';
                 $this->json_return($ajax);
@@ -283,7 +283,7 @@ class Ft_field_visit_field_visit extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/reporting/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -317,7 +317,7 @@ class Ft_field_visit_field_visit extends Root_Controller
             $results=$this->db->get()->result_array();
             if(!$results)
             {
-                System_helper::invalid_try('Details',$item_id,'Non-Exists');
+                System_helper::invalid_try('Details',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -355,7 +355,7 @@ class Ft_field_visit_field_visit extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Details',$item_id,'Id Non-Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
