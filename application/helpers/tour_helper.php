@@ -45,7 +45,7 @@ class Tour_helper
         return array(
             'accommodation',
             'transportation',
-            'food_allowance',
+            'per-diem',
             'miscellaneous'
         );
     }
@@ -61,10 +61,10 @@ class Tour_helper
         $output = '';
 
         $output .= '<div class="row show-grid">';
-        $output .= '    <div class="col-xs-4">';
+        $output .= '    <div class="col-xs-' . $col_1 . '">';
         $output .= '        <label class="control-label pull-right">Purpose(s):</label>';
         $output .= '    </div>';
-        $output .= '    <div class="col-sm-4 col-xs-8 purpose-list">';
+        $output .= '    <div class="col-xs-' . $col_2 . ' purpose-list">';
         $output .= '        <table class="table table-bordered table-striped table-hover">';
         $output .= '            <thead>';
         $output .= '                <tr>';
@@ -119,6 +119,11 @@ class Tour_helper
             // EACH IOU Items
             foreach ($iou_items as $iou_item)
             {
+                $iou_amount = 0;
+                if (isset($amount_iou_items[$iou_item]))
+                {
+                    $iou_amount = $amount_iou_items[$iou_item];
+                }
                 $output .= '<div class="row show-grid">';
                 $output .= '    <div class="col-xs-' . $col_1 . '">';
                 if ($i == 0)
@@ -130,11 +135,11 @@ class Tour_helper
                 $output .= '        <label class="control-label pull-right normal">' . Tour_helper::to_label($iou_item) . ':</label>';
                 $output .= '    </div>';
                 $output .= '    <div class="col-xs-' . $col_3 . '" style="padding-left:0">';
-                $output .= '        <label class="control-label pull-right">' . (System_helper::get_string_amount((isset($amount_iou_items[$iou_item])) ? $amount_iou_items[$iou_item] : 0)) . '</label>';
+                $output .= '        <label class="control-label pull-right">' . (System_helper::get_string_amount($iou_amount)) . '</label>';
                 $output .= '    </div>';
                 $output .= '</div>';
 
-                $total_iou_amount += $amount_iou_items[$iou_item];
+                $total_iou_amount += $iou_amount;
                 $i++;
             }
 
