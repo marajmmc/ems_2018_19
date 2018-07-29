@@ -13,6 +13,7 @@ $lang['MSG_DELETED_FAIL'] = 'Failed to Delete!';
 $lang['MSG_CONFIRM_DELETE'] = 'Are you sure to delete?'; // added by Maraj
 $lang['MSG_CONFIRM_FORWARD'] = 'Are you sure to Forward?';
 $lang['MSG_CONFIRM_APPROVE'] = 'Are you sure to Approve?';
+$lang['MSG_CONFIRM_PAYMENT'] = 'Are you sure to confirm Payment?';
 $lang['MSG_CONFIRM_REJECT'] = 'Are you sure to Reject?';
 $lang['MSG_CONFIRM_ROLLBACK'] = 'Are you sure to Rollback?';
 $lang['MSG_DELETED_SUCCESS'] = 'Successfully Deleted';
@@ -288,7 +289,8 @@ $lang['LABEL_STATUS_APPROVE'] = "Approved";
 $lang['LABEL_STATUS_FORWARDED_TOUR'] = "Tour Forwarded";
 $lang['LABEL_STATUS_APPROVED_TOUR'] = "Tour Approved";
 $lang['LABEL_STATUS_FORWARDED_PAYMENT'] = "Payment Forwarded";
-$lang['LABEL_STATUS_APPROVED_PAYMENT'] = "Payment Approved";
+$lang['LABEL_STATUS_APPROVED_PAYMENT'] = "IOU Approve Status";
+$lang['LABEL_STATUS_PAID_PAYMENT'] = "Payment Status";
 $lang['LABEL_STATUS_FORWARDED_REPORTING'] = "Report Forwarded";
 $lang['LABEL_STATUS_APPROVED_REPORTING'] = "Report Approved";
 
