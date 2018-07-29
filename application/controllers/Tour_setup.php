@@ -33,13 +33,13 @@ class Tour_setup extends Root_Controller
         {
             $this->system_get_items_all();
         }
-        elseif ($action == "list_upcoming")
+        elseif ($action == "list_waiting")
         {
-            $this->system_list_upcoming();
+            $this->system_list_waiting();
         }
-        elseif ($action == "get_items_upcoming")
+        elseif ($action == "get_items_waiting")
         {
-            $this->system_get_items_upcoming();
+            $this->system_get_items_waiting();
         }
         elseif ($action == "add")
         {
@@ -77,9 +77,9 @@ class Tour_setup extends Root_Controller
         {
             $this->system_set_preference('list_all');
         }
-        elseif ($action == "set_preference_upcoming")
+        elseif ($action == "set_preference_waiting")
         {
-            $this->system_set_preference('list_upcoming');
+            $this->system_set_preference('list_waiting');
         }
         elseif ($action == "save_preference")
         {
@@ -115,7 +115,7 @@ class Tour_setup extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou_request'] = 1;
-        if ($method == 'list_all' || $method == 'list_upcoming')
+        if ($method == 'list_all' || $method == 'list_waiting')
         {
             $data['status_forwarded_tour'] = 1;
             $data['status_approved_tour'] = 1;
@@ -288,21 +288,21 @@ class Tour_setup extends Root_Controller
         $this->json_return($items);
     }
 
-    private function system_list_upcoming()
+    private function system_list_waiting()
     {
         $user = User_helper::get_user();
-        $method = 'list_upcoming';
+        $method = 'list_waiting';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['title'] = "Tour Upcoming List";
+            $data['title'] = "Tour Waiting List";
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_upcoming", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_waiting", $data, true));
             $ajax['status'] = true;
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . "/index/list_upcoming");
+            $ajax['system_page_url'] = site_url($this->controller_url . "/index/list_waiting");
             $this->json_return($ajax);
         }
         else
@@ -313,7 +313,7 @@ class Tour_setup extends Root_Controller
         }
     }
 
-    private function system_get_items_upcoming()
+    private function system_get_items_waiting()
     {
         $current_records = $this->input->post('total_records');
         if (!$current_records)
@@ -706,7 +706,7 @@ class Tour_setup extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status_forwarded_tour !=', $this->config->item('system_status_forwarded'));
             $this->db->where('tour_setup.status_approved_tour !=', $this->config->item('system_status_approved'));
-            $this->db->where('tour_setup.status_forwarded_payment !=', $this->config->item('system_status_forwarded'));
+            $this->db->where('tour_setup.status_approved_payment !=', $this->config->item('system_status_approved'));
             $this->db->where('tour_setup.status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
             $this->db->where('tour_setup.status_approved_reporting !=', $this->config->item('system_status_approved'));
             if ($user->user_group != 1)
@@ -767,7 +767,7 @@ class Tour_setup extends Root_Controller
         $this->db->where('id', $item_id);
         $this->db->where('status_forwarded_tour !=', $this->config->item('system_status_forwarded'));
         $this->db->where('status_approved_tour !=', $this->config->item('system_status_approved'));
-        $this->db->where('status_forwarded_payment !=', $this->config->item('system_status_forwarded'));
+        $this->db->where('status_approved_payment !=', $this->config->item('system_status_approved'));
         $this->db->where('status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
         $this->db->where('status_approved_reporting !=', $this->config->item('system_status_approved'));
         if ($user->user_group != 1)

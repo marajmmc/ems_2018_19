@@ -754,7 +754,7 @@ class Tour_reporting extends Root_Controller
             $user_ids[$data['item']['user_forwarded_tour']] = $data['item']['user_forwarded_tour'];
             $user_ids[$data['item']['user_approved_tour']] = $data['item']['user_approved_tour'];
             $user_ids[$data['item']['user_rollback_tour']] = $data['item']['user_rollback_tour'];
-            $user_ids[$data['item']['user_forwarded_payment']] = $data['item']['user_forwarded_payment'];
+            $user_ids[$data['item']['user_approved_payment']] = $data['item']['user_approved_payment'];
             $user_ids[$data['item']['user_forwarded_reporting']] = $data['item']['user_forwarded_reporting'];
             $user_ids[$data['item']['user_approved_reporting']] = $data['item']['user_approved_reporting'];
             $user_ids[$data['item']['user_rollback_reporting']] = $data['item']['user_rollback_reporting'];
