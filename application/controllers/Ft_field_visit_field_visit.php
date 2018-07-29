@@ -19,6 +19,7 @@ class Ft_field_visit_field_visit extends Root_Controller
             $this->json_return($ajax);
         }
         $this->controller_url = strtolower(get_class($this));
+        $this->lang->load('field_visit');
     }
     public function index($action="list",$id=0)
     {
@@ -30,9 +31,9 @@ class Ft_field_visit_field_visit extends Root_Controller
         {
             $this->get_items();
         }
-        elseif($action=="reporting")
+        elseif($action=="edit")
         {
-            $this->system_reporting($id);
+            $this->system_edit($id);
         }
         elseif($action=="save")
         {
@@ -185,7 +186,7 @@ class Ft_field_visit_field_visit extends Root_Controller
         }
         $this->json_return($items);
     }
-    private function system_reporting($id)
+    private function system_edit($id)
     {
         if((isset($this->permissions['action1'])&&($this->permissions['action1']==1))||(isset($this->permissions['action2'])&&($this->permissions['action2']==1)))
         {
@@ -210,7 +211,7 @@ class Ft_field_visit_field_visit extends Root_Controller
             $results=$this->db->get()->result_array();
             if(!$results)
             {
-                System_helper::invalid_try('Reporting',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
+                System_helper::invalid_try('Edit',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -249,16 +250,16 @@ class Ft_field_visit_field_visit extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Reporting',$item_id,'Id Non-Exists in field_visit_setup_farmer');
+                System_helper::invalid_try('Edit',$item_id,'Id Non-Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Reporting',$item_id,'Trying to report on others field visit setup');
+                System_helper::invalid_try('Edit',$item_id,'Edit others');
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to report on others field visit setup';
+                $ajax['system_message']='You are trying to report on others field visit setup which area is not assigned to you';
                 $this->json_return($ajax);
             }
             $data['visits_picture']=array();
@@ -276,14 +277,14 @@ class Ft_field_visit_field_visit extends Root_Controller
                 $data['fruits_picture'][$result['picture_id']][$result['variety_id']]=$result;
             }
             $data['disease_picture']=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_disease_picture'),'*',array('setup_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('id'));
-            $data['title']="Edit Field Visit";
+            $data['title']="Reporting:: Field Visit";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/reporting",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/reporting/'.$item_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$item_id);
             $this->json_return($ajax);
         }
         else
@@ -362,9 +363,9 @@ class Ft_field_visit_field_visit extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Details',$item_id,'Trying to view details of others task');
+                System_helper::invalid_try('Details',$item_id,'View others');
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to view details of others task which area is not assigned to you';
+                $ajax['system_message']='You are trying to view details of others field visit which area is not assigned to you';
                 $this->json_return($ajax);
             }
             $data['visits_picture']=array();
@@ -421,9 +422,9 @@ class Ft_field_visit_field_visit extends Root_Controller
         }
         if(!$this->check_my_editable($result_setup_field_visit))
         {
-            System_helper::invalid_try('Save',$id,'Trying to save others task');
+            System_helper::invalid_try('Save',$id,'Save others');
             $ajax['status']=false;
-            $ajax['system_message']='You are trying to save others task which area is not assigned to you';
+            $ajax['system_message']='You are trying to save reporting on others field visit which area is not assigned to you';
             $this->json_return($ajax);
         }
         $this->db->from($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties').' farmer_varieties');

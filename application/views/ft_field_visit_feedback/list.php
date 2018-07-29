@@ -7,7 +7,7 @@ if((isset($CI->permissions['action1'])&&($CI->permissions['action1']==1))||(isse
     $action_buttons[]=array
     (
         'type'=>'button',
-        'label'=>$CI->lang->line('ACTION_EDIT'),
+        'label'=>$CI->lang->line('ACTION_FEEDBACK'),
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
@@ -130,13 +130,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 sortable: true,
                 showfilterrow: true,
                 columnsresize: true,
-                pagesize:20,
+                pagesize:50,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
                 selectionmode: 'singlerow',
                 altrows: true,
-                autoheight: true,
-                enabletooltips: true,
-                rowsheight: 35,
+                height: '350px',
+                enablebrowserselection:true,
+                columnsreorder: true,
+                rowsheight: 30,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>',pinned:true,dataField: 'id',width:'40',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['id']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>',pinned:true,dataField: 'farmer_name',width:'200',rendered:tooltiprenderer,cellsrenderer: cellsrenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},

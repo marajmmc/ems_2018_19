@@ -6,9 +6,9 @@ if((isset($CI->permissions['action1'])&&($CI->permissions['action1']==1))||(isse
 {
     $action_buttons[]=array(
         'type'=>'button',
-        'label'=>'Reporting',
+        'label'=>$CI->lang->line('ACTION_REPORTING'),
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/reporting')
+        'data-action-link'=>site_url($CI->controller_url.'/index/edit')
     );
 }
 if(isset($CI->permissions['action0'])&&($CI->permissions['action0']==1))
@@ -127,16 +127,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 showfilterrow: true,
                 columnsresize: true,
                 pagesize:50,
-                pagesizeoptions: ['50', '100', '200','300','500','1000','5000'],
+                pagesizeoptions: ['20', '50', '100', '200','300','500'],
                 selectionmode: 'singlerow',
                 altrows: true,
                 height: '350px',
+                enablebrowserselection:true,
                 columnsreorder: true,
-                enablebrowserselection: true,
+                rowsheight: 30,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>',pinned:true,dataField: 'id',width:'40',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['id']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>',pinned:true,dataField: 'farmer_name',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>',pinned:true,dataField: 'year',width:'100',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['year']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>',pinned:true,dataField: 'year',width:'80',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['year']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>',pinned:true,dataField: 'season',filtertype: 'list',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['season']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
@@ -147,7 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_sowing']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',filtertype: 'list',width:'50',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visits']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',filtertype: 'list',width:'50',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['interval']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT_DONE'); ?>', dataField: 'num_visit_done',filtertype: 'list',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visit_done']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT_DONE'); ?>', dataField: 'num_visit_done',filtertype: 'list',width:'50',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['num_visit_done']?0:1;?>}
                 ]
             });
     });

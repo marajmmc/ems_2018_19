@@ -430,9 +430,9 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit',$item_id,'Trying to edit others task');
+                System_helper::invalid_try('Edit',$item_id,'Edit others');
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to edit others task';
+                $ajax['system_message']='You are trying to edit others field visit setup which area is not assigned to you.';
                 $this->json_return($ajax);
             }
             $data['seasons']=Query_helper::get_info($this->config->item('table_ems_setup_seasons'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering ASC'));
@@ -518,7 +518,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
         $result=$this->db->get()->row_array();
         if(!$result)
         {
-            System_helper::invalid_try('Save',$item['upazilla_id'],'Not Found');
+            System_helper::invalid_try('Save',$item['upazilla_id'],'Upazilla Id not found');
             $ajax['status']=false;
             $ajax['system_message']='Invalid Try';
             $this->json_return($ajax);
@@ -527,9 +527,9 @@ class Ft_field_visit_setup_farmer extends Root_Controller
 
         if(!$this->check_my_editable($result))
         {
-            System_helper::invalid_try('Save',$item['upazilla_id'],'Not Assigned');
+            System_helper::invalid_try('Save',$item['upazilla_id'],'Save others');
             $ajax['status']=false;
-            $ajax['system_message']='You are trying to setup field visit for an upazilla which is not assigned to you';
+            $ajax['system_message']='You are trying to save field visit setup for an area which is not assigned to you';
             $this->json_return($ajax);
         }
         else
@@ -786,10 +786,10 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             }
 
             $data['previous_varieties']=array();
-            $results=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),'*',array('setup_id ='.$item_id,'revision ='.'1'));
+            $results=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties'),'*',array('setup_id ='.$item_id,'revision =1'));
             if(!$results)
             {
-                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Details',$item_id,'Id Not Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -827,16 +827,16 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Details',$item_id,'Id Not Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Details',$item_id,'Trying to view details of others task');
+                System_helper::invalid_try('Details',$item_id,'View others');
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to view details of others task';
+                $ajax['system_message']='You are trying to view details of others field visit setup which area is not assigned to you';
                 $this->json_return($ajax);
             }
 
@@ -845,7 +845,7 @@ class Ft_field_visit_setup_farmer extends Root_Controller
             $user_ids[$data['item']['user_updated']]=$data['item']['user_updated'];
             $data['users']=System_helper::get_users_info($user_ids);
 
-            $data['title']="Detail:: Farmer and Field Visit Setup";
+            $data['title']="Details:: Farmer and Field Visit Setup";
             $data['varieties']=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),array('id value','name text','whose'),array('crop_type_id ='.$data['item']['type_id'],'status !="'.$this->config->item('system_status_delete').'"'),0,0,array('whose ASC','ordering ASC'));
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));

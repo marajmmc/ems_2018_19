@@ -1,4 +1,7 @@
 <?php
+$lang['ACTION_FEEDBACK'] = 'Feedback';
+$lang['ACTION_REPORTING'] = 'Reporting';
+
 $lang['LABEL_FEEDBACK'] = 'Feedback';
 $lang['LABEL_FEEDBACK_REQUIRE'] = 'Feedback Require';
 $lang['LABEL_NUM_VISIT_DONE_FEEDBACK'] = 'Number Of Visit Feedback';

@@ -207,7 +207,7 @@ class Ft_field_visit_feedback extends Root_Controller
             $results=$this->db->get()->result_array();
             if(!$results)
             {
-                System_helper::invalid_try('Edit',$item_id,'Non-Exists');
+                System_helper::invalid_try('Edit',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -245,16 +245,16 @@ class Ft_field_visit_feedback extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Edit',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Edit',$item_id,'Id Non-Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit',$item_id,'Trying to give feedback on others field visit setup');
+                System_helper::invalid_try('Edit',$item_id,'Edit others');
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to give feedback on others field visit setup';
+                $ajax['system_message']='You are trying to give feedback on others field visit setup which area is not assigned to you';
                 $this->json_return($ajax);
             }
             $data['visits_picture']=array();
@@ -396,7 +396,7 @@ class Ft_field_visit_feedback extends Root_Controller
             $results=$this->db->get()->result_array();
             if(!$results)
             {
-                System_helper::invalid_try('Details',$item_id,'Non-Exists');
+                System_helper::invalid_try('Details',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try';
                 $this->json_return($ajax);
@@ -434,16 +434,16 @@ class Ft_field_visit_feedback extends Root_Controller
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
-                System_helper::invalid_try('Details',$item_id,'Id Not Exists');
+                System_helper::invalid_try('Details',$item_id,'Id Non-Exists in field_visit_setup_farmer');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
             if(!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Details',$item_id,'Trying to view details of others task');
+                System_helper::invalid_try('Details',$item_id,'View others');
                 $ajax['status']=false;
-                $ajax['system_message']='You are trying to view details of others task which area is not assigned to you';
+                $ajax['system_message']='You are trying to view details of others field visit feedback which area is not assigned to you';
                 $this->json_return($ajax);
             }
             $data['visits_picture']=array();
