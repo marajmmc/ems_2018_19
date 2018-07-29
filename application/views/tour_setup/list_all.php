@@ -12,8 +12,8 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(
-        'label' => 'Upcoming List',
-        'href' => site_url($CI->controller_url . '/index/list_upcoming')
+        'label' => 'Waiting List',
+        'href' => site_url($CI->controller_url . '/index/list_waiting')
     );
 }
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))

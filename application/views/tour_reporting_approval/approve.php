@@ -19,6 +19,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         width: 50px
     }
 
+    .panel {
+        border: none;
+    }
+
     label {
         margin-top: 5px
     }
@@ -31,11 +35,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         color: #a94442;
         font-weight: bold;
         font-style: italic;
-    }
-
-    .remarks-req {
-        color: #FF0000;
-        display: none;
     }
 </style>
 
@@ -227,10 +226,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th><?php echo $this->lang->line('LABEL_SL_NO'); ?></th>
+                    <th style="width:5%"><?php echo $this->lang->line('LABEL_SL_NO'); ?></th>
                     <th>Purpose(s)</th>
                     <th>Reporting Date</th>
-                    <th>Status</th>
+                    <th style="width:20%">Status <span style="color:#FF0000">*</span></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -248,7 +247,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                 if ($row['purpose_type'] && ($row['purpose_type'] == $this->config->item('system_status_additional')))
                                 {
                                     echo '&nbsp; (<span>Additional</span>)';
-                                }?>
+                                } ?>
                             </td>
                             <td>
                                 <?php
@@ -259,6 +258,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                     {
                                         echo '<button title="Click for details" class="btn btn-sm btn-info pop_up" data-purpose="' . $row['p_id'] . '" data-date="' . $reporting_date . '">' . (System_helper::display_date($reporting_date)) . '</button> &nbsp;';
                                     }
+                                }
+                                else
+                                {
+                                    echo '-';
                                 }
                                 ?>
                             </td>
@@ -283,25 +286,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks <span class="remarks-req">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks_approved_reporting]" class="form-control"> </textarea>
-            </div>
-            <div class="col-xs-4">
-                <label class="control-label normal remarks-req">Remarks field is required for Rollback</label>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
                 <label class="control-label pull-right">Approve <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
                 <select name="item[status_approved_reporting]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
                     <option value="<?php echo $this->config->item('system_status_approved'); ?>">Approve</option>
-                    <option value="<?php echo $this->config->item('system_status_rollback'); ?>">Rollback</option>
                 </select>
             </div>
         </div>
@@ -323,8 +313,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
-        var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
+        var left = ((($(window).width() - 550) / 2) + $(window).scrollLeft());
+        var top = ((($(window).height() - 550) / 2) + $(window).scrollTop());
         $("#popup_window").jqxWindow({position: { x: left, y: top  }});
 
         $(document).off("click", ".pop_up");
@@ -355,13 +345,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         });
 
         $(".status-combo").on('change', function (event) {
-            $(".remarks-req").css('display','none');
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
                 $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_APPROVE'); ?>');
-            } else if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {
-                $(".remarks-req").css('display','inline');
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }

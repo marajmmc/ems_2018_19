@@ -116,7 +116,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_APPROVE'); ?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select name="item[status_forwarded_payment]" class="form-control status-combo">
+                <select name="item[status_approved_payment]" class="form-control status-combo">
                     <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
                     <option value="<?php echo $this->config->item('system_status_approved'); ?>">Approve</option>
                 </select>

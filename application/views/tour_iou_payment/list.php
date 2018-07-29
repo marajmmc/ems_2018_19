@@ -1,6 +1,19 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
 
+/*  $flag :-
+        1 = Payment
+        2 = Approve
+        0 = SuperAdmin & others
+*/
+$flag = 0;
+
+$PAYMENT_ACCESS = TRUE;
+if (($user_group != 1) && (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1)))
+{
+    $PAYMENT_ACCESS = FALSE;
+}
+
 $action_buttons = array();
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
@@ -9,13 +22,15 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'href' => site_url($CI->controller_url . '/index/list_all')
     );
 }
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
+if ((isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1)) && $PAYMENT_ACCESS)
 {
-    $action_buttons[] = array(
+    $flag = 1; // 1 - for Payment
+    $action_buttons[] = array
+    (
         'type' => 'button',
-        'label' => $CI->lang->line("ACTION_EDIT"),
+        'label' => 'Payment',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit')
+        'data-action-link' => site_url($CI->controller_url . '/index/payment')
     );
 }
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
@@ -56,6 +71,7 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
 }
 if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
 {
+    $flag = 2; // 2 - for Approve
     $action_buttons[] = array
     (
         'type' => 'button',
@@ -70,6 +86,11 @@ $action_buttons[] = array(
 
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
+
+if ($user_group == 1)
+{
+    $flag = 0; // 0 - for SuperAdmin
+}
 ?>
 <div class="row widget">
     <div class="widget-header">
@@ -91,7 +112,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items/'.$flag);?>";
 
         // prepare the data
         var source =
@@ -101,7 +122,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 { name: 'id', type: 'int' },
                 <?php
                 foreach($system_preference_items as $key => $value){ ?>
-                    { name: '<?php echo $key; ?>', type: 'string' },
+                { name: '<?php echo $key; ?>', type: 'string' },
                 <?php } ?>
             ],
             id: 'id',
@@ -139,6 +160,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
+                    <?php
+                    $user = User_helper::get_user();
+                    if($user->user_id == 1){ ?>
+                        , { text: 'IOU Approve Status', dataField: 'status_approved_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>}
+                        , { text: 'Payment Status', dataField: 'status_paid_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>}
+                    <?php } ?>
                 ]
             });
     });

@@ -1,5 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
+/*  $flag :-
+        1 = Payment
+        0 = SuperAdmin, Approve & others
+*/
+$flag = 0;
+if ((isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
+    && (!isset($CI->permissions['action7']) || ($CI->permissions['action7'] != 1))
+    && ($user_group != 1))
+{
+    $flag = 1;
+}
 
 $action_buttons=array();
 $action_buttons[]=array(
@@ -93,7 +104,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <script type="text/javascript">
     $(document).ready(function ()
     {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all/'.$flag);?>";
 
         // prepare the data
         var source =
@@ -140,7 +151,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: 'Date From', dataField: 'date_from',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
-                    { text: 'IOU Payment Status', dataField: 'status_forwarded_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_forwarded_payment']?0:1;?>}
+                    <?php
+                    $user = User_helper::get_user();
+                    if ((isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1)) || ($user->user_id == 1)) { ?>
+                        { text: 'IOU Approve Status', dataField: 'status_approved_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>},
+                    <?php } ?>
+                    { text: 'Payment Status', dataField: 'status_paid_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>}
                 ]
             });
     });

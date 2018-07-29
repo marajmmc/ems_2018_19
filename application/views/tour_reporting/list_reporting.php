@@ -6,14 +6,6 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
     'href' => site_url($CI->controller_url . '/index/list')
 );
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'View',
-        'class' => 'scroll_down'
-    );
-}
 if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
     $action_buttons[] = array
@@ -51,17 +43,20 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 <style>
     label{margin-top:5px}
-    label.normal{font-weight:normal !important}
+    .jqx-grid {
+        box-sizing: border-box;
+        border-style: solid;
+        border-width: 0;
+    }
 </style>
 
 <div class="row widget">
-    <div class="widget-header" style="margin-bottom:5px">
+    <div class="widget-header" style="margin-bottom:0">
         <div class="title tour-title">
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
     </div>
-
 
     <div class="row show-grid">
         <div class="col-xs-12" id="system_jqx_container">
@@ -70,89 +65,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         -->
         </div>
     </div>
-
-
-    <div class="row show-grid" style="margin-top:30px">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Name:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['name'] ?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Designation:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label">
-                <?php if ($item['designation'])
-                {
-                    echo $item['designation'];
-                }
-                else
-                {
-                    echo 'N/A';
-                }
-                ?>
-            </label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Department:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label">
-                <?php if ($item['department_name'])
-                {
-                    echo $item['department_name'];
-                }
-                else
-                {
-                    echo 'N/A';
-                }
-                ?>
-            </label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">Title:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['title'] ?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?>:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            From &nbsp;<label class="control-label"><?php echo System_helper::display_date($item['date_from']) ?></label> &nbsp;
-            To &nbsp;<label class="control-label"><?php echo System_helper::display_date($item['date_to']) ?></label>
-        </div>
-    </div>
-
-    <?php echo Tour_helper::tour_purpose_view($item['tour_setup_id']); ?>
-
-    <?php echo Tour_helper::iou_items_summary_view('', $item); ?>
-
-    <?php if($item['remarks']){ ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label normal"><?php echo nl2br($item['remarks']); ?></label>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-    <?php } ?>
 
     <div class="clearfix"></div>
 </div>

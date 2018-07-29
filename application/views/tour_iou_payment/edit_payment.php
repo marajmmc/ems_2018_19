@@ -86,28 +86,27 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
     <?php echo Tour_helper::iou_items_summary_view('', $item); ?>
 
-    <?php if (($item['remarks']))
-    {
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label normal"><?php echo nl2br($item['remarks']); ?></label>
-            </div>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Approved IOU Amount:</label>
         </div>
-    <?php } ?>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>
+        </div>
+    </div>
 
-    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
+    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_payment'); ?>" method="post">
         <input type="hidden" id="id" name="id" value="<?php echo $item['tour_setup_id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT_IOU_PAY'); ?> <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Payment <span style="color:#FF0000">*</span></label>
             </div>
-            <div class="col-xs-4">
-                <input type="text" name="item[amount_iou_payment]" value="<?php echo ($item['amount_iou_payment'] > 0) ? $item['amount_iou_payment'] : $item['amount_iou_request']; ?>" class="form-control float_type_positive price_unit_tk iou_payment_input"/>
+            <div class="col-sm-4 col-xs-8">
+                <select name="item[status_paid_payment]" class="form-control status-combo">
+                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                    <option value="<?php echo $this->config->item('system_status_paid'); ?>">Paid</option>
+                </select>
             </div>
         </div>
 
@@ -124,17 +123,19 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 &nbsp;
             </div>
         </div>
-
     </form>
+
     <div class="clearfix"></div>
 </div>
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
-        $(".iou_payment_input").on("blur", function (event) { // Puts a Zero if blank
-            var iou_value = parseFloat($(this).val());
-            if (iou_value == '' || isNaN(iou_value)) {
-                $(this).val('0');
+        $(".status-combo").on('change', function (event) {
+            var options = $(this).val();
+            if (options == '<?php echo $this->config->item('system_status_paid'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_PAYMENT'); ?>');
+            } else {
+                $("#button_action_save").removeAttr('data-message-confirm');
             }
         });
     });
