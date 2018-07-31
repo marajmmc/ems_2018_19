@@ -50,6 +50,47 @@ class Tour_helper
         );
     }
 
+    public static function tour_duration($tour_id = 0)
+    {
+        if ($tour_id > 0)
+        {
+            $CI =& get_instance();
+            $row = $CI->db->select('date_from, date_to')->get_where($CI->config->item('table_ems_tour_setup'), array('id'=> $tour_id))->row_array();
+            $duration = (round(($row['date_to'] - $row['date_from']) / (60 * 60 * 24)) + 1);
+            return $duration.' Day(s)';
+        }
+        return '';
+    }
+
+    public static function tour_amount($tour_id = 0) // IOU Requested OR, IOU Paid
+    {
+        if ($tour_id > 0)
+        {
+            $CI =& get_instance();
+            $item = $CI->db->select('amount_iou_items')->get_where($CI->config->item('table_ems_tour_setup'), array('id' => $tour_id, 'status !=' => $CI->config->item('system_status_delete')))->row_array();
+            $iou_items = Tour_helper::get_iou_items();
+            if ($iou_items)
+            {
+                $amount_iou_items = array();
+                $total_iou_amount = 0.0;
+                if ($item['amount_iou_items'] && ($item['amount_iou_items'] != ''))
+                {
+                    $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+                }
+                // EACH IOU Items
+                foreach ($iou_items as $iou_item)
+                {
+                    if (isset($amount_iou_items[$iou_item]))
+                    {
+                        $total_iou_amount += $amount_iou_items[$iou_item];
+                    }
+                }
+                return $total_iou_amount;
+            }
+        }
+        return '';
+    }
+
     public static function tour_purpose_view($tour_id = '', $items = array(), $col_1 = 4, $col_2 = 4)
     {
         $CI =& get_instance();
