@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tour_iou_payment extends Root_Controller
+class Tour_iou_adjustment extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -33,13 +33,13 @@ class Tour_iou_payment extends Root_Controller
         {
             $this->system_get_items_all($id);
         }
-        elseif ($action == "payment")
+        elseif ($action == "adjustment")
         {
-            $this->system_edit_payment($id);
+            $this->system_edit_adjustment($id);
         }
-        elseif ($action == "save_payment")
+        elseif ($action == "save_adjustment")
         {
-            $this->system_save_payment($id);
+            $this->system_save_adjustment($id);
         }
         elseif ($action == "approve")
         {
@@ -94,11 +94,7 @@ class Tour_iou_payment extends Root_Controller
         $data['amount_iou_request'] = 1;
         if (($method == 'list_all') || ($user->user_id == 1))
         {
-            $data['status_paid_payment'] = 1;
-            if ((isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)) || ($user->user_id == 1))
-            {
-                $data['status_approved_payment'] = 1;
-            }
+            $data['status_approved_adjustment'] = 1;
         }
         return $data;
     }
@@ -130,7 +126,7 @@ class Tour_iou_payment extends Root_Controller
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['user_group'] = $user->user_group;
-            $data['title'] = "Tour Pending List for IOU Payment";
+            $data['title'] = "Tour List for IOU Adjustment";
             $ajax['status'] = true;
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
@@ -153,7 +149,7 @@ class Tour_iou_payment extends Root_Controller
     {
         $user = User_helper::get_user();
         /*  $action :-
-                1 = Payment
+                1 = Adjustment
                 2 = Approve
                 0 = SuperAdmin & others
         */
@@ -172,14 +168,12 @@ class Tour_iou_payment extends Root_Controller
         $this->db->where('user_area.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
-        if (($user->user_id != 1) && ($action == 1)) //Only for Payment Permission
-        {
-            $this->db->where('tour_setup.status_approved_payment', $this->config->item('system_status_approved'));
-            $this->db->where('tour_setup.status_paid_payment !=', $this->config->item('system_status_paid'));
-        }
+        $this->db->where('tour_setup.status_paid_payment', $this->config->item('system_status_paid'));
+        $this->db->where('tour_setup.status_approved_adjustment !=', $this->config->item('system_status_approved'));
         if (($user->user_id != 1) && ($action == 2)) //Only for Approve Permission
         {
-            $this->db->where('tour_setup.status_approved_payment', $this->config->item('system_status_pending'));
+            $this->db->where('tour_setup.revision_count_edit_adjustment >', 0);
+            $this->db->where('tour_setup.status_approved_adjustment', $this->config->item('system_status_forwarded'));
         }
         $this->db->order_by('tour_setup.id DESC');
         $items = $this->db->get()->result_array();
@@ -188,6 +182,7 @@ class Tour_iou_payment extends Root_Controller
         {
             $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
             $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
+            $items[$key]['date_to'] = $item['status_approved_adjustment'];
             if ($item['designation'] == '')
             {
                 $items[$key]['designation'] = '-';
@@ -208,7 +203,7 @@ class Tour_iou_payment extends Root_Controller
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             $data['user_group'] = $user->user_group;
-            $data['title'] = "Tour All List for IOU Payment";
+            $data['title'] = "Tour All List for IOU Adjustment";
             $ajax['status'] = true;
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
@@ -244,9 +239,10 @@ class Tour_iou_payment extends Root_Controller
             $pagesize = $pagesize * 2;
         }
         $user = User_helper::get_user();
-        /*  $flag :-
-            1 = Payment
-            0 = SuperAdmin, Approve & others
+        /*  $action :-
+                1 = Adjustment
+                2 = Approve
+                0 = SuperAdmin & others
         */
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
@@ -263,9 +259,15 @@ class Tour_iou_payment extends Root_Controller
         $this->db->where('user_area.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
-        if (($user->user_id != 1) && ($action == 1)) //Only for Payment Permission
+        $this->db->where('tour_setup.status_paid_payment', $this->config->item('system_status_paid'));
+        if (($user->user_id != 1) && ($action == 1)) //Only for Adjustment Permission
         {
-            $this->db->where('tour_setup.status_approved_payment', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_approved_adjustment !=', $this->config->item('system_status_approved'));
+        }
+        if (($user->user_id != 1) && ($action == 2)) //Only for Approve Permission
+        {
+            $this->db->where('tour_setup.revision_count_edit_adjustment >', 0);
+            $this->db->where('tour_setup.status_approved_adjustment !=', $this->config->item('system_status_pending'));
         }
         $this->db->order_by('tour_setup.id DESC');
         $this->db->limit($pagesize, $current_records);
@@ -288,7 +290,7 @@ class Tour_iou_payment extends Root_Controller
         $this->json_return($items);
     }
 
-    private function system_edit_payment($id)
+    private function system_edit_adjustment($id)
     {
         if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
         {
@@ -315,48 +317,39 @@ class Tour_iou_payment extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
             $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_approved_payment', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_approved_reporting', $this->config->item('system_status_approved'));
             $data['item'] = $this->db->get()->row_array();
 
             if (!$data['item'])
             {
-                System_helper::invalid_try('Payment', $id, 'Edit Payment Not Exists');
+                System_helper::invalid_try('Adjustment', $id, 'Edit Adjustment Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status_approved_payment'] != $this->config->item('system_status_approved'))
+            if ($data['item']['status_paid_payment'] != $this->config->item('system_status_paid'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'IOU Payment NOT Approved yet.';
+                $ajax['system_message'] = 'Not Paid yet. Cannot Adjust before Pay.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status_paid_payment'] == $this->config->item('system_status_paid'))
+            if ($data['item']['status_approved_adjustment'] == $this->config->item('system_status_approved'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Already Paid. Cannot Pay again.';
+                $ajax['system_message'] = 'Already Approved. Cannot Adjust now.';
                 $this->json_return($ajax);
             }
 
-            $iou_item_amount = json_decode($data['item']['amount_iou_items']);
-            $iou_items = Tour_helper::get_iou_items();
-            $total_iou_amount = 0.0;
-            foreach ($iou_item_amount as $iou => $amount)
-            {
-                if (in_array($iou, $iou_items))
-                {
-                    $total_iou_amount += $amount;
-                }
-            }
-            $data['total_iou_amount'] = $total_iou_amount;
-
-            $data['title'] = 'Tour IOU Payment :: ' . $data['item']['title'];
+            $data['total_iou_amount'] = Tour_helper::tour_amount($item_id);
+            $data['title'] = 'Tour IOU Adjustment :: ' . $data['item']['title'];
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/edit_payment", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/edit_adjustment", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/payment/' . $item_id);
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/adjustment/' . $item_id);
             $this->json_return($ajax);
         }
         else
@@ -367,7 +360,7 @@ class Tour_iou_payment extends Root_Controller
         }
     }
 
-    private function system_save_payment()
+    private function system_save_adjustment()
     {
         $id = $this->input->post("id");
         $item = $this->input->post('item');
@@ -380,7 +373,7 @@ class Tour_iou_payment extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        if (!$this->check_validation_payment())
+        if (!$this->check_validation_adjustment())
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->message;
@@ -391,7 +384,8 @@ class Tour_iou_payment extends Root_Controller
             'id =' . $id,
             'status ="' . $this->config->item('system_status_active') . '"',
             'status_approved_tour ="' . $this->config->item('system_status_approved') . '"',
-            'status_approved_payment ="' . $this->config->item('system_status_approved') . '"'
+            'status_approved_payment ="' . $this->config->item('system_status_approved') . '"',
+            'status_approved_reporting ="' . $this->config->item('system_status_approved') . '"'
         );
         $result = Query_helper::get_info($this->config->item('table_ems_tour_setup'), '*', $check_condition, 1);
         if (!$result)
@@ -401,16 +395,31 @@ class Tour_iou_payment extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if ($result['status_paid_payment'] == $this->config->item('system_status_paid'))
+        if ($result['status_paid_payment'] != $this->config->item('system_status_paid'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Already Paid. Cannot Pay again.';
+            $ajax['system_message'] = 'Not Paid yet. Cannot Adjust before Pay.';
+            $this->json_return($ajax);
+        }
+        if ($result['status_approved_adjustment'] == $this->config->item('system_status_approved'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Already Approved. Cannot Adjust now.';
+            $this->json_return($ajax);
+        }
+        if(Tour_helper::tour_amount($id) == trim($item['amount_iou_adjustment']))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Same Voucher Amount. No Adjustment Needed.';
             $this->json_return($ajax);
         }
 
         $this->db->trans_start(); //DB Transaction Handle START
-        $item['date_paid_payment'] = $time;
-        $item['user_paid_payment'] = $user->user_id;
+        $item['amount_iou_adjustment'] = trim($item['amount_iou_adjustment']);
+        $item['status_approved_adjustment'] = $this->config->item('system_status_forwarded');
+        $item['date_updated_adjustment'] = $time;
+        $item['user_updated_adjustment'] = $user->user_id;
+        $this->db->set('revision_count_edit_adjustment', 'revision_count_edit_adjustment + 1', FALSE);
         Query_helper::update($this->config->item('table_ems_tour_setup'), $item, array("id = " . $id));
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -453,23 +462,31 @@ class Tour_iou_payment extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
             $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_approved_payment', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_approved_reporting', $this->config->item('system_status_approved'));
             $data['item'] = $this->db->get()->row_array();
-
             if (!$data['item'])
             {
-                System_helper::invalid_try('Approve', $id, 'Approve Payment Not Exists');
+                System_helper::invalid_try('Approve', $id, 'Approve Adjustment Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status_approved_payment'] == $this->config->item('system_status_approved'))
+            if ($data['item']['status_approved_adjustment'] != $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Already Approved.';
+                $ajax['system_message'] = 'No Adjustment done yet.';
+                $this->json_return($ajax);
+            }
+            if ($data['item']['status_approved_adjustment'] == $this->config->item('system_status_approved'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Adjustment already Approved. Cannot Approved again';
                 $this->json_return($ajax);
             }
 
-            $data['title'] = 'Tour IOU Payment Approval :: ' . $data['item']['title'];
+            $data['total_iou_amount'] = Tour_helper::tour_amount($item_id);
+            $data['title'] = 'Tour IOU Adjustment Approval :: ' . $data['item']['title'];
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
             if ($this->message)
@@ -510,26 +527,36 @@ class Tour_iou_payment extends Root_Controller
         $check_condition = array(
             'id =' . $id,
             'status ="' . $this->config->item('system_status_active') . '"',
-            'status_approved_tour ="' . $this->config->item('system_status_approved') . '"'
+            'status_approved_tour ="' . $this->config->item('system_status_approved') . '"',
+            'status_approved_payment ="' . $this->config->item('system_status_approved') . '"',
+            'status_approved_reporting ="' . $this->config->item('system_status_approved') . '"'
         );
         $result = Query_helper::get_info($this->config->item('table_ems_tour_setup'), '*', $check_condition, 1);
         if (!$result)
         {
-            System_helper::invalid_try('Approve', $id, 'Approve Payment Not Exists');
+            System_helper::invalid_try('Approve', $id, 'Approve Adjustment Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if ($result['status_approved_payment'] == $this->config->item('system_status_approved'))
+        if ($result['status_approved_adjustment'] != $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Already Approved.';
+            $ajax['system_message'] = 'No Adjustment done yet.';
+            $this->json_return($ajax);
+        }
+        if ($result['status_approved_adjustment'] == $this->config->item('system_status_approved'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Adjustment already Approved. Cannot Approved again';
             $this->json_return($ajax);
         }
 
+        //pr($this->input->post());
+
         $this->db->trans_start(); //DB Transaction Handle START
-        $item['date_approved_payment'] = $time;
-        $item['user_approved_payment'] = $user->user_id;
+        $item['date_approved_adjustment'] = $time;
+        $item['user_approved_adjustment'] = $user->user_id;
         Query_helper::update($this->config->item('table_ems_tour_setup'), $item, array("id = " . $id));
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -546,27 +573,10 @@ class Tour_iou_payment extends Root_Controller
         }
     }
 
-    /* private function check_validation_adjustment()
+    private function check_validation_adjustment()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[amount_iou_payment]', 'IOU to Pay', 'required');
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->message = validation_errors();
-            return false;
-        }
-        if ($this->input->post('item[amount_iou_payment]') <= 0)
-        {
-            $this->message = "IOU to Pay cannot be 0 or, negative";
-            return false;
-        }
-        return true;
-    } */
-
-    private function check_validation_payment()
-    {
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[status_paid_payment]', 'Payment', 'required');
+        $this->form_validation->set_rules('item[amount_iou_adjustment]', 'IOU Voucher', 'trim|required|greater_than_equal_to[0]');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
@@ -578,7 +588,7 @@ class Tour_iou_payment extends Root_Controller
     private function check_validation_approve()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[status_approved_payment]', 'Approve', 'required');
+        $this->form_validation->set_rules('item[status_approved_adjustment]', 'Approve', 'trim|required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
