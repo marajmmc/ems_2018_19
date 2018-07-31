@@ -146,7 +146,16 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo 'Reporting ' . $CI->lang->line('LABEL_DATE'); ?></label>
+                <label class="control-label pull-right">Duration:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo Tour_helper::tour_duration($item['id']); ?></label>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo 'Reporting ' . $CI->lang->line('LABEL_DATE'); ?>:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo System_helper::display_date($reporting_date); ?></label>
