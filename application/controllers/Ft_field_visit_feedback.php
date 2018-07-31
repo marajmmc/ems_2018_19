@@ -502,12 +502,13 @@ class Ft_field_visit_feedback extends Root_Controller
         }
         return true;
     }
-    private function system_set_preference($method = 'list')
+    private function system_set_preference()
     {
+        $method = 'list';
         $user = User_helper::get_user();
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
-            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers());
             $data['preference_method_name'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));

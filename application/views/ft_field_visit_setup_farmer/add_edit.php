@@ -447,6 +447,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             }
 
         });
+        $(document).off('change','#upazilla_id');
         $(document).off('change','#crop_id');
         $(document).on("change","#crop_id",function()
         {
