@@ -17,6 +17,11 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 }
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
+<style>
+    /*#field_visit img{*/
+        /*display:block; width:100%; height:auto;*/
+    /*}*/
+</style>
 <div class="row widget">
 
     <div class="widget-header">
@@ -142,7 +147,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             {
                 ?>
                 <div style="overflow-x: auto;" class="row show-grid">
-                    <table class="table table-bordered">
+                    <table id="field_visit" class="table table-bordered">
                         <thead>
                         <tr>
                             <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>

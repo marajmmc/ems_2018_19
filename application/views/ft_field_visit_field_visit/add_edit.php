@@ -172,7 +172,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 if($editable)
                                 {
                                     ?>
-                                    <input type="file" class="browse_button" data-preview-container="#visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                    <input type="file" class="browse_button" data-preview-width="300" data-preview-container="#visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
                                 <?php
                                 }
                                 ?>
@@ -206,7 +206,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 if($editable)
                                 {
                                     ?>
-                                    <input type="file" class="browse_button" data-preview-container="#visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                    <input type="file" class="browse_button" data-preview-width="300" data-preview-container="#visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
                                 <?php
                                 }
                                 ?>
@@ -323,7 +323,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 if($editable)
                                 {
                                     ?>
-                                    <input type="file" class="browse_button" data-preview-container="#fruit_image_<?php echo $headers['id'].'_'.$variety['variety_id']; ?>" name="fruit_image_<?php echo $headers['id'].'_'.$variety['variety_id']; ?>">
+                                    <input type="file" class="browse_button" data-preview-width="300" data-preview-container="#fruit_image_<?php echo $headers['id'].'_'.$variety['variety_id']; ?>" name="fruit_image_<?php echo $headers['id'].'_'.$variety['variety_id']; ?>">
                                 <?php
                                 }
                                 ?>
@@ -418,7 +418,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 </div>
                             </td>
                             <td>
-                                <input type="file" id="disease_image_<?php echo $index+1; ?>" name="disease_image_<?php echo $index+1; ?>" data-current-id="<?php echo $index+1;?>" data-preview-container="#disease_image_<?php echo $index+1;?>" class="browse_button"><br>
+                                <input type="file" id="disease_image_<?php echo $index+1; ?>" name="disease_image_<?php echo $index+1; ?>" data-preview-width="300" data-current-id="<?php echo $index+1;?>" data-preview-container="#disease_image_<?php echo $index+1;?>" class="browse_button"><br>
                                 <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
                             </td>
                             <td>
