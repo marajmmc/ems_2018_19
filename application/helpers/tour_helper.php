@@ -1,12 +1,30 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 /* ------Tour Status Constants----- */
-CONST TOUR_PENDING = 1;
-CONST TOUR_FORWARDED = 2;
+CONST TOUR_FORWARDED = 1;
+CONST TOUR_NOT_FORWARDED = 2;
 CONST TOUR_APPROVED = 3;
-CONST TOUR_REJECTED = 4;
+CONST TOUR_NOT_APPROVED = 4;
+CONST TOUR_REJECTED = 5;
+CONST TOUR_NOT_REJECTED = 6;
 
+/* ------Tour Payment Constants----- */
+CONST TOUR_PAYMENT_APPROVED = 7;
+CONST TOUR_PAYMENT_NOT_APPROVED = 8;
+CONST TOUR_PAYMENT_PAID = 9;
+CONST TOUR_PAYMENT_NOT_PAID = 10;
+
+/* ------Tour Adjustment Constants----- */
+CONST TOUR_IOU_ADJUSTMENT_FORWARDED = 11;
+CONST TOUR_IOU_ADJUSTMENT_NOT_FORWARDED = 12;
+CONST TOUR_IOU_ADJUSTMENT_APPROVED = 13;
+CONST TOUR_IOU_ADJUSTMENT_NOT_APPROVED = 14;
+
+/* ------Tour Reporting Constants----- */
+CONST TOUR_REPORTING_FORWARDED = 15;
+CONST TOUR_REPORTING_NOT_FORWARDED = 16;
+CONST TOUR_REPORTING_APPROVED = 17;
+CONST TOUR_REPORTING_NOT_APPROVED = 18;
 
 class Tour_helper
 {
@@ -56,73 +74,6 @@ class Tour_helper
             'miscellaneous',
             'local_conveyance'
         );
-    }
-
-    public static function tour_status_check($tour_array = array(), $check_status = array())
-    {
-        $CI =& get_instance();
-
-        /* if ((in_array(TOUR_FORWARDED, $check_status)) && ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded')))
-        {
-            return array(
-                'status' => false,
-                'system_message' => 'This Tour is not Forwarded yet.'
-            );
-        }
-        if ((in_array(TOUR_APPROVED, $check_status)) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_approved')))
-        {
-            return array(
-                'status' => false,
-                'system_message' => 'This Tour is not Approved yet.'
-            );
-        }
-        if ((in_array(TOUR_REJECTED, $check_status)) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_rejected')))
-        {
-            return array(
-                'status' => false,
-                'system_message' => 'This Tour has been Rejected.'
-            );
-        }
-        if ((in_array(TOUR_APPROVED, $check_status)) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_approved')))
-        {
-            return array(
-                'status' => false,
-                'system_message' => 'This Tour\'s IOU is not Approved yet.'
-            );
-        } */
-
-        if (!empty($check_status))
-        {
-            foreach ($check_status AS $flag)
-            {
-                switch ($flag)
-                {
-                    CASE TOUR_FORWARDED:
-                        if ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded'))
-                        {
-                            return array(
-                                'status' => false,
-                                'system_message' => 'This Tour is not Forwarded yet.'
-                            );
-                        }
-                        break;
-
-                    CASE TOUR_APPROVED:
-                        if ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded'))
-                        {
-                            return array(
-                                'status' => false,
-                                'system_message' => 'This Tour is not Forwarded yet.'
-                            );
-                        }
-                        break;
-                }
-            }
-        }
-        else
-        {
-
-        }
     }
 
     public static function tour_duration($date_from = '', $date_to = '', $tour_id = 0)
@@ -279,6 +230,155 @@ class Tour_helper
         }
 
         return $output;
+    }
+
+    public static function tour_status_check($tour_array = array(), $check_status = array())
+    {
+        if (!empty($tour_array) && !empty($check_status))
+        {
+            $CI =& get_instance();
+            foreach ($check_status AS $flag)
+            {   /*
+                ----------------Tour Status Constants----------------
+                */
+                if ((TOUR_FORWARDED == $flag) && ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded'))) // Checks if TOUR FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour is not Forwarded yet.'
+                    );
+                }
+                elseif ((TOUR_NOT_FORWARDED == $flag) && ($tour_array['status_forwarded_tour'] == $CI->config->item('system_status_forwarded'))) // Checks if TOUR not FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour has been Forwarded Already.'
+                    );
+                }
+                elseif ((TOUR_APPROVED == $flag) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_approved'))) // Checks if TOUR APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour is not Approved yet.'
+                    );
+                }
+                elseif ((TOUR_NOT_APPROVED == $flag) && ($tour_array['status_approved_tour'] == $CI->config->item('system_status_approved'))) // Checks if TOUR not APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour has been Approved Already.'
+                    );
+                }
+                elseif ((TOUR_REJECTED == $flag) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_rejected'))) // Checks if TOUR REJECTED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour is not Rejected.'
+                    );
+                }
+                elseif ((TOUR_NOT_REJECTED == $flag) && ($tour_array['status_approved_tour'] == $CI->config->item('system_status_rejected'))) // Checks if TOUR not REJECTED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour has been Rejected Already.'
+                    );
+                }
+                /*
+                ----------------Tour Payment Constants----------------
+                */
+                elseif ((TOUR_PAYMENT_APPROVED == $flag) && ($tour_array['status_approved_payment'] != $CI->config->item('system_status_approved'))) // Checks if TOUR PAYMENT APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'Tour IOU is not Approved yet.'
+                    );
+                }
+                elseif ((TOUR_PAYMENT_NOT_APPROVED == $flag) && ($tour_array['status_approved_payment'] == $CI->config->item('system_status_approved'))) // Checks if TOUR PAYMENT not APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'Tour IOU has been Approved Already.'
+                    );
+                }
+                elseif ((TOUR_PAYMENT_PAID == $flag) && ($tour_array['status_paid_payment'] != $CI->config->item('system_status_paid'))) // Checks if TOUR PAYMENT PAID
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'Tour IOU is not Paid yet.'
+                    );
+                }
+                elseif ((TOUR_PAYMENT_NOT_PAID == $flag) && ($tour_array['status_paid_payment'] == $CI->config->item('system_status_paid'))) // Checks if TOUR PAYMENT not PAID
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'Tour IOU has been Paid Already.'
+                    );
+                }
+                /*
+                ----------------Tour Adjustment Constants----------------
+                */
+                elseif ((TOUR_IOU_ADJUSTMENT_FORWARDED == $flag) && ($tour_array['status_approved_adjustment'] != $CI->config->item('system_status_forwarded'))) // Checks if TOUR IOU ADJUSTMENT FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This IOU Adjustment is not Forwarded yet.'
+                    );
+                }
+                elseif ((TOUR_IOU_ADJUSTMENT_NOT_FORWARDED == $flag) && ($tour_array['status_approved_adjustment'] == $CI->config->item('system_status_forwarded'))) // Checks if TOUR IOU ADJUSTMENT not FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This IOU Adjustment has been Forwarded Already.'
+                    );
+                }
+                elseif ((TOUR_IOU_ADJUSTMENT_APPROVED == $flag) && ($tour_array['status_approved_adjustment'] != $CI->config->item('system_status_approved'))) // Checks if TOUR IOU ADJUSTMENT APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour is not Approved yet.'
+                    );
+                }
+                elseif ((TOUR_IOU_ADJUSTMENT_NOT_APPROVED == $flag) && ($tour_array['status_approved_adjustment'] == $CI->config->item('system_status_approved'))) // Checks if TOUR IOU ADJUSTMENT not APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour has been Approved Already.'
+                    );
+                }
+                /*
+                ----------------Tour Reporting Constants----------------
+                */
+                elseif ((TOUR_REPORTING_FORWARDED == $flag) && ($tour_array['status_forwarded_reporting'] != $CI->config->item('system_status_forwarded'))) // Checks if TOUR REPORTING FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour is not Forwarded yet.'
+                    );
+                }
+                elseif ((TOUR_REPORTING_NOT_FORWARDED == $flag) && ($tour_array['status_forwarded_reporting'] == $CI->config->item('system_status_forwarded'))) // Checks if TOUR REPORTING not FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour has been Forwarded Already.'
+                    );
+                }
+                elseif ((TOUR_REPORTING_APPROVED == $flag) && ($tour_array['status_approved_reporting'] != $CI->config->item('system_status_approved'))) // Checks if TOUR REPORTING APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour Reporting is not Approved yet.'
+                    );
+                }
+                elseif ((TOUR_REPORTING_NOT_APPROVED == $flag) && ($tour_array['status_approved_reporting'] == $CI->config->item('system_status_approved'))) // Checks if TOUR REPORTING not APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour Reporting has been Approved Already.'
+                    );
+                }
+            }
+        }
+        return array('status' => true);
     }
 }
 

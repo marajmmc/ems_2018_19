@@ -100,18 +100,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Supervisors Remarks <span class="remarks-req">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea name="item[remarks_approve_reject]" class="form-control"></textarea>
-            </div>
-            <div class="col-xs-4">
-                <label class="control-label normal remarks-req"> </label>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
                 <label class="control-label pull-right">Approve <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -121,6 +109,18 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
                     <option value="<?php echo $CI->config->item('system_status_rejected') ?>">Reject</option>
                 </select>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Supervisors Remarks <span class="remarks-req">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="item[remarks_approve_reject]" class="form-control"></textarea>
+            </div>
+            <div class="col-xs-4">
+                <label class="control-label normal remarks-req"> </label>
             </div>
         </div>
 
