@@ -306,7 +306,7 @@ class Tour_approval extends Root_Controller
 
     private function system_approve($id)
     {
-        if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
+        if (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1))
         {
             if ($id > 0)
             {
@@ -352,9 +352,9 @@ class Tour_approval extends Root_Controller
             }
             if (!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try('Edit', $item_id, 'Trying to edit others Tour');
+                System_helper::invalid_try('Approve', $item_id, 'Trying to Approve others Tour');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'You are trying to approve others Tour';
+                $ajax['system_message'] = 'You are trying to Approve others Tour';
                 $this->json_return($ajax);
             }
             if ($data['item']['status_approved_tour'] == $this->config->item('system_status_approved'))
@@ -392,7 +392,7 @@ class Tour_approval extends Root_Controller
         $user = User_helper::get_user();
         $designation_child_ids = Tour_helper::get_child_ids_designation($user->designation);
         /*-------------------------------VALIDATION CHECKING------------------------------------*/
-        if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
+        if (!(isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
@@ -429,7 +429,7 @@ class Tour_approval extends Root_Controller
         }
         if (!$this->check_my_editable($data))
         {
-            System_helper::invalid_try('Edit', $item_id, 'Trying to edit others Tour');
+            System_helper::invalid_try('Approve', $item_id, 'Trying to Approve others Tour');
             $ajax['status'] = false;
             $ajax['system_message'] = 'You are trying to approve others Tour';
             $this->json_return($ajax);
@@ -443,7 +443,7 @@ class Tour_approval extends Root_Controller
         if ($data['status_approved_tour'] == $this->config->item('system_status_rejected'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Has been Rejected Already.';
+            $ajax['system_message'] = 'Rejected Already. Cannot Approve Now.';
             $this->json_return($ajax);
         }
         if (!$this->check_validation_approve())
@@ -521,7 +521,7 @@ class Tour_approval extends Root_Controller
         {
             $this->form_validation->set_rules('item[remarks_approve_reject]', 'Supervisor Remarks', 'required');
         }
-        $this->form_validation->set_rules('item[status_approved_tour]', 'Approve', 'required');
+        $this->form_validation->set_rules('item[status_approved_tour]', 'Approve', 'trim|required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();

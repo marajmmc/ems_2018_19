@@ -443,21 +443,16 @@ class Tour_setup extends Root_Controller
 
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*');
-
-            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
-            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
-
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
-
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
-
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
+            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id AND user_area.revision=1', 'INNER');
+            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
 
             $this->db->where('tour_setup.status !="' . $this->config->item('system_status_delete') . '"');
             $this->db->where('user_info.revision', 1);
@@ -706,7 +701,7 @@ class Tour_setup extends Root_Controller
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status_forwarded_tour !=', $this->config->item('system_status_forwarded'));
             $this->db->where('tour_setup.status_approved_tour !=', $this->config->item('system_status_approved'));
-            $this->db->where('tour_setup.status_approved_payment !=', $this->config->item('system_status_approved'));
+            $this->db->where('tour_setup.status_forwarded_payment !=', $this->config->item('system_status_forwarded'));
             $this->db->where('tour_setup.status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
             $this->db->where('tour_setup.status_approved_reporting !=', $this->config->item('system_status_approved'));
             if ($user->user_group != 1)
@@ -767,7 +762,7 @@ class Tour_setup extends Root_Controller
         $this->db->where('id', $item_id);
         $this->db->where('status_forwarded_tour !=', $this->config->item('system_status_forwarded'));
         $this->db->where('status_approved_tour !=', $this->config->item('system_status_approved'));
-        $this->db->where('status_approved_payment !=', $this->config->item('system_status_approved'));
+        $this->db->where('status_forwarded_payment !=', $this->config->item('system_status_forwarded'));
         $this->db->where('status_forwarded_reporting !=', $this->config->item('system_status_forwarded'));
         $this->db->where('status_approved_reporting !=', $this->config->item('system_status_approved'));
         if ($user->user_group != 1)

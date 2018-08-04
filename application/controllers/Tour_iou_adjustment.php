@@ -182,7 +182,7 @@ class Tour_iou_adjustment extends Root_Controller
         {
             $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
             $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
-            $items[$key]['date_to'] = $item['status_approved_adjustment'];
+            //$items[$key]['status_approved_adjustment'] = $item['status_approved_adjustment'];
             if ($item['designation'] == '')
             {
                 $items[$key]['designation'] = '-';
