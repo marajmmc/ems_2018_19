@@ -1,6 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/* ------Tour Status Constants----- */
+CONST TOUR_PENDING = 1;
+CONST TOUR_FORWARDED = 2;
+CONST TOUR_APPROVED = 3;
+CONST TOUR_REJECTED = 4;
+
+
 class Tour_helper
 {
     public static function get_child_ids_designation($designation_id)
@@ -44,22 +51,97 @@ class Tour_helper
     {
         return array(
             'accommodation',
-            'transportation',
+            'ground_transportation',
             'per-diem',
-            'miscellaneous'
+            'miscellaneous',
+            'local_conveyance'
         );
     }
 
-    public static function tour_duration($tour_id = 0)
+    public static function tour_status_check($tour_array = array(), $check_status = array())
     {
-        if ($tour_id > 0)
+        $CI =& get_instance();
+
+        /* if ((in_array(TOUR_FORWARDED, $check_status)) && ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded')))
+        {
+            return array(
+                'status' => false,
+                'system_message' => 'This Tour is not Forwarded yet.'
+            );
+        }
+        if ((in_array(TOUR_APPROVED, $check_status)) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_approved')))
+        {
+            return array(
+                'status' => false,
+                'system_message' => 'This Tour is not Approved yet.'
+            );
+        }
+        if ((in_array(TOUR_REJECTED, $check_status)) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_rejected')))
+        {
+            return array(
+                'status' => false,
+                'system_message' => 'This Tour has been Rejected.'
+            );
+        }
+        if ((in_array(TOUR_APPROVED, $check_status)) && ($tour_array['status_approved_tour'] != $CI->config->item('system_status_approved')))
+        {
+            return array(
+                'status' => false,
+                'system_message' => 'This Tour\'s IOU is not Approved yet.'
+            );
+        } */
+
+        if (!empty($check_status))
+        {
+            foreach ($check_status AS $flag)
+            {
+                switch ($flag)
+                {
+                    CASE TOUR_FORWARDED:
+                        if ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded'))
+                        {
+                            return array(
+                                'status' => false,
+                                'system_message' => 'This Tour is not Forwarded yet.'
+                            );
+                        }
+                        break;
+
+                    CASE TOUR_APPROVED:
+                        if ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded'))
+                        {
+                            return array(
+                                'status' => false,
+                                'system_message' => 'This Tour is not Forwarded yet.'
+                            );
+                        }
+                        break;
+                }
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    public static function tour_duration($date_from = '', $date_to = '', $tour_id = 0)
+    {
+        if (($date_from != '') && ($date_to != ''))
+        {
+            $duration = (round(($date_to - $date_from) / (60 * 60 * 24)) + 1);
+        }
+        elseif ($tour_id > 0)
         {
             $CI =& get_instance();
-            $row = $CI->db->select('date_from, date_to')->get_where($CI->config->item('table_ems_tour_setup'), array('id'=> $tour_id))->row_array();
+            $row = $CI->db->select('date_from, date_to')->get_where($CI->config->item('table_ems_tour_setup'), array('id' => $tour_id))->row_array();
             $duration = (round(($row['date_to'] - $row['date_from']) / (60 * 60 * 24)) + 1);
-            return $duration.' Day(s)';
         }
-        return '';
+        else
+        {
+            return '';
+        }
+        return $duration . ' Day(s)';
     }
 
     public static function tour_amount($tour_id = 0) // IOU Requested OR, IOU Paid
