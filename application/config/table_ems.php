@@ -31,3 +31,6 @@ $config['table_ems_ft_field_visit_setup_farmer_varieties'] = 'arm_ems_2018_19.em
 $config['table_ems_ft_field_visit_visits_picture'] = 'arm_ems_2018_19.ems_ft_field_visit_visits_picture';
 $config['table_ems_ft_field_visit_fruit_picture'] = 'arm_ems_2018_19.ems_ft_field_visit_fruit_picture';
 $config['table_ems_ft_field_visit_disease_picture'] = 'arm_ems_2018_19.ems_ft_field_visit_disease_picture';
+
+//Daily Activities
+$config['table_ems_da_tmpo_setup_areas'] = 'arm_ems_2018_19.ems_da_tmpo_setup_areas';
