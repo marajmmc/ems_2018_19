@@ -155,6 +155,7 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
             }
         }
         $this->db->where('areas.status',$this->config->item('system_status_active'));
+        $this->db->order_by('areas.outlet_id','ASC');
         $this->db->order_by('areas.ordering','ASC');
         $this->db->group_by('areas.id');
         $items=$this->db->get()->result_array();
@@ -196,10 +197,6 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
             $this->db->where('areas.status',$this->config->item('system_status_active'));
             $this->db->where('areas.id',$item_id);
             $data['item']=$this->db->get()->row_array();
-
-//            print_r($data['item']);
-//            exit;
-
             if(!$data['item'])
             {
                 System_helper::invalid_try('Lead_farmer_list',$item_id,'Id Non-Exists');
@@ -275,7 +272,6 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
             }
         }
 
-
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
         $this->db->select('areas.id area_id,areas.name area_name');
 
@@ -293,32 +289,10 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
 
         $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
         $this->db->select('division.id division_id, division.name division_name');
-
-//
-//
-//
-//        $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
-//        $this->db->select('outlet_info.customer_id outlet_id,outlet_info.name outlet');
-//
-//        $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
-//        $this->db->select('d.id district_id, d.name district_name');
-//
-//        $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
-//        $this->db->select('t.id territory_id, t.name territory_name');
-//
-//        $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-//        $this->db->select('zone.id zone_id, zone.name zone_name');
-//
-//        $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-//        $this->db->select('division.id division_id, division.name division_name');
-
         $this->db->where('areas.status',$this->config->item('system_status_active'));
         $this->db->where('areas.id',$area_id);
 
         $data['item_head']=$this->db->get()->row_array();
-
-//        print_r($data['item_head']);
-//        exit;
         if(!$data['item_head'])
         {
             System_helper::invalid_try('Add_lead_farmer',$area_id,'Id Non-Exists');
@@ -333,7 +307,6 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-
         if($item_id>0)
         {
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers');
@@ -363,8 +336,6 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
             );
             $data['title']="Create Lead Farmer Of Area(".$data['item_head']['area_name'].')';
         }
-
-
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_lead_farmer",$data,true));
         if($this->message)
@@ -417,10 +388,7 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
             $ajax['system_message']=$this->message;
             $this->json_return($ajax);
         }
-
-
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
-
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
 
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');

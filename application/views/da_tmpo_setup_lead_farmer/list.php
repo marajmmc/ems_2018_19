@@ -109,7 +109,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns:[
                     { text: '<?php echo $CI->lang->line('LABEL_AREA_NAME'); ?>',pinned:true,dataField: 'area_name',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['area_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>',pinned:true,dataField: 'outlet',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>',pinned:true,dataField: 'outlet',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',dataField: 'division_name',width:'180',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',dataField: 'zone_name',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',dataField: 'territory_name',width:'180',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
