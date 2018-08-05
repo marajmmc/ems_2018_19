@@ -289,6 +289,7 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
 
         $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
         $this->db->select('division.id division_id, division.name division_name');
+
         $this->db->where('areas.status',$this->config->item('system_status_active'));
         $this->db->where('areas.id',$area_id);
 
@@ -310,51 +311,23 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
 
         if($item_id>0)
         {
-            //Valid Farmer id checking
-
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers');
-            $this->db->select('lead_farmers.id');
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=lead_farmers.area_id','INNER');
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            if($this->locations['division_id']>0)
-            {
-                $this->db->where('division.id',$this->locations['division_id']);
-                if($this->locations['zone_id']>0)
-                {
-                    $this->db->where('zone.id',$this->locations['zone_id']);
-                    if($this->locations['territory_id']>0)
-                    {
-                        $this->db->where('t.id',$this->locations['territory_id']);
-                        if($this->locations['district_id']>0)
-                        {
-                            $this->db->where('d.id',$this->locations['district_id']);
-                        }
-                    }
-                }
-            }
-            $this->db->where('areas.status',$this->config->item('system_status_active'));
-            $results=$this->db->get()->result_array();
-            $farmer_ids=array();
-            foreach($results as $result)
-            {
-                $farmer_ids[]=$result['id'];
-            }
-            if(!in_array($item_id,$farmer_ids))
-            {
-                System_helper::invalid_try('Save',$id,'Farmer id '.$id.' not assigned');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
-                $this->json_return($ajax);
-                die();
-            }
-
-            
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers');
             $this->db->select('lead_farmers.*');
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=lead_farmers.area_id','INNER');
+            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
+
+            $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
+            $this->db->select('d.id district_id, d.name district_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
+            $this->db->select('t.id territory_id, t.name territory_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+            $this->db->select('zone.id zone_id, zone.name zone_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+            $this->db->select('division.id division_id, division.name division_name');
+
             $this->db->where('lead_farmers.id',$item_id);
             $this->db->where('lead_farmers.status !=',$this->config->item('system_status_deleted'));
             $data['item']=$this->db->get()->row_array();
@@ -365,11 +338,19 @@ class Da_tmpo_setup_lead_farmer extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
+            if(!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('Add_lead_farmer',$item_id,'User location not assign');
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
             $data['title']='Edit Lead Farmer: '.$data['item']['name'];
         }
         else
         {
-            $data['item']=array(
+            $data['item']=array
+            (
                 'id'=>'',
                 'name'=>'',
                 'mobile_no'=>'',
