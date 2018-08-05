@@ -130,6 +130,7 @@ class Da_tmpo_setup_area extends Root_Controller
             }
         }
         $this->db->where('outlet_info.revision',1);
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
         $this->db->order_by('outlet_info.ordering','ASC');
         $this->db->group_by('outlet_info.customer_id');
         $this->db->group_by('areas.outlet_id');
