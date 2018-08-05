@@ -34,3 +34,4 @@ $config['table_ems_ft_field_visit_disease_picture'] = 'arm_ems_2018_19.ems_ft_fi
 
 //Daily Activities
 $config['table_ems_da_tmpo_setup_areas'] = 'arm_ems_2018_19.ems_da_tmpo_setup_areas';
+$config['table_ems_da_tmpo_setup_area_lead_farmers'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_lead_farmers';
