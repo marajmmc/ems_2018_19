@@ -228,7 +228,7 @@ class Da_tmpo_setup_area extends Root_Controller
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
         $this->db->select('areas.*');
         $this->db->where('areas.outlet_id',$id);
-        //$this->db->where('areas.status',$this->config->item('system_status_active'));
+        $this->db->where('areas.status !=',$this->config->item('system_status_deleted'));
         $this->db->order_by('areas.ordering','ASC');
         $items=$this->db->get()->result_array();
         $this->json_return($items);
@@ -303,7 +303,7 @@ class Da_tmpo_setup_area extends Root_Controller
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
             $this->db->select('areas.*');
             $this->db->where('areas.id',$item_id);
-            $this->db->where('areas.status',$this->config->item('system_status_active'));
+            $this->db->where('areas.status !=',$this->config->item('system_status_deleted'));
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
             {
@@ -427,6 +427,7 @@ class Da_tmpo_setup_area extends Root_Controller
         {
             $item['user_created'] = $user->user_id;
             $item['date_created'] = $time;
+            $item['revision_count'] = 1;
             Query_helper::add($this->config->item('table_ems_da_tmpo_setup_areas'),$item);
         }
         $this->db->trans_complete();   //DB Transaction Handle END
