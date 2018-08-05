@@ -10,7 +10,7 @@ if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
 {
     $action_buttons[]=array(
         'label'=>$CI->lang->line("ACTION_NEW"),
-        'href'=>site_url($CI->controller_url.'/index/add_area/'.$item['id'])
+        'href'=>site_url($CI->controller_url.'/index/add_edit_area/'.$item['id'])
     );
 }
 if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
@@ -19,7 +19,7 @@ if(isset($CI->permissions['action2']) && ($CI->permissions['action2']==1))
         'type'=>'button',
         'label'=>$CI->lang->line('ACTION_EDIT'),
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/edit_area/'.$item['id'])
+        'data-action-link'=>site_url($CI->controller_url.'/index/add_edit_area/'.$item['id'])
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
@@ -43,7 +43,7 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 }
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
-    'href'=>site_url($CI->controller_url.'/index/area_setup/'.$item['id'])
+    'href'=>site_url($CI->controller_url.'/index/area_list/'.$item['id'])
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
@@ -55,49 +55,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="clearfix"></div>
     </div>
-
-    <div style="" class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['division_name'];;?></label>
-        </div>
-    </div>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['zone_name'];;?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['territory_name'];;?></label>
-        </div>
-    </div>
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['district_name'];?></label>
-        </div>
-    </div>
-    <div style="" class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['outlet'];?></label>
-        </div>
-    </div>
-
     <div class="col-xs-12" id="system_jqx_container">
 
     </div>
@@ -112,15 +69,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var source =
         {
             dataType: "json",
-            type:'POST',
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'ordering', type: 'int' },
-                { name: 'name', type: 'string' },
-                { name: 'address', type: 'string' },
-                { name: 'remarks', type: 'string' }
+                <?php
+                foreach($system_preference_items as $key => $value){ ?>
+                { name: '<?php echo $key; ?>', type: 'string' },
+                <?php } ?>
             ],
             id: 'id',
+            type: 'POST',
             url: url,
             data:{id:<?php echo $item['id']; ?>}
         };
@@ -151,7 +108,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'80',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ADDRESS'); ?>', dataField: 'address',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200',rendered:tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'200',rendered:tooltiprenderer}
 
                 ]
             });

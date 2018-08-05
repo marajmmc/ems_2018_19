@@ -4,7 +4,7 @@ $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url.'/index/area_setup/'.$item_head['outlet_id'])
+    'href'=>site_url($CI->controller_url.'/index/area_list/'.$item_head['outlet_id'])
 );
 $action_buttons[]=array(
     'type'=>'button',
@@ -43,7 +43,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['division_name'];;?></label>
+                <label class="control-label"><?php echo $item_head['division_name'];?></label>
             </div>
         </div>
 
@@ -52,7 +52,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['zone_name'];;?></label>
+                <label class="control-label"><?php echo $item_head['zone_name'];?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -60,7 +60,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['territory_name'];;?></label>
+                <label class="control-label"><?php echo $item_head['territory_name'];?></label>
             </div>
         </div>
         <div class="row show-grid">
