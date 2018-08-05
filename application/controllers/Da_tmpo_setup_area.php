@@ -236,96 +236,106 @@ class Da_tmpo_setup_area extends Root_Controller
 
     private function system_add_edit_area($outlet_id,$id='')
     {
-        if((isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || (isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+        if($id>0)
         {
-            if($id>0)
+            $item_id=$id;
+        }
+        else
+        {
+            $item_id=$this->input->post('id');
+        }
+
+        if($item_id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
             {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-
-            $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
-            $this->db->select('outlet_info.customer_id outlet_id,outlet_info.name outlet');
-
-            $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
-            $this->db->select('d.id district_id, d.name district_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
-            $this->db->select('t.id territory_id, t.name territory_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-            $this->db->select('zone.id zone_id, zone.name zone_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            $this->db->select('division.id division_id, division.name division_name');
-
-            $this->db->where('outlet_info.revision',1);
-            $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
-            $this->db->where('outlet_info.customer_id',$outlet_id);
-            $data['item_head']=$this->db->get()->row_array();
-            if(!$data['item_head'])
-            {
-                System_helper::invalid_try('Add_area',$outlet_id,'Id Non-Exists');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if(!$this->check_my_editable($data['item_head']))
-            {
-                System_helper::invalid_try('Add_area',$outlet_id,'User location not assign');
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-
-            if($item_id>0)
-            {
-                $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
-                $this->db->select('areas.*');
-                $this->db->where('areas.id',$item_id);
-                $this->db->where('areas.status',$this->config->item('system_status_active'));
-                $data['item']=$this->db->get()->row_array();
-                if(!$data['item'])
-                {
-                    System_helper::invalid_try('Edit_area',$item_id,'Id Non-Exists');
-                    $ajax['status']=false;
-                    $ajax['system_message']='Invalid Try.';
-                    $this->json_return($ajax);
-                }
-                $data['title']='Edit Area: '.$data['item_head']['outlet'].', Name: '.$data['item']['name'];
-            }
-            else
-            {
-                $data['item']=array(
-                    'id'=>'',
-                    'name'=>'',
-                    'address'=>'',
-                    'remarks'=>'',
-                    'status'=>$this->config->item('system_status_active'),
-                    'ordering'=>99
-                );
-                $data['title']="Create Growing Area of Showroom (".$data['item_head']['outlet'].')';
-            }
-
-
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_area",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_area/'.$outlet_id.'/'.$item_id);
-            $this->json_return($ajax);
         }
         else
         {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
+        $this->db->select('outlet_info.customer_id outlet_id,outlet_info.name outlet');
+
+        $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
+        $this->db->select('d.id district_id, d.name district_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->select('t.id territory_id, t.name territory_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->select('zone.id zone_id, zone.name zone_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        $this->db->select('division.id division_id, division.name division_name');
+
+        $this->db->where('outlet_info.revision',1);
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
+        $this->db->where('outlet_info.customer_id',$outlet_id);
+        $data['item_head']=$this->db->get()->row_array();
+        if(!$data['item_head'])
+        {
+            System_helper::invalid_try('Add_area',$outlet_id,'Id Non-Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if(!$this->check_my_editable($data['item_head']))
+        {
+            System_helper::invalid_try('Add_area',$outlet_id,'User location not assign');
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+
+        if($item_id>0)
+        {
+            $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
+            $this->db->select('areas.*');
+            $this->db->where('areas.id',$item_id);
+            $this->db->where('areas.status',$this->config->item('system_status_active'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Edit_area',$item_id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['title']='Edit Area: '.$data['item_head']['outlet'].', Name: '.$data['item']['name'];
+        }
+        else
+        {
+            $data['item']=array(
+                'id'=>'',
+                'name'=>'',
+                'address'=>'',
+                'remarks'=>'',
+                'status'=>$this->config->item('system_status_active'),
+                'ordering'=>99
+            );
+            $data['title']="Create Growing Area of Showroom (".$data['item_head']['outlet'].')';
+        }
+
+
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_area",$data,true));
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_area/'.$outlet_id.'/'.$item_id);
+        $this->json_return($ajax);
     }
     private function system_save()
     {
