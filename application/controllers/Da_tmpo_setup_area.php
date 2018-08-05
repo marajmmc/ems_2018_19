@@ -228,7 +228,7 @@ class Da_tmpo_setup_area extends Root_Controller
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
         $this->db->select('areas.*');
         $this->db->where('areas.outlet_id',$id);
-        $this->db->where('areas.status',$this->config->item('system_status_active'));
+        //$this->db->where('areas.status',$this->config->item('system_status_active'));
         $this->db->order_by('areas.ordering','ASC');
         $items=$this->db->get()->result_array();
         $this->json_return($items);
