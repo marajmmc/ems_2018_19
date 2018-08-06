@@ -187,6 +187,7 @@ class Da_tmpo_setup_area extends Root_Controller
             $this->db->select('division.id division_id, division.name division_name');
 
             $this->db->where('outlet_info.revision',1);
+            $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
             $this->db->where('outlet_info.customer_id',$item_id);
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
@@ -205,7 +206,7 @@ class Da_tmpo_setup_area extends Root_Controller
             }
 
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title']="Growing area setup list of showroom (".$data['item']['outlet'].')';
+            $data['title']="Growing area setup list (Showroom: ".$data['item']['outlet'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/area_list",$data,true));
             if($this->message)
@@ -312,7 +313,7 @@ class Da_tmpo_setup_area extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $data['title']='Edit Area: '.$data['item_head']['outlet'].', Name: '.$data['item']['name'];
+            $data['title']='Edit Growing Area ('.$data['item']['name'].')';
         }
         else
         {
@@ -324,7 +325,7 @@ class Da_tmpo_setup_area extends Root_Controller
                 'status'=>$this->config->item('system_status_active'),
                 'ordering'=>99
             );
-            $data['title']="Create Growing Area of Showroom (".$data['item_head']['outlet'].')';
+            $data['title']='Create Growing Area';
         }
 
 

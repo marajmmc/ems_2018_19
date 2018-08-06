@@ -94,7 +94,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
         $method = 'list';
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $data['title']="Growing Area List";
+            $data['title']="Growing Area List (For Dealer Setup)";
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -153,6 +153,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
             }
         }
         $this->db->where('areas.status',$this->config->item('system_status_active'));
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
         $this->db->order_by('areas.outlet_id','ASC');
         $this->db->order_by('areas.ordering','ASC');
         $this->db->group_by('areas.id');
@@ -193,6 +194,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
             $this->db->select('division.id division_id, division.name division_name');
 
             $this->db->where('areas.status',$this->config->item('system_status_active'));
+            $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
             $this->db->where('areas.id',$item_id);
             $data['item']=$this->db->get()->row_array();
             if(!$data['item'])
@@ -211,7 +213,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
             }
 
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title']="Dealer setup list of Area (".$data['item']['area_name'].')';
+            $data['title']="Dealer Setup List (Growing Area :".$data['item']['area_name'].' , Outlet :'.$data['item']['outlet'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/dealer_list",$data,true));
             if($this->message)
@@ -291,7 +293,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
 
         $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
         $this->db->select('division.id division_id, division.name division_name');
-
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
         $this->db->where('areas.status',$this->config->item('system_status_active'));
         $this->db->where('areas.id',$area_id);
 
@@ -330,7 +332,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
 
             $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->select('division.id division_id, division.name division_name');
-
+            $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
             $this->db->where('dealers.id',$item_id);
             $this->db->where('dealers.status !=',$this->config->item('system_status_deleted'));
             $data['item']=$this->db->get()->row_array();
@@ -349,7 +351,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $data['title']='Edit Dealer';
+            $data['title']='Edit Dealer ('.$data['item_head']['dealer'];
         }
         else
         {
@@ -442,6 +444,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
 
         $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
         $this->db->select('division.id division_id');
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
         $this->db->where('areas.status',$this->config->item('system_status_active'));
         $this->db->where('areas.id',$item['area_id']);
         $data['item_head']=$this->db->get()->row_array();
