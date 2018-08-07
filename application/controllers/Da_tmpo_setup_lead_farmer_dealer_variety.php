@@ -837,7 +837,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_dealers'),'*',array('dealer_id='.$item['dealer_id'], 'status !="'.$this->config->item('system_status_delete').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_dealers'),'*',array('dealer_id='.$item['dealer_id'], 'area_id='.$item['area_id'], 'status !="'.$this->config->item('system_status_delete').'"'),1);
             if($result)
             {
                 $ajax['status']=false;
