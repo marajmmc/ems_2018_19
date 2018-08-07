@@ -530,11 +530,11 @@ class Da_tmpo_setup_area extends Root_Controller
 
         if($item_id>0)
         {
-            $data['areas']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'),'id, name',array('status !="'.$this->config->item('system_status_delete').'"', 'outlet_id ='.$item_id));
+            $data['areas']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'),'id, CONCAT_WS(" - ",name, address) name',array('status !="'.$this->config->item('system_status_delete').'"', 'outlet_id ='.$item_id));
         }
         else
         {
-            $data['areas']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'),'id, name',array('status="'.$this->config->item('system_status_active').'"', 'outlet_id ='.$item_id));
+            $data['areas']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'),'id, CONCAT_WS(" - ",name, address) name',array('status="'.$this->config->item('system_status_active').'"', 'outlet_id ='.$item_id));
         }
         if(!$data['areas'])
         {

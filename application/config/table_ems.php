@@ -37,3 +37,4 @@ $config['table_ems_da_tmpo_setup_areas'] = 'arm_ems_2018_19.ems_da_tmpo_setup_ar
 $config['table_ems_da_tmpo_setup_area_lead_farmers'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_lead_farmers';
 $config['table_ems_da_tmpo_setup_area_dealers'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_dealers';
 $config['table_ems_da_tmpo_setup_visit_schedules'] = 'arm_ems_2018_19.ems_da_tmpo_setup_visit_schedules';
+$config['table_ems_da_tmpo_setup_area_varieties'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_varieties';
