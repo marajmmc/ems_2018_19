@@ -55,6 +55,59 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="clearfix"></div>
     </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse3" href="#">+ Location View</a></label>
+            </h4>
+        </div>
+        <div id="collapse3" class="panel-collapse collapse">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['division_name'];?></label>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['zone_name'];?></label>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['territory_name'];?></label>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['district_name'];?></label>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $item['outlet_name'];?></label>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-xs-12" id="system_jqx_container">
 
     </div>
@@ -105,11 +158,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'80',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_ADDRESS'); ?>', dataField: 'address',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id',width:'50',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:'200',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_ADDRESS'); ?>', dataField: 'address',width:'200',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'200',rendered:tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'80',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'70',rendered:tooltiprenderer}
 
                 ]
             });

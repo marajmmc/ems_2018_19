@@ -37,46 +37,54 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
             <div class="clearfix"></div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse3" href="#">+ Location View</a></label>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse">
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <label class="control-label"><?php echo $item_head['division_name'];?></label>
+                    </div>
+                </div>
 
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['division_name'];?></label>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['zone_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['territory_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['district_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item_head['outlet'];?></label>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <label class="control-label"><?php echo $item_head['zone_name'];?></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <label class="control-label"><?php echo $item_head['territory_name'];?></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <label class="control-label"><?php echo $item_head['district_name'];?></label>
+                    </div>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <label class="control-label"><?php echo $item_head['outlet'];?></label>
+                    </div>
+                </div>
             </div>
         </div>
 

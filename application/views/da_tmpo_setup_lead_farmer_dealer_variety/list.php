@@ -122,6 +122,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns:[
+                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>',pinned:true,dataField: 'id',width:'50',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['id']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET'); ?>',pinned:true,dataField: 'outlet',width:'250',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['outlet']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AREA_NAME'); ?>',pinned:true,dataField: 'area_name',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['area_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AREA_ADDRESS'); ?>',pinned:true,dataField: 'area_address',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['area_address']?0:1;?>},

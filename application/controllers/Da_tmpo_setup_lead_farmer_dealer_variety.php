@@ -97,6 +97,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
     {
         if($method=='list')
         {
+            $data['id']= 1;
             $data['outlet']= 1;
             $data['area_name']= 1;
             $data['area_address']= 1;
@@ -183,6 +184,9 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.area_id =areas.id AND dealers.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->select('count(DISTINCT dealers.id) number_of_dealers',true);
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties','varieties.area_id =areas.id AND dealers.status="'.$this->config->item('system_status_active').'"','LEFT');
+        $this->db->select('count(DISTINCT varieties.id) number_of_varieties',true);
 
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
         $this->db->select('d.name district_name');

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Da_tmpo_setup_area extends Root_Controller
+class Da_tmpo_setup_area_visit_schedule extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -74,7 +74,7 @@ class Da_tmpo_setup_area extends Root_Controller
         if($method=='list')
         {
             $data['id']= 1;
-            $data['outlet']= 1;
+            $data['outlet_name']= 1;
             $data['division_name']= 1;
             $data['zone_name']= 1;
             $data['territory_name']= 1;
@@ -104,7 +104,7 @@ class Da_tmpo_setup_area extends Root_Controller
         $method = 'list';
         if(isset($this->permissions['action0']) && ($this->permissions['action0']==1))
         {
-            $data['title']="Growing Area Showrooms List";
+            $data['title']="Growing Area & Visit Schedule Setup List (Showroom)";
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -126,7 +126,7 @@ class Da_tmpo_setup_area extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
-        $this->db->select('outlet_info.customer_id id,outlet_info.name outlet, outlet_info.ordering order');
+        $this->db->select('outlet_info.customer_id id,outlet_info.name outlet_name, outlet_info.ordering order');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','outlet_info.customer_id =areas.outlet_id AND areas.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->select('count(DISTINCT areas.id) number_of_areas',true);
@@ -185,7 +185,7 @@ class Da_tmpo_setup_area extends Root_Controller
                 $item_id=$this->input->post('id');
             }
             $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
-            $this->db->select('outlet_info.customer_id id,outlet_info.name outlet');
+            $this->db->select('outlet_info.customer_id id,outlet_info.name outlet_name');
 
             $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
             $this->db->select('d.id district_id, d.name district_name');
@@ -219,7 +219,7 @@ class Da_tmpo_setup_area extends Root_Controller
             }
 
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title']="Growing area setup list (Showroom: ".$data['item']['outlet'].')';
+            $data['title']="Growing area setup list (Showroom: ".$data['item']['outlet_name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/area_list",$data,true));
             if($this->message)
@@ -682,7 +682,6 @@ class Da_tmpo_setup_area extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[name]',$this->lang->line('LABEL_NAME'),'required');
-        $this->form_validation->set_rules('item[address]',$this->lang->line('LABEL_ADDRESS'),'required');
         $this->form_validation->set_rules('item[status]',$this->lang->line('LABEL_STATUS'),'required');
         $this->form_validation->set_rules('item[ordering]',$this->lang->line('LABEL_ORDER'),'required');
         if($this->form_validation->run() == FALSE)
