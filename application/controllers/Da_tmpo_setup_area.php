@@ -65,6 +65,7 @@ class Da_tmpo_setup_area extends Root_Controller
     {
         if($method=='list')
         {
+            $data['id']= 1;
             $data['outlet']= 1;
             $data['division_name']= 1;
             $data['zone_name']= 1;

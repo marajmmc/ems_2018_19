@@ -118,7 +118,7 @@ class Da_tmpo_setup_dealer extends Root_Controller
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
         $this->db->select('areas.id,areas.name area_name');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1 ','INNER');
         $this->db->select('outlet_info.name outlet');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.area_id =areas.id AND dealers.status="'.$this->config->item('system_status_active').'"','LEFT');

@@ -83,48 +83,44 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-bordered table-responsive">
                     <thead>
                     <tr>
-                        <th colspan="4" class="bg-success text-center">Weekly Visit Schedule Setup</th>
-                    </tr>
-                    <tr>
-                        <th colspan="2" class="text-center">Odd</th>
-                        <th colspan="2" class="text-center">Even</th>
+                        <th colspan="3" class="bg-success text-center">Weekly Visit Schedule Setup</th>
                     </tr>
                     <tr>
                         <th>Day</th>
-                        <th>Area</th>
-                        <th>Day</th>
-                        <th>Area</th>
+                        <th>Odd</th>
+                        <th>Even</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    for($day=6; $day<13; $day++)
+                    for($day=3; $day<10; $day++)
                     {
+                        $day_key=($day%7);
                         ?>
                         <tr>
-                            <td><?php echo date('l',259200+($day%7)*86400);?></td>
+                            <td><?php echo date('l',($day)*86400);?> </td>
                             <td>
-                                <select name="" id="" class="form-control">
+                                <input type="hidden" name="items[<?php echo $day_key;?>][id]" id="" value="<?php echo isset($items[$day_key]['id'])?$items[$day_key]['id']:0;?>" />
+                                <select name="items[<?php echo $day_key;?>][area_id_odd]" id="" class="form-control">
                                     <option value="">Select</option>
                                     <?php
                                     foreach($areas as $area)
                                     {
                                         ?>
-                                        <option value="<?php echo $area['id']?>"><?php echo $area['name']?></option>
+                                        <option value="<?php echo $area['id']?>" <?php if(isset($items[$day_key]['area_id_odd']) && $items[$day_key]['area_id_odd']==$area['id']){echo "selected='selected'";}?>><?php echo $area['name']?></option>
                                     <?php
                                     }
                                     ?>
                                 </select>
                             </td>
-                            <td><?php echo date('l',259200+($day%7)*86400);?></td>
                             <td>
-                                <select name="" id="" class="form-control">
+                                <select name="items[<?php echo $day_key;?>][area_id_even]" id="" class="form-control">
                                     <option value="">Select</option>
                                     <?php
                                     foreach($areas as $area)
                                     {
                                         ?>
-                                        <option value="<?php echo $area['id']?>"><?php echo $area['name']?></option>
+                                        <option value="<?php echo $area['id']?>" <?php if(isset($items[$day_key]['area_id_even']) && $items[$day_key]['area_id_even']==$area['id']){echo "selected='selected'";}?>><?php echo $area['name']?></option>
                                     <?php
                                     }
                                     ?>

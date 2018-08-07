@@ -204,9 +204,13 @@ class Da_tmpo_setup_visit_schedule extends Root_Controller
             $data['areas']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'),'id, name',array('status="'.$this->config->item('system_status_active').'"', 'outlet_id ='.$item_id));
         }
 
-        $data['items']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),array('*'),array('status !="'.$this->config->item('system_status_delete').'"', 'outlet_id ='.$item_id));
-        $data['title']="Create Visit Schedule of Showroom (".$data['item_head']['outlet'].')';
+        $results=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),array('*'),array('status !="'.$this->config->item('system_status_delete').'"', 'outlet_id ='.$item_id));
+        foreach($results as $result)
+        {
+            $data['items'][$result['ordering']]=$result;
+        }
 
+        $data['title']="Create Visit Schedule of Showroom (".$data['item_head']['outlet'].')';
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
         if($this->message)
@@ -220,6 +224,7 @@ class Da_tmpo_setup_visit_schedule extends Root_Controller
     {
         $id = $this->input->post("id");
         $item=$this->input->post('item');
+        $items=$this->input->post('items');
         $user = User_helper::get_user();
         $time=time();
         if($id>0)
@@ -228,19 +233,6 @@ class Da_tmpo_setup_visit_schedule extends Root_Controller
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
-            $this->db->select('areas.*');
-            $this->db->where('areas.id',$id);
-            $this->db->where('areas.status !=',$this->config->item('system_status_delete'));
-            $data['item']=$this->db->get()->row_array();
-            if(!$data['item'])
-            {
-                System_helper::invalid_try('Save',$id,'Id Non-Exists');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
         }
@@ -252,12 +244,6 @@ class Da_tmpo_setup_visit_schedule extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-        }
-        if(!$this->check_validation())
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->message;
-            $this->json_return($ajax);
         }
 
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
@@ -277,39 +263,86 @@ class Da_tmpo_setup_visit_schedule extends Root_Controller
 
         $this->db->where('outlet_info.revision',1);
         $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
-        $this->db->where('outlet_info.customer_id',$item['outlet_id']);
+        $this->db->where('outlet_info.customer_id',$id);
         $data['item_head']=$this->db->get()->row_array();
         if(!$data['item_head'])
         {
-            System_helper::invalid_try('Save',$item['outlet_id'],'Id Non-Exists');
+            System_helper::invalid_try('Save',$id,'Id Non-Exists');
             $ajax['status']=false;
             $ajax['system_message']='Invalid Try.';
             $this->json_return($ajax);
         }
         if(!$this->check_my_editable($data['item_head']))
         {
-            System_helper::invalid_try('Save',$item['outlet_id'],'User location not assign');
+            System_helper::invalid_try('Save',$id,'User location not assign');
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
 
         $this->db->trans_start();  //DB Transaction Handle START
-        if($id>0)
+        $old_results=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'), '*',array('outlet_id='.$id));
+        $old_items=array();
+        foreach($old_results as $result)
         {
-            $item['user_updated'] = $user->user_id;
-            $item['date_updated'] = $time;
-            $this->db->set('revision_count', 'revision_count+1', FALSE);
-            Query_helper::update($this->config->item('table_ems_da_tmpo_setup_areas'),$item,array("id = ".$id));
+            $old_items[$result['ordering']]=$result;
+        }
+        if($old_results)
+        {
+            foreach($items as $key=>$value)
+            {
+                /*if($old_items[$key]['area_id_odd']!=$value['area_id_odd'] || $old_items[$key]['area_id_even']!=$value['area_id_even'])
+                {
+                    if($old_items[$key]['area_id_odd']!=$value['area_id_odd'])
+                    {
+                        $item['area_id_odd'] = $value['area_id_odd'];
+                        $this->db->set('revision_count_odd', 'revision_count_odd+1', FALSE);
+                    }
+                    if($old_items[$key]['area_id_even']!=$value['area_id_even'])
+                    {
+                        $item['area_id_even'] = $value['area_id_even'];
+                        $this->db->set('revision_count_even', 'revision_count_even+1', FALSE);
+                    }
+                    $item['user_updated'] = $user->user_id;
+                    $item['date_updated'] = $time;
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),$item,array("id = ".$value['id']));
+                }*/
+                if($value['area_id_odd'] && $old_items[$key]['area_id_odd']!=$value['area_id_odd'])
+                {
+                    $item['area_id_odd'] = $value['area_id_odd'];
+                    $this->db->set('revision_count_odd', 'revision_count_odd+1', FALSE);
+                    $item['user_updated'] = $user->user_id;
+                    $item['date_updated'] = $time;
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),$item,array("id = ".$value['id']));
+                }
+                if($value['area_id_even'] && $old_items[$key]['area_id_even']!=$value['area_id_even'])
+                {
+                    $item['area_id_even'] = $value['area_id_even'];
+                    $this->db->set('revision_count_even', 'revision_count_even+1', FALSE);
+                    $item['user_updated'] = $user->user_id;
+                    $item['date_updated'] = $time;
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),$item,array("id = ".$value['id']));
+                }
+
+            }
         }
         else
         {
-            $item['user_created'] = $user->user_id;
-            $item['date_created'] = $time;
-            $item['revision_count'] = 1;
-            Query_helper::add($this->config->item('table_ems_da_tmpo_setup_areas'),$item);
+            foreach($items as $key=>$value)
+            {
+                $item['outlet_id'] = $id;
+                $item['area_id_odd'] = $value['area_id_odd'];
+                $item['area_id_even'] = $value['area_id_even'];
+                $item['user_created'] = $user->user_id;
+                $item['date_created'] = $time;
+                $item['revision_count_odd'] = 1;
+                $item['revision_count_even'] = 1;
+                $item['ordering'] = $key;
+                Query_helper::add($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),$item);
+            }
         }
         $this->db->trans_complete();   //DB Transaction Handle END
+
         if ($this->db->trans_status() === TRUE)
         {
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
@@ -322,20 +355,7 @@ class Da_tmpo_setup_visit_schedule extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function check_validation()
-    {
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[name]',$this->lang->line('LABEL_NAME'),'required');
-        $this->form_validation->set_rules('item[address]',$this->lang->line('LABEL_ADDRESS'),'required');
-        $this->form_validation->set_rules('item[status]',$this->lang->line('LABEL_STATUS'),'required');
-        $this->form_validation->set_rules('item[ordering]',$this->lang->line('LABEL_ORDER'),'required');
-        if($this->form_validation->run() == FALSE)
-        {
-            $this->message=validation_errors();
-            return false;
-        }
-        return true;
-    }
+
     private function system_set_preference()
     {
         $user = User_helper::get_user();
