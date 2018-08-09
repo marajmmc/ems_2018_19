@@ -107,7 +107,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             $data['district_name']= 1;
             $data['number_of_lead_farmers']= 1;
             $data['number_of_dealers']= 1;
-            $data['number_of_varieties']= 1;
+            $data['number_of_products']= 1;
         }
         else if($method=='list_lead_farmer')
         {
@@ -186,7 +186,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
         $this->db->select('count(DISTINCT dealers.id) number_of_dealers',true);
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties','varieties.area_id =areas.id AND dealers.status="'.$this->config->item('system_status_active').'"','LEFT');
-        $this->db->select('count(DISTINCT varieties.id) number_of_varieties',true);
+        $this->db->select('count(DISTINCT varieties.id) number_of_products',true);
 
         $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
         $this->db->select('d.name district_name');
@@ -987,7 +987,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             }
 
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title']="Variety Setup List :: Outlet: ".$data['item']['outlet_name'].", Growing Area: ".$data['item']['area_name'].", Address: ".$data['item']['area_address'];
+            $data['title']="Month Wise Crop Setup List :: Outlet: ".$data['item']['outlet_name'].", Growing Area: ".$data['item']['area_name'].", Address: ".$data['item']['area_address'];
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_variety",$data,true));
             if($this->message)
@@ -1009,9 +1009,6 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
         $id=$this->input->post('id');
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
         $this->db->select('varieties.*');
-
-        /*$this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = varieties.variety_id','INNER');
-        $this->db->select('v.name variety_name, v.id variety_id');*/
 
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = varieties.crop_id','INNER');
         $this->db->select('crop.name crop_name, crop.id crop_id');
@@ -1171,7 +1168,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             $data['types']=array();
             $data['varieties']=array();
 
-            $data['title']="Variety Assign :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'];
+            $data['title']="Month Wise Crop Assign :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'];
         }
 
 

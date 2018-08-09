@@ -7,13 +7,6 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
     $action_buttons[]=array
     (
         'type'=>'button',
-        'label'=>'Setup Lead Farmer',
-        'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/list_lead_farmer')
-    );
-    $action_buttons[]=array
-    (
-        'type'=>'button',
         'label'=>'Setup Dealer',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/list_dealer')
@@ -21,7 +14,14 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
     $action_buttons[]=array
     (
         'type'=>'button',
-        'label'=>'Setup Variety',
+        'label'=>'Setup Lead Farmer',
+        'class'=>'button_jqx_action',
+        'data-action-link'=>site_url($CI->controller_url.'/index/list_lead_farmer')
+    );
+    $action_buttons[]=array
+    (
+        'type'=>'button',
+        'label'=>'Setup Month Wise Crop',
         'class'=>'button_jqx_action',
         'data-action-link'=>site_url($CI->controller_url.'/index/list_variety')
     );
@@ -130,9 +130,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',dataField: 'zone_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',dataField: 'territory_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>',dataField: 'district_name',width:'150',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LEAD_FARMERS'); ?>',dataField: 'number_of_lead_farmers',width:'100',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['number_of_lead_farmers']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_DEALERS'); ?>',dataField: 'number_of_dealers',width:'100',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['number_of_dealers']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_VARIETIES'); ?>',dataField: 'number_of_varieties',width:'100',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['number_of_varieties']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LEAD_FARMERS'); ?>',dataField: 'number_of_lead_farmers',width:'100',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['number_of_lead_farmers']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_PRODUCTS'); ?>',dataField: 'number_of_products',width:'100',cellsalign: 'right',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['number_of_products']?0:1;?>}
                 ]
             });
     });

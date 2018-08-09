@@ -179,7 +179,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name', width:'200',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_MOBILE_NO'); ?>', dataField: 'mobile_no',width:'100',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ADDRESS'); ?>', dataField: 'address',width:'250',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'250',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'80',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'70',filtertype: 'list',rendered:tooltiprenderer}
 
