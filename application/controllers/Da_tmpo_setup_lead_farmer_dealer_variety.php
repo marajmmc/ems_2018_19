@@ -763,6 +763,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             $this->db->order_by('farmer.id ASC');
             $data['dealers']=$this->db->get()->result_array();
 
+
             $data['title']="Edit Dealer Assign :: Outlet: ".$data['item']['outlet_name'].", Growing Area: ".$data['item']['area_name'].", Address: ".$data['item']['area_address'];
         }
         else
@@ -787,7 +788,6 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             $this->db->where("farmer_outlet.farmer_id NOT IN (select dealer_id from ".$this->config->item('table_ems_da_tmpo_setup_area_dealers')." where status !='".$this->config->item('system_status_delete')."' AND area_id=".$area_id.")");
             $this->db->order_by('farmer.id ASC');
             $data['dealers']=$this->db->get()->result_array();
-
             $data['title']="Dealer Assign :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'];
         }
 
