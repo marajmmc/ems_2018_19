@@ -110,6 +110,7 @@ $lang['LABEL_UPDATED_BY'] = 'Updated By';
 $lang['LABEL_FORWARDED_BY'] = 'Forwarded By';
 $lang['LABEL_ROLLBACK_BY'] = 'Rollback By';
 $lang['LABEL_APPROVED_BY'] = 'Approved By';
+$lang['LABEL_PAID_BY'] = 'Paid By';
 
 $lang['LABEL_SEASON'] = 'Season';
 
@@ -179,6 +180,7 @@ $lang['LABEL_DATE_FORWARDED_TIME'] = 'Forwarded Time';
 $lang['LABEL_DATE_ROLLBACK_TIME'] = 'Rollback Time';
 $lang['LABEL_DATE_APPROVED_TIME'] = 'Approved Time';
 $lang['LABEL_DATE_COMPLETED_TIME'] = 'Completed Time';
+$lang['LABEL_DATE_PAID_TIME'] = 'Paid Time';
 $lang['LABEL_DATE_SETUP']="Setup Date";
 $lang['LABEL_DATE_APPROVE']="Approve Date";
 
@@ -276,6 +278,7 @@ $lang['LABEL_DETAILS_BUTTON'] = 'Details';
 $lang['LABEL_TITLE'] = 'Title';
 $lang['LABEL_AMOUNT_IOU_REQUEST'] = "IOU Amount Request";
 $lang['LABEL_AMOUNT_IOU_PAY'] = "IOU to Pay";
+$lang['LABEL_AMOUNT_IOU_ADJUSTMENT'] = "IOU to Adjust";
 $lang['LABEL_AMOUNT_IOU_PAYMENT'] = "IOU Amount Paid";
 $lang['LABEL_AMOUNT_TOTAL_IOU'] = "Total IOU Amount";
 $lang['LABEL_DESIGNATION'] = "Designation";

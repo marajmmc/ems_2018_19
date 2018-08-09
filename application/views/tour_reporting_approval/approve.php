@@ -12,7 +12,11 @@ $action_buttons[] = array(
     'data-form' => '#save_form'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
-
+$is_rollback = FALSE;
+if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_reporting'] != $CI->config->item('system_status_approved'))) // Flag for Rollback
+{
+    $is_rollback = TRUE;
+}
 ?>
 <style>
     .purpose-list table tr td:first-child {
@@ -72,15 +76,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Title</label></th>
-                <th colspan="3"><label class="control-label"><?php echo $item['title']; ?></label></th>
+                <th colspan="3">
+                    <label class="control-label"><?php echo $item['title'] . ' ( Tour ID:' . $item['tour_setup_id'] . ' )'; ?></label>
+                </th>
             </tr>
             <tr>
                 <th class="widget-header header_caption">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?></label></th>
-                <th colspan="3">
+                <th>
                     <label class="control-label"> From <?php echo System_helper::display_date($item['date_from']) ?>
                         To <?php echo System_helper::display_date($item['date_to']) ?>
                     </label>
+                </th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">Duration</label></th>
+                <th colspan="3">
+                    <label class="control-label"><?php echo Tour_helper::tour_duration($item['date_from'], $item['date_to']); ?></label>
                 </th>
             </tr>
             <tr>
@@ -88,9 +98,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?></label>
                 </th>
                 <th colspan="3">
-                    <label class="control-label"><?php echo number_format($item['amount_iou_request'], 2); ?></label>
+                    <label class="control-label"><?php echo System_helper::get_string_amount($item['amount_iou_request']); ?></label>
                 </th>
             </tr>
+
+            <?php if ($item['remarks']) { ?>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right">Remarks</label>
+                    </th>
+                    <th colspan="3">
+                        <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
+                    </th>
+                </tr>
+            <?php } ?>
+
             <tr>
                 <th class="widget-header header_caption">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY'); ?></label>
@@ -181,38 +203,99 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 </tr>
             <?php
             }
-            if ($item['status_forwarded_reporting'] == $CI->config->item('system_status_forwarded'))
+            ?>
+            <!--------------------------------- Tour IOU Information ----------------------------------->
+            <tr>
+                <th colspan="4" class="bg-info text-info">Tour IOU Payment Information</th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right">IOU Approve Status</label>
+                </th>
+                <th><label class="control-label"><?php echo $item['status_approved_payment']; ?></label></th>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right">IOU Pay Status</label>
+                </th>
+                <th><label class="control-label"><?php echo $item['status_paid_payment']; ?></label></th>
+            </tr>
+            <?php
+            if (!empty($item['user_approved_payment']) && !empty($item['date_approved_payment']))
             {
                 ?>
                 <tr>
-                    <th colspan="4" class="bg-info text-info">Tour Reporting Forward Information</th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVED_BY'); ?></label>
+                    </th>
+                    <th><label class="control-label"><?php echo $users[$item['user_approved_payment']]['name']; ?></label>
+                    </th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_APPROVED_TIME'); ?></label>
+                    </th>
+                    <th>
+                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_approved_payment']); ?></label>
+                    </th>
+                </tr>
+            <?php
+            }
+            if (!empty($item['user_paid_payment']) && !empty($item['date_paid_payment']))
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PAID_BY'); ?></label>
+                    </th>
+                    <th><label class="control-label"><?php echo $users[$item['user_paid_payment']]['name']; ?></label>
+                    </th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PAID_TIME'); ?></label>
+                    </th>
+                    <th>
+                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_paid_payment']); ?></label>
+                    </th>
+                </tr>
+            <?php
+            }
+            if ($is_rollback)
+            {
+                ?>
+                <tr>
+                    <th colspan="4" class="bg-danger text-danger">Tour Reporting Rollback Information</th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARD'); ?> Status</label>
+                        <label class="control-label pull-right">Remarks</label>
                     </th>
-                    <th><label class="control-label"><?php echo $item['status_forwarded_reporting']; ?></label></th>
+                    <th colspan="3">
+                        <label class="control-label"><?php echo nl2br($item['remarks_rollback_reporting']); ?></label>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right">Status</label>
+                    </th>
+                    <th><label class="control-label">Rollback</label></th>
                     <th class="widget-header header_caption">
                         <label class="control-label pull-right">(Reporting) Number of Rollback</label>
                     </th>
-                    <th><label class="control-label"><?php echo $item['revision_count_rollback_reporting']; ?></label>
-                    </th>
+                    <th><label class="control-label"><?php echo $item['revision_count_rollback_reporting']; ?></label></th>
                 </tr>
                 <tr>
                     <th class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY'); ?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ROLLBACK_BY'); ?></label>
                     </th>
                     <th>
-                        <label class="control-label"><?php echo $users[$item['user_forwarded_reporting']]['name']; ?></label>
+                        <label class="control-label"><?php echo $users[$item['user_rollback_reporting']]['name']; ?></label>
                     </th>
                     <th class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME'); ?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_ROLLBACK_TIME'); ?></label>
                     </th>
                     <th>
-                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_forwarded_reporting']); ?></label>
+                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_rollback_reporting']); ?></label>
                     </th>
                 </tr>
-            <?php } ?>
+            <?php
+            }
+            ?>
         </table>
     </div>
     <div class="clearfix"></div>

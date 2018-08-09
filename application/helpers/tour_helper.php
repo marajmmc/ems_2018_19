@@ -238,7 +238,7 @@ class Tour_helper
         {
             $CI =& get_instance();
             foreach ($check_status AS $flag)
-            {   /*
+            { /*
                 ----------------Tour Status Constants----------------
                 */
                 if ((TOUR_FORWARDED == $flag) && ($tour_array['status_forwarded_tour'] != $CI->config->item('system_status_forwarded'))) // Checks if TOUR FORWARDED
@@ -321,14 +321,14 @@ class Tour_helper
                 {
                     return array(
                         'status' => false,
-                        'system_message' => 'This IOU Adjustment is not Forwarded yet.'
+                        'system_message' => 'IOU Adjustment is not Forwarded yet.'
                     );
                 }
                 elseif ((TOUR_IOU_ADJUSTMENT_NOT_FORWARDED == $flag) && ($tour_array['status_approved_adjustment'] == $CI->config->item('system_status_forwarded'))) // Checks if TOUR IOU ADJUSTMENT not FORWARDED
                 {
                     return array(
                         'status' => false,
-                        'system_message' => 'This IOU Adjustment has been Forwarded Already.'
+                        'system_message' => 'IOU Adjustment has been Forwarded Already.'
                     );
                 }
                 elseif ((TOUR_IOU_ADJUSTMENT_APPROVED == $flag) && ($tour_array['status_approved_adjustment'] != $CI->config->item('system_status_approved'))) // Checks if TOUR IOU ADJUSTMENT APPROVED
@@ -366,19 +366,60 @@ class Tour_helper
                 {
                     return array(
                         'status' => false,
-                        'system_message' => 'This Tour Reporting is not Approved yet.'
+                        'system_message' => 'Tour Reporting is not Approved yet.'
                     );
                 }
                 elseif ((TOUR_REPORTING_NOT_APPROVED == $flag) && ($tour_array['status_approved_reporting'] == $CI->config->item('system_status_approved'))) // Checks if TOUR REPORTING not APPROVED
                 {
                     return array(
                         'status' => false,
-                        'system_message' => 'This Tour Reporting has been Approved Already.'
+                        'system_message' => 'Tour Reporting has been Approved Already.'
                     );
                 }
             }
         }
         return array('status' => true);
+    }
+
+    /*------------------Convert Numeric Amount INTO In-Word------------------*/
+    public static function get_string_amount_inword($number)
+    {
+        $number = (float) $number;
+        $decimal = round($number - ($no = floor($number)), 2) * 100;
+        $hundred = null;
+        $digits_length = strlen($no);
+        $i = 0;
+        $str = array();
+        $words = array(
+            0 => 'Zero', 1 => 'One', 2 => 'Two',
+            3 => 'Three', 4 => 'Four', 5 => 'Five', 6 => 'Six',
+            7 => 'Seven', 8 => 'Eight', 9 => 'Nine',
+            10 => 'Ten', 11 => 'Eleven', 12 => 'Twelve',
+            13 => 'Thirteen', 14 => 'Fourteen', 15 => 'Fifteen',
+            16 => 'Sixteen', 17 => 'Seventeen', 18 => 'Eighteen',
+            19 => 'Nineteen', 20 => 'Twenty', 30 => 'Thirty',
+            40 => 'Forty', 50 => 'Fifty', 60 => 'Sixty',
+            70 => 'Seventy', 80 => 'Eighty', 90 => 'Ninety'
+        );
+        $digits = array('', 'hundred', 'thousand', 'lakh', 'crore');
+        while ($i < $digits_length)
+        {
+            $divider = ($i == 2) ? 10 : 100;
+            $number = floor($no % $divider);
+            $no = floor($no / $divider);
+            $i += $divider == 10 ? 1 : 2;
+            if ($number)
+            {
+                $plural = (($counter = count($str)) && $number > 9) ? 's' : null;
+                $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
+                $str [] = ($number < 21) ? $words[$number] . ' ' . $digits[$counter] . $plural . ' ' . $hundred : $words[floor($number / 10) * 10] . ' ' . $words[$number % 10] . ' ' . $digits[$counter] . $plural . ' ' . $hundred;
+            }
+            else $str[] = null;
+        }
+        $Taka = implode('', array_reverse($str));
+        $Paisa = ($decimal) ? ", " . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' Paisa' : '';
+
+        return ($Taka ? $Taka . 'Taka' : '') . $Paisa;
     }
 }
 

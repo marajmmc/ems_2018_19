@@ -149,7 +149,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right">Duration:</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo Tour_helper::tour_duration($item['id']); ?></label>
+                <label class="control-label"><?php echo Tour_helper::tour_duration($item['date_from'], $item['date_to']); ?></label>
             </div>
         </div>
 
@@ -167,7 +167,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 </div>
 
 <div>
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
+    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
 
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0"/>
@@ -177,7 +177,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         <div class="col-xs-12 widget-header" style="font-size:1.2em; margin-bottom:0; border-top:1px solid #cfcfcf">
             <label class="control-label" style="margin:0">Reporting ( <?php echo System_helper::display_date($reporting_date); ?> )</label>
         </div>
-
         <?php
         if ($items) // OLD ITEMS
         {
@@ -348,21 +347,25 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     </div>
                 </div>
             </div>
-
         <?php } ?>
-
     </div>
 
     <div class="row show-grid" style="margin:5px 0 0">
         <div class="col-xs-12">
-            <div class="pull-right" style="margin:5px;display:inline-block">
+            <div class="pull-right" style="display:inline-block">
                 <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
-            </div>
-            <div class="action_button pull-right">
-                <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
             </div>
             <div class="clearfix"></div>
         </div>
+    </div>
+
+    <div class="row show-grid" style="margin:0">
+        <div class="col-xs-12">
+            <div class="action_button" style="width:100%; text-align:center">
+                <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
+            </div>
+        </div>
+        <div class="clearfix"></div>
     </div>
 
 </form>

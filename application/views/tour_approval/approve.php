@@ -80,6 +80,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
     </div>
 
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Duration:</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo Tour_helper::tour_duration($item['date_from'], $item['date_to']); ?></label>
+        </div>
+    </div>
+
     <?php echo Tour_helper::tour_purpose_view($item['tour_setup_id']); ?>
 
     <?php echo Tour_helper::iou_items_summary_view('', $item); ?>

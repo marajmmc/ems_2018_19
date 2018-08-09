@@ -13,6 +13,11 @@ $action_buttons[] = array(
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
+$is_rollback = FALSE;
+if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_reporting'] != $CI->config->item('system_status_approved'))) // Flag for Rollback
+{
+    $is_rollback = TRUE;
+}
 ?>
 <style>
     .purpose-list table tr td:first-child {
@@ -37,7 +42,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         margin-right: 8px;
         background: #d7d7d7;
     }
-    span.text-danger{font-style:italic;color:#FF0000}
+
+    span.text-danger {
+        font-style: italic;
+        color: #FF0000
+    }
 </style>
 
 <div class="row widget">
@@ -55,7 +64,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse1" href="#"> + Tour Information</a></label>
         </h4>
     </div>
-    <div id="collapse1" class="panel-collapse collapse in">
+    <div id="collapse1" class="panel-collapse collapse <?php echo ($is_rollback) ? 'in' : ''; ?>">
         <table class="table table-bordered table-responsive system_table_details_view">
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Name</label></th>
@@ -74,15 +83,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </tr>
             <tr>
                 <th class="widget-header header_caption"><label class="control-label pull-right">Title</label></th>
-                <th colspan="3"><label class="control-label"><?php echo $item['title']; ?></label></th>
+                <th colspan="3">
+                    <label class="control-label"><?php echo $item['title'] . ' ( Tour ID:' . $item['tour_setup_id'] . ' )'; ?></label>
+                </th>
             </tr>
             <tr>
                 <th class="widget-header header_caption">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?></label></th>
-                <th colspan="3">
+                <th>
                     <label class="control-label"> From <?php echo System_helper::display_date($item['date_from']) ?>
                         To <?php echo System_helper::display_date($item['date_to']) ?>
                     </label>
+                </th>
+                <th class="widget-header header_caption"><label class="control-label pull-right">Duration</label></th>
+                <th colspan="3">
+                    <label class="control-label"><?php echo Tour_helper::tour_duration($item['date_from'], $item['date_to']); ?></label>
                 </th>
             </tr>
             <tr>
@@ -90,9 +105,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?></label>
                 </th>
                 <th colspan="3">
-                    <label class="control-label"><?php echo number_format($item['amount_iou_request'], 2); ?></label>
+                    <label class="control-label"><?php echo System_helper::get_string_amount($item['amount_iou_request']); ?></label>
                 </th>
             </tr>
+
+            <?php if ($item['remarks']) { ?>
+            <tr>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right">Remarks</label>
+                </th>
+                <th colspan="3">
+                    <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
+                </th>
+            </tr>
+            <?php } ?>
+
             <tr>
                 <th class="widget-header header_caption">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY'); ?></label>
@@ -183,39 +210,77 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 </tr>
             <?php
             }
-            if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_reporting'] != $CI->config->item('system_status_approved')))
+            ?>
+            <!--------------------------------- Tour IOU Information ----------------------------------->
+            <tr>
+                <th colspan="4" class="bg-info text-info">Tour IOU Payment Information</th>
+            </tr>
+            <tr>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right">IOU Approve Status</label>
+                </th>
+                <th><label class="control-label"><?php echo $item['status_approved_payment']; ?></label></th>
+                <th class="widget-header header_caption">
+                    <label class="control-label pull-right">IOU Pay Status</label>
+                </th>
+                <th><label class="control-label"><?php echo $item['status_paid_payment']; ?></label></th>
+            </tr>
+            <?php
+            if (!empty($item['user_approved_payment']) && !empty($item['date_approved_payment']))
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVED_BY'); ?></label>
+                    </th>
+                    <th><label class="control-label"><?php echo $users[$item['user_approved_payment']]['name']; ?></label>
+                    </th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_APPROVED_TIME'); ?></label>
+                    </th>
+                    <th>
+                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_approved_payment']); ?></label>
+                    </th>
+                </tr>
+            <?php
+            }
+            if (!empty($item['user_paid_payment']) && !empty($item['date_paid_payment']))
+            {
+                ?>
+                <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PAID_BY'); ?></label>
+                    </th>
+                    <th><label class="control-label"><?php echo $users[$item['user_paid_payment']]['name']; ?></label>
+                    </th>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PAID_TIME'); ?></label>
+                    </th>
+                    <th>
+                        <label class="control-label"><?php echo System_helper::display_date_time($item['date_paid_payment']); ?></label>
+                    </th>
+                </tr>
+            <?php
+            }
+            if ($is_rollback)
             {
                 ?>
                 <tr>
                     <th colspan="4" class="bg-danger text-danger">Tour Reporting Rollback Information</th>
                 </tr>
                 <tr>
-                    <th class="widget-header header_caption" rowspan="2">
-                        <label class="control-label pull-right">Purpose Status</label>
-                    </th>
-                    <th rowspan="2">
-                        <label class="control-label normal">
-                            <ol style="margin:0">
-                                <?php foreach ($purposes as $purpose)
-                                {
-                                    $status = '';
-                                    if ($purpose['status_completed'] == $CI->config->item('system_status_incomplete'))
-                                    {
-                                        $status = '(<span class="text-danger">' . $CI->config->item('system_status_incomplete') . '</span>)';
-                                    }
-                                    echo '<li>' . $purpose['purpose'] . $status . '</li>';
-                                } ?>
-                            </ol>
-                        </label>
-                    </th>
                     <th class="widget-header header_caption">
                         <label class="control-label pull-right">Remarks</label>
                     </th>
-                    <th>
-                        <label class="control-label normal"><?php echo nl2br($item['remarks_rollback_reporting']); ?></label>
+                    <th colspan="3">
+                        <label class="control-label"><?php echo nl2br($item['remarks_rollback_reporting']); ?></label>
                     </th>
                 </tr>
                 <tr>
+                    <th class="widget-header header_caption">
+                        <label class="control-label pull-right">Status</label>
+                    </th>
+                    <th><label class="control-label">Rollback</label></th>
                     <th class="widget-header header_caption">
                         <label class="control-label pull-right">(Reporting) Number of Rollback</label>
                     </th>
@@ -292,22 +357,22 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks</label>
+                <label class="control-label pull-right">Forward <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <textarea name="item[remarks_forward_reporting]" class="form-control"><?php echo $item['remarks_forwarded_reporting'] ?></textarea>
+                <select name="item[status_forwarded_reporting]" class="form-control status-combo">
+                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                    <option value="<?php echo $this->config->item('system_status_forwarded'); ?>">Forward</option>
+                </select>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Forward <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Remarks</label>
             </div>
             <div class="col-xs-4">
-                <select name="item[status_forwarded_tour]" class="form-control status-combo">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $this->config->item('system_status_forwarded'); ?>">Forward</option>
-                </select>
+                <textarea name="item[remarks_forwarded_reporting]" class="form-control"><?php echo $item['remarks_forwarded_reporting'] ?></textarea>
             </div>
         </div>
 

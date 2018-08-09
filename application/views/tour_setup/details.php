@@ -357,6 +357,54 @@ if (!empty($item['user_paid_payment']) && !empty($item['date_paid_payment']))
     </tr>
 <?php
 }
+if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
+{
+?>
+    <tr>
+        <td colspan="4" class="bg-info text-info">
+            <label class="control-label">Tour IOU Adjustment Information</label>
+        </td>
+    </tr>
+    <tr>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right">IOU Adjustment Forward Status</label>
+        </td>
+        <td>
+            <label class="control-label">
+            <?php
+            if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
+            {
+                echo $CI->config->item('system_status_forwarded');
+            }
+            ?>
+            </label>
+        </td>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right">IOU Adjustment Approve Status</label>
+        </td>
+        <td>
+            <label class="control-label">
+            <?php
+            if ($item['status_approved_adjustment'] == $CI->config->item('system_status_approved'))
+            {
+                echo $CI->config->item('system_status_approved');
+            }
+            else
+            {
+                echo $CI->config->item('system_status_pending');
+            }
+            ?>
+            </label>
+        </td>
+    </tr>
+<?php
+}
+/* if()
+{
+?>
+
+<?php
+}  */
 if ($is_reporting_rollback)
 {
     ?>

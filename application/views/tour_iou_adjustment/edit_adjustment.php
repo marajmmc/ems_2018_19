@@ -29,6 +29,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     .right-align {
         text-align: right !important
     }
+
+    .center-align {
+        text-align: center !important
+    }
 </style>
 
 <div class="row widget">
@@ -91,53 +95,105 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right">Duration:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo Tour_helper::tour_duration($item['tour_setup_id']); ?></label>
-        </div>
-    </div>
-
-    <?php echo Tour_helper::iou_items_summary_view('', $item); ?>
-
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">IOU Amount Already Paid:</label>
-        </div>
-        <div class="col-sm-4 col-xs-8 right-align">
-            <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>
+            <label class="control-label"><?php echo Tour_helper::tour_duration($item['date_from'], $item['date_to']); ?></label>
         </div>
     </div>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_adjustment'); ?>" method="post">
         <input type="hidden" id="id" name="id" value="<?php echo $item['tour_setup_id']; ?>"/>
 
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">IOU Voucher Amount <span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[amount_iou_adjustment]" class="form-control float_type_positive price_unit_tk iou_adjustment_input" value="<?php echo $item['amount_iou_adjustment']; ?>" />
-            </div>
-        </div>
+        <?php
+        $iou_items = Tour_helper::get_iou_items();
+        if ($iou_items)
+        {
+            $i = 0;
+            $amount_iou_items = array();
+            $total_iou_amount = 0.0;
+            $total_voucher_amount = 0.0;
 
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Adjustment:</label>
-            </div>
-            <div class="col-sm-4 col-xs-8 right-align">
-                <label class="control-label adjustment_amount"> 0.00 </label>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                &nbsp;
-            </div>
-            <div class="col-sm-4 col-xs-4">
-                <div class="action_button pull-right" style="margin-right:0">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
+            $amount_iou_adj_items = $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+            if ($item['amount_iou_adjustment_items'] && ($item['amount_iou_adjustment_items'] != ''))
+            {
+                $amount_iou_adj_items = json_decode($item['amount_iou_adjustment_items'], TRUE);
+            }
+            ?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">IOU Items:</label>
+                </div>
+                <div class="col-xs-2 right-align" style="border-bottom:1px solid #000; padding-bottom:5px">
+                    <label class="control-label normal">Item </label>
+                </div>
+                <div class="col-xs-1 right-align" style="border-bottom:1px solid #000; padding-bottom:5px">
+                    <label class="control-label normal">Paid</label>
+                </div>
+                <div class="col-xs-2 center-align" style="border-bottom:1px solid #000; padding-bottom:5px">
+                    <label class="control-label normal">Voucher Amount</label>
                 </div>
             </div>
-            <div class="col-sm-4 col-xs-4">
-                &nbsp;
+            <?php
+            foreach ($iou_items as $iou_item)
+            {
+                $iou_amount = $iou_adj_amount = 0;
+                if (isset($amount_iou_items[$iou_item]))
+                {
+                    $iou_amount = $amount_iou_items[$iou_item];
+                }
+                if (isset($amount_iou_adj_items[$iou_item]))
+                {
+                    $iou_adj_amount = $amount_iou_adj_items[$iou_item];
+                }
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4"> &nbsp;</div>
+                    <div class="col-xs-2">
+                        <label class="control-label pull-right normal"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
+                    </div>
+                    <div class="col-xs-1" style="padding-left:0">
+                        <label class="control-label pull-right"><?php echo(System_helper::get_string_amount($iou_amount)); ?></label>
+                    </div>
+                    <div class="col-xs-2">
+                        <input type="text" name="items[<?php echo $iou_item; ?>]" class="form-control float_type_positive price_unit_tk iou_adjustment_input" value="<?php echo $iou_adj_amount; ?>"/>
+                    </div>
+                </div>
+                <?php
+                $total_iou_amount += $iou_amount;
+                if ($item['amount_iou_adjustment_items'] && ($item['amount_iou_adjustment_items'] != ''))
+                {
+                    $total_voucher_amount += $iou_adj_amount;
+                }
+                $i++;
+            }
+            ?>
+            <div class="row show-grid" style="margin-bottom:15px">
+                <div class="col-xs-4"> &nbsp; </div>
+                <div class="col-xs-2" style="border-top:1px solid #000; padding-top:5px">
+                    <label class="control-label pull-right normal">Total:</label>
+                </div>
+                <div class="col-xs-1" style="border-top:1px solid #000; padding-top:5px; padding-left:0; text-align:right">
+                    <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>
+                </div>
+                <div class="col-xs-2" style="border-top:1px solid #000; padding-top:5px; padding-left:0; padding-right:30px; text-align:right">
+                    <label class="control-label voucher_amount"><?php echo System_helper::get_string_amount($total_voucher_amount); ?></label>
+                </div>
+            </div>
+
+            <div class="row show-grid" style="margin-bottom:40px">
+                <div class="col-xs-4"> &nbsp; </div>
+                <div class="col-xs-2">
+                    <label class="control-label pull-right normal">Adjustment:</label>
+                </div>
+                <div class="col-xs-3" style="padding-left:0; padding-right:30px; text-align:right">
+                    <label class="control-label adjustment_amount"> 0.00 </label>
+                </div>
+            </div>
+        <?php } ?>
+
+        <div class="row show-grid">
+            <div class="col-xs-12">
+                <div class="action_button center-align" style="width:100%;">
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
+                </div>
             </div>
         </div>
     </form>
@@ -147,31 +203,45 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
-        var exp_amt = parseFloat($(".iou_adjustment_input").val().trim());
-        check_input_amount(exp_amt); // Called, when Page Loads First time
+        check_input_amount(false); // When page loads 1st time
 
-        $(".iou_adjustment_input").on("change keyup", function (event) {
-            var exp_amt = parseFloat($(this).val().trim());
-            check_input_amount(exp_amt); // Called, when an Amount is Typed
+        $(document).on("change keyup", ".iou_adjustment_input", function (event) {
+            check_input_amount(true); // When voucher amounts are entered
         });
     });
 
-    function check_input_amount(exp_amt){
-        var paid_amt = parseFloat(<?php echo trim($total_iou_amount); ?>);
-        if ((paid_amt !== '') && (exp_amt !== '') && !isNaN(paid_amt) && !isNaN(exp_amt)) {
-            var adj_amt = exp_amt - paid_amt;
-            if (adj_amt > 0) {
-                var note = "(Pay To Employee)";
-            } else if (adj_amt < 0) {
-                var note = "(Return To Accounts)";
-            } else {
-                var note = "(No Adjustment Needed)";
+    function check_input_amount(show_note) {
+        var sum = parseFloat(0);
+        var item_amount = parseFloat(0);
+        $(".iou_adjustment_input").each(function (e) {
+            item_amount = parseFloat($(this).val());
+            if (!isNaN(item_amount) && (item_amount > 0)) {
+                sum += item_amount;
             }
-            note = '<span class="normal">' + note + '</span>';
+        });
+        $(".voucher_amount").text(get_string_amount(sum));
+
+        var paid_amt = parseFloat(<?php echo trim($total_iou_amount); ?>);
+        var exp_amt = sum;
+
+        if (show_note) { // When 'KEYUP/CHANGE' event fired
+            if ((paid_amt !== '') && (exp_amt !== '') && !isNaN(paid_amt) && !isNaN(exp_amt)) {
+                var adj_amt = exp_amt - paid_amt;
+                if (adj_amt > 0) {
+                    var note = "(Pay To Employee)";
+                } else if (adj_amt < 0) {
+                    var note = "(Return To Accounts)";
+                } else {
+                    var note = "(No Adjustment Needed)";
+                }
+                note = '<span class="normal">' + note + '</span>';
+            } else {
+                var adj_amt = 0.00;
+                note = '';
+            }
         } else {
-            var adj_amt = 0.00;
             note = '';
         }
-        $(".adjustment_amount").html(note + " &nbsp;&nbsp;" + get_string_amount(Math.abs(adj_amt)));
+        $(".adjustment_amount").html(get_string_amount(Math.abs(adj_amt)) + '<br/>' + note);
     }
 </script>
