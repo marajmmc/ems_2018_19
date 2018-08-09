@@ -177,7 +177,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', width:'50',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width:'250',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month', width:'250',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'100',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME'); ?>', dataField: 'crop_type_name',width:'250',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'250',rendered:tooltiprenderer},

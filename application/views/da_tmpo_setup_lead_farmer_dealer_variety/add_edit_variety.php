@@ -102,13 +102,29 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             </div>
         </div>
-
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MONTH');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="month" class="form-control" name="item[month]" >
+                    <?php
+                    for($i=1;$i<13;$i++)
+                    {
+                        ?>
+                        <option value="<?php echo $i;?>" <?php if($i==$item['month']){echo "selected='selected'";}?>><?php echo date("F", mktime(0, 0, 0,  $i,1, 2000));?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
         <div class="row show-grid" id="crop_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_id" name="crop_id" class="form-control">
+                <select id="crop_id" name="item[crop_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($crops as $crop)
@@ -122,32 +138,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div style="<?php if(!($item['crop_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="crop_type_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?> </label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_type_id" name="crop_type_id" class="form-control">
+                <select id="crop_type_id" name="item[crop_type_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                     <?php
                     foreach($types as $type)
                     {?>
                         <option value="<?php echo $type['value']?>" <?php if($type['value']==$item['crop_type_id']){ echo "selected";}?>><?php echo $type['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        <div style="<?php if(!($item['crop_type_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="variety_id_container">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8" id="variety_list_container">
-                <select id="variety_id" name="item[variety_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($varieties as $variety)
-                    {?>
-                        <option value="<?php echo $variety['value']?>" <?php if($variety['value']==$item['variety_id']){ echo "selected";}?>><?php echo $variety['text'];?></option>
                     <?php
                     }
                     ?>
@@ -217,23 +216,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 if(system_types[crop_id]!==undefined)
                 {
                     $('#crop_type_id').html(get_dropdown_with_select(system_types[crop_id]));
-                }
-            }
-        });
-
-
-        $(document).on("change","#crop_type_id",function()
-        {
-            $('#system_report_container').html('');
-            $('#variety_id').val("");
-            var crop_type_id=$('#crop_type_id').val();
-            $('#variety_id_container').hide();
-            if(crop_type_id>0)
-            {
-                $('#variety_id_container').show();
-                if(system_varieties[crop_type_id]!==undefined)
-                {
-                    $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
                 }
             }
         });

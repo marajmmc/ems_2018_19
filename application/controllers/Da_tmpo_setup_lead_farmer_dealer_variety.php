@@ -132,7 +132,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
         else if($method=='list_variety')
         {
             $data['id']= 1;
-            $data['variety_name']= 1;
+            $data['month']= 1;
             $data['crop_name']= 1;
             $data['crop_type_name']= 1;
             $data['remarks']= 1;
@@ -1010,19 +1010,27 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
         $this->db->select('varieties.*');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = varieties.variety_id','INNER');
-        $this->db->select('v.name variety_name, v.id variety_id');
+        /*$this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = varieties.variety_id','INNER');
+        $this->db->select('v.name variety_name, v.id variety_id');*/
 
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','INNER');
-        $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
-
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = varieties.crop_id','INNER');
         $this->db->select('crop.name crop_name, crop.id crop_id');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = varieties.crop_type_id','LEFT');
+        $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
 
         $this->db->where('varieties.area_id',$id);
         $this->db->where('varieties.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('varieties.ordering','ASC');
         $items=$this->db->get()->result_array();
+        foreach($items as &$item)
+        {
+            if(!$item['crop_type_id'])
+            {
+                $item['crop_type_name']='All';
+            }
+            $item['month']=date("F", mktime(0, 0, 0,  $item['month'],1, 2000));
+        }
         $this->json_return($items);
     }
     private function system_add_edit_variety($area_id,$id='')
@@ -1096,14 +1104,14 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
             $this->db->select('varieties.*');
 
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = varieties.variety_id','INNER');
-            $this->db->select('v.name variety_name, v.id variety_id');
+            /*$this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id = varieties.variety_id','INNER');
+            $this->db->select('v.name variety_name, v.id variety_id');*/
 
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = v.crop_type_id','INNER');
-            $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = crop_type.crop_id','INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = varieties.crop_id','INNER');
             $this->db->select('crop.name crop_name, crop.id crop_id');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = varieties.crop_type_id','LEFT');
+            $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
 
             $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=varieties.area_id','INNER');
             $this->db->select('areas.id area_id,areas.name area_name,areas.address area_address');
@@ -1143,8 +1151,6 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
 
             $data['crops']=Query_helper::get_info($this->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
             $data['types']=Query_helper::get_info($this->config->item('table_login_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['item']['crop_id'],'status !="'.$this->config->item('system_status_delete').'"'));
-            $data['varieties']=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),array('id value','name text','whose'),array('crop_type_id ='.$data['item']['crop_type_id'],'status !="'.$this->config->item('system_status_delete').'"'),0,0,array('whose ASC','ordering ASC'));
-
 
             $data['title']="Edit Variety Assign :: Outlet: ".$data['item']['outlet_name'].", Growing Area: ".$data['item']['area_name'].", Address: ".$data['item']['area_address'];
         }
@@ -1153,9 +1159,9 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
             $data['item']=array
             (
                 'id'=>'',
+                'month'=>date('n', time()),
                 'crop_id'=>'',
                 'crop_type_id'=>'',
-                'variety_id'=>'',
                 'remarks'=>'',
                 'status'=>$this->config->item('system_status_active'),
                 'ordering'=>99
@@ -1214,13 +1220,13 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_varieties'),'*',array('variety_id='.$item['variety_id'], 'area_id='.$item['area_id'], 'status !="'.$this->config->item('system_status_delete').'"'),1);
+            /*$result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_varieties'),'*',array('variety_id='.$item['variety_id'], 'area_id='.$item['area_id'], 'status !="'.$this->config->item('system_status_delete').'"'),1);
             if($result)
             {
                 $ajax['status']=false;
                 $ajax['system_message']='You are already assign to variety. (ID: '.$result['id'].' & status: '.$result['status'].')';
                 $this->json_return($ajax);
-            }
+            }*/
         }
         if(!$this->check_validation_variety())
         {
@@ -1302,7 +1308,8 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
     private function check_validation_variety()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
+        $this->form_validation->set_rules('item[month]',$this->lang->line('LABEL_MONTH'),'required');
+        $this->form_validation->set_rules('item[crop_id]',$this->lang->line('LABEL_CROP_NAME'),'required');
         $this->form_validation->set_rules('item[status]',$this->lang->line('LABEL_STATUS'),'required');
         $this->form_validation->set_rules('item[ordering]',$this->lang->line('LABEL_ORDER'),'required');
         if($this->form_validation->run() == FALSE)
