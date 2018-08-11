@@ -96,10 +96,10 @@ class Survey_variety_arm extends Root_Controller
         $this->db->select('arm_characteristics.characteristics');
 
         $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"','LEFT');
-        $this->db->select('count(arm_files_images.variety_id) number_of_images',true);
+        $this->db->select('count(DISTINCT arm_files_images.id) number_of_images',true);
 
         $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'"','LEFT');
-        $this->db->select('count(arm_files_videos.variety_id) number_of_videos',true);
+        $this->db->select('count(DISTINCT arm_files_videos.id) number_of_videos',true);
 
         $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('type.ordering','ASC');
@@ -210,64 +210,75 @@ class Survey_variety_arm extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        $variety=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),'*',array('id ='.$id,'whose ="ARM"'),1);
-        if(!$variety)
+        if(!$this->check_validation())
         {
-            System_helper::invalid_try('Save',$id,'Id Non-Exists');
             $ajax['status']=false;
-            $ajax['system_message']='Invalid Try.';
+            $ajax['system_message']=$this->message;
             $this->json_return($ajax);
-        }
-
-        $old_item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$id),1);
-
-        $item['date_start1']=System_helper::get_time($item['date_start1'].'-1970');
-        $item['date_end1']=System_helper::get_time($item['date_end1'].'-1970');
-        if($item['date_end1']<$item['date_start1'])
-        {
-            $item['date_end1']=System_helper::get_time($this->input->post('date_end1').'-1971');
-        }
-        if($item['date_end1']!=0)
-        {
-            $item['date_end1']+=24*3600-1;
-        }
-        $item['date_start2']=System_helper::get_time($item['date_start2'].'-1970');
-        $item['date_end2']=System_helper::get_time($item['date_end2'].'-1970');
-        if($item['date_end2']<$item['date_start2'])
-        {
-            $item['date_end2']=System_helper::get_time($this->input->post('date_end2').'-1971');
-        }
-        if($item['date_end2']!=0)
-        {
-            $item['date_end2']+=24*3600-1;
-        }
-
-        $this->db->trans_start();  //DB Transaction Handle START
-
-        if($old_item)
-        {
-            $item['user_updated'] = $user->user_id;
-            $item['date_updated'] = $time;
-            Query_helper::update($this->config->item('table_ems_survey_variety_arm_characteristics'),$item,array("id = ".$old_item['id']));
         }
         else
         {
-            $item['variety_id'] = $id;
-            $item['user_created'] = $user->user_id;
-            $item['date_created'] = $time;
-            Query_helper::add($this->config->item('table_ems_survey_variety_arm_characteristics'),$item);
-        }
-        $this->db->trans_complete();   //DB Transaction Handle END
-        if ($this->db->trans_status() === TRUE)
-        {
-            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-            $this->system_list();
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-            $this->json_return($ajax);
+            $variety=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),'*',array('id ='.$id,'whose ="ARM"'),1);
+            if(!$variety)
+            {
+                System_helper::invalid_try('Save',$id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $old_item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$id),1);
+
+            $item['date_start1']=System_helper::get_time($item['date_start1'].'-1970');
+            $item['date_end1']=System_helper::get_time($item['date_end1'].'-1970');
+            if($item['date_end1']<$item['date_start1'])
+            {
+                $item['date_end1']=System_helper::get_time($this->input->post('date_end1').'-1971');
+            }
+            if($item['date_end1']!=0)
+            {
+                $item['date_end1']+=24*3600-1;
+            }
+            $item['date_start2']=System_helper::get_time($item['date_start2'].'-1970');
+            $item['date_end2']=System_helper::get_time($item['date_end2'].'-1970');
+            if($item['date_end2']<$item['date_start2'])
+            {
+                $item['date_end2']=System_helper::get_time($this->input->post('date_end2').'-1971');
+            }
+            if($item['date_end2']!=0)
+            {
+                $item['date_end2']+=24*3600-1;
+            }
+
+            $this->db->trans_start();  //DB Transaction Handle START
+
+            if($old_item)
+            {
+                $item['user_updated'] = $user->user_id;
+                $item['date_updated'] = $time;
+                $this->db->set('revision_count', 'revision_count+1', FALSE);
+                Query_helper::update($this->config->item('table_ems_survey_variety_arm_characteristics'),$item,array("id = ".$old_item['id']));
+            }
+            else
+            {
+                $item['variety_id'] = $id;
+                $item['revision_count'] = 1;
+                $item['user_created'] = $user->user_id;
+                $item['date_created'] = $time;
+                Query_helper::add($this->config->item('table_ems_survey_variety_arm_characteristics'),$item);
+            }
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->json_return($ajax);
+            }
         }
     }
     private function system_set_preference()
@@ -289,5 +300,16 @@ class Survey_variety_arm extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+    private function check_validation()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[characteristics]',$this->lang->line('LABEL_CHARACTERISTICS'),'required');
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
+        return true;
     }
 }
