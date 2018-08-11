@@ -29,24 +29,6 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
-        'label' => 'Print View',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/print_view')
-    );
-}
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Print Requisition',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/print_requisition')
-    );
-}
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
         'label' => $CI->lang->line("ACTION_PRINT"),
         'class' => 'button_action_download',
         'data-title' => "Print",

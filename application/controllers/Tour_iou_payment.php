@@ -65,10 +65,6 @@ class Tour_iou_payment extends Root_Controller
         {
             $this->system_details($id);
         }
-        /* elseif ($action == "print_view")
-        {
-            $this->system_print_view($id);
-        } */
         elseif ($action == "print_requisition")
         {
             $this->system_print_requisition($id);
@@ -189,6 +185,7 @@ class Tour_iou_payment extends Root_Controller
         {
             $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
             $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
+            $items[$key]['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
             if ($item['designation'] == '')
             {
                 $items[$key]['designation'] = '-';
@@ -277,6 +274,7 @@ class Tour_iou_payment extends Root_Controller
         {
             $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
             $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
+            $items[$key]['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
             if ($item['designation'] == '')
             {
                 $items[$key]['designation'] = '-';
@@ -349,6 +347,7 @@ class Tour_iou_payment extends Root_Controller
             }
             $data['total_iou_amount'] = $total_iou_amount;
 
+            $data['requisition_print_page'] = $this->load->view($this->controller_url . "/print_requisition", $data, true);
             $data['title'] = 'Tour IOU Payment :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/edit_payment", $data, true));
@@ -469,6 +468,7 @@ class Tour_iou_payment extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $data['requisition_print_page'] = $this->load->view($this->controller_url . "/print_requisition", $data, true);
             $data['title'] = 'Tour IOU Payment Approval :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));

@@ -157,7 +157,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: 'Title', dataField: 'title', hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: 'Date From', dataField: 'date_from', width: '100', hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to', width: '100', hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
                 ]
             });
     });

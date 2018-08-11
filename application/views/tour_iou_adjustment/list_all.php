@@ -27,24 +27,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'data-action-link' => site_url($CI->controller_url . '/index/details')
     );
 }
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Print View',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/print_view')
-    );
-}
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Print Requisition',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/print_requisition')
-    );
-}
 if(isset($CI->permissions['action4'])&&($CI->permissions['action4']==1))
 {
     $action_buttons[] = array(
@@ -151,7 +133,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: 'Title',dataField: 'title',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: 'Date From', dataField: 'date_from',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
                     { text: 'Adjustment Status', dataField: 'status_approved_adjustment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_adjustment']?0:1;?>}
                 ]
             });

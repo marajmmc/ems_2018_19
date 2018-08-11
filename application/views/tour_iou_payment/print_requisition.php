@@ -11,10 +11,6 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK") . ' to All list',
     'href' => site_url($CI->controller_url . '/index/list_all')
 );
-$action_buttons[] = array(
-    'label' => $CI->lang->line("ACTION_BACK") . ' to Waiting list',
-    'href' => site_url($CI->controller_url . '/index/list_waiting')
-);
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 {
     $action_buttons[] = array(
@@ -24,6 +20,13 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
     );
 }
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
+
+// Fetching Approver Info.
+if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
+{
+    $user_ids = array($item['user_approved_payment']);
+    $users_info = System_helper::get_users_info($user_ids);
+}
 /*-------------------------------- PAGE PRINT CONFIGURATION -----------------------------------*/
 $width = 8.27 * 100;
 $height = 11.69 * 100;
@@ -73,8 +76,8 @@ $num_pages = ceil($total_records / $row_per_page);
                             <td><?php echo $item['tour_setup_id']; ?></td>
                             <td><strong><?php echo $CI->lang->line('LABEL_DATE'); ?></strong></td>
                             <td>
-                                <?php echo System_helper::display_date($item['date_from']) ?>
-                                to <?php echo System_helper::display_date($item['date_to']) ?>
+                                <b><?php echo System_helper::display_date($item['date_from']) ?></b>
+                                &nbsp; to &nbsp; <b><?php echo System_helper::display_date($item['date_to']) ?></b>
                             </td>
                         </tr>
                         <tr>
@@ -106,6 +109,19 @@ $num_pages = ceil($total_records / $row_per_page);
                             <td><strong>Employee ID</strong></td>
                             <td><?php echo $item['employee_id']; ?></td>
                         </tr>
+                        <?php
+                        if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
+                        {
+                        ?>
+                        <tr>
+                            <td><strong>Approved By</strong></td>
+                            <td><?php echo $users_info[$item['user_approved_payment']]['name']; ?></td>
+                            <td><strong>Approved Time</strong></td>
+                            <td><?php echo System_helper::display_date_time($item['date_approved_payment']); ?></td>
+                        </tr>
+                        <?php
+                        }
+                        ?>
                     </table>
                 </div>
             </div>
