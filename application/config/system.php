@@ -39,3 +39,7 @@ $config['system_customer_type_customer_id']=2;
 //System Configuration
 $config['system_purpose_ems_menu_odd_color']='ems_menu_odd_color';
 $config['system_purpose_ems_menu_even_color']='ems_menu_even_color';
+
+//System File Type
+$config['system_file_type_image']='image';
+$config['system_file_type_video']='video';

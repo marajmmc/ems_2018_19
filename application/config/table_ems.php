@@ -38,3 +38,7 @@ $config['table_ems_da_tmpo_setup_area_lead_farmers'] = 'arm_ems_2018_19.ems_da_t
 $config['table_ems_da_tmpo_setup_area_dealers'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_dealers';
 $config['table_ems_da_tmpo_setup_visit_schedules'] = 'arm_ems_2018_19.ems_da_tmpo_setup_visit_schedules';
 $config['table_ems_da_tmpo_setup_area_varieties'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_varieties';
+
+//ARM Variety Info
+$config['table_ems_survey_variety_arm_characteristics'] = 'arm_ems_2018_19.ems_survey_variety_arm_characteristics';
+$config['table_ems_survey_variety_arm_files'] = 'arm_ems_2018_19.ems_survey_variety_arm_files';

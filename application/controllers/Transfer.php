@@ -17,6 +17,7 @@ class Transfer extends CI_Controller
         //$this->field_visit_visits_picture();
         //$this->field_visit_fruit_picture();
         //$this->field_visit_disease_picture();
+        $this->survey_variety_arm();
     }
 
     /*R&D Demo*/
@@ -393,6 +394,73 @@ class Transfer extends CI_Controller
         else
         {
             echo 'Failed disease picture';
+        }
+    }
+
+    /*ARM Variety Info*/
+    private function survey_variety_arm()
+    {
+        $source_tables=array(
+            'variety_arm'=>'arm_ems.ems_survey_product',
+        );
+        $destination_tables=array(
+            'variety_arm_characteristics'=>$this->config->item('table_ems_survey_variety_arm_characteristics'),
+            'variety_arm_files'=>$this->config->item('table_ems_survey_variety_arm_files'),
+        );
+        $results=Query_helper::get_info($source_tables['variety_arm'],'*',array());
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($results as $result)
+        {
+            $data_characteristics=array();
+            $data_characteristics['id']=$result['id'];
+            $data_characteristics['variety_id']=$result['variety_id'];
+            $data_characteristics['characteristics']=$result['characteristics'];
+            $data_characteristics['comparison']=$result['comparison'];
+            $data_characteristics['remarks']=$result['remarks'];
+            $data_characteristics['date_start1']=$result['date_start'];
+            $data_characteristics['date_end1']=$result['date_end'];
+            $data_characteristics['date_start2']=$result['date_start2'];
+            $data_characteristics['date_end2']=$result['date_end2'];
+            $data_characteristics['date_created']=$result['date_created'];
+            $data_characteristics['user_created']=$result['user_created'];
+            $data_characteristics['date_updated']=$result['date_updated'];
+            $data_characteristics['user_updated']=$result['user_updated'];
+            Query_helper::add($destination_tables['variety_arm_characteristics'],$data_characteristics,false);
+
+            $data_files=array();
+            $data_files['variety_id']=$result['variety_id'];
+            $data_files['file_type']='image';
+            if($result['picture_file_name'])
+            {
+                $data_files['file_name']=$result['picture_file_name'];
+            }
+            else
+            {
+                $data_files['file_name']='no_image.jpg';
+            }
+
+            if($result['picture_file_full'])
+            {
+                $data_files['file_location']=$result['picture_file_full'];
+            }
+            else
+            {
+                $data_files['file_location']='images/no_image.jpg';
+            }
+            $data_files['date_created']=$result['date_created'];
+            $data_files['user_created']=$result['user_created'];
+            $data_files['date_updated']=$result['date_updated'];
+            $data_files['user_updated']=$result['user_updated'];
+            Query_helper::add($destination_tables['variety_arm_files'],$data_files,false);
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'Success ARM Variety Info';
+        }
+        else
+        {
+            echo 'Failed ARM Variety Info';
         }
     }
 }
