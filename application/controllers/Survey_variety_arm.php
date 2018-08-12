@@ -32,6 +32,30 @@ class Survey_variety_arm extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="image_list")
+        {
+            $this->system_file_list($id,$file_type='image');
+        }
+        elseif($action=="get_files")
+        {
+            $this->system_get_files($id);
+        }
+        elseif($action=='add_edit_image')
+        {
+            $this->system_add_edit_image($id,$id1);
+        }
+        elseif($action=="save_file")
+        {
+            $this->system_save_file();
+        }
+        elseif($action=="video_list")
+        {
+            $this->system_file_list($id,$file_type='video');
+        }
+        elseif($action=='add_edit_video')
+        {
+            $this->system_add_edit_video($id,$id1);
+        }
         elseif($action=="set_preference")
         {
             $this->system_set_preference();
@@ -47,13 +71,26 @@ class Survey_variety_arm extends Root_Controller
     }
     private function get_preference_headers($method)
     {
-        $data['id']= 1;
-        $data['name']= 1;
-        $data['crop_name']= 1;
-        $data['crop_type_name']= 1;
-        $data['characteristics']= 1;
-        $data['number_of_images']= 1;
-        $data['number_of_videos']= 1;
+        if($method=='list')
+        {
+            $data['id']= 1;
+            $data['name']= 1;
+            $data['crop_name']= 1;
+            $data['crop_type_name']= 1;
+            $data['characteristics']= 1;
+            $data['number_of_images']= 1;
+            $data['number_of_videos']= 1;
+        }
+        else if($method=='file_list')
+        {
+            $data['id']= 1;
+            $data['remarks']= 1;
+            $data['status']= 1;
+        }
+        else
+        {
+            $data=array();
+        }
         return $data;
     }
     private function system_list()
@@ -95,10 +132,10 @@ class Survey_variety_arm extends Root_Controller
         $this->db->join($this->config->item('table_ems_survey_variety_arm_characteristics').' arm_characteristics','arm_characteristics.variety_id = v.id','LEFT');
         $this->db->select('arm_characteristics.characteristics');
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"','LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'" AND arm_files_images.status="'.$this->config->item('system_status_active').'"' ,'LEFT');
         $this->db->select('count(DISTINCT arm_files_images.id) number_of_images',true);
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'"','LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'" AND arm_files_images.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->select('count(DISTINCT arm_files_videos.id) number_of_videos',true);
 
         $this->db->order_by('crop.ordering','ASC');
@@ -122,85 +159,76 @@ class Survey_variety_arm extends Root_Controller
         }
         $this->json_return($items);
     }
-    private function system_add_edit_characteristics($id)
+    private function system_add_edit_characteristics($variety_id)
     {
-        if($id>0)
+        if(isset($this->permissions['action2'])&&($this->permissions['action2']==1))
         {
-            $item_id=$id;
-        }
-        else
-        {
-            $item_id=$this->input->post('id');
-        }
-
-        if($item_id>0)
-        {
-            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            if($variety_id>0)
             {
+                $item_id=$variety_id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+            $this->db->select('v.id,v.name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+
+            $this->db->where('v.id',$item_id);
+            $this->db->where('v.whose','ARM');
+            $data['item_head']=$this->db->get()->row_array();
+            if(!$data['item_head'])
+            {
+                System_helper::invalid_try('Add_edit_characteristics',$item_id,'Id Non-Exists');
                 $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-        }
-        else
-        {
-            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            $item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$item_id),1);
+            if($item)
             {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
+                $data['item']=$item;
             }
-        }
+            else
+            {
+                $data['item']['characteristics']='';
+                $data['item']['comparison']='';
+                $data['item']['remarks']='';
+                $data['item']['remarks']='';
+                $data['item']['date_start1']=time();
+                $data['item']['date_end1']=time();
+                $data['item']['date_start2']=0;
+                $data['item']['date_end2']=0;
+            }
 
-        $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
-        $this->db->select('v.id,v.name');
-
-        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
-        $this->db->select('type.name crop_type_name');
-
-        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->select('crop.name crop_name');
-
-        $this->db->where('v.id',$item_id);
-        $this->db->where('v.whose','ARM');
-        $data['item_head']=$this->db->get()->row_array();
-        if(!$data['item_head'])
-        {
-            System_helper::invalid_try('Add_edit_characteristics',$item_id,'Id Non-Exists');
-            $ajax['status']=false;
-            $ajax['system_message']='Invalid Try.';
+            $data['title']="Edit ARM Variety Info for (".$data['item_head']['name'].')';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_characteristics",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_characteristics/'.$item_id);
             $this->json_return($ajax);
         }
-        $item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$item_id),1);
-        if($item)
-        {
-            $data['item']=$item;
-        }
         else
         {
-            $data['item']['characteristics']='';
-            $data['item']['comparison']='';
-            $data['item']['remarks']='';
-            $data['item']['remarks']='';
-            $data['item']['date_start1']=time();
-            $data['item']['date_end1']=time();
-            $data['item']['date_start2']=0;
-            $data['item']['date_end2']=0;
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
         }
 
-        $data['title']="Edit ARM Variety Info for (".$data['item_head']['name'].')';
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_characteristics",$data,true));
-        if($this->message)
-        {
-            $ajax['system_message']=$this->message;
-        }
-        $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_characteristics/'.$item_id);
-        $this->json_return($ajax);
     }
     private function system_save()
     {
-        $id = $this->input->post("id");
+        $variety_id = $this->input->post("id");
         $item=$this->input->post('item');
         $user = User_helper::get_user();
         $time=time();
@@ -218,16 +246,16 @@ class Survey_variety_arm extends Root_Controller
         }
         else
         {
-            $variety=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),'*',array('id ='.$id,'whose ="ARM"'),1);
+            $variety=Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'),'*',array('id ='.$variety_id,'whose ="ARM"'),1);
             if(!$variety)
             {
-                System_helper::invalid_try('Save',$id,'Id Non-Exists');
+                System_helper::invalid_try('Save',$variety_id,'Id Non-Exists');
                 $ajax['status']=false;
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            $old_item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$id),1);
+            $old_item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$variety_id),1);
 
             $item['date_start1']=System_helper::get_time($item['date_start1'].'-1970');
             $item['date_end1']=System_helper::get_time($item['date_end1'].'-1970');
@@ -261,7 +289,7 @@ class Survey_variety_arm extends Root_Controller
             }
             else
             {
-                $item['variety_id'] = $id;
+                $item['variety_id'] = $variety_id;
                 $item['revision_count'] = 1;
                 $item['user_created'] = $user->user_id;
                 $item['date_created'] = $time;
@@ -280,6 +308,402 @@ class Survey_variety_arm extends Root_Controller
                 $this->json_return($ajax);
             }
         }
+    }
+    private function system_file_list($variety_id,$file_type)
+    {
+        $user = User_helper::get_user();
+        $method = 'file_list';
+        if(isset($this->permissions['action2']) && ($this->permissions['action2']==1))
+        {
+            if($variety_id>0)
+            {
+                $item_id=$variety_id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+            $this->db->select('v.id,v.name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+
+            $this->db->where('v.id',$item_id);
+            $this->db->where('v.whose','ARM');
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('File_list',$item_id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
+            if($file_type==$this->config->item('system_file_type_image'))
+            {
+                $data['file_type']=$this->config->item('system_file_type_image');
+                $data['title']="Image setup list (Variety: ".$data['item']['name'].')';
+            }
+            else
+            {
+                $data['file_type']=$this->config->item('system_file_type_video');
+                $data['title']="Video setup list (Variety: ".$data['item']['name'].')';
+            }
+
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/file_list",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            if($file_type==$this->config->item('system_file_type_image'))
+            {
+                $ajax['system_page_url']=site_url($this->controller_url.'/index/image_list/'.$item_id);
+            }
+            else
+            {
+                $ajax['system_page_url']=site_url($this->controller_url.'/index/video_list/'.$item_id);
+            }
+
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_get_files()
+    {
+        $variety_id=$this->input->post('id');
+        $file_type=$this->input->post('file_type');
+
+        $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+        $this->db->select('arm_files.*');
+        $this->db->where('arm_files.variety_id',$variety_id);
+        if($file_type==$this->config->item('system_file_type_image'))
+        {
+            $this->db->where('arm_files.file_type',$this->config->item('system_file_type_image'));
+        }
+        else
+        {
+            $this->db->where('arm_files.file_type',$this->config->item('system_file_type_video'));
+        }
+        $this->db->where('arm_files.status !=',$this->config->item('system_status_delete'));
+        $items=$this->db->get()->result_array();
+        $this->json_return($items);
+    }
+    private function system_add_edit_image($variety_id,$id='')
+    {
+        if($id>0)
+        {
+            $item_id=$id;
+        }
+        else
+        {
+            $item_id=$this->input->post('id');
+        }
+        if($item_id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+        $this->db->select('v.id variety_id,v.name');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->select('type.name crop_type_name');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+        $this->db->select('crop.name crop_name');
+
+        $this->db->where('v.id',$variety_id);
+        $this->db->where('v.whose','ARM');
+        $data['item_head']=$this->db->get()->row_array();
+        if(!$data['item_head'])
+        {
+            System_helper::invalid_try('Add_edit_image',$variety_id,'Id Non-Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+
+        if($item_id>0)
+        {
+            $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+            $this->db->select('arm_files.*');
+            $this->db->where('arm_files.id',$item_id);
+            $this->db->where('arm_files.file_type',$this->config->item('system_file_type_image'));
+            $this->db->where('arm_files.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Edit_image',$item_id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['title']='Edit Image Of Variety ('.$data['item_head']['name'].')';
+        }
+        else
+        {
+            $data['item']=array(
+                'id'=>'',
+                'file_name'=>'',
+                'file_location'=>'',
+                'remarks'=>'',
+                'status'=>$this->config->item('system_status_active')
+            );
+            $data['title']='Add Image';
+        }
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_image",$data,true));
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_image/'.$variety_id.'/'.$item_id);
+        $this->json_return($ajax);
+    }
+    private function system_save_file()
+    {
+        $id = $this->input->post("id");
+        $item=$this->input->post('item');
+        $user = User_helper::get_user();
+        $time=time();
+        if($id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+
+            $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+            $this->db->select('arm_files.*');
+            $this->db->where('arm_files.id',$id);
+            $this->db->where('arm_files.file_type',$this->config->item('system_file_type_image'));
+            $this->db->where('arm_files.status !=',$this->config->item('system_status_delete'));
+            $file_info=$this->db->get()->row_array();
+            if(!$file_info)
+            {
+                System_helper::invalid_try('Save_image',$id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+        if(!$this->check_validation_file_info())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->json_return($ajax);
+        }
+
+        $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+        $this->db->select('v.id variety_id,v.name');
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->select('type.name crop_type_name');
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+        $this->db->select('crop.name crop_name');
+        $this->db->where('v.id',$item['variety_id']);
+        $this->db->where('v.whose','ARM');
+        $variety_info=$this->db->get()->row_array();
+        if(!$variety_info)
+        {
+            System_helper::invalid_try('Save_image',$item['variety_id'],'Id Non-Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+
+        $path='images/survey_variety/'.$item['variety_id'];
+        $dir=(FCPATH).$path;
+        if(!is_dir($dir))
+        {
+            mkdir($dir, 0777);
+        }
+        $types='gif|jpg|png|jpeg|wmv|mp4|mov|ftv|mkv|3gp|avi';
+        $uploaded_files = System_helper::upload_file($path,$types);
+        if(array_key_exists('file_name',$uploaded_files))
+        {
+            $type=substr($uploaded_files['file_name']['info']['file_type'],0,5);
+            if($uploaded_files['file_name']['status'])
+            {
+                $item['file_type']=$type;
+                $item['file_name']=$uploaded_files['file_name']['info']['file_name'];
+                $item['file_location']=$path.'/'.$uploaded_files['file_name']['info']['file_name'];
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$uploaded_files['file_name']['message'];
+                $this->json_return($ajax);
+                die();
+            }
+        }
+        if(!$id>0)
+        {
+            if(!$uploaded_files)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='The Picture field is required';
+                $this->json_return($ajax);
+                die();
+            }
+        }
+
+        $this->db->trans_start();  //DB Transaction Handle START
+        if($id>0)
+        {
+            $item['user_updated'] = $user->user_id;
+            $item['date_updated'] = $time;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
+            Query_helper::update($this->config->item('table_ems_survey_variety_arm_files'),$item,array("id = ".$id));
+        }
+        else
+        {
+            $item['user_created'] = $user->user_id;
+            $item['date_created'] = $time;
+            $item['revision_count'] = 1;
+            Query_helper::add($this->config->item('table_ems_survey_variety_arm_files'),$item);
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $save_and_new=$this->input->post('system_save_new_status');
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            if($save_and_new==1)
+            {
+                $this->system_add_edit_image($item['variety_id']);
+            }
+            else
+            {
+                $this->system_file_list($item['variety_id'],$file_type=$this->config->item('system_file_type_image'));
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_add_edit_video($variety_id,$id='')
+    {
+        if($id>0)
+        {
+            $item_id=$id;
+        }
+        else
+        {
+            $item_id=$this->input->post('id');
+        }
+
+        if($item_id>0)
+        {
+            if(!(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->json_return($ajax);
+            }
+        }
+
+        $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+        $this->db->select('v.id variety_id,v.name');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->select('type.name crop_type_name');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+        $this->db->select('crop.name crop_name');
+
+        $this->db->where('v.id',$variety_id);
+        $this->db->where('v.whose','ARM');
+        $data['item_head']=$this->db->get()->row_array();
+        if(!$data['item_head'])
+        {
+            System_helper::invalid_try('Add_edit_file',$variety_id,'Id Non-Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+
+        if($item_id>0)
+        {
+            $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+            $this->db->select('arm_files.*');
+            $this->db->where('arm_files.id',$item_id);
+            $this->db->where('arm_files.file_type',$this->config->item('system_file_type_video'));
+            $this->db->where('arm_files.status !=',$this->config->item('system_status_delete'));
+            $data['item']=$this->db->get()->row_array();
+            if(!$data['item'])
+            {
+                System_helper::invalid_try('Edit_video',$item_id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['title']='Edit Video Of Variety ('.$data['item_head']['name'].')';
+        }
+        else
+        {
+            $data['item']=array(
+                'id'=>'',
+                'file_name'=>'',
+                'file_location'=>null,
+                'remarks'=>'',
+                'status'=>$this->config->item('system_status_active')
+            );
+            $data['title']='Add Video';
+        }
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_video",$data,true));
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $ajax['system_page_url']=site_url($this->controller_url.'/index/add_edit_video/'.$variety_id.'/'.$item_id);
+        $this->json_return($ajax);
     }
     private function system_set_preference()
     {
@@ -305,6 +729,17 @@ class Survey_variety_arm extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[characteristics]',$this->lang->line('LABEL_CHARACTERISTICS'),'required');
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
+        return true;
+    }
+    private function check_validation_file_info()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[status]',$this->lang->line('LABEL_STATUS'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
