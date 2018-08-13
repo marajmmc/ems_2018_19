@@ -207,7 +207,7 @@ class Survey_variety_arm extends Root_Controller
                 $data['item']['date_end2']=0;
             }
 
-            $data['title']="Edit ARM Variety Info for (".$data['item_head']['name'].')';
+            $data['title']="Edit ARM Variety Characteristics (".$data['item_head']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit_characteristics",$data,true));
             if($this->message)
@@ -614,7 +614,7 @@ class Survey_variety_arm extends Root_Controller
 
         if(isset($_FILES['video']))
         {
-            if($_FILES['video']['size']>10000000 && $_FILES['video']['type']!='video/mp4')
+            if($_FILES['video']['size']>10000000)
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("Please Upload a Short Video File (Below 10MB)");

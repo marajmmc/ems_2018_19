@@ -93,7 +93,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_arm_variety_info').$item['file_location']; ?>" alt="<?php echo $item['file_name']; ?>">
                 </div>
             </div>
-            <input type="hidden" name="file_type" value="<?php echo $file_type;?>">
         <?php } else{?>
 
             <div class="row show-grid">
@@ -111,9 +110,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                 </div>
             </div>
-            <input type="hidden" name="file_type" value="<?php echo $file_type;?>">
-
         <?php } ?>
+        <input type="hidden" name="file_type" value="<?php echo $file_type;?>">
 
         <div class="row show-grid">
             <div class="col-xs-4">
