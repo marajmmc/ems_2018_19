@@ -14,7 +14,7 @@ class Survey_variety_arm extends Root_Controller
         $this->controller_url = strtolower(get_class($this));
         $this->lang->load('market_survey');
     }
-    public function index($action="list",$id=0,$id1=0,$id2=0)
+    public function index($action="list",$id=0,$id1='',$id2=0)
     {
         if($action=="list")
         {
@@ -34,15 +34,15 @@ class Survey_variety_arm extends Root_Controller
         }
         elseif($action=="list_image")
         {
-            $this->system_list_file($id,$file_type=$this->config->item('system_file_type_image'));
+            $this->system_list_file($id,$id1=$this->config->item('system_file_type_image'));
         }
-        elseif($action=="get_files")
+        elseif($action=="get_items_files")
         {
-            $this->system_get_files($id);
+            $this->system_get_items_files($id);
         }
         elseif($action=='add_edit_image')
         {
-            $this->system_add_edit_file($id,$file_type=$this->config->item('system_file_type_image'),$id2);
+            $this->system_add_edit_file($id,$id1=$this->config->item('system_file_type_image'),$id2);
         }
         elseif($action=="save_file")
         {
@@ -50,11 +50,11 @@ class Survey_variety_arm extends Root_Controller
         }
         elseif($action=="list_video")
         {
-            $this->system_list_file($id,$file_type=$this->config->item('system_file_type_video'));
+            $this->system_list_file($id,$id1=$this->config->item('system_file_type_video'));
         }
         elseif($action=='add_edit_video')
         {
-            $this->system_add_edit_file($id,$file_type=$this->config->item('system_file_type_video'),$id2);
+            $this->system_add_edit_file($id,$id1=$this->config->item('system_file_type_video'),$id2);
         }
         elseif($action=="set_preference")
         {
@@ -132,10 +132,10 @@ class Survey_variety_arm extends Root_Controller
         $this->db->join($this->config->item('table_ems_survey_variety_arm_characteristics').' arm_characteristics','arm_characteristics.variety_id = v.id','LEFT');
         $this->db->select('arm_characteristics.characteristics');
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'" AND arm_files_images.status="'.$this->config->item('system_status_active').'"' ,'LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"' ,'LEFT');
         $this->db->select('count(DISTINCT arm_files_images.id) number_of_images',true);
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'" AND arm_files_images.status="'.$this->config->item('system_status_active').'"','LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'"','LEFT');
         $this->db->select('count(DISTINCT arm_files_videos.id) number_of_videos',true);
 
         $this->db->order_by('crop.ordering','ASC');
@@ -145,7 +145,6 @@ class Survey_variety_arm extends Root_Controller
         $this->db->where('v.whose','ARM');
         $this->db->group_by('v.id');
         $items=$this->db->get()->result_array();
-
         foreach($items as &$item)
         {
             if(strlen($item['characteristics'])>0)
@@ -355,7 +354,7 @@ class Survey_variety_arm extends Root_Controller
             }
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/file_list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list_file",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -378,7 +377,7 @@ class Survey_variety_arm extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_get_files()
+    private function system_get_items_files()
     {
         $variety_id=$this->input->post('id');
         $file_type=$this->input->post('file_type');
@@ -611,6 +610,16 @@ class Survey_variety_arm extends Root_Controller
             $ajax['status']=false;
             $ajax['system_message']='Invalid Try.';
             $this->json_return($ajax);
+        }
+
+        if(isset($_FILES['video']))
+        {
+            if($_FILES['video']['size']>10000000 && $_FILES['video']['type']!='video/mp4')
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("Please Upload a Short Video File (Below 10MB)");
+                $this->json_return($ajax);
+            }
         }
 
         $path='images/survey_variety/'.$item['variety_id'];

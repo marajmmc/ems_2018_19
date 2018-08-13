@@ -131,7 +131,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     $(document).ready(function ()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_files');?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_files');?>";
         // prepare the data
         var source =
         {
