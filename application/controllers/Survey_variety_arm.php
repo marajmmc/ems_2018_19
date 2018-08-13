@@ -612,15 +612,16 @@ class Survey_variety_arm extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if(isset($_FILES['video']))
+        if(isset($_FILES['file_name']))
         {
-            if($_FILES['video']['size']>10000000)
+            if($_FILES['file_name']['size']>10000000)
             {
                 $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("Please Upload a Short Video File (Below 10MB)");
+                $ajax['system_message']=$this->lang->line("Please Upload File (Below 10MB)");
                 $this->json_return($ajax);
             }
         }
+
 
         $path='images/survey_product/'.$item['variety_id'];
         $dir=(FCPATH).$path;
