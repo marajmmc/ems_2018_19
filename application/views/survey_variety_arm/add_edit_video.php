@@ -4,7 +4,7 @@ $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url.'/index/video_list/'.$item_head['variety_id'])
+    'href'=>site_url($CI->controller_url.'/index/list_video/'.$item_head['variety_id'])
 );
 $action_buttons[]=array(
     'type'=>'button',
@@ -76,8 +76,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </video>
                 </div>
                 <div>
-<!--                    <input type="file" class="browse_button file_type_video" data-preview-container="#video" name="video" accept="video/*">-->
-
 
                     <input type="file" class="browse_button file_type_video" data-preview-container="#video" name="file_name" accept="video/*">
 

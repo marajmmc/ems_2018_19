@@ -16,14 +16,14 @@ if((isset($CI->permissions['action1']) && ($CI->permissions['action1']==1)) || (
         'type'=>'button',
         'label'=>'Image Setup',
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/image_list')
+        'data-action-link'=>site_url($CI->controller_url.'/index/list_image')
     );
     $action_buttons[]=array
     (
         'type'=>'button',
         'label'=>'Video Setup',
         'class'=>'button_jqx_action',
-        'data-action-link'=>site_url($CI->controller_url.'/index/video_list')
+        'data-action-link'=>site_url($CI->controller_url.'/index/list_video')
     );
 }
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))

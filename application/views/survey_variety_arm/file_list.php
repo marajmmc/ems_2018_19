@@ -67,14 +67,14 @@ if($file_type==$this->config->item('system_file_type_image'))
 {
     $action_buttons[]=array(
         'label'=>$CI->lang->line("ACTION_REFRESH"),
-        'href'=>site_url($CI->controller_url.'/index/image_list/'.$item['id'])
+        'href'=>site_url($CI->controller_url.'/index/list_image/'.$item['id'])
     );
 }
 else
 {
     $action_buttons[]=array(
         'label'=>$CI->lang->line("ACTION_REFRESH"),
-        'href'=>site_url($CI->controller_url.'/index/video_list/'.$item['id'])
+        'href'=>site_url($CI->controller_url.'/index/list_video/'.$item['id'])
     );
 }
 
