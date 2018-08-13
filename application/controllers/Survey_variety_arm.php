@@ -614,7 +614,7 @@ class Survey_variety_arm extends Root_Controller
 
         if(isset($_FILES['file_name']))
         {
-            if($_FILES['file_name']['size']>1000)
+            if($_FILES['file_name']['size']>10485760)
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("Please Upload File (Below 10MB)");
