@@ -148,49 +148,47 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 </div>
             </div>
         </div>
-
         <?php
-        if ($iou_items)
+        $i = 0;
+        $amount_iou_items = array();
+        if($item['amount_iou_items'])
         {
-            $i = 0;
-            $amount_iou_items = array();
-            if($item['amount_iou_items'] && ($item['amount_iou_items'] != '')){
-                $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
-            }
-            $total_iou_amt = 0.0;
-            foreach ($iou_items as $iou_item)
-            {
-                ?>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <?php if ($i == 0)
-                        {
+            $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+        }
+        $total_iou_amt = 0.0;
+        foreach ($iou_items as $iou_item)
+        {
+            ?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <?php if ($i == 0)
+                    {
                         ?>
-                            <label class="control-label pull-right"><?php echo 'IOU Items'; ?> <span style="color:#FF0000">*</span></label>
-                        <?php
-                        }
-                        else
-                        {
-                            echo '';
-                        } ?>
-                    </div>
-                    <div class="col-xs-2">
-                        <label class="control-label pull-right"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
-                    </div>
-                    <div class="col-xs-2">
-                        <?php
-                        $current_iou =0;
-                        if(isset($amount_iou_items[$iou_item])){
-                            $current_iou += $amount_iou_items[$iou_item];
-                        }
-                        $total_iou_amt += $current_iou;
-                        ?>
-                        <input type="text" name="items_iou[<?php echo $iou_item; ?>]" value="<?php echo $current_iou; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
-                    </div>
+                        <label class="control-label pull-right"><?php echo 'IOU Items'; ?> <span style="color:#FF0000">*</span></label>
+                    <?php
+                    }
+                    else
+                    {
+                        echo '';
+                    } ?>
                 </div>
-                <?php
-                $i++;
-            }
+                <div class="col-xs-2">
+                    <label class="control-label pull-right"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
+                </div>
+                <div class="col-xs-2">
+                    <?php
+                    $current_iou =0;
+                    if(isset($amount_iou_items[$iou_item]))
+                    {
+                        $current_iou += $amount_iou_items[$iou_item];
+                    }
+                    $total_iou_amt += $current_iou;
+                    ?>
+                    <input type="text" name="items_iou[<?php echo $iou_item; ?>]" value="<?php echo $current_iou; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
+                </div>
+            </div>
+            <?php
+            $i++;
         }
         ?>
 

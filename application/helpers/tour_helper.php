@@ -62,18 +62,34 @@ class Tour_helper
 
     public static function to_label($input) // Converts INDEX type text into LABEL type text
     {
-        return ucwords(str_replace('_', ' ', trim($input)));
+        //return ucwords(str_replace('_', ' ', trim($input)));
+        $CI =& get_instance();
+        $result=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou'), '*',array('id='.$input),1);
+        $item=$result['name'];
+        if($result['status']!=$CI->config->item('system_status_active'))
+        {
+            $item=$result['name'].' ('.$result['status'].')';
+        }
+        return $item;
     }
 
     public static function get_iou_items()
     {
-        return array(
+        $CI =& get_instance();
+        $results=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou'), '*',array());
+        $items=array();
+        foreach($results as $result)
+        {
+            $items[$result['id']]=$result['id'];
+        }
+        return $items;
+        /*return array(
             'accommodation',
             'ground_transportation',
             'per-diem',
             'miscellaneous',
             'local_conveyance'
-        );
+        );*/
     }
 
     public static function tour_duration($date_from = '', $date_to = '', $tour_id = 0)
