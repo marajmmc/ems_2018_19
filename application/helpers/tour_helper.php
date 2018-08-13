@@ -73,23 +73,25 @@ class Tour_helper
         return $item;
     }
 
-    public static function get_iou_items()
+    public static function get_iou_items($status=false)
     {
         $CI =& get_instance();
-        $results=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou'), '*',array());
+        $status_active=$CI->config->item('system_status_active');
+        if($status)
+        {
+            $results=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou').' iou', array('iou.*',"IF(iou.status='$status_active', iou.name, concat_ws(' - ',iou.name, iou.status)) name"),array('status="'.$CI->config->item('system_status_active').'"'));
+        }
+        else
+        {
+            $results=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou').' iou', array('iou.*',"IF(iou.status='$status_active', iou.name, concat_ws(' - ',iou.name, iou.status)) name"),array());
+        }
+
         $items=array();
         foreach($results as $result)
         {
-            $items[$result['id']]=$result['id'];
+            $items[$result['id']]=$result;
         }
         return $items;
-        /*return array(
-            'accommodation',
-            'ground_transportation',
-            'per-diem',
-            'miscellaneous',
-            'local_conveyance'
-        );*/
     }
 
     public static function tour_duration($date_from = '', $date_to = '', $tour_id = 0)
@@ -438,6 +440,7 @@ class Tour_helper
         return ($Taka ? $Taka . 'Taka' : '') . $Paisa;
     }
 }
+
 
 /*-------------------------- DEBUGGING FUNCTIONS --------------------------*/
 // Added by Mahmud (Temporarily just for debugging ARRAY)

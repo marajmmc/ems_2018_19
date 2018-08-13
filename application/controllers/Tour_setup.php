@@ -398,7 +398,7 @@ class Tour_setup extends Root_Controller
             );
 
             $data['items'] = array();
-            $data['iou_items'] = Tour_helper::get_iou_items();
+            $data['iou_items'] = Tour_helper::get_iou_items(true);
 
             $data['title'] = "New Tour";
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));

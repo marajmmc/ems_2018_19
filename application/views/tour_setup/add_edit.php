@@ -173,18 +173,18 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     } ?>
                 </div>
                 <div class="col-xs-2">
-                    <label class="control-label pull-right"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
+                    <label class="control-label pull-right"><?php echo $iou_item['name']; ?>:</label>
                 </div>
                 <div class="col-xs-2">
                     <?php
                     $current_iou =0;
-                    if(isset($amount_iou_items[$iou_item]))
+                    if(isset($amount_iou_items[$iou_item['id']]))
                     {
                         $current_iou += $amount_iou_items[$iou_item];
                     }
                     $total_iou_amt += $current_iou;
                     ?>
-                    <input type="text" name="items_iou[<?php echo $iou_item; ?>]" value="<?php echo $current_iou; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
+                    <input type="text" name="items_iou[<?php echo $iou_item['id']; ?>]" value="<?php echo $current_iou; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
                 </div>
             </div>
             <?php

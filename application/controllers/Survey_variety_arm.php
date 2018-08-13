@@ -129,8 +129,8 @@ class Survey_variety_arm extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_characteristics').' arm_characteristics','arm_characteristics.variety_id = v.id','LEFT');
-        $this->db->select('arm_characteristics.characteristics');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_characteristics').' characteristics','characteristics.variety_id = v.id','LEFT');
+        $this->db->select('characteristics.characteristics');
 
         $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"' ,'LEFT');
         $this->db->select('count(DISTINCT arm_files_images.id) number_of_images',true);
@@ -147,7 +147,7 @@ class Survey_variety_arm extends Root_Controller
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
-            if(strlen($item['characteristics'])>0)
+            if($item['characteristics'])
             {
                 $item['characteristics']="Done";
             }
