@@ -622,7 +622,7 @@ class Survey_variety_arm extends Root_Controller
             }
         }
 
-        $path='images/survey_variety/'.$item['variety_id'];
+        $path='images/survey_product/'.$item['variety_id'];
         $dir=(FCPATH).$path;
         if(!is_dir($dir))
         {
