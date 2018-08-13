@@ -4,7 +4,7 @@ $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url.'/index/list_video/'.$item_head['variety_id'])
+    'href'=>site_url($CI->controller_url.'/index/list_image/'.$item_head['variety_id'])
 );
 $action_buttons[]=array(
     'type'=>'button',
@@ -65,25 +65,48 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Video</label>
-            </div>
-            <div class="col-xs-4">
-                <div style="<?php if(!(isset($item['file_location']))){echo 'display:none;';}?>" id="video_preview_container_id">
-                    <video width="300" controls id="video_preview_id">
-                        <source src="<?php if(isset($item['file_location'])){ echo $CI->config->item('system_image_base_url').$item['file_location'];}?>" id="arm_variety_video">
-                    </video>
+        <?php if($file_type==$this->config->item('system_file_type_image')){?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Picture</label>
                 </div>
-                <div>
-
-                    <input type="file" class="browse_button file_type_video" data-preview-container="#video" name="file_name" accept="video/*">
-
-<!--                    <input type="hidden" class="hidden_file" name="video_file[file_name]" value="--><?php //echo $item['file_name'];?><!--">-->
-
+                <div class="col-xs-4">
+                    <input type="file" class="browse_button_image" data-preview-container="#image_variety_info" data-preview-width="300" name="file_name">
                 </div>
             </div>
-        </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"></label>
+                </div>
+                <div class="col-xs-4" id="image_variety_info">
+                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_arm_variety_info').$item['file_location']; ?>" alt="<?php echo $item['file_name']; ?>">
+                </div>
+            </div>
+            <input type="hidden" name="file_type" value="<?php echo $file_type;?>">
+        <?php } else{?>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Video</label>
+                </div>
+                <div class="col-xs-4">
+                    <div style="<?php if(!(isset($item['file_location']))){echo 'display:none;';}?>" id="video_preview_container_id">
+                        <video width="300" controls id="video_preview_id">
+                            <source src="<?php if(isset($item['file_location'])){ echo $CI->config->item('system_image_base_url').$item['file_location'];}?>" id="arm_variety_video">
+                        </video>
+                    </div>
+                    <div>
+
+                        <input type="file" class="browse_button_video file_type_video" data-preview-container="#video" name="file_name" accept="video/*">
+
+                        <!--                    <input type="hidden" class="hidden_file" name="video_file[file_name]" value="--><?php //echo $item['file_name'];?><!--">-->
+
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="file_type" value="<?php echo $file_type;?>">
+
+        <?php } ?>
 
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -111,7 +134,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        $(".browse_button").filestyle({input: false,icon: false,buttonText: "Upload Video",buttonName: "btn-primary"});
+        $(".browse_button_image").filestyle({input: false,icon: false,buttonText: "Upload Picture",buttonName: "btn-primary"});
+        $(".browse_button_video").filestyle({input: false,icon: false,buttonText: "Upload Video",buttonName: "btn-primary"});
 
         $(document).on("change", ".file_type_video", function(evt) {
 
