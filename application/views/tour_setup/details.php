@@ -41,7 +41,7 @@ $CI->db->where('tour_id', $item['id']);
 $CI->db->where('status !=', $CI->config->item('system_status_delete'));
 $all_reporting = $CI->db->get()->result_array();
 
-if ($all_reporting && ($item['status_approved_reporting'] == $CI->config->item('system_status_approved')))
+if ($all_reporting)
 {
     foreach ($all_reporting as $reporting)
     {
@@ -53,6 +53,7 @@ if ($all_reporting && ($item['status_approved_reporting'] == $CI->config->item('
             "contact_no" => $reporting['contact_no'],
             "profession" => $reporting['profession'],
             "discussion" => $reporting['discussion'],
+            "date_created" => $reporting['date_created']
         );
     }
 }
@@ -101,6 +102,7 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
         width: 1%;
         white-space: nowrap
     }
+    .entry_date{font-size:0.85em; white-space:nowrap}
 </style>
 <div class="row widget">
 <div class="widget-header" style="margin:0">
@@ -357,54 +359,6 @@ if (!empty($item['user_paid_payment']) && !empty($item['date_paid_payment']))
     </tr>
 <?php
 }
-if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
-{
-?>
-    <tr>
-        <td colspan="4" class="bg-info text-info">
-            <label class="control-label">Tour IOU Adjustment Information</label>
-        </td>
-    </tr>
-    <tr>
-        <td class="widget-header header_caption">
-            <label class="control-label pull-right">IOU Adjustment Forward Status</label>
-        </td>
-        <td>
-            <label class="control-label">
-            <?php
-            if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
-            {
-                echo $CI->config->item('system_status_forwarded');
-            }
-            ?>
-            </label>
-        </td>
-        <td class="widget-header header_caption">
-            <label class="control-label pull-right">IOU Adjustment Approve Status</label>
-        </td>
-        <td>
-            <label class="control-label">
-            <?php
-            if ($item['status_approved_adjustment'] == $CI->config->item('system_status_approved'))
-            {
-                echo $CI->config->item('system_status_approved');
-            }
-            else
-            {
-                echo $CI->config->item('system_status_pending');
-            }
-            ?>
-            </label>
-        </td>
-    </tr>
-<?php
-}
-/* if()
-{
-?>
-
-<?php
-}  */
 if ($is_reporting_rollback)
 {
     ?>
@@ -478,7 +432,89 @@ if ($item['status_approved_reporting'] == $CI->config->item('system_status_appro
             <label class="control-label"><?php echo System_helper::display_date_time($item['date_approved_reporting']); ?></label>
         </td>
     </tr>
-<?php } ?>
+<?php
+}
+if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
+{
+?>
+    <tr>
+        <td colspan="4" class="bg-info text-info">
+            <label class="control-label">Tour IOU Adjustment Information</label>
+        </td>
+    </tr>
+    <tr>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right">IOU Adjustment Forward Status</label>
+        </td>
+        <td>
+            <label class="control-label">
+                <?php
+                if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
+                {
+                    echo $CI->config->item('system_status_forwarded');
+                }
+                ?>
+            </label>
+        </td>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right">IOU Adjustment Approve Status</label>
+        </td>
+        <td>
+            <label class="control-label">
+                <?php
+                if ($item['status_approved_adjustment'] == $CI->config->item('system_status_approved'))
+                {
+                    echo $CI->config->item('system_status_approved');
+                }
+                else
+                {
+                    echo $CI->config->item('system_status_pending');
+                }
+                ?>
+            </label>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARDED_BY'); ?></label>
+        </td>
+        <td><label class="control-label"><?php echo $users[$item['user_updated_adjustment']]['name']; ?></label>
+        </td>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_FORWARDED_TIME'); ?></label>
+        </td>
+        <td>
+            <label class="control-label"><?php echo System_helper::display_date_time($item['date_updated_adjustment']); ?></label>
+        </td>
+    </tr>
+    <?php
+    if ($item['status_approved_adjustment'] == $CI->config->item('system_status_approved'))
+    {
+    ?>
+        <tr>
+            <td class="widget-header header_caption">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVED_BY'); ?></label>
+            </td>
+            <td><label class="control-label"><?php echo $users[$item['user_approved_adjustment']]['name']; ?></label>
+            </td>
+            <td class="widget-header header_caption">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_APPROVED_TIME'); ?></label>
+            </td>
+            <td>
+                <label class="control-label"><?php echo System_helper::display_date_time($item['date_approved_adjustment']); ?></label>
+            </td>
+        </tr>
+<?php
+    }
+}
+/* if()
+{
+?>
+
+<?php
+}  */
+?>
 
 </table>
 </div>
@@ -693,7 +729,10 @@ if ($item['status_approved_reporting'] == $CI->config->item('system_status_appro
                             ?>
                             <table class="table table-bordered report-wrap">
                                 <tr>
-                                    <td rowspan="5" style="width:12%"><?php echo System_helper::display_date($report['date_reporting']) ?></td>
+                                    <td rowspan="5" style="width:17%">
+                                        <b><?php echo System_helper::display_date($report['date_reporting']) ?></b>
+                                        <br/><i class="entry_date">( Entry Date &amp; Time:<br/><?php echo System_helper::display_date_time($report['date_created']); ?> )</i>
+                                    </td>
                                     <td class="no-wrap"><label class="control-label"> Report (Description) </label></td>
                                     <td colspan="3"><?php echo nl2br($report['report_description']); ?></td>
                                 </tr>

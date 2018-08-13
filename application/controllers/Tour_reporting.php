@@ -819,7 +819,7 @@ class Tour_reporting extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            $ajax = Tour_helper::tour_status_check($data['item'], array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_REPORTING_NOT_FORWARDED, TOUR_APPROVED));
+            $ajax = Tour_helper::tour_status_check($data['item'], array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_REPORTING_NOT_FORWARDED, TOUR_PAYMENT_PAID, TOUR_APPROVED));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -937,7 +937,7 @@ class Tour_reporting extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_REPORTING_NOT_FORWARDED, TOUR_APPROVED));
+        $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_REPORTING_NOT_FORWARDED, TOUR_PAYMENT_PAID, TOUR_APPROVED));
         if (!$ajax['status'])
         {
             $this->json_return($ajax);
