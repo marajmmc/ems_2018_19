@@ -614,7 +614,7 @@ class Survey_variety_arm extends Root_Controller
 
         if(isset($_FILES['file_name']))
         {
-            if($_FILES['file_name']['size']>10000000)
+            if($_FILES['file_name']['size']>1000)
             {
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("Please Upload File (Below 10MB)");
@@ -630,7 +630,8 @@ class Survey_variety_arm extends Root_Controller
             mkdir($dir, 0777);
         }
         $types='gif|jpg|png|jpeg|wmv|mp4|mov|ftv|mkv|3gp|avi';
-        $uploaded_files = System_helper::upload_file($path,$types);
+        $max_size=10240;
+        $uploaded_files = System_helper::upload_file($path,$types,$max_size);
         if(array_key_exists('file_name',$uploaded_files))
         {
             if($uploaded_files['file_name']['status'])
