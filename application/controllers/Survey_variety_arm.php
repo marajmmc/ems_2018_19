@@ -132,10 +132,10 @@ class Survey_variety_arm extends Root_Controller
         $this->db->join($this->config->item('table_ems_survey_variety_arm_characteristics').' characteristics','characteristics.variety_id = v.id','LEFT');
         $this->db->select('characteristics.characteristics');
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"' ,'LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"  AND arm_files_images.status="'.$this->config->item('system_status_active').'"' ,'LEFT');
         $this->db->select('count(DISTINCT arm_files_images.id) number_of_images',true);
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'"','LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'" AND arm_files_videos.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->select('count(DISTINCT arm_files_videos.id) number_of_videos',true);
 
         $this->db->order_by('crop.ordering','ASC');
