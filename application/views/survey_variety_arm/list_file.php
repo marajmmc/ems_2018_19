@@ -172,7 +172,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 enablebrowserselection:true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id',width:'50',cellsalign: 'right',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>',dataField: 'id',width:'50',cellsalign: 'right',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>',dataField: 'file_name',width:'200',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'350',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_STATUS'); ?>', dataField: 'status',width:'150',filtertype: 'list',rendered:tooltiprenderer}
                 ]

@@ -32,6 +32,10 @@ class Survey_variety_arm extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="details")
+        {
+            $this->system_details($id);
+        }
         elseif($action=="list_image")
         {
             $this->system_list_file($id,$id1=$this->config->item('system_file_type_image'));
@@ -84,6 +88,7 @@ class Survey_variety_arm extends Root_Controller
         else if($method=='list_file')
         {
             $data['id']= 1;
+            $data['file_name']= 1;
             $data['remarks']= 1;
             $data['status']= 1;
         }
@@ -306,6 +311,74 @@ class Survey_variety_arm extends Root_Controller
                 $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
                 $this->json_return($ajax);
             }
+        }
+    }
+    private function system_details($id)
+    {
+        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
+        {
+            if($id>0)
+            {
+                $item_id=$id;
+            }
+            else
+            {
+                $item_id=$this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
+            $this->db->select('v.id,v.name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+            $this->db->select('type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+            $this->db->select('crop.name crop_name');
+
+            $this->db->where('v.id',$item_id);
+            $this->db->where('v.whose','ARM');
+            $data['item_head']=$this->db->get()->row_array();
+            if(!$data['item_head'])
+            {
+                System_helper::invalid_try('Details',$item_id,'Id Non-Exists');
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['item_characteristics']=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$item_id),1);
+            $item_files=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_files'),'*',array('variety_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'));
+
+            $data['item_image']=array();
+            $data['item_video']=array();
+            foreach($item_files as $item_file)
+            {
+                if($item_file['file_type']==$this->config->item('system_file_type_image'))
+                {
+                    $data['item_image'][$item_file['id']]=$item_file;
+                }
+                else
+                {
+                    $data['item_video'][$item_file['id']]=$item_file;
+                }
+
+            }
+            $data['title']="Details ARM Variety Info Of (".$data['item_head']['name'].')';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->json_return($ajax);
+
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
         }
     }
     private function system_list_file($variety_id,$file_type)
@@ -612,17 +685,6 @@ class Survey_variety_arm extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if(isset($_FILES['file_name']))
-        {
-            if($_FILES['file_name']['size']>10485760)
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("Please Upload File (Below 10MB)");
-                $this->json_return($ajax);
-            }
-        }
-
-
         $path='images/survey_product/'.$item['variety_id'];
         $dir=(FCPATH).$path;
         if(!is_dir($dir))
@@ -630,24 +692,18 @@ class Survey_variety_arm extends Root_Controller
             mkdir($dir, 0777);
         }
         $types='gif|jpg|png|jpeg|wmv|mp4|mov|ftv|mkv|3gp|avi';
-        $max_size=10240;
-        $uploaded_files = System_helper::upload_file($path,$types,$max_size);
-        if(array_key_exists('file_name',$uploaded_files))
+
+        if($file_type==$this->config->item('system_file_type_video'))
         {
-            if($uploaded_files['file_name']['status'])
-            {
-                $item['file_type']=$file_type;
-                $item['file_name']=$uploaded_files['file_name']['info']['file_name'];
-                $item['file_location']=$path.'/'.$uploaded_files['file_name']['info']['file_name'];
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$uploaded_files['file_name']['message'];
-                $this->json_return($ajax);
-                die();
-            }
+            $max_size=102400;
         }
+        else
+        {
+            $max_size=10240;
+        }
+
+        $uploaded_files = System_helper::upload_file($path,$types,$max_size);
+
         if(!$id>0)
         {
             if(!$uploaded_files)
@@ -662,6 +718,33 @@ class Survey_variety_arm extends Root_Controller
                     $ajax['system_message']='The Video field is required';
                 }
 
+                $this->json_return($ajax);
+                die();
+            }
+        }
+
+        if(array_key_exists('file_name',$uploaded_files))
+        {
+            if(isset($uploaded_files['file_name']['info']))
+            {
+                $type=substr($uploaded_files['file_name']['info']['file_type'],0,5);
+                if($file_type!==$type)
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='The File Type You Are Attempting To Upload Is Not Allowed';
+                    $this->json_return($ajax);
+                }
+            }
+            if($uploaded_files['file_name']['status'])
+            {
+                $item['file_type']=$file_type;
+                $item['file_name']=$uploaded_files['file_name']['info']['file_name'];
+                $item['file_location']=$path.'/'.$uploaded_files['file_name']['info']['file_name'];
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$uploaded_files['file_name']['message'];
                 $this->json_return($ajax);
                 die();
             }
