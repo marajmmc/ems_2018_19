@@ -44,6 +44,7 @@ if ($result)
     $footer_image = base_url($CI->config->item('system_base_url_picture_setup_print') . $result['image_footer_location']);
 }
 // IOU Items
+$iou_items = Tour_helper::get_iou_items();
 $items = json_decode($item['amount_iou_items']);
 /*-------------------------------- No. of PAGE CONFIGURATION -----------------------------------*/
 $total_records = sizeof($items);

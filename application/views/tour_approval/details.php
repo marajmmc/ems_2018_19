@@ -508,12 +508,6 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
 <?php
     }
 }
-/* if()
-{
-?>
-
-<?php
-}  */
 ?>
 
 </table>

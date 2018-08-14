@@ -60,136 +60,61 @@ class Tour_helper
         }
     }
 
-    public static function to_label($input) // Converts INDEX type text into LABEL type text
-    {
-        //return ucwords(str_replace('_', ' ', trim($input)));
-        $CI =& get_instance();
-        $result=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou'), '*',array('id='.$input),1);
-        $item=$result['name'];
-        if($result['status']!=$CI->config->item('system_status_active'))
-        {
-            $item=$result['name'].' ('.$result['status'].')';
-        }
-        return $item;
-    }
-
-    public static function get_iou_items($status=false)
+    public static function get_iou_items($status = false)
     {
         $CI =& get_instance();
-        $status_active=$CI->config->item('system_status_active');
-        if($status)
+        $status_active = $CI->config->item('system_status_active');
+        if ($status)
         {
-            $results=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou').' iou', array('iou.*',"IF(iou.status='$status_active', iou.name, concat_ws(' - ',iou.name, iou.status)) name"),array('status="'.$CI->config->item('system_status_active').'"'));
+            $condition = array('status="' . $CI->config->item('system_status_active') . '"');
         }
         else
         {
-            $results=Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou').' iou', array('iou.*',"IF(iou.status='$status_active', iou.name, concat_ws(' - ',iou.name, iou.status)) name"),array());
+            $condition = array();
         }
+        $results = Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou') . ' iou', array('iou.*', "IF(iou.status='$status_active', iou.name, CONCAT( '( <b>', iou.status, '</b> ) ', iou.name )) name"), $condition);
 
-        $items=array();
-        foreach($results as $result)
+        $items = array();
+        foreach ($results as $result)
         {
-            $items[$result['id']]=$result;
+            $items[$result['id']] = $result;
         }
         return $items;
     }
 
-    public static function tour_duration($date_from = '', $date_to = '', $tour_id = 0)
+    public static function tour_duration($date_from = 0, $date_to = 0)
     {
-        if (($date_from != '') && ($date_to != ''))
+        if (($date_from > 0) && ($date_to > 0))
         {
-            $duration = (round(($date_to - $date_from) / (60 * 60 * 24)) + 1);
-        }
-        elseif ($tour_id > 0)
-        {
-            $CI =& get_instance();
-            $row = $CI->db->select('date_from, date_to')->get_where($CI->config->item('table_ems_tour_setup'), array('id' => $tour_id))->row_array();
-            $duration = (round(($row['date_to'] - $row['date_from']) / (60 * 60 * 24)) + 1);
+            $duration = (round(($date_to - $date_from) / (60 * 60 * 24)) + 1) . ' Day(s)';
         }
         else
         {
             return '';
         }
-        return $duration . ' Day(s)';
-    }
-
-    public static function tour_amount($tour_id = 0) // IOU Requested OR, IOU Paid
-    {
-        if ($tour_id > 0)
-        {
-            $CI =& get_instance();
-            $item = $CI->db->select('amount_iou_items')->get_where($CI->config->item('table_ems_tour_setup'), array('id' => $tour_id, 'status !=' => $CI->config->item('system_status_delete')))->row_array();
-            $iou_items = Tour_helper::get_iou_items();
-            if ($iou_items)
-            {
-                $amount_iou_items = array();
-                $total_iou_amount = 0.0;
-                if ($item['amount_iou_items'] && ($item['amount_iou_items'] != ''))
-                {
-                    $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
-                }
-                // EACH IOU Items
-                foreach ($iou_items as $iou_item)
-                {
-                    if (isset($amount_iou_items[$iou_item]))
-                    {
-                        $total_iou_amount += $amount_iou_items[$iou_item];
-                    }
-                }
-                return $total_iou_amount;
-            }
-        }
-        return '';
+        return $duration;
     }
 
     public static function tour_purpose_view($tour_id = '', $items = array(), $col_1 = 4, $col_2 = 4)
     {
         $CI =& get_instance();
-
         if (empty($items))
         {
             $items = $CI->db->select('purpose')->get_where($CI->config->item('table_ems_tour_purpose'), array('tour_id' => $tour_id, 'status !=' => $CI->config->item('system_status_delete')))->result_array();
         }
-        $output = '';
 
-        $output .= '<div class="row show-grid">';
-        $output .= '    <div class="col-xs-' . $col_1 . '">';
-        $output .= '        <label class="control-label pull-right">Purpose(s):</label>';
-        $output .= '    </div>';
-        $output .= '    <div class="col-xs-' . $col_2 . ' purpose-list">';
-        $output .= '        <table class="table table-bordered table-striped table-hover">';
-        $output .= '            <thead>';
-        $output .= '                <tr>';
-        $output .= '                    <th>' . $CI->lang->line('LABEL_SL_NO') . '</th>';
-        $output .= '                    <th>Purpose</th>';
-        $output .= '                </tr>';
-        $output .= '            </thead>';
-        $output .= '            <tbody>';
-        if ($items)
-        {
-            $serial = 0;
-            foreach ($items as $row)
-            {
-                ++$serial;
-                $output .= '        <tr>';
-                $output .= '            <td>' . $serial . '.</td>';
-                $output .= '            <td>' . $row['purpose'] . '</td>';
-                $output .= '        </tr>';
-            }
-        }
-        else
-        {
-            $output .= '            <tr><td colspan="2"> Tour Purpose has Not been Setup </td></tr>';
-        }
-        $output .= '            </tbody>';
-        $output .= '        </table>';
-        $output .= '    </div>';
-        $output .= '</div>';
+        $data = array(
+            'items'=>$items,
+            'col_1'=>$col_1,
+            'col_2'=>$col_2,
+            'slno_label'=>$CI->lang->line('LABEL_SL_NO')
+        );
 
-        return $output;
+        $html = $CI->load->view("tour_setup/view_purpose_summary", $data, true);
+        return $html;
     }
 
-    public static function iou_items_summary_view($tour_id = '', $item = array(), $col_1 = 4, $col_2 = 3, $col_3 = 1) // PARAMETER: Either pass Tour ID or, Tour Setup Array
+    public static function iou_items_summary_view($tour_id = 0, $item = array(), $col_1 = 4, $col_2 = 3, $col_3 = 1) // PARAMETER: Either pass Tour ID or, Tour Setup Array
     {
         $CI =& get_instance();
         if (empty($item))
@@ -197,57 +122,17 @@ class Tour_helper
             $item = $CI->db->select('amount_iou_items')->get_where($CI->config->item('table_ems_tour_setup'), array('id' => $tour_id, 'status !=' => $CI->config->item('system_status_delete')))->row_array();
         }
 
-        $output = '';
-        $iou_items = Tour_helper::get_iou_items();
-        if ($iou_items)
-        {
-            $i = 0;
-            $amount_iou_items = array();
-            $total_iou_amount = 0.0;
-            if ($item['amount_iou_items'] && ($item['amount_iou_items'] != ''))
-            {
-                $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
-            }
-            // EACH IOU Items
-            foreach ($iou_items as $iou_item)
-            {
-                $iou_amount = 0;
-                if (isset($amount_iou_items[$iou_item]))
-                {
-                    $iou_amount = $amount_iou_items[$iou_item];
-                }
-                $output .= '<div class="row show-grid">';
-                $output .= '    <div class="col-xs-' . $col_1 . '">';
-                if ($i == 0)
-                {
-                    $output .= '    <label class="control-label pull-right">IOU Items:</label>';
-                }
-                $output .= '    </div>';
-                $output .= '    <div class="col-xs-' . $col_2 . '">';
-                $output .= '        <label class="control-label pull-right normal">' . Tour_helper::to_label($iou_item) . ':</label>';
-                $output .= '    </div>';
-                $output .= '    <div class="col-xs-' . $col_3 . '" style="padding-left:0">';
-                $output .= '        <label class="control-label pull-right">' . (System_helper::get_string_amount($iou_amount)) . '</label>';
-                $output .= '    </div>';
-                $output .= '</div>';
+        $data = array(
+            'item' => $item,
+            'iou_items' => Tour_helper::get_iou_items(),
+            'col_1' => $col_1,
+            'col_2' => $col_2,
+            'col_3' => $col_3,
+            'iou_rqst_label'=>$CI->lang->line('LABEL_AMOUNT_IOU_REQUEST')
+        );
 
-                $total_iou_amount += $iou_amount;
-                $i++;
-            }
-
-            // SUMMATION of the IOU Items
-            $output .= '<div class="row show-grid" style="margin-bottom:30px">';
-            $output .= '    <div class="col-xs-' . $col_1 . '"> &nbsp; </div>';
-            $output .= '    <div class="col-xs-' . $col_2 . '" style="border-top:1px solid #000; padding-top:5px">';
-            $output .= '        <label class="control-label pull-right">Total ' . $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST') . ':</label>';
-            $output .= '    </div>';
-            $output .= '    <div class="col-xs-' . $col_3 . '" style="border-top:1px solid #000; padding-top:5px; padding-left:0; text-align:right">';
-            $output .= '        <label class="control-label">' . (System_helper::get_string_amount($total_iou_amount)) . '</label>';
-            $output .= '    </div>';
-            $output .= '</div>';
-        }
-
-        return $output;
+        $html = $CI->load->view("tour_setup/view_iou_summary", $data, true);
+        return $html;
     }
 
     public static function tour_status_check($tour_array = array(), $check_status = array())
@@ -402,7 +287,7 @@ class Tour_helper
     /*------------------Convert Numeric Amount INTO In-Word------------------*/
     public static function get_string_amount_inword($number)
     {
-        $number = (float) $number;
+        $number = (float)$number;
         $decimal = round($number - ($no = floor($number)), 2) * 100;
         $hundred = null;
         $digits_length = strlen($no);

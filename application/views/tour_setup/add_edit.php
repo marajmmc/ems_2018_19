@@ -26,9 +26,25 @@ $action_buttons[] = array(
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 ?>
 <style>
-    .datepicker {cursor: pointer !important;}
-    label{margin-top:5px}
-    #purpose-wrap tr td:last-child{width:1% !important;}
+    .datepicker {
+        cursor: pointer !important;
+    }
+
+    label {
+        margin-top: 5px
+    }
+
+    #purpose-wrap tr td:last-child {
+        width: 1% !important;
+    }
+
+    .right-align {
+        text-align: right !important;
+    }
+
+    .iou-table tr td {
+        padding: 5px;
+    }
 </style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
@@ -71,8 +87,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Title
-                    <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Title <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[title]" id="title" class="form-control" value="<?php echo $item['title']; ?>"/>
@@ -107,97 +122,107 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <div class="col-sm-4 col-xs-8">
                     <table class="table table-bordered" id="purpose-wrap">
                         <tbody>
-                            <?php
-                            if($items)
+                        <?php
+                        if ($items)
+                        {
+                            foreach ($items as $item_purpose)
                             {
-                                foreach ($items as $item_purpose)
-                                {
-                                    ?>
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control purpose" name="old_items[<?php echo $item_purpose['id']; ?>]" value="<?php echo $item_purpose['purpose']; ?>"/>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
-                                        </td>
-                                    </tr>
-                                <?php
-                                }
-                            }
-                            else
-                            {
-                            ?>
+                                ?>
                                 <tr>
                                     <td>
-                                        <input type="text" class="form-control purpose" name="items[0]"/>
+                                        <input type="text" class="form-control purpose" name="old_items[<?php echo $item_purpose['id']; ?>]" value="<?php echo $item_purpose['purpose']; ?>"/>
                                     </td>
-                                    <td style="width:1%">
+                                    <td>
                                         <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
                                     </td>
                                 </tr>
                             <?php
                             }
+                        }
+                        else
+                        {
                             ?>
-                            <tr class="purpose-addMore">
-                                <td colspan="2">
-                                    <button type="button" class="btn btn-warning btn-sm system_button_add_more pull-right" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
+                            <tr>
+                                <td>
+                                    <input type="text" class="form-control purpose" name="items[0]"/>
+                                </td>
+                                <td style="width:1%">
+                                    <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
                                 </td>
                             </tr>
+                        <?php
+                        }
+                        ?>
+                        <tr class="purpose-addMore">
+                            <td colspan="2">
+                                <button type="button" class="btn btn-warning btn-sm system_button_add_more pull-right" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
         <?php
-        $i = 0;
-        $amount_iou_items = array();
-        if($item['amount_iou_items'])
+        if ($item['amount_iou_items'])
         {
             $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
         }
-        $total_iou_amt = 0.0;
-        foreach ($iou_items as $iou_item)
+        else
         {
-            ?>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <?php if ($i == 0)
-                    {
-                        ?>
-                        <label class="control-label pull-right"><?php echo 'IOU Items'; ?> <span style="color:#FF0000">*</span></label>
-                    <?php
-                    }
-                    else
-                    {
-                        echo '';
-                    } ?>
-                </div>
-                <div class="col-xs-2">
-                    <label class="control-label pull-right"><?php echo $iou_item['name']; ?>:</label>
-                </div>
-                <div class="col-xs-2">
-                    <?php
-                    $current_iou =0;
-                    if(isset($amount_iou_items[$iou_item['id']]))
-                    {
-                        $current_iou += $amount_iou_items[$iou_item];
-                    }
-                    $total_iou_amt += $current_iou;
-                    ?>
-                    <input type="text" name="items_iou[<?php echo $iou_item['id']; ?>]" value="<?php echo $current_iou; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
-                </div>
-            </div>
-            <?php
-            $i++;
+            $amount_iou_items = array();
         }
+        $total_iou_amt = 0.0;
         ?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">IOU Items <span style="color:#FF0000">*</span></label>
+            </div>
+
+            <div class="col-xs-4">
+                <table class="iou-table">
+                    <?php
+                    foreach ($iou_items as $key => $iou_item)
+                    {
+                        if ($iou_item['status'] == $this->config->item('system_status_inactive'))
+                        {
+                            if (isset($amount_iou_items[$key]) && ($amount_iou_items[$key] > 0))
+                            {
+                                // Do Nothing
+                            }else{
+                                continue;
+                            }
+                        }
+                        ?>
+                        <tr>
+                            <td class="right-align"><?php echo $iou_item['name']; ?> :</td>
+                            <td style="width:35%">
+                                <?php
+                                $current_iou = 0;
+                                if (isset($amount_iou_items[$key]))
+                                {
+                                    $current_iou += $amount_iou_items[$key];
+                                }
+                                $total_iou_amt += $current_iou;
+                                ?>
+                                <input type="text" name="items_iou[<?php echo $iou_item['id']; ?>]" value="<?php echo $current_iou; ?>" class="form-control float_type_positive price_unit_tk iou_item_input"/>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </table>
+            </div>
+        </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_TOTAL_IOU'); ?> <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_TOTAL_IOU'); ?>
+                    <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                BDT. <label class="amount_iou_label"><?php echo System_helper::get_string_amount($total_iou_amt); ?></label>
+                BDT.
+                <label class="amount_iou_label"><?php echo System_helper::get_string_amount($total_iou_amt); ?></label>
                 <input type="hidden" id="amount_iou" name="item[amount_iou_request]" value="<?php echo $total_iou_amt; ?>">
             </div>
         </div>
@@ -218,14 +243,14 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 <div id="system_content_add_more" style="display:none;">
     <table>
         <tbody>
-            <tr>
-                <td>
-                    <input type="text" class="form-control purpose" />
-                </td>
-                <td style="width:1%">
-                    <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                <input type="text" class="form-control purpose"/>
+            </td>
+            <td style="width:1%">
+                <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
@@ -265,7 +290,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         $(document).on("blur", ".iou_item_input", function (event) { // Puts a Zero if blank
             var iou_value = parseFloat($(this).val());
-            if(iou_value == '' || isNaN(iou_value)){
+            if (iou_value == '' || isNaN(iou_value)) {
                 $(this).val('0');
             }
         });

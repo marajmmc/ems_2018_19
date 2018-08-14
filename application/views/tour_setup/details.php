@@ -508,12 +508,6 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
 <?php
     }
 }
-/* if()
-{
-?>
-
-<?php
-}  */
 ?>
 
 </table>
@@ -545,10 +539,10 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                     $total_iou_amount = 0.0;
                     $total_voucher_amount = 0.0;
 
-                    $amount_iou_adj_items = $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+                    $current_iou_adj_amount = $amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
                     if ($item['amount_iou_adjustment_items'] && ($item['amount_iou_adjustment_items'] != ''))
                     {
-                        $amount_iou_adj_items = json_decode($item['amount_iou_adjustment_items'], TRUE);
+                        $current_iou_adj_amount = json_decode($item['amount_iou_adjustment_items'], TRUE);
                     }
                     ?>
                     <div class="row show-grid">
@@ -563,16 +557,29 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                         </div>
                     </div>
                     <?php
-                    foreach ($iou_items as $iou_item)
+                    pr($amount_iou_items, 0);
+                    pr($iou_items);
+                    /* foreach ($iou_items as $key => $iou_item)
                     {
-                        $iou_amount = $iou_adj_amount = 0;
+                        if (!isset($amount_iou_items[$key]) || ($amount_iou_items[$key] <= 0))
+                        {
+                            continue;
+                        }
+                        $current_iou_amount = $amount_iou_items[$key]; */
+
+                    foreach ($iou_items as $key => $iou_item)
+                    {
+
+
+
+                        $current_iou_amount = $current_iou_adj_amount = 0;
                         if (isset($amount_iou_items[$iou_item]))
                         {
-                            $iou_amount = $amount_iou_items[$iou_item];
+                            $current_iou_amount = $amount_iou_items[$iou_item];
                         }
-                        if (isset($amount_iou_adj_items[$iou_item]))
+                        if (isset($current_iou_adj_amount[$iou_item]))
                         {
-                            $iou_adj_amount = $amount_iou_adj_items[$iou_item];
+                            $iou_adj_amount = $current_iou_adj_amount[$iou_item];
                         }
                         ?>
                         <div class="row show-grid">
@@ -580,14 +587,14 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                                 <label class="control-label pull-right normal"><?php echo Tour_helper::to_label($iou_item); ?>:</label>
                             </div>
                             <div class="col-xs-3" style="padding-left:0">
-                                <label class="control-label pull-right"><?php echo(System_helper::get_string_amount($iou_amount)); ?></label>
+                                <label class="control-label pull-right"><?php echo(System_helper::get_string_amount($current_iou_amount)); ?></label>
                             </div>
                             <div class="col-xs-3">
                                 <label class="control-label pull-right"><?php echo(System_helper::get_string_amount($iou_adj_amount)); ?></label>
                             </div>
                         </div>
                         <?php
-                        $total_iou_amount += $iou_amount;
+                        $total_iou_amount += $current_iou_amount;
                         if ($item['amount_iou_adjustment_items'] && ($item['amount_iou_adjustment_items'] != ''))
                         {
                             $total_voucher_amount += $iou_adj_amount;

@@ -468,6 +468,7 @@ class Tour_iou_payment extends Root_Controller
                 $this->json_return($ajax);
             }
 
+
             $data['requisition_print_page'] = $this->load->view($this->controller_url . "/print_requisition", $data, true);
             $data['title'] = 'Tour IOU Payment Approval :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
