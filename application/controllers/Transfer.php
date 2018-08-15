@@ -17,7 +17,7 @@ class Transfer extends CI_Controller
         //$this->field_visit_visits_picture();
         //$this->field_visit_fruit_picture();
         //$this->field_visit_disease_picture();
-        $this->survey_variety_arm();
+        //$this->survey_variety_arm();
     }
 
     /*R&D Demo*/
@@ -441,7 +441,7 @@ class Transfer extends CI_Controller
 
             if($result['picture_file_full'])
             {
-                $data_files['file_location']=$result['picture_file_full'];
+                $data_files['file_location']=str_replace('survey_product','survey_variety_arm',$result['picture_file_full']);
             }
             else
             {
