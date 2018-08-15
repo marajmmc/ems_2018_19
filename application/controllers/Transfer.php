@@ -17,7 +17,7 @@ class Transfer extends CI_Controller
         //$this->field_visit_visits_picture();
         //$this->field_visit_fruit_picture();
         //$this->field_visit_disease_picture();
-        //$this->survey_variety_arm();
+        $this->survey_variety_arm();
     }
 
     /*R&D Demo*/
@@ -429,7 +429,7 @@ class Transfer extends CI_Controller
 
             $data_files=array();
             $data_files['variety_id']=$result['variety_id'];
-            $data_files['file_type']='image';
+            $data_files['file_type']=$this->config->item('system_file_type_image');
             if($result['picture_file_name'])
             {
                 $data_files['file_name']=$result['picture_file_name'];

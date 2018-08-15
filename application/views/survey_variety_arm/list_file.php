@@ -25,7 +25,7 @@ if($file_type==$this->config->item('system_file_type_image'))
         );
     }
 }
-else
+else if($file_type==$this->config->item('system_file_type_video'))
 {
     if(isset($CI->permissions['action1']) && ($CI->permissions['action1']==1))
     {
@@ -146,7 +146,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             id: 'id',
             type: 'POST',
             url: url,
-            data:{id:<?php echo $item['id']; ?>,file_type:'<?php echo $file_type; ?>'}
+            data:{variety_id:<?php echo $item['id']; ?>,file_type:'<?php echo $file_type; ?>'}
         };
 
         var tooltiprenderer = function (element) {

@@ -42,5 +42,7 @@ $config['system_purpose_ems_menu_odd_color']='ems_menu_odd_color';
 $config['system_purpose_ems_menu_even_color']='ems_menu_even_color';
 
 //System File Type
-$config['system_file_type_image']='image';
-$config['system_file_type_video']='video';
+$config['system_file_type_image']='Image';
+$config['system_file_type_video']='Video';
+$config['system_file_type_video_ext']='wmv|mp4|mov|ftv|mkv|3gp|avi';
+$config['system_file_type_video_max_size']=102400;//100mb

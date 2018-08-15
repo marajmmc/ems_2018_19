@@ -20,7 +20,7 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_characteristics');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item_head['id']; ?>" />
     <div class="row widget">
         <div class="widget-header">

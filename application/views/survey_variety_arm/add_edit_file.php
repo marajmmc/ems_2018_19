@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
-if($file_type==$this->config->item('system_file_type_image'))
+if($file_type==$CI->config->item('system_file_type_image'))
 {
     $action_buttons[]=array(
         'label'=>$CI->lang->line("ACTION_BACK"),
@@ -34,6 +34,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_file');?>" method="post">
     <input type="hidden" id="variety_id" name="item[variety_id]" value="<?php echo $item_head['variety_id']; ?>" />
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
+    <input type="hidden" name="item[file_type]" value="<?php echo $file_type;?>">
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -76,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             </div>
         </div>
 
-        <?php if($file_type==$this->config->item('system_file_type_image')){?>
+        <?php if($file_type==$CI->config->item('system_file_type_image')){?>
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right">Picture</label>
@@ -93,25 +94,25 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_arm_variety_info').$item['file_location']; ?>" alt="<?php echo $item['file_name']; ?>">
                 </div>
             </div>
-        <?php } else{?>
+        <?php } else if($file_type==$CI->config->item('system_file_type_video')){?>
 
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right">Video</label>
                 </div>
                 <div class="col-xs-4">
-                    <div style="<?php if(!(isset($item['file_location']))){echo 'display:none;';}?>" id="video_preview_container_id">
+                    <div id="video_preview_container_id">
                         <video width="300" controls id="video_preview_id">
-                            <source src="<?php if(isset($item['file_location'])){ echo $CI->config->item('system_base_url_arm_variety_info').$item['file_location'];}?>" id="arm_variety_video">
+                            <source src="<?php if(strlen($item['file_location'])>0){ echo $CI->config->item('system_base_url_arm_variety_info').$item['file_location'];}?>" id="arm_variety_video">
                         </video>
                     </div>
                     <div>
-                        <input type="file" class="browse_button_video file_type_video" data-preview-container="#video" name="file_name" accept="video/*">
+                        <input type="file" class="browse_button_video file_type_video" name="file_name" accept="video/*">
                     </div>
                 </div>
             </div>
         <?php } ?>
-        <input type="hidden" name="file_type" value="<?php echo $file_type;?>">
+
 
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -142,10 +143,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(".browse_button_image").filestyle({input: false,icon: false,buttonText: "Upload Picture",buttonName: "btn-primary"});
         $(".browse_button_video").filestyle({input: false,icon: false,buttonText: "Upload Video",buttonName: "btn-primary"});
 
-        $(document).on("change", ".file_type_video", function(evt) {
-
-            $('.file_type_video').attr('name','file_name');
-            $('#video_preview_container_id').show();
+        $(document).on("change", ".file_type_video", function(evt)
+        {
             var $source = $('#arm_variety_video');
             $source[0].src = URL.createObjectURL(this.files[0]);
             $source.parent()[0].load();
