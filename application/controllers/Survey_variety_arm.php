@@ -740,7 +740,6 @@ class Survey_variety_arm extends Root_Controller
 
             $data['item_characteristics']=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$item_id),1);
             $item_files=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_files'),'*',array('variety_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'));
-
             $data['item_image']=array();
             $data['item_video']=array();
             foreach($item_files as $item_file)
@@ -749,7 +748,7 @@ class Survey_variety_arm extends Root_Controller
                 {
                     $data['item_image'][$item_file['id']]=$item_file;
                 }
-                else
+                else if($item_file['file_type']==$this->config->item('system_file_type_video'))
                 {
                     $data['item_video'][$item_file['id']]=$item_file;
                 }

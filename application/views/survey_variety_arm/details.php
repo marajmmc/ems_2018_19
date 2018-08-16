@@ -87,10 +87,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right">Cultivation Period 1</label>
                     </div>
                     <div class="col-xs-2">
-                        <label class="form-control"><?php if($item_characteristics['date_start1']!=0){echo date('d-F',$item_characteristics['date_start1']);}?></label>
+                        <b>From: </b><?php if($item_characteristics['date_start1']!=0){echo date('d-F',$item_characteristics['date_start1']);}?>
                     </div>
                     <div class="col-xs-2">
-                        <label class="form-control"><?php if($item_characteristics['date_end1']!=0){echo date('d-F',$item_characteristics['date_end1']);}?></label>
+                        <b>To: </b><?php if($item_characteristics['date_end1']!=0){echo date('d-F',$item_characteristics['date_end1']);}?>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -98,10 +98,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right">Cultivation Period 2</label>
                     </div>
                     <div class="col-xs-2">
-                        <label class="form-control"><?php if($item_characteristics['date_start2']!=0){echo date('d-F',$item_characteristics['date_start2']);}?></label>
+                        <b>From: </b><?php if($item_characteristics['date_start2']!=0){echo date('d-F',$item_characteristics['date_start2']);}?>
                     </div>
                     <div class="col-xs-2">
-                        <label class="form-control"><?php if($item_characteristics['date_end2']!=0){echo date('d-F',$item_characteristics['date_end2']);}?></label>
+                        <b>To: </b><?php if($item_characteristics['date_end2']!=0){echo date('d-F',$item_characteristics['date_end2']);}?>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -130,7 +130,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </div>
                 </div>
             <?php } ?>
-
         </div>
     </div>
 
@@ -144,7 +143,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div id="images_info" class="panel-collapse collapse in">
             <?php if($item_image){?>
                 <?php foreach($item_image as $image){?>
-                    <div class="col-md-3">
+                    <div class="col-sm-3">
                         <img style="width:250px; height: 200px" src="<?php echo $CI->config->item('system_base_url_arm_variety_info').$image['file_location']; ?>" alt="<?php echo $image['file_name']; ?>">
                             <b><?php echo $image['file_name'];?></b>
                     </div>
@@ -172,9 +171,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
 
         <div id="videos_info" class="panel-collapse collapse in">
-            <?php if($item_image){?>
+            <?php if($item_video){?>
                 <?php foreach($item_video as $video){?>
-                    <div class="col-md-3">
+                    <div class="col-sm-3">
                         <video width="300" controls>
                             <source src="<?php if(isset($video['file_location'])){ echo $CI->config->item('system_base_url_arm_variety_info').$video['file_location'];}?>">
                         </video>
