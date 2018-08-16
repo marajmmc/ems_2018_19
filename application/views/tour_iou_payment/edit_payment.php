@@ -51,7 +51,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right">Name:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['name'] ?> (<?php echo $item['employee_id'] ?>)</label>
+            <label class="control-label"><?php echo $item['name']; ?> (<?php echo $item['employee_id'] ?>)</label>
         </div>
     </div>
 
@@ -80,7 +80,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label pull-right">Title:</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['title'] ?></label>
+            <label class="control-label"><?php echo $item['title']; ?></label>
         </div>
     </div>
 
@@ -105,6 +105,17 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <label class="control-label"><?php echo System_helper::get_string_amount($total_iou_amount); ?></label>
         </div>
     </div>
+
+    <?php if(!empty($item['remarks_approved_payment'])){ ?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Approver's Remarks:</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo nl2br($item['remarks_approved_payment']); ?></label>
+            </div>
+        </div>
+    <?php } ?>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_payment'); ?>" method="post">
         <input type="hidden" id="id" name="id" value="<?php echo $item['tour_setup_id']; ?>"/>

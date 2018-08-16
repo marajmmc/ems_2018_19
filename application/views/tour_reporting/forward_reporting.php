@@ -13,6 +13,45 @@ $action_buttons[] = array(
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
+$purposes = array();
+/*---------------------Purpose Array---------------------*/
+$CI->db->from($CI->config->item('table_ems_tour_purpose'));
+$CI->db->select('id, purpose, type');
+$CI->db->where('tour_id', $item['tour_setup_id']);
+$result = $CI->db->get()->result_array();
+if ($result)
+{
+    foreach ($result as $row)
+    {
+        $purposes[$row['id']] = $row;
+    }
+}
+/*--------------------Reporting Array--------------------*/
+$CI->db->from($CI->config->item('table_ems_tour_reporting'));
+$CI->db->select('*');
+$CI->db->where('tour_id', $item['tour_setup_id']);
+$CI->db->where('status !=', $CI->config->item('system_status_delete'));
+$CI->db->order_by('date_reporting', 'ASC');
+$all_reporting = $CI->db->get()->result_array();
+
+if ($all_reporting)
+{
+    foreach ($all_reporting as $reporting)
+    {
+        //$purposes[$reporting['purpose_id']]['purpose'] =
+        $purposes[$reporting['purpose_id']]['reporting'][$reporting['id']] = array(
+            "date_reporting" => $reporting['date_reporting'],
+            "report_description" => $reporting['report_description'],
+            "recommendation" => $reporting['recommendation'],
+            "name" => $reporting['name'],
+            "contact_no" => $reporting['contact_no'],
+            "profession" => $reporting['profession'],
+            "discussion" => $reporting['discussion'],
+            "date_created" => $reporting['date_created']
+        );
+    }
+}
+
 $is_rollback = FALSE;
 if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_reporting'] != $CI->config->item('system_status_approved'))) // Flag for Rollback
 {
@@ -47,6 +86,7 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
         font-style: italic;
         color: #FF0000
     }
+    .entry_date{font-size:0.85em; white-space:nowrap}
 </style>
 
 <div class="row widget">
@@ -305,6 +345,104 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
             ?>
         </table>
     </div>
+
+
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <label><a class="external text-danger" data-toggle="collapse" data-target="#collapse5" href="#"> + Report Details</a></label>
+        </h4>
+    </div>
+    <div id="collapse5" class="panel-collapse collapse">
+        <table class="table table-bordered table-responsive system_table_details_view">
+            <tr>
+                <td class="center-align" style="width:20%"><label class="control-label"> Purpose </label></td>
+                <td class="center-align"><label class="control-label"> Report </label></td>
+            </tr>
+            <?php
+            foreach ($purposes as $purpose)
+            {
+                ?>
+                <tr>
+                    <td><label class="control-label"> <?php echo $purpose['purpose']; ?> </label></td>
+                    <td>
+                        <?php
+                        if (isset($purpose['reporting']) && !empty($purpose['reporting']))
+                        {
+                            foreach ($purpose['reporting'] as $report)
+                            {
+                                ?>
+                                <table class="table table-bordered report-wrap">
+                                    <tr>
+                                        <td rowspan="5" style="width:17%">
+                                            <b><?php echo System_helper::display_date($report['date_reporting']) ?></b>
+                                            <br/><i class="entry_date">( Entry Date &amp; Time:<br/><?php echo System_helper::display_date_time($report['date_created']); ?> )</i>
+                                        </td>
+                                        <td class="no-wrap"><label class="control-label"> Report (Description) </label></td>
+                                        <td colspan="3"><?php echo nl2br($report['report_description']); ?></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><label class="control-label"> Recommendation </label></td>
+                                        <td colspan="3"><?php echo nl2br($report['recommendation']); ?></td>
+                                    </tr>
+                                    <?php
+                                    if (trim($report['name']) != "")
+                                    {
+                                        ?>
+                                        <tr>
+                                            <td><label class="control-label"> Contact Name </label></td>
+                                            <td colspan="3"><?php echo $report['name']; ?></td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    if ((trim($report['name']) != "") && (trim($report['contact_no']) != "") || (trim($report['profession']) != ""))
+                                    {
+                                        ?>
+                                        <tr>
+                                            <td><label class="control-label"> Phone No. </label></td>
+                                            <td style="width:22%">
+                                                <?php echo (trim($report['contact_no']) != "") ? $report['contact_no'] : '-'; ?>
+                                            </td>
+                                            <td class="no-wrap"><label class="control-label"> Profession </label></td>
+                                            <td>
+                                                <?php echo (trim($report['profession']) != "") ? $report['profession'] : '-'; ?>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    if ((trim($report['name']) != "") && (trim($report['discussion']) != ""))
+                                    {
+                                        ?>
+                                        <tr>
+                                            <td><label class="control-label"> Discussion </label></td>
+                                            <td colspan="3"><?php echo nl2br($report['discussion']); ?></td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+                                </table>
+                            <?php
+                            }
+                        }
+                        else
+                        {
+                            echo "- <i>No Reporting Done Yet, for this Purpose</i> -";
+                        }
+                        ?>
+                    </td>
+                </tr>
+            <?php } ?>
+        </table>
+    </div>
+
+
+
+
+
+
+
+
+
     <div class="clearfix"></div>
 </div>
 

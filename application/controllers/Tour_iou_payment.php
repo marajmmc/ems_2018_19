@@ -335,18 +335,7 @@ class Tour_iou_payment extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $iou_item_amount = json_decode($data['item']['amount_iou_items']);
-            $iou_items = Tour_helper::get_iou_items();
-            $total_iou_amount = 0.0;
-            foreach ($iou_item_amount as $iou => $amount)
-            {
-                if (in_array($iou, $iou_items))
-                {
-                    $total_iou_amount += $amount;
-                }
-            }
-            $data['total_iou_amount'] = $total_iou_amount;
-
+            $data['total_iou_amount'] = Tour_helper::calculate_total_iou($data['item']['amount_iou_items']);
             $data['requisition_print_page'] = $this->load->view($this->controller_url . "/print_requisition", $data, true);
             $data['title'] = 'Tour IOU Payment :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;

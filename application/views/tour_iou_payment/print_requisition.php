@@ -43,11 +43,13 @@ if ($result)
     $header_image = base_url($CI->config->item('system_base_url_picture_setup_print') . $result['image_header_location']);
     $footer_image = base_url($CI->config->item('system_base_url_picture_setup_print') . $result['image_footer_location']);
 }
-// IOU Items
+
+/*----------------------IOU Items------------------------------*/
 $iou_items = Tour_helper::get_iou_items();
-$items = json_decode($item['amount_iou_items']);
+$amount_iou_items = json_decode($item['amount_iou_items'], TRUE);
+
 /*-------------------------------- No. of PAGE CONFIGURATION -----------------------------------*/
-$total_records = sizeof($items);
+$total_records = sizeof($amount_iou_items);
 $num_pages = ceil($total_records / $row_per_page);
 ?>
 
@@ -137,21 +139,22 @@ $num_pages = ceil($total_records / $row_per_page);
                         <?php
                         $i = 0;
                         $total_amount = 0;
-                        foreach ($items as $item_name => $amount)
+                        foreach ($iou_items as $key => $iou_item)
                         {
-                            if($amount <= 0){
+                            if(!isset($amount_iou_items[$key]) || $amount_iou_items[$key] <=0){
                                 continue;
                             }
+                            $current_iou_amount = $amount_iou_items[$key];
                             ?>
                             <tr>
                                 <td><?php echo ++$i; ?></td>
-                                <td><?php echo Tour_helper::to_label($item_name); ?></td>
-                                <td style="text-align:right"><?php echo System_helper::get_string_amount($amount); ?></td>
+                                <td><?php echo $iou_item['name']; ?></td>
+                                <td style="text-align:right"><?php echo System_helper::get_string_amount($current_iou_amount); ?></td>
                             </tr>
-                        <?php
-                            $total_amount += $amount;
-                        } ?>
-
+                            <?php
+                            $total_amount += $current_iou_amount;
+                        }
+                        ?>
                         <tr>
                             <td colspan="2">
                                 <strong>In Words:</strong> <?php echo Tour_helper::get_string_amount_inword($total_amount); ?>

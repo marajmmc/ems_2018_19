@@ -35,14 +35,6 @@ if (isset($CI->permissions['action5']) && ($CI->permissions['action5'] == 1))
         'data-title' => "Download"
     );
 }
-if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'label' => 'Forward',
-        'href' => site_url($CI->controller_url . '/index/forward/'.$item['tour_setup_id'])
-    );
-}
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
     'href' => site_url($CI->controller_url . '/index/list_reporting/' . $item['id'])

@@ -82,6 +82,20 @@ class Tour_helper
         return $items;
     }
 
+    public static function calculate_total_iou($json_data='') // $json_data = JSON code of IOU request/ IOU adjustment
+    {
+        $total_iou_amount = 0.0;
+        if(!empty($json_data))
+        {
+            $iou_item_amount = json_decode($json_data);
+            foreach ($iou_item_amount as $amount)
+            {
+                $total_iou_amount += $amount;
+            }
+        }
+        return $total_iou_amount;
+    }
+
     public static function tour_duration($date_from = 0, $date_to = 0)
     {
         if (($date_from > 0) && ($date_to > 0))

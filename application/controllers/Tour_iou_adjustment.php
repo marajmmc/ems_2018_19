@@ -334,7 +334,7 @@ class Tour_iou_adjustment extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['total_iou_amount'] = Tour_helper::tour_amount($item_id);
+            $data['total_iou_amount'] = Tour_helper::calculate_total_iou($data['item']['amount_iou_items']);
             $data['title'] = 'Tour IOU Adjustment :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/edit_adjustment", $data, true));
@@ -400,7 +400,7 @@ class Tour_iou_adjustment extends Root_Controller
                 $total_amount_iou_adj += $item;
             }
         }
-        if (!$this->check_validation_adjustment($id, $total_amount_iou_adj))
+        if (!$this->check_validation_adjustment($result, $total_amount_iou_adj))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->message;
@@ -470,7 +470,7 @@ class Tour_iou_adjustment extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['total_iou_amount'] = Tour_helper::tour_amount($item_id);
+            $data['total_iou_amount'] = Tour_helper::calculate_total_iou($data['item']['amount_iou_items']);
             $data['title'] = 'Tour IOU Adjustment Approval :: '.$data['item']['title'].' ( Tour ID:'.$data['item']['tour_setup_id'].' )';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
@@ -625,10 +625,10 @@ class Tour_iou_adjustment extends Root_Controller
         }
     }
 
-    private function check_validation_adjustment($item_id, $sum=0)
+    private function check_validation_adjustment($item, $sum=0)
     {
-        $iou_rqst = Tour_helper::tour_amount($item_id);
-        if ($sum <= 0)
+        $iou_rqst = Tour_helper::calculate_total_iou($item['amount_iou_items']);
+        if (!($sum > 0))
         {
             $this->message = "Total Voucher Amount cannot be 0 or, negative";
             return false;
