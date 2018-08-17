@@ -12,7 +12,7 @@ class Survey_variety_arm extends Root_Controller
         $this->message="";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
-        $this->lang->load('survey_variety_arm');
+        $this->lang->load('survey_variety');
     }
     public function index($action="list",$id=0,$id1='',$id2=0)
     {
@@ -134,13 +134,13 @@ class Survey_variety_arm extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_characteristics').' characteristics','characteristics.variety_id = v.id','LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_characteristics').' characteristics','characteristics.variety_id = v.id','LEFT');
         $this->db->select('characteristics.characteristics');
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"  AND arm_files_images.status="'.$this->config->item('system_status_active').'"' ,'LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_files').' arm_files_images','arm_files_images.variety_id =v.id AND arm_files_images.file_type="'.$this->config->item('system_file_type_image').'"  AND arm_files_images.status="'.$this->config->item('system_status_active').'"' ,'LEFT');
         $this->db->select('count(DISTINCT arm_files_images.id) number_of_images',true);
 
-        $this->db->join($this->config->item('table_ems_survey_variety_arm_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'" AND arm_files_videos.status="'.$this->config->item('system_status_active').'"','LEFT');
+        $this->db->join($this->config->item('table_ems_survey_variety_files').' arm_files_videos','arm_files_videos.variety_id =v.id AND arm_files_videos.file_type="'.$this->config->item('system_file_type_video').'" AND arm_files_videos.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->select('count(DISTINCT arm_files_videos.id) number_of_videos',true);
 
         $this->db->order_by('crop.ordering','ASC');
@@ -195,7 +195,7 @@ class Survey_variety_arm extends Root_Controller
                 $ajax['system_message']='Invalid Try.';
                 $this->json_return($ajax);
             }
-            $item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$item_id),1);
+            $item=Query_helper::get_info($this->config->item('table_ems_survey_variety_characteristics'),'*',array('variety_id ='.$item_id),1);
             if($item)
             {
                 $data['item']=$item;
@@ -259,7 +259,7 @@ class Survey_variety_arm extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $old_item=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$variety_id),1);
+            $old_item=Query_helper::get_info($this->config->item('table_ems_survey_variety_characteristics'),'*',array('variety_id ='.$variety_id),1);
 
             $item['date_start1']=System_helper::get_time($item['date_start1'].'-1970');
             $item['date_end1']=System_helper::get_time($item['date_end1'].'-1970');
@@ -289,7 +289,7 @@ class Survey_variety_arm extends Root_Controller
                 $item['user_updated'] = $user->user_id;
                 $item['date_updated'] = $time;
                 $this->db->set('revision_count', 'revision_count+1', FALSE);
-                Query_helper::update($this->config->item('table_ems_survey_variety_arm_characteristics'),$item,array("id = ".$old_item['id']));
+                Query_helper::update($this->config->item('table_ems_survey_variety_characteristics'),$item,array("id = ".$old_item['id']));
             }
             else
             {
@@ -297,7 +297,7 @@ class Survey_variety_arm extends Root_Controller
                 $item['revision_count'] = 1;
                 $item['user_created'] = $user->user_id;
                 $item['date_created'] = $time;
-                Query_helper::add($this->config->item('table_ems_survey_variety_arm_characteristics'),$item);
+                Query_helper::add($this->config->item('table_ems_survey_variety_characteristics'),$item);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -387,7 +387,7 @@ class Survey_variety_arm extends Root_Controller
         $variety_id=$this->input->post('variety_id');
         $file_type=$this->input->post('file_type');
 
-        $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+        $this->db->from($this->config->item('table_ems_survey_variety_files').' arm_files');
         $this->db->select('arm_files.*');
         $this->db->where('arm_files.variety_id',$variety_id);
         if($file_type==$this->config->item('system_file_type_image'))
@@ -457,7 +457,7 @@ class Survey_variety_arm extends Root_Controller
 
         if($item_id>0)
         {
-            $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+            $this->db->from($this->config->item('table_ems_survey_variety_files').' arm_files');
             $this->db->select('arm_files.*');
             $this->db->where('arm_files.id',$item_id);
             if($file_type==$this->config->item('system_file_type_image'))
@@ -553,7 +553,7 @@ class Survey_variety_arm extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $this->db->from($this->config->item('table_ems_survey_variety_arm_files').' arm_files');
+            $this->db->from($this->config->item('table_ems_survey_variety_files').' arm_files');
             $this->db->select('arm_files.*');
             $this->db->where('arm_files.id',$id);
             if($file_type==$this->config->item('system_file_type_image'))
@@ -622,7 +622,7 @@ class Survey_variety_arm extends Root_Controller
             $ajax['system_message']='Invalid Try.';
             $this->json_return($ajax);
         }
-        $path='images/survey_variety_arm/'.$item['variety_id'];
+        $path='images/survey_variety/'.$item['variety_id'];
         $dir=(FCPATH).$path;
         if(!is_dir($dir))
         {
@@ -675,14 +675,14 @@ class Survey_variety_arm extends Root_Controller
             $item['user_updated'] = $user->user_id;
             $item['date_updated'] = $time;
             $this->db->set('revision_count', 'revision_count+1', FALSE);
-            Query_helper::update($this->config->item('table_ems_survey_variety_arm_files'),$item,array("id = ".$id));
+            Query_helper::update($this->config->item('table_ems_survey_variety_files'),$item,array("id = ".$id));
         }
         else
         {
             $item['user_created'] = $user->user_id;
             $item['date_created'] = $time;
             $item['revision_count'] = 1;
-            Query_helper::add($this->config->item('table_ems_survey_variety_arm_files'),$item);
+            Query_helper::add($this->config->item('table_ems_survey_variety_files'),$item);
         }
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
@@ -738,8 +738,8 @@ class Survey_variety_arm extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['item_characteristics']=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_characteristics'),'*',array('variety_id ='.$item_id),1);
-            $item_files=Query_helper::get_info($this->config->item('table_ems_survey_variety_arm_files'),'*',array('variety_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'));
+            $data['item_characteristics']=Query_helper::get_info($this->config->item('table_ems_survey_variety_characteristics'),'*',array('variety_id ='.$item_id),1);
+            $item_files=Query_helper::get_info($this->config->item('table_ems_survey_variety_files'),'*',array('variety_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'));
             $data['item_image']=array();
             $data['item_video']=array();
             foreach($item_files as $item_file)

@@ -40,5 +40,5 @@ $config['table_ems_da_tmpo_setup_visit_schedules'] = 'arm_ems_2018_19.ems_da_tmp
 $config['table_ems_da_tmpo_setup_area_varieties'] = 'arm_ems_2018_19.ems_da_tmpo_setup_area_varieties';
 
 //ARM Variety Info
-$config['table_ems_survey_variety_arm_characteristics'] = 'arm_ems_2018_19.ems_survey_variety_arm_characteristics';
-$config['table_ems_survey_variety_arm_files'] = 'arm_ems_2018_19.ems_survey_variety_arm_files';
+$config['table_ems_survey_variety_characteristics'] = 'arm_ems_2018_19.ems_survey_variety_characteristics';
+$config['table_ems_survey_variety_files'] = 'arm_ems_2018_19.ems_survey_variety_files';

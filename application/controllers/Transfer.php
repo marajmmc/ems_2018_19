@@ -404,8 +404,8 @@ class Transfer extends CI_Controller
             'variety_arm'=>'arm_ems.ems_survey_product',
         );
         $destination_tables=array(
-            'variety_arm_characteristics'=>$this->config->item('table_ems_survey_variety_arm_characteristics'),
-            'variety_arm_files'=>$this->config->item('table_ems_survey_variety_arm_files'),
+            'variety_arm_characteristics'=>$this->config->item('table_ems_survey_variety_characteristics'),
+            'variety_arm_files'=>$this->config->item('table_ems_survey_variety_files'),
         );
         $results=Query_helper::get_info($source_tables['variety_arm'],'*',array());
         $this->db->trans_start();  //DB Transaction Handle START
@@ -441,7 +441,7 @@ class Transfer extends CI_Controller
 
             if($result['picture_file_full'])
             {
-                $data_files['file_location']=str_replace('survey_product','survey_variety_arm',$result['picture_file_full']);
+                $data_files['file_location']=str_replace('survey_product','survey_variety',$result['picture_file_full']);
             }
             else
             {
