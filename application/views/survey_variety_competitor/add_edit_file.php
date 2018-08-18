@@ -103,7 +103,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div class="col-xs-4">
                     <div id="video_preview_container_id">
                         <video width="300" controls id="video_preview_id">
-                            <source src="<?php if(strlen($item['file_location'])>0){ echo $CI->config->item('system_base_url_survey_variety').$item['file_location'];}?>" id="arm_variety_video">
+                            <source src="<?php if(strlen($item['file_location'])>0){ echo $CI->config->item('system_base_url_survey_variety').$item['file_location'];}?>" id="competitor_variety_video">
                         </video>
                     </div>
                     <div>
@@ -145,7 +145,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         $(document).on("change", ".file_type_video", function(evt)
         {
-            var $source = $('#arm_variety_video');
+            var $source = $('#competitor_variety_video');
             $source[0].src = URL.createObjectURL(this.files[0]);
             $source.parent()[0].load();
             var video=document.createElement('video');
