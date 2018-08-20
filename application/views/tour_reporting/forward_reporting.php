@@ -67,10 +67,6 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
         border: none;
     }
 
-    label {
-        margin-top: 5px
-    }
-
     label.normal {
         font-weight: normal !important
     }

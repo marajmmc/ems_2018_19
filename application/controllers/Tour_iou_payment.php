@@ -12,6 +12,12 @@ class Tour_iou_payment extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
+        if (!($this->locations))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
+            $this->json_return($ajax);
+        }
         $this->load->helper('tour');
     }
 
