@@ -636,6 +636,27 @@ class Tour_iou_adjustment extends Root_Controller
         }
     }
 
+    private function check_my_editable($item)
+    {
+        if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
+        {
+            return false;
+        }
+        if (($this->locations['zone_id'] > 0) && ($this->locations['zone_id'] != $item['zone_id']))
+        {
+            return false;
+        }
+        if (($this->locations['territory_id'] > 0) && ($this->locations['territory_id'] != $item['territory_id']))
+        {
+            return false;
+        }
+        if (($this->locations['district_id'] > 0) && ($this->locations['district_id'] != $item['district_id']))
+        {
+            return false;
+        }
+        return true;
+    }
+
     private function check_validation_adjustment($item, $sum=0)
     {
         $iou_rqst = Tour_helper::calculate_total_iou($item['amount_iou_items']);

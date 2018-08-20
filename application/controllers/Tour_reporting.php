@@ -1076,6 +1076,27 @@ class Tour_reporting extends Root_Controller
         }
     }
 
+    private function check_my_editable($item)
+    {
+        if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
+        {
+            return false;
+        }
+        if (($this->locations['zone_id'] > 0) && ($this->locations['zone_id'] != $item['zone_id']))
+        {
+            return false;
+        }
+        if (($this->locations['territory_id'] > 0) && ($this->locations['territory_id'] != $item['territory_id']))
+        {
+            return false;
+        }
+        if (($this->locations['district_id'] > 0) && ($this->locations['district_id'] != $item['district_id']))
+        {
+            return false;
+        }
+        return true;
+    }
+
     private function check_validation()
     {
         $items = $this->input->post('items');
