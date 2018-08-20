@@ -3,9 +3,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 ?>
 <style>
-    .item_not_found
+    .item_panel
     {
-        padding: 20px;
+        padding-top: 10px;
     }
 </style>
 <div class="row widget">
@@ -22,7 +22,7 @@ $CI=& get_instance();
                 <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_variety_info" href="#">+ Variety Info</a></label>
             </h4>
         </div>
-        <div id="collapse_variety_info" class="panel-collapse collapse in">
+        <div id="collapse_variety_info" class="panel-collapse collapse in item_panel">
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
@@ -57,7 +57,7 @@ $CI=& get_instance();
                 <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_characteristics_info" href="#">+ Characteristics Info</a></label>
             </h4>
         </div>
-        <div id="collapse_characteristics_info" class="panel-collapse collapse in">
+        <div id="collapse_characteristics_info" class="panel-collapse collapse in item_panel">
 
             <?php if($item_characteristics){?>
                 <div class="row show-grid">
@@ -108,7 +108,7 @@ $CI=& get_instance();
                 </div>
             <?php } else{?>
                 <div class="row show-grid">
-                    <div class="col-xs-4 item_not_found">
+                    <div class="col-xs-4">
                         <label class="control-label pull-right">Characteristics setup not done yet.</label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
@@ -126,54 +126,57 @@ $CI=& get_instance();
             </h4>
         </div>
 
-        <div id="images_info" class="panel-collapse collapse in">
+        <div id="images_info" class="panel-collapse collapse in item_panel">
+            <div class="row show-grid">
             <?php if($item_image){?>
                 <?php foreach($item_image as $image){?>
-                    <div class="col-sm-3">
-                        <img style="width:250px; height: 200px" src="<?php echo $CI->config->item('system_base_url_survey_variety').$image['file_location']; ?>" alt="<?php echo $image['file_name']; ?>">
+                    <div class="col-sm-3 col-xs-4">
+                        <img class="img img-thumbnail img-responsive" style="height: 150px" src="<?php echo $CI->config->item('system_base_url_survey_variety').$image['file_location']; ?>" alt="<?php echo $image['file_name']; ?>">
                     </div>
                 <?php } ?>
             <?php } else{?>
-                <div class="row show-grid">
-                    <div class="col-xs-4 item_not_found">
+
+                    <div class="col-xs-4">
                         <label class="control-label pull-right">Image setup not done yet.</label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
 
                     </div>
-                </div>
             <?php } ?>
+            </div>
         </div>
     </div>
 
     <div class="clearfix"></div>
 
     <div class="panel panel-default">
+
         <div class="panel-heading">
             <h4 class="panel-title">
                 <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#videos_info" href="#">+ Videos Info</a></label>
             </h4>
         </div>
 
-        <div id="videos_info" class="panel-collapse collapse in">
-            <?php if($item_video){?>
-                <?php foreach($item_video as $video){?>
-                    <div class="col-sm-3">
-                        <video width="300" controls>
-                            <source src="<?php if(isset($video['file_location'])){ echo $CI->config->item('system_base_url_survey_variety').$video['file_location'];}?>">
-                        </video>
-                    </div>
-                <?php } ?>
-            <?php } else{?>
-                <div class="row show-grid">
-                    <div class="col-xs-4 item_not_found">
-                        <label class="control-label pull-right">Video setup not done yet.</label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
+        <div id="videos_info" class="panel-collapse collapse in item_panel">
 
-                    </div>
-                </div>
-            <?php } ?>
+            <div class="row show-grid">
+                <?php if($item_video){?>
+                    <?php foreach($item_video as $video){?>
+                        <div class="col-sm-3 col-xs-4">
+                            <video class="img img-thumbnail img-responsive" style="height: 150px" controls>
+                                <source src="<?php if(isset($video['file_location'])){ echo $CI->config->item('system_base_url_survey_variety').$video['file_location'];}?>">
+                            </video>
+                        </div>
+                    <?php } ?>
+                <?php } else{?>
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right">Video setup not done yet.</label>
+                        </div>
+                        <div class="col-sm-4 col-xs-8">
+
+                        </div>
+                <?php } ?>
+            </div>
         </div>
     </div>
 

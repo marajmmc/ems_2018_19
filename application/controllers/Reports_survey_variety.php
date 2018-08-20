@@ -99,7 +99,7 @@ class Reports_survey_variety extends Root_Controller
             }
         }
         $this->db->where('v.whose','Competitor');
-        $this->db->where('v.status =',$this->config->item('system_status_active'));
+        $this->db->where('v.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('crop_type.ordering','ASC');
         $this->db->order_by('v.ordering','ASC');
@@ -152,7 +152,7 @@ class Reports_survey_variety extends Root_Controller
         $variety_ids=$this->input->post('variety_ids');
 
         $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
-        $this->db->select('v.id,v.name variety_name');
+        $this->db->select('v.id,v.name variety_name,v.whose');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
         $this->db->select('type.name crop_type_name');
@@ -176,11 +176,26 @@ class Reports_survey_variety extends Root_Controller
         $this->db->where_in('v.id',$variety_ids);
         $this->db->group_by('v.id');
         $results=$this->db->get()->result_array();
+
+        $this->db->from($this->config->item('table_ems_survey_variety_files').' files');
+        $this->db->select('files.file_location,files.variety_id');
+        $this->db->order_by('files.id','ASC');
+        $this->db->where('files.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('files.file_type =',$this->config->item('system_file_type_image'));
+        $this->db->where_in('files.variety_id',$variety_ids);
+        $this->db->group_by('files.variety_id');
+        $results_files=$this->db->get()->result_array();
+        $files=array();
+        foreach($results_files as $file)
+        {
+            $files[$file['variety_id']]=$file['file_location'];
+        }
+
         foreach($results as $result)
         {
             $item=array();
             $item['id']=$result['id'];
-            $item['crop_info']=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['variety_name'];
+            $item['crop_info']=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['variety_name'].'<br>'.'('.$result['whose'].')';
             $item['characteristics']=nl2br($result['characteristics']);
             $item['cultivation_period']='';
             if($result['date_start1']!=0)
@@ -191,8 +206,17 @@ class Reports_survey_variety extends Root_Controller
             {
                 $item['cultivation_period'].='<br>'.date('d-F',$result['date_start2']).' to '.date('d-F',$result['date_end2']);
             }
-            $image=$this->config->item('system_base_url_survey_variety').$result['file_location'];
-            $item['picture']='<img src="'.$image.'" style="max-height: 100px;max-width: 133px;">';
+
+            if(isset($files[$result['id']]))
+            {
+                $image=$this->config->item('system_base_url_survey_variety').$files[$result['id']];
+            }
+            else
+            {
+                $image=base_url().'images/no_image.jpg';
+            }
+
+            $item['picture']=$image;
             $item['comparison']=nl2br($result['comparison']);
             $item['remarks']=$result['remarks'];
             $item['number_of_images']=$result['number_of_images'];
@@ -215,7 +239,7 @@ class Reports_survey_variety extends Root_Controller
                 $item_id=$this->input->post('id');
             }
             $this->db->from($this->config->item('table_login_setup_classification_varieties').' v');
-            $this->db->select('v.id,v.name');
+            $this->db->select('v.id,v.name,v.whose');
 
             $this->db->join($this->config->item('table_login_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
             $this->db->select('type.name crop_type_name');
@@ -224,6 +248,7 @@ class Reports_survey_variety extends Root_Controller
             $this->db->select('crop.name crop_name');
 
             $this->db->where('v.id',$item_id);
+            $this->db->where('v.status !=',$this->config->item('system_status_delete'));
             $data['item_head']=$this->db->get()->row_array();
             if(!$data['item_head'])
             {
@@ -249,7 +274,7 @@ class Reports_survey_variety extends Root_Controller
                 }
 
             }
-            $data['title']="Details ARM Variety Info Of (".$data['item_head']['name'].')';
+            $data['title']="Details ".$data['item_head']['whose']." Variety Info Of (".$data['item_head']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
@@ -257,7 +282,6 @@ class Reports_survey_variety extends Root_Controller
                 $ajax['system_message']=$this->message;
             }
             $this->json_return($ajax);
-
         }
         else
         {

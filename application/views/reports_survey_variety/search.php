@@ -72,6 +72,7 @@ $CI = & get_instance();
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         $(document).off("change", "#select_all_arm");
+        $(document).off("change", "#select_all_competitor");
         $(document).off("change", "#crop_id");
         $(document).off("change", "#crop_type_id");
 
@@ -84,6 +85,19 @@ $CI = & get_instance();
             else
             {
                 $('.setup_arm').prop('checked', false);
+            }
+
+        });
+
+        $(document).on("change","#select_all_competitor",function()
+        {
+            if($(this).is(':checked'))
+            {
+                $('.setup_competitor').prop('checked', true);
+            }
+            else
+            {
+                $('.setup_competitor').prop('checked', false);
             }
 
         });

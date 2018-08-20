@@ -118,6 +118,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             {
                 element.html('<div><button class="btn btn-primary pop_up" data-item-no="'+row+'">Details</button></div>');
             }
+            if(column=='picture')
+            {
+                element.html('<div><img style="height: 126px" class="img img-responsive" src="'+value+'"></div>');
+            }
             return element[0].outerHTML;
 
         };
