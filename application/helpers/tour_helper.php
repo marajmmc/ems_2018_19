@@ -72,7 +72,7 @@ class Tour_helper
         {
             $condition = array();
         }
-        $results = Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou') . ' iou', array('iou.*', "IF(iou.status='$status_active', iou.name, CONCAT( '( <b>', iou.status, '</b> ) ', iou.name )) name"), $condition);
+        $results = Query_helper::get_info($CI->config->item('table_login_setup_expense_item_iou') . ' iou', array('iou.*', "IF(iou.status='$status_active', iou.name, CONCAT( iou.name, ' (', iou.status, ')' )) name"), $condition, 0, 0, array('ordering', 'id'));
 
         $items = array();
         foreach ($results as $result)

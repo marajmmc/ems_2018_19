@@ -122,7 +122,7 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
 <table class="table table-bordered table-responsive system_table_details_view">
 <tr>
     <td class="widget-header header_caption"><label class="control-label pull-right">Name</label></td>
-    <td colspan="3"><label class="control-label"><?php echo $item['name']; ?></label></td>
+    <td colspan="3"><label class="control-label"><?php echo $users[$item['user_id']]['name']." (".$item['employee_id'].")"; ?></label></td>
 </tr>
 <tr>
     <td class="widget-header header_caption"><label class="control-label pull-right">Designation</label>

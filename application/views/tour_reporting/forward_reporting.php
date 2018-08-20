@@ -86,6 +86,10 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
         font-style: italic;
         color: #FF0000
     }
+    .no-wrap {
+        width: 1%;
+        white-space: nowrap
+    }
     .entry_date{font-size:0.85em; white-space:nowrap}
 </style>
 

@@ -169,6 +169,7 @@ class Tour_reporting_approval extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
         $this->db->where('user_area.revision', 1);
+        $this->db->where('user_info.revision', 1);
         if ($user->user_group != 1) // If not SuperAdmin, Then Only child's Tour list will appear.
         {
             $this->db->where_in('designation.id', $designation_child_ids);
@@ -268,6 +269,7 @@ class Tour_reporting_approval extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
         $this->db->where('user_area.revision', 1);
+        $this->db->where('user_info.revision', 1);
         if ($user->user_group != 1) // If not SuperAdmin, Then Only child's Tour list will appear.
         {
             $this->db->where_in('designation.id', $designation_child_ids);
@@ -771,18 +773,22 @@ class Tour_reporting_approval extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $user = User_helper::get_user();
+            $designation_child_ids = Tour_helper::get_child_ids_designation($user->designation);
 
-            $data = $items = array();
+            $data = array();
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=tour_setup.user_id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $this->db->select('designation.name AS designation');
-            $this->db->join($this->config->item('table_login_setup_department') . ' department', 'designation.id = user_info.designation', 'LEFT');
+            $this->db->select('designation.name AS designation, designation.id as designation_id');
+            $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
+            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+            $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
@@ -794,10 +800,18 @@ class Tour_reporting_approval extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (($user->user_group != 1) && ($data['item']['user_id']!=$user->user_id))
+            if (($user->user_group != 1) && ($data['item']['user_id'] != $user->user_id) && !in_array($data['item']['designation_id'], $designation_child_ids))
             {
+                System_helper::invalid_try('details', $item_id, 'Not Allowed to see others Tour Details');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Not Allowed to see, Tour Details of others';
+                $ajax['system_message'] = 'Not Allowed to see others Tour Details';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try('details', $item_id, 'Trying to View Tour Details of others');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to View Tour Details of others';
                 $this->json_return($ajax);
             }
 
@@ -817,8 +831,6 @@ class Tour_reporting_approval extends Root_Controller
             $user_ids[$data['item']['user_rollback_reporting']] = $data['item']['user_rollback_reporting'];
             $data['users'] = System_helper::get_users_info($user_ids);
 
-
-            $data['items'] = $items;
             $data['title'] = 'Tour Details :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
