@@ -12,6 +12,7 @@ class Tour_iou_adjustment extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
+        $this->locations = User_helper::get_locations();
         if (!($this->locations))
         {
             $ajax['status'] = false;
