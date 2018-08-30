@@ -9,3 +9,6 @@ $lang['LABEL_NUM_FRUIT_PICTURE'] = 'Number Of Fruit Picture';
 $lang['LABEL_NUM_FRUIT_PICTURE_FEEDBACK'] = 'Number Of Fruit Picture Feedback';
 $lang['LABEL_NUM_DISEASE_PICTURE'] = 'Number Of Disease Picture';
 $lang['LABEL_NUM_DISEASE_PICTURE_FEEDBACK'] = 'Number Of Disease Picture Feedback';
+
+/* Growing Area Visit */
+$lang['LABEL_STATUS_VISIT_AREA'] = 'Area Visited Status';

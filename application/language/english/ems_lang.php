@@ -324,3 +324,7 @@ $lang['LABEL_FEEDBACK'] = 'Feedback';
 
 //R&D Demo Report
 $lang['LABEL_LOAD_VARIETY'] = 'Load Variety';
+
+// Area
+$lang['LABEL_AREA_NAME'] = 'Area Name';
+$lang['LABEL_AREA_ADDRESS'] = 'Area Address';

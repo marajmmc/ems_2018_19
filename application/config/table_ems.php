@@ -42,3 +42,7 @@ $config['table_ems_da_tmpo_setup_area_varieties'] = 'arm_ems_2018_19.ems_da_tmpo
 //ARM Variety Info
 $config['table_ems_survey_variety_characteristics'] = 'arm_ems_2018_19.ems_survey_variety_characteristics';
 $config['table_ems_survey_variety_files'] = 'arm_ems_2018_19.ems_survey_variety_files';
+
+// TMPO Growing Area Visit
+$config['table_ems_da_tmpo_setup_growing_area_visit'] = 'arm_ems_2018_19.ems_da_tmpo_setup_growing_area_visit';
+$config['table_ems_da_tmpo_setup_growing_area_visit_details'] = 'arm_ems_2018_19.ems_da_tmpo_setup_growing_area_visit_details';
