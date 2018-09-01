@@ -97,7 +97,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <table class="table table-responsive table-bordered">
                     <thead>
                     <tr>
-                        <th class="text-center bg-success" colspan="3">
+                        <th class="text-center bg-success" colspan="4">
                             Dealer Information
                         </th>
                     </tr>
@@ -134,7 +134,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tbody>
                     <thead>
                     <tr>
-                        <th class="text-center bg-success" colspan="3">
+                        <th class="text-center bg-success" colspan="4">
                             Lead Farmer Information
                         </th>
                     </tr>
