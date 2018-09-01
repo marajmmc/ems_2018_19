@@ -103,6 +103,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     <tr>
                         <th>Dealer Name</th>
+                        <th>Previous Description</th>
                         <th>Description</th>
                         <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
                     </tr>
@@ -114,6 +115,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><?php echo $dealer['dealer_name']?></td>
+                        <td>--</td>
                         <td>
                             <textarea name="dealer_items[<?php echo $dealer['id']?>][description]" class="form-control"><?php echo $dealer['description'] ?></textarea>
                         </td>
@@ -138,6 +140,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     <tr>
                         <th>Lead Farmer Name</th>
+                        <th>Previous Description</th>
                         <th>Description</th>
                         <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
                     </tr>
@@ -149,6 +152,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                         <tr>
                             <td><?php echo $farmer['lead_farmers_name']?></td>
+                            <td>--</td>
                             <td>
                                 <textarea name="farmer_items[<?php echo $farmer['id']?>][description]" class="form-control"><?php echo $farmer['description'] ?></textarea>
                             </td>
