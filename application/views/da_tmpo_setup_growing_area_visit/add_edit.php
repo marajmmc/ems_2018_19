@@ -8,18 +8,6 @@ $action_buttons[]=array(
 );
 $action_buttons[]=array(
     'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_SAVE"),
-    'id'=>'button_action_save',
-    'data-form'=>'#save_form'
-);
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_SAVE_NEW"),
-    'id'=>'button_action_save_new',
-    'data-form'=>'#save_form'
-);
-$action_buttons[]=array(
-    'type'=>'button',
     'label'=>$CI->lang->line("ACTION_CLEAR"),
     'id'=>'button_action_clear',
     'data-form'=>'#save_form'
@@ -104,9 +92,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
 
         <div class="row show-grid">
-            <div class="col-xs-4">
+            <div class="col-xs-12">
                 <table class="table table-responsive table-bordered">
                     <thead>
+                    <tr>
+                        <th class="text-center bg-success" colspan="3">
+                            Dealer Information
+                        </th>
+                    </tr>
                     <tr>
                         <th>Dealer Name</th>
                         <th>Description</th>
@@ -115,17 +108,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </thead>
                     <tbody>
                     <?php
-                    echo "<pre>";
-                    print_r($dealers);
-                    echo "</pre>";
-
                     foreach($dealers as $dealer)
                     {
                         ?>
                     <tr>
                         <td><?php echo $dealer['dealer_name']?></td>
                         <td>
-                            <textarea name="item[address]" class="form-control"><?php echo $dealer['description'] ?></textarea>
+                            <textarea name="dealers[<?php echo $dealer['id']?>][description]" class="form-control"><?php //echo $dealer['description'] ?></textarea>
                         </td>
                         <td>
                             <input type="file"/>
@@ -135,28 +124,44 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                     ?>
                     </tbody>
+                    <thead>
+                    <tr>
+                        <th class="text-center bg-success" colspan="3">
+                            Lead Farmer Information
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Lead Farmer Name</th>
+                        <th>Description</th>
+                        <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    foreach($farmers as $farmer)
+                    {
+                        ?>
+                        <tr>
+                            <td><?php echo $farmer['name']?></td>
+                            <td>
+                                <textarea name="farmers[<?php echo $farmer['id']?>][description]" class="form-control"><?php //echo $dealer['description'] ?></textarea>
+                            </td>
+                            <td>
+                                <input type="file"/>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-xs-12">
+                <table class="table table-responsive table-bordered">
+
                 </table>
             </div>
         </div>
-
-        <!--<div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_NAME');*/?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[name]" id="price" class="form-control" value="<?php /*echo $item['name'];*/?>"/>
-            </div>
-        </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_MOBILE_NO');*/?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[mobile_no]" id="price" class="form-control" value="<?php /*echo $item['mobile_no'];*/?>"/>
-            </div>
-        </div>-->
-
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Other Information<span style="color:#FF0000">*</span></label>
@@ -165,7 +170,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <textarea name="item[address]" class="form-control"><?php echo $item['other_information'] ?></textarea>
             </div>
         </div>
-
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Other Information</label>
@@ -177,13 +181,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS');?><span style="color:#FF0000">*</span></label>
+
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="status" name="item[status]" class="form-control">
-                    <option value="<?php echo $CI->config->item('system_status_active'); ?>" <?php if ($item['status'] == $CI->config->item('system_status_active')) { echo "selected='selected'"; } ?> ><?php echo $CI->lang->line('ACTIVE') ?></option>
-                    <option value="<?php echo $CI->config->item('system_status_inactive'); ?>" <?php if ($item['status'] == $CI->config->item('system_status_inactive')) { echo "selected='selected'"; } ?> ><?php echo $CI->lang->line('INACTIVE') ?></option>
-                </select>
+            <div class="col-sm-4 col-xs-4">
+                <div class="action_button pull-right">
+                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure HQ to outlet transfer delivery done?">Save</button>
+                </div>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+
             </div>
         </div>
     </div>

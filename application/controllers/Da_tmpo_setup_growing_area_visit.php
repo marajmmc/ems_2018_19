@@ -171,7 +171,6 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         //echo $this->db->last_query();
         $this->json_return($items);
     }
-
     private function system_add_edit($date_visit,$id='')
     {
         if($id>0)
@@ -243,9 +242,8 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->db->where('dealers.area_id',$item_id);
             $this->db->where('dealers.status',$this->config->item('system_status_active'));
             $data['dealers']=$this->db->get()->result_array();
-            echo $this->db->last_query();
 
-            $data['farmers']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers'),array('id value','name text'),array('area_id'=>$id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['farmers']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers'),array('*'),array('area_id='.$item_id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
 
             $data['item']=array
             (
