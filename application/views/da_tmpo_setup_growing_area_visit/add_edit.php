@@ -103,7 +103,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     <tr>
                         <th>Dealer Name</th>
-                        <th>Previous Description</th>
+                        <th>Previous Activity </th>
                         <th>Description</th>
                         <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
                     </tr>
@@ -140,7 +140,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </tr>
                     <tr>
                         <th>Lead Farmer Name</th>
-                        <th>Previous Description</th>
+                        <th>Previous Activity </th>
                         <th>Description</th>
                         <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
                     </tr>
