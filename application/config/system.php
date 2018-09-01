@@ -34,6 +34,8 @@ $config['system_base_url_ft_rnd_demo_picture']='http://50.116.76.180/ems/';
 $config['system_base_url_ft_field_visit']='http://localhost/ems_2018_19/';
 $config['system_base_url_survey_variety']='http://localhost/ems_2018_19/';
 
+$config['system_base_url_growing_are_visit']='http://localhost/ems_2018_19/';
+
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
 

@@ -143,7 +143,6 @@ class Setup_print extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-
         }
         else
         {
