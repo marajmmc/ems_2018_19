@@ -98,7 +98,14 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         }
         else
         {
-            $date_visit=System_helper::get_time(System_helper::display_date(time()));
+            if(System_helper::get_time(System_helper::display_date($date))>0)
+            {
+                $date_visit=System_helper::get_time(System_helper::display_date($date));
+            }
+            else
+            {
+                $date_visit=System_helper::get_time(System_helper::display_date(time()));
+            }
         }
 
         $reports['date_visit']=$date_visit;
@@ -190,7 +197,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         //echo $this->db->last_query();
         $this->json_return($items);
     }
-    private function system_list_previous($date)
+    private function system_list_previous()
     {
         $user = User_helper::get_user();
         $method = 'list_previous';
