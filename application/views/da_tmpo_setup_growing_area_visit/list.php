@@ -70,7 +70,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div class="col-xs-1">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE');?> </label>
                 </div>
-                <div class="col-sm-1 col-xs-1">
+                <div class="col-sm-2 col-xs-2">
                     <input type="text" name="report[date_visit]" id="date_visit" class="form-control datepicker" value="<?php echo System_helper::display_date($options['date_visit']);?>" readonly />
                 </div>
             </div>
