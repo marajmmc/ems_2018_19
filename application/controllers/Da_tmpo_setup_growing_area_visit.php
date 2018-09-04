@@ -393,14 +393,17 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $this->db->where('visit.area_id',$area_id);
         $this->db->where('visit.week_odd_even',$week_odd_even);
         $this->db->where('visit.date_visit !=',$date_visit);
+        $this->db->where('visit.date_visit < ',$date_visit);
         $this->db->where('visit.status',$this->config->item('system_status_active'));
         $this->db->order_by('visit.id', 'DESC');
         $this->db->limit(1);
         $result=$this->db->get()->row_array();
         $result_area_id=0;
+        $date_visit_previous=0;
         if($result)
         {
             $result_area_id=$result['id'];
+            $date_visit_previous=$result['date_visit'];
         }
 
         /*get previous visit details information*/
