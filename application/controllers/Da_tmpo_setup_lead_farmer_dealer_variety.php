@@ -183,7 +183,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
         $this->db->select('count(DISTINCT lead_farmers.id) number_of_lead_farmers',true);
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.area_id =areas.id AND dealers.status="'.$this->config->item('system_status_active').'"','LEFT');
-        $this->db->select('count(DISTINCT dealers.id) number_of_dealers',true);
+        $this->db->select('count(DISTINCT dealers.dealer_id) number_of_dealers',true);
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties','varieties.area_id =areas.id AND dealers.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->select('count(DISTINCT varieties.id) number_of_products',true);
@@ -1007,6 +1007,7 @@ class Da_tmpo_setup_lead_farmer_dealer_variety extends Root_Controller
     private function system_get_varieties()
     {
         $id=$this->input->post('id');
+
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
         $this->db->select('varieties.*');
 

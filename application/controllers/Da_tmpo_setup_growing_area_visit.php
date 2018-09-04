@@ -308,6 +308,12 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $ajax['system_message']='Invalid Visit Date.';
             $this->json_return($ajax);
         }
+        else
+        {
+            $date_visit=System_helper::get_time(System_helper::display_date($date_visit));
+            $week_number = date('W', $date_visit);
+            $week_odd_even=($week_number%2);
+        }
 
         if(!(isset($this->permissions['action1']) && ($this->permissions['action1']==1)) || !(isset($this->permissions['action2']) && ($this->permissions['action2']==1)))
         {
@@ -327,6 +333,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             }
         }
 
+        /*get area information*/
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
         $this->db->select('areas.id area_id,areas.name area_name,areas.address area_address');
 
@@ -363,11 +370,67 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->json_return($ajax);
         }
 
+        /*get setup variety items*/
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
+        $this->db->select('varieties.*');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = varieties.crop_id','INNER');
+        $this->db->select('crop.name crop_name, crop.id crop_id');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = varieties.crop_type_id','LEFT');
+        $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
+
+        $this->db->where('varieties.area_id',$area_id);
+        $this->db->where('varieties.month',date('n',$date_visit));
+        $this->db->where('varieties.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('varieties.ordering','ASC');
+        $data['varieties']=$this->db->get()->result_array();
+
+        /*get previous visit information*/
+        //$data['previous_visit']=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_growing_area_visit'),'*',array('week_odd_even='.$week_odd_even),1,0,array('id DESC'));
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
+        $this->db->select('visit.*');
+        $this->db->where('visit.area_id',$area_id);
+        $this->db->where('visit.week_odd_even',$week_odd_even);
+        $this->db->where('visit.date_visit !=',$date_visit);
+        $this->db->where('visit.status',$this->config->item('system_status_active'));
+        $this->db->order_by('visit.id', 'DESC');
+        $this->db->limit(1);
+        $result=$this->db->get()->row_array();
+        $result_area_id=0;
+        if($result)
+        {
+            $result_area_id=$result['id'];
+        }
+
+        /*get previous visit details information*/
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
+        $this->db->select('details.*');
+        $this->db->where('details.visit_id',$result_area_id);
+        $this->db->where('details.status',$this->config->item('system_status_active'));
+        $results=$this->db->get()->result_array();
+
+        $data['previous_dealers']=array();
+        $data['previous_farmers']=array();
+        foreach($results as $result)
+        {
+            if($result['dealer_id'])
+            {
+                $data['previous_dealers'][$result['dealer_id']]=$result;
+            }
+            if($result['farmer_id'])
+            {
+                $data['previous_farmers'][$result['farmer_id']]=$result;
+            }
+        }
+
+        /*get visit information*/
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
         $this->db->where('visit.area_id',$area_id);
         $this->db->where('visit.date_visit',$date_visit);
         $this->db->where('visit.status',$this->config->item('system_status_active'));
         $result=$this->db->get()->row_array();
+
 
         if($result)
         {
@@ -394,8 +457,9 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
 
             $this->db->where('details.visit_id',$result['id']);
             $this->db->where('details.status',$this->config->item('system_status_active'));
-
             $results=$this->db->get()->result_array();
+            //echo $this->db->last_query();
+
             $data['dealers']=array();
             $data['farmers']=array();
             foreach($results as $result)
@@ -421,7 +485,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             );
 
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers');
-            $this->db->select('dealers.*');
+            $this->db->select('dealers.*, dealers.id dealer_id');
             $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','INNER');
             $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
             $this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
@@ -438,7 +502,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
                 $data['dealers'][]=$result;
             }
 
-            $results=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' farmers',array('farmers.*, farmers.name lead_farmers_name'),array('area_id='.$area_id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $results=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' farmers',array('farmers.*, farmers.id farmer_id, farmers.name lead_farmers_name'),array('area_id='.$area_id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $data['farmers']=array();
             foreach($results as &$result)
             {
@@ -474,6 +538,28 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $ajax['status']=false;
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
+        }
+        if(!System_helper::get_time(System_helper::display_date($date_visit)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Visit Date.';
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $date_visit=System_helper::get_time(System_helper::display_date($date_visit));
+            $week_number = date('W', $date_visit);
+            $week_odd_even=($week_number%2);
+        }
+        if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
+        {
+            $current_date=System_helper::get_time(System_helper::display_date(time()));
+            if($current_date!=$date_visit)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']="You can't update record in date: (".System_helper::display_date($date_visit).")";
+                $this->json_return($ajax);
+            }
         }
 
         //$path=site_url($this->controller_url.'/images/growing_area_visit/');
@@ -530,6 +616,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $result=$this->db->get()->row_array();
         if($result)
         {
+            $item['week_odd_even'] = $week_odd_even;
             $item['user_updated'] = $user->user_id;
             $item['date_updated'] = $time;
             Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit'),$item, array(['id='.$result['id']]));
@@ -593,7 +680,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         }
         else
         {
-
+            $item['week_odd_even'] = $week_odd_even;
             $item['user_created'] = $user->user_id;
             $item['date_created'] = $time;
             $visit_id=Query_helper::add($this->config->item('table_ems_da_tmpo_setup_growing_area_visit'),$item);

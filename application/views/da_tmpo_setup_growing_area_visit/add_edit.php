@@ -13,7 +13,6 @@ $action_buttons[]=array(
     'data-form'=>'#save_form'
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
-
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="date_visit" name="item[date_visit]" value="<?php echo $item['date_visit']; ?>" />
@@ -91,6 +90,45 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_crop_type" href="#">+ Crop & Type Information</a></label>
+                </h4>
+            </div>
+            <div id="collapse_crop_type" class="panel-collapse collapse">
+                <div class="row show-grid">
+                    <?php
+                    if(!$varieties)
+                    {
+                        ?>
+                        <div class="col-xs-12">
+                            <div class="checkbox alert alert-danger text-center">
+                                <strong>There is no variety setup.</strong>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    else
+                    {
+                        $serial=0;
+                        foreach($varieties as $variety)
+                        {
+                            ++$serial;
+                            $crop_type_name=$serial.'. '.$variety['crop_type_name'].' ('.$variety['crop_name'].')';
+                            ?>
+                            <div class="col-xs-2">
+                                <div class="checkbox">
+                                    <label><span class="label label-default" title="<?php echo $crop_type_name;?>"><?php echo $crop_type_name;?></span></label>
+                                </div>
+                            </div>
+                        <?php
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
 
         <div class="row show-grid">
             <div class="col-xs-12">
@@ -110,29 +148,47 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </thead>
                     <tbody>
                     <?php
-                    foreach($dealers as $dealer)
+                    if(!$dealers)
                     {
                         ?>
-                    <tr>
-                        <td><?php echo $dealer['dealer_name']?></td>
-                        <td>--</td>
-                        <td>
-                            <textarea name="dealer_items[<?php echo $dealer['id']?>][description]" class="form-control"><?php echo $dealer['description'] ?></textarea>
-                        </td>
-                        <td>
-                            <input type="file" id="dealer_file_<?php echo $dealer['id']?>" name="dealer_file_<?php echo $dealer['id']?>" class="browse_button" data-preview-container="#preview_dealer_img_<?php echo $dealer['id']?>" data-preview-width="300">
-                            <div class="preview_dealer_img" id="preview_dealer_img_<?php echo $dealer['id']?>">
-                                <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$dealer['image_location']; ?>" class="external" target="_blank">
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$dealer['image_location']; ?>" alt="<?php echo $dealer['image_name']; ?>">
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php
+                        <tr>
+                            <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no dealer setup.</strong></td>
+                        </tr>
+                        <?php
+                    }
+                    else
+                    {
+                        foreach($dealers as $dealer)
+                        {
+                            ?>
+                            <tr>
+                                <td><?php echo $dealer['dealer_name']?></td>
+                                <td>
+                                    <?php
+                                    echo isset($previous_dealers[$dealer['dealer_id']]['description'])?$previous_dealers[$dealer['dealer_id']]['description']:'--';
+                                    ?>
+                                </td>
+                                <td>
+                                    <textarea name="dealer_items[<?php echo $dealer['id']?>][description]" class="form-control"><?php echo $dealer['description'] ?></textarea>
+                                </td>
+                                <td>
+                                    <input type="file" id="dealer_file_<?php echo $dealer['id']?>" name="dealer_file_<?php echo $dealer['id']?>" class="browse_button" data-preview-container="#preview_dealer_img_<?php echo $dealer['id']?>" data-preview-width="300">
+                                    <div class="preview_dealer_img" id="preview_dealer_img_<?php echo $dealer['id']?>">
+                                        <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$dealer['image_location']; ?>" class="external" target="_blank">
+                                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$dealer['image_location']; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php
+                        }
                     }
                     ?>
                     </tbody>
                     <thead>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                    </tr>
                     <tr>
                         <th class="text-center bg-success" colspan="4">
                             Lead Farmer Information
@@ -147,25 +203,40 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </thead>
                     <tbody>
                     <?php
-                    foreach($farmers as $farmer)
+                    if(!$farmers)
                     {
                         ?>
                         <tr>
-                            <td><?php echo $farmer['lead_farmers_name']?></td>
-                            <td>--</td>
-                            <td>
-                                <textarea name="farmer_items[<?php echo $farmer['id']?>][description]" class="form-control"><?php echo $farmer['description'] ?></textarea>
-                            </td>
-                            <td>
-                                <input type="file" id="farmer_file_<?php echo $farmer['id']?>" name="farmer_file_<?php echo $farmer['id']?>" class="browse_button" data-preview-container="#preview_farmer_img_<?php echo $farmer['id']?>" data-preview-width="300" style="float: left">
-                                <div class="preview_farmer_img" id="preview_farmer_img_<?php echo $farmer['id']?>">
-                                    <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" class="external" target="_blank">
-                                        <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" alt="<?php echo $farmer['image_name']; ?>">
-                                    </a>
-                                </div>
-                            </td>
+                            <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no lead farmer setup.</strong></td>
                         </tr>
                     <?php
+                    }
+                    else
+                    {
+                        foreach($farmers as $farmer)
+                        {
+                            ?>
+                            <tr>
+                                <td><?php echo $farmer['lead_farmers_name']?></td>
+                                <td>
+                                    <?php
+                                    echo isset($previous_farmers[$farmer['farmer_id']]['description'])?$previous_farmers[$farmer['farmer_id']]['description']:'--';
+                                    ?>
+                                </td>
+                                <td>
+                                    <textarea name="farmer_items[<?php echo $farmer['id']?>][description]" class="form-control"><?php echo $farmer['description'] ?></textarea>
+                                </td>
+                                <td>
+                                    <input type="file" id="farmer_file_<?php echo $farmer['id']?>" name="farmer_file_<?php echo $farmer['id']?>" class="browse_button" data-preview-container="#preview_farmer_img_<?php echo $farmer['id']?>" data-preview-width="300" style="float: left">
+                                    <div class="preview_farmer_img" id="preview_farmer_img_<?php echo $farmer['id']?>">
+                                        <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" class="external" target="_blank">
+                                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" alt="<?php echo $farmer['image_name']; ?>">
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php
+                        }
                     }
                     ?>
                     </tbody>
