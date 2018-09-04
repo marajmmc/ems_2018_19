@@ -50,7 +50,11 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         }
         elseif($action=="set_preference")
         {
-            $this->system_set_preference();
+            $this->system_set_preference('list');
+        }
+        elseif($action=="set_preference_previous")
+        {
+            $this->system_set_preference('list_previous');
         }
         elseif($action=="save_preference")
         {
@@ -756,17 +760,23 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->json_return($ajax);
         }
     }
-    private function system_set_preference()
+    private function system_set_preference($method)
     {
         $user = User_helper::get_user();
-        $method = 'list';
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['preference_method_name'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            if($method=='list_previous')
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_previous');
+            }
+            else
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            }
             $this->json_return($ajax);
         }
         else

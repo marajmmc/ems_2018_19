@@ -33,12 +33,12 @@ if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
     $action_buttons[]=array
     (
         'label'=>'Preference',
-        'href'=>site_url($CI->controller_url.'/index/set_preference')
+        'href'=>site_url($CI->controller_url.'/index/set_preference_all')
     );
 }
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_REFRESH"),
-    'href'=>site_url($CI->controller_url.'/index/list_previous')
+    'href'=>site_url($CI->controller_url.'/index/list_all')
 );
 $action_buttons[]=array(
     'type'=>'button',
