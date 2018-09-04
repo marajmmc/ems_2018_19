@@ -243,7 +243,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $this->db->select('visit.*');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=visit.area_id','INNER');
-        $this->db->select('areas.id,areas.name area_name,areas.address area_address,areas.address status_visit_area');
+        $this->db->select('areas.name area_name,areas.address area_address,areas.address status_visit_area');
 
         $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
         $this->db->select('outlet_info.name outlet');
@@ -617,12 +617,16 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $this->db->where('visit.date_visit',$date_visit);
         $this->db->where('visit.status',$this->config->item('system_status_active'));
         $result=$this->db->get()->row_array();
+
         if($result)
         {
-            $item['week_odd_even'] = $week_odd_even;
-            $item['user_updated'] = $user->user_id;
-            $item['date_updated'] = $time;
-            Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit'),$item, array(['id='.$result['id']]));
+            $data=array();
+            $data['other_info'] = $item['other_info'];
+            $data['remarks'] = $item['remarks'];
+            $data['week_odd_even'] = $week_odd_even;
+            $data['user_updated'] = $user->user_id;
+            $data['date_updated'] = $time;
+            Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit'),$data, array('id='.$result['id']));
 
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
             $this->db->select('details.*');

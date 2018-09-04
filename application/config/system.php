@@ -24,6 +24,10 @@ $config['system_status_rejected']='Rejected';
 $config['system_status_initial']='Initial';
 $config['system_status_additional']='Additional';
 $config['system_status_paid']='Paid';
+$config['system_status_present']='Present';
+$config['system_status_absent']='Absent';
+$config['system_status_cl']='Casual Leave';
+
 
 $config['system_base_url_profile_picture']='http://50.116.76.180/login/';
 
