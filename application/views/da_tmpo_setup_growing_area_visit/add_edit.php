@@ -143,7 +143,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th>Dealer Name</th>
                         <th>Previous Activity </th>
                         <th>Description</th>
-                        <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
+                        <th>Upload Image</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -198,7 +198,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th>Lead Farmer Name</th>
                         <th>Previous Activity </th>
                         <th>Description</th>
-                        <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
+                        <th>Upload Image</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -250,7 +250,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Other Information </label>
+                <label class="control-label pull-right">Others Activities </label>
             </div>
             <div class="col-xs-4">
                 <textarea name="item[other_info]" class="form-control"><?php echo $item['other_info'] ?></textarea>

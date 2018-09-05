@@ -253,7 +253,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         ?>
                     <tr>
-                        <td><strong>Other Information</strong></td>
+                        <td><strong>Others Activities</strong></td>
                         <td colspan="21"><?php echo $item_head['other_info'] ?></td>
                     </tr>
                     <?php
