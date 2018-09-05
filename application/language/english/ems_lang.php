@@ -326,5 +326,5 @@ $lang['LABEL_FEEDBACK'] = 'Feedback';
 $lang['LABEL_LOAD_VARIETY'] = 'Load Variety';
 
 // Area
-$lang['LABEL_AREA_NAME'] = 'Area Name';
-$lang['LABEL_AREA_ADDRESS'] = 'Area Address';
+$lang['LABEL_AREA_NAME'] = 'Growing Area Name';
+$lang['LABEL_AREA_ADDRESS'] = 'Growing Area Address';

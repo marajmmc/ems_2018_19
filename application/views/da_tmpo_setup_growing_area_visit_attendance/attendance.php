@@ -134,66 +134,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <thead>
                     <tr>
                         <th class="text-center bg-success" colspan="4">
-                            Dealer Information
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Dealer Name</th>
-                        <th>Previous Activity </th>
-                        <th>Description</th>
-                        <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    if(!$dealers)
-                    {
-                        ?>
-                        <tr>
-                            <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no dealer setup.</strong></td>
-                        </tr>
-                        <?php
-                    }
-                    else
-                    {
-                        foreach($dealers as $dealer)
-                        {
-                            if($dealer['image_location'])
-                            {
-                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').$dealer['image_location'];
-                            }
-                            else
-                            {
-                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').'images/no_image.jpg';
-                            }
-                            ?>
-                            <tr>
-                                <td><?php echo $dealer['dealer_name']?></td>
-                                <td>
-                                    <?php
-                                    echo isset($previous_dealers[$dealer['dealer_id']]['description'])?$previous_dealers[$dealer['dealer_id']]['description']:'--';
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php echo $dealer['description'] ?>
-                                </td>
-                                <td>
-                                    <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
-                                        <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                    }
-                    ?>
-                    </tbody>
-                    <thead>
-                    <tr>
-                        <th colspan="4">&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center bg-success" colspan="4">
                             Lead Farmer Information
                         </th>
                     </tr>
@@ -247,6 +187,66 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         }
                     }
                     ?>
+                    </tbody>
+                    <thead>
+                    <tr>
+                        <th colspan="4">&nbsp;</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center bg-success" colspan="4">
+                            Dealer Information
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Dealer Name</th>
+                        <th>Previous Activity </th>
+                        <th>Description</th>
+                        <th>Upload Image (JPG/PNG/GIF) | Max Upload Size: 10MB</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    if(!$dealers)
+                    {
+                        ?>
+                        <tr>
+                            <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no dealer setup.</strong></td>
+                        </tr>
+                        <?php
+                    }
+                    else
+                    {
+                        foreach($dealers as $dealer)
+                        {
+                            if($dealer['image_location'])
+                            {
+                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').$dealer['image_location'];
+                            }
+                            else
+                            {
+                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').'images/no_image.jpg';
+                            }
+                            ?>
+                            <tr>
+                                <td><?php echo $dealer['dealer_name']?></td>
+                                <td>
+                                    <?php
+                                    echo isset($previous_dealers[$dealer['dealer_id']]['description'])?$previous_dealers[$dealer['dealer_id']]['description']:'--';
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php echo $dealer['description'] ?>
+                                </td>
+                                <td>
+                                    <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
+                                        <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php
+                        }
+                    }
+                    ?>
                     <tr><td colspan="21">&nbsp;</td></tr>
                     <?php
                     if($item_head['other_info'])
@@ -271,7 +271,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     }
                     ?>
                     </tbody>
-
                 </table>
             </div>
             <div class="col-xs-12">
