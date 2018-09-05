@@ -377,9 +377,11 @@ class Da_tmpo_setup_growing_area_visit_attendance extends Root_Controller
         $this->db->limit(1);
         $result=$this->db->get()->row_array();
         $result_area_id=0;
+        $data['date_visit_previous']=0;
         if($result)
         {
             $result_area_id=$result['id'];
+            $data['date_visit_previous']=$result['date_visit'];
         }
 
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
@@ -417,7 +419,12 @@ class Da_tmpo_setup_growing_area_visit_attendance extends Root_Controller
         $this->db->order_by('varieties.ordering','ASC');
         $data['varieties']=$this->db->get()->result_array();
 
-        $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($data['item_head']['date_visit']).'</span>';
+        $date_visit_title='';
+        if($data['date_visit_previous'])
+        {
+            $date_visit_title=" || <span class='text-danger'>Previous visit date: ".System_helper::display_date($data['date_visit_previous'])."</span>";
+        }
+        $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($data['item_head']['date_visit']).'</span> '.$date_visit_title;
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/attendance",$data,true));
         if($this->message)
