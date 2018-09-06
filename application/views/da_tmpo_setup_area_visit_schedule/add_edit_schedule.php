@@ -96,12 +96,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </thead>
                     <tbody>
                     <?php
-                    for($day=3; $day<10; $day++)
+                    for($day_key=0; $day_key<7; $day_key++)
                     {
-                        $day_key=($day%7);
                         ?>
                         <tr>
-                            <td><?php echo date('l',($day)*86400);?> </td>
+                            <td><?php echo date('l',($day_key+3)*86400);?> </td>
                             <td>
                                 <input type="hidden" name="items[<?php echo $day_key;?>][id]" id="" value="<?php echo isset($items[$day_key]['id'])?$items[$day_key]['id']:0;?>" />
                                 <select name="items[<?php echo $day_key;?>][area_id_odd]" id="" class="form-control">
