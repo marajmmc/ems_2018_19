@@ -159,21 +159,16 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $date_visit=$this->input->post('date_visit');
         $week_number = date('W', $date_visit);
         $week_odd_even=($week_number%2);
-        $day_key = date('N', $date_visit);
-        if($day_key==7)
-        {
-            $day_key=0;
-        }
-
+        $day_key = date('w', $date_visit);
 
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_visit_schedules').' schedules');
         if($week_odd_even)
         {
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=schedules.area_id_even','INNER');
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=schedules.area_id_odd','INNER');
         }
         else
         {
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=schedules.area_id_odd','INNER');
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=schedules.area_id_even','INNER');
         }
         $this->db->select('areas.id,areas.name area_name,areas.address area_address,areas.address status_visit_area');
 
@@ -363,18 +358,15 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
 
         $week_number = date('W', $date_visit);
         $week_odd_even=($week_number%2);
-        $day_key = date('N', $date_visit);
-        if($day_key==7)
-        {
-            $day_key=0;
-        }
+        $day_key = date('w', $date_visit);
+
         if($week_odd_even)
         {
-            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_even='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_odd='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
         }
         else
         {
-            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_odd='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_even='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
         }
         if(!$result)
         {
@@ -631,18 +623,15 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
 
         $week_number = date('W', $date_visit);
         $week_odd_even=($week_number%2);
-        $day_key = date('N', $date_visit);
-        if($day_key==7)
-        {
-            $day_key=0;
-        }
+        $day_key = date('w', $date_visit);
+
         if($week_odd_even)
         {
-            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_even='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_odd='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
         }
         else
         {
-            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_odd='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_even='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
         }
         if(!$result)
         {
