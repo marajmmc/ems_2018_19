@@ -100,31 +100,33 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
     }
     private function system_list($date)
     {
-        if(System_helper::get_time($date)>0)
+        $current_date=System_helper::get_time(System_helper::display_date(time()));
+        if($this->input->post('date_selected'))
         {
-            $date_visit=System_helper::get_time($date);
+            $date=System_helper::get_time($this->input->post('date_selected'));
         }
-        else
+        elseif($date==0)
         {
-            if(System_helper::get_time(System_helper::display_date($date))>0)
-            {
-                $date_visit=System_helper::get_time(System_helper::display_date($date));
-            }
-            else
-            {
-                $date_visit=System_helper::get_time(System_helper::display_date(time()));
-            }
+            $date=System_helper::get_time(System_helper::display_date(time()));
         }
-        if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
+        $date_visit=System_helper::get_time(System_helper::display_date($date));
+        if($date!=$date_visit)
         {
-            $current_date=System_helper::get_time(System_helper::display_date(time()));
-            if($current_date!=$date_visit)
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid URL';
+            $this->json_return($ajax);
+        }
+        if($current_date!=$date_visit)
+        {
+            if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
             {
                 $ajax['status']=false;
-                $ajax['system_message']="You can't update record in date: (".System_helper::display_date($date_visit).")";
+                $ajax['system_message']='You do not have access';
                 $this->json_return($ajax);
             }
+
         }
+
 
         $reports['date_visit']=$date_visit;
 
@@ -157,8 +159,12 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $date_visit=$this->input->post('date_visit');
         $week_number = date('W', $date_visit);
         $week_odd_even=($week_number%2);
-        $day_of_week = date('N', $date_visit)+3;
-        $day_key=($day_of_week%7);
+        $day_key = date('N', $date_visit);
+        if($day_key==7)
+        {
+            $day_key=0;
+        }
+
 
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_visit_schedules').' schedules');
         if($week_odd_even)
@@ -335,11 +341,13 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         }
         else
         {
-            $date_visit=System_helper::get_time(System_helper::display_date($date_visit));
-            $week_number = date('W', $date_visit);
-            $week_odd_even=($week_number%2);
-            $day_of_week = date('N', $date_visit)+3;
-            $day_key=($day_of_week%7);
+            $converted_date=System_helper::get_time(System_helper::display_date($date_visit));
+            if($converted_date!=$date_visit)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid ULR (Edit).';
+                $this->json_return($ajax);
+            }
         }
 
         if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
@@ -353,6 +361,13 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             }
         }
 
+        $week_number = date('W', $date_visit);
+        $week_odd_even=($week_number%2);
+        $day_key = date('N', $date_visit);
+        if($day_key==7)
+        {
+            $day_key=0;
+        }
         if($week_odd_even)
         {
             $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_even='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
@@ -364,7 +379,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         if(!$result)
         {
             $ajax['status']=false;
-            $ajax['system_message']="Invalid date or area.";
+            $ajax['system_message']="Invalid area.";
             $this->json_return($ajax);
         }
 
@@ -469,9 +484,14 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $this->db->where('visit.date_visit',$date_visit);
         $this->db->where('visit.status',$this->config->item('system_status_active'));
         $result=$this->db->get()->row_array();
-
         if($result)
         {
+            /*if($result['status_attendance']!=$this->config->item('system_status_pending'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='This area already attendance';
+                $this->json_return($ajax);
+            }*/
             $data['item']=array
             (
                 'area_id'=>$area_id,
@@ -584,26 +604,37 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         if(!System_helper::get_time(System_helper::display_date($date_visit)))
         {
             $ajax['status']=false;
-            $ajax['system_message']='Invalid Visit Date.';
+            $ajax['system_message']='Invalid Visit Date (Save).';
             $this->json_return($ajax);
         }
         else
         {
-            $date_visit=System_helper::get_time(System_helper::display_date($date_visit));
-            $week_number = date('W', $date_visit);
-            $week_odd_even=($week_number%2);
-            $day_of_week = date('N', $date_visit)+3;
-            $day_key=($day_of_week%7);
+            $converted_date=System_helper::get_time(System_helper::display_date($date_visit));
+            if($converted_date!=$date_visit)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid ULR (Save).';
+                $this->json_return($ajax);
+            }
         }
+
         if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
         {
             $current_date=System_helper::get_time(System_helper::display_date(time()));
             if($current_date!=$date_visit)
             {
                 $ajax['status']=false;
-                $ajax['system_message']="You can't update record in date: (".System_helper::display_date($date_visit).")";
+                $ajax['system_message']="You can't update record (save) in date: (".System_helper::display_date($date_visit).")";
                 $this->json_return($ajax);
             }
+        }
+
+        $week_number = date('W', $date_visit);
+        $week_odd_even=($week_number%2);
+        $day_key = date('N', $date_visit);
+        if($day_key==7)
+        {
+            $day_key=0;
         }
         if($week_odd_even)
         {
@@ -616,12 +647,11 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         if(!$result)
         {
             $ajax['status']=false;
-            $ajax['system_message']="Invalid date or area.";
+            $ajax['system_message']="Invalid area.";
             $this->json_return($ajax);
         }
 
-        //$path=site_url($this->controller_url.'/images/growing_area_visit/');
-        $path='images/growing_area_visit';
+        $path='images/growing_area_visit/'.$area_id;
         $dir=(FCPATH).$path;
         if(!is_dir($dir))
         {

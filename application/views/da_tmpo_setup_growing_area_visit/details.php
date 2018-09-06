@@ -325,7 +325,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><strong>Others Activities</strong></td>
-                        <td colspan="21"><?php echo nl2br($item_head['other_info']) ?></td>
+                        <td colspan="21"><?php echo $item_head['other_info'] ?></td>
                     </tr>
                     <?php
                     }
@@ -336,7 +336,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><strong>Remarks</strong></td>
-                        <td colspan="21"><?php echo nl2br($item_head['remarks']) ?></td>
+                        <td colspan="21"><?php echo $item_head['remarks'] ?></td>
                     </tr>
                     <?php
                     }
@@ -347,7 +347,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><strong>Remarks for attendance</strong></td>
-                        <td colspan="21"><?php echo nl2br($item_head['remarks_attendance']) ?></td>
+                        <td colspan="21"><?php echo $item_head['remarks_attendance'] ?></td>
                     </tr>
                     <?php
                     }

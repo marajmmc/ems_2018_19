@@ -178,7 +178,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 <td>
                                     <input type="file" id="farmer_file_<?php echo $farmer['id']?>" name="farmer_file_<?php echo $farmer['id']?>" class="browse_button" data-preview-container="#preview_farmer_img_<?php echo $farmer['id']?>" data-preview-width="300" style="float: left">
                                     <div class="preview_farmer_img" id="preview_farmer_img_<?php echo $farmer['id']?>">
-                                        <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" class="external" target="_blank">
+                                        <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$item['area_id'].'/'.$farmer['image_location']; ?>" class="external" target="_blank">
                                             <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" alt="<?php echo $farmer['image_name']; ?>">
                                         </a>
                                     </div>

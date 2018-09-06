@@ -99,11 +99,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         //$(".datepicker").datepicker({dateFormat : "ddmmyy"});
 
         $(".datepicker").on('change', function(){
-            var url_list="<?php echo site_url($CI->controller_url.'/index/list/');?>"+$('#date_visit').val();
+            var date_selected=$('#date_visit').val();
             $.ajax({
-                url: url_list,
+                url: '<?php echo site_url($CI->controller_url.'/index/list/');?>',
                 type: 'POST',
                 dataType: "JSON",
+                data:{date_selected:date_selected},
                 success: function (data, status)
                 {
 
