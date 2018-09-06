@@ -115,11 +115,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         foreach($varieties as $variety)
                         {
                             ++$serial;
-                            $crop_type_name=$serial.'. '.$variety['crop_type_name'].' ('.$variety['crop_name'].')';
+                            $crop_type_name=$serial.'. '.$variety['crop_name'].' ('.$variety['crop_type_name'].')';
+                            if(!$variety['crop_type_id'])
+                            {
+                                $crop_type_name=$serial.'. '.$variety['crop_name'].' (All)';
+                            }
                             ?>
                             <div class="col-xs-2">
                                 <div class="checkbox">
-                                    <label><strong><?php echo $crop_type_name;?></strong></label>
+                                    <label title="<?php echo $crop_type_name;?>"><strong><?php echo $crop_type_name;?></strong></label>
                                 </div>
                             </div>
                         <?php
@@ -143,7 +147,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th>Lead Farmer Name</th>
                         <th>Previous Activity </th>
                         <th>Description</th>
-                        <th>Upload Image</th>
+                        <th>Upload Image <small class="text-danger"><i>(Note: Landscape image upload)</i></small></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -198,7 +202,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th>Dealer Name</th>
                         <th>Previous Activity </th>
                         <th>Description</th>
-                        <th>Upload Image</th>
+                        <th>Upload Image <small class="text-danger"><i>(Note: Landscape image upload)</i></small></th>
                     </tr>
                     </thead>
                     <tbody>

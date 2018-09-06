@@ -4,7 +4,7 @@ $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url)
+    'href'=>site_url($CI->controller_url.'/index/list_previous/')
 );
 $action_buttons[]=array(
     'type'=>'button',
@@ -30,62 +30,129 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </h4>
             </div>
             <div id="collapse3" class="panel-collapse collapse">
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['division_name'];?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['zone_name'];?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['territory_name'];?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['district_name'];?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['outlet_name'];?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AREA_NAME');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['area_name'];?></label>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AREA_ADDRESS');?></label>
-                    </div>
-                    <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['area_address'];?></label>
-                    </div>
-                </div>
+                <table class="table table-bordered table-responsive system_table_details_view">
+                    <thead>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_VISIT');?></label></th>
+                        <th class=""><label class="control-label"><?php echo System_helper::display_date($item_head['date_visit']);?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['division_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right">Previous <?php echo $CI->lang->line('LABEL_DATE_VISIT');?></label></th>
+                        <th class=" header_value">
+                            <label class="control-label">
+                                <?php
+                                if($date_visit_previous)
+                                {
+                                    echo System_helper::display_date($date_visit_previous);
+                                }
+                                else
+                                {
+                                    echo "Nothing's previous history.";
+                                }
+                                ?>
+                            </label>
+                        </th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['zone_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['territory_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['district_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['outlet_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AREA_NAME');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['area_name'];?></label></th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">&nbsp;</th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AREA_ADDRESS');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $item_head['area_address'];?></label></th>
+                    </tr>
+                    <?php
+                    if($item_head['other_info'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Others Activities</label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item_head['other_info']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item_head['remarks'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item_head['remarks']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CREATED_BY');?></label></th>
+                        <th class=" header_value"><label class="control-label"><?php echo $users[$item_head['user_created']]['name'];?></label></th>
+                        <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_CREATED_TIME');?></label></th>
+                        <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item_head['date_created']);?></label></th>
+                    </tr>
+                    <?php
+                    if($item_head['user_updated'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY');?></label></th>
+                            <th class=" header_value"><label class="control-label"><?php echo $users[$item_head['user_updated']]['name'];?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME');?></label></th>
+                            <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item_head['date_updated']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <tr>
+                        <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right">Attendance Status</label></th>
+                        <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item_head['status_attendance']);?></label></th>
+                    </tr>
+                    <?php
+                    if($item_head['remarks_attendance'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption" style="vertical-align: top"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE');?></label></th>
+                            <th class=" header_value" colspan="3"><label class="control-label"><?php echo nl2br($item_head['remarks_attendance']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if($item_head['user_attendance'])
+                    {
+                        ?>
+                        <tr>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Attendance By</label></th>
+                            <th class=" header_value"><label class="control-label"><?php echo $users[$item_head['user_attendance']]['name'];?></label></th>
+                            <th class="widget-header header_caption"><label class="control-label pull-right">Attendance Time</label></th>
+                            <th class=""><label class="control-label"><?php echo System_helper::display_date_time($item_head['date_attendance']);?></label></th>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    </thead>
+                </table>
             </div>
         </div>
         <div class="panel panel-default">
@@ -94,7 +161,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_crop_type" href="#">+ Crop & Type Information</a></label>
                 </h4>
             </div>
-            <div id="collapse_crop_type" class="panel-collapse collapse">
+            <div id="collapse_crop_type" class="panel-collapse">
                 <div class="row show-grid">
                     <?php
                     if(!$varieties)
@@ -274,6 +341,21 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php
                     }
                     ?>
+                    <?php
+                    if($item_head['remarks_attendance'])
+                    {
+                        ?>
+                    <tr>
+                        <td><strong>Remarks for attendance</strong></td>
+                        <td colspan="21"><?php echo nl2br($item_head['remarks_attendance']) ?></td>
+                    </tr>
+                    <?php
+                    }
+                    ?>
+                    <tr>
+                        <td><strong>Attendance</strong></td>
+                        <td colspan="21"><?php echo $item_head['status_attendance'] ?></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -283,40 +365,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </table>
             </div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks for attendance</label>
-            </div>
-            <div class="col-xs-4">
-                <textarea name="item[remarks_attendance]" class="form-control"></textarea>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Attendance<span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="status_attendance" class="form-control" name="item[status_attendance]">
-                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                    <option value="<?php echo $this->config->item('system_status_present')?>"><?php echo $this->config->item('system_status_present')?></option>
-                    <option value="<?php echo $this->config->item('system_status_absent')?>"><?php echo $this->config->item('system_status_absent')?></option>
-                    <option value="<?php echo $this->config->item('system_status_cl')?>"><?php echo $this->config->item('system_status_cl')?></option>
-                </select>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-
-            </div>
-            <div class="col-sm-4 col-xs-4">
-                <div class="action_button pull-right">
-                    <button id="button_action_save" type="button" class="btn" data-form="#save_form" data-message-confirm="Are You Sure?">Save</button>
-                </div>
-            </div>
-            <div class="col-sm-4 col-xs-4">
-
-            </div>
-        </div>
     </div>
     <div class="clearfix"></div>
 </form>
@@ -324,6 +372,5 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        $(":file").filestyle({input: false,buttonText: "<?php echo $CI->lang->line('UPLOAD');?>", buttonName: "btn-danger"});
     });
 </script>
