@@ -994,13 +994,6 @@ class Tour_setup extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (($user->user_group != 1) && ($data['item']['user_id'] != $user->user_id) && !in_array($data['item']['designation_id'], $designation_child_ids))
-            {
-                System_helper::invalid_try('details', $item_id, 'Not Allowed to see others Tour Details');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Not Allowed to see others Tour Details';
-                $this->json_return($ajax);
-            }
             if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try('details', $item_id, 'Trying to View Tour Details of others');
