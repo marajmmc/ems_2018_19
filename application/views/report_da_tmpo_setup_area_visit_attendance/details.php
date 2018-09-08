@@ -1,18 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
-$action_buttons=array();
-$action_buttons[]=array(
-    'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url.'/index/list_previous/')
-);
-$action_buttons[]=array(
-    'type'=>'button',
-    'label'=>$CI->lang->line("ACTION_CLEAR"),
-    'id'=>'button_action_clear',
-    'data-form'=>'#save_form'
-);
-$CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item_head['id']; ?>" />
@@ -325,7 +313,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><strong>Others Activities</strong></td>
-                        <td colspan="21"><?php echo $item_head['other_info'] ?></td>
+                        <td colspan="21"><?php echo nl2br($item_head['other_info']) ?></td>
                     </tr>
                     <?php
                     }
@@ -336,7 +324,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><strong>Remarks</strong></td>
-                        <td colspan="21"><?php echo $item_head['remarks'] ?></td>
+                        <td colspan="21"><?php echo nl2br($item_head['remarks']) ?></td>
                     </tr>
                     <?php
                     }
@@ -347,7 +335,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         ?>
                     <tr>
                         <td><strong>Remarks for attendance</strong></td>
-                        <td colspan="21"><?php echo $item_head['remarks_attendance'] ?></td>
+                        <td colspan="21"><?php echo nl2br($item_head['remarks_attendance']) ?></td>
                     </tr>
                     <?php
                     }

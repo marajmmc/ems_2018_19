@@ -26,7 +26,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse3" href="#">+ Location View</a></label>
+                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse3" href="#">+ Basic Information</a></label>
                 </h4>
             </div>
             <div id="collapse3" class="panel-collapse collapse">

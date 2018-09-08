@@ -61,7 +61,6 @@ foreach($user_info as $user)
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
-
             <div class="col-sm-4 col-xs-8">
                 <?php
                 if($CI->locations['zone_id']>0)
