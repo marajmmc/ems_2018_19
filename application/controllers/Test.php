@@ -20,6 +20,11 @@ class Test extends CI_Controller {
 	 */
     public function index()
     {
+        //echo System_helper::display_date_time(0);
+        //echo date('l',(86400*3)+);
+        $week_number=date('W', System_helper::get_time('04-Sep-2018'));
+        echo $week_odd_even=($week_number%2);
+        die();
         $CI=$this;
         $system_crops=Query_helper::get_info($CI->config->item('table_login_setup_classification_crops'),array('id value','name text'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $results=Query_helper::get_info($CI->config->item('table_login_setup_classification_crop_types'),array('id value','name text','crop_id'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering ASC'));

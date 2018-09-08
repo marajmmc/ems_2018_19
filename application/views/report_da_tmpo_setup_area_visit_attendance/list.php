@@ -75,7 +75,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             var element = $(defaultHtml);
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px'});
             console.log(record);
-            if(column=='details_button')
+            if(column=='details_view')
             {
                 if(record.visit_id)
                 {
@@ -117,7 +117,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         { text: '<?php echo $CI->lang->line('LABEL_SCHEDULE_AREA'); ?>', dataField: 'schedule_area',width:'300',hidden: <?php echo $system_preference_items['schedule_area']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_VISITED_AREA'); ?>', dataField: 'visited_area',width:'300',hidden: <?php echo $system_preference_items['visited_area']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE'); ?>', dataField: 'status_attendance',filtertype: 'list',width:'100',hidden: <?php echo $system_preference_items['status_attendance']?0:1;?>},
-                        { text: 'Details', dataField: 'details_button',width: '120',cellsrenderer: cellsrenderer}
+                        { text: '<?php echo $CI->lang->line('LABEL_DETAILS_VIEW'); ?>', dataField: 'details_view',width: '120',cellsrenderer: cellsrenderer}
                     ]
             });
     });

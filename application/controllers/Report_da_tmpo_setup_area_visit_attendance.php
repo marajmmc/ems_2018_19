@@ -65,6 +65,7 @@ class Report_da_tmpo_setup_area_visit_attendance extends Root_Controller
         $data['schedule_area']= 1;
         $data['visited_area']= 1;
         $data['status_attendance']= 1;
+        $data['details_view']= 1;
         if($result)
         {
             if($result['preferences']!=null)
