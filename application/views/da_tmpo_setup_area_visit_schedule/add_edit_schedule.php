@@ -96,8 +96,17 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     </thead>
                     <tbody>
                     <?php
-                    for($day_key=0; $day_key<7; $day_key++)
+                    for($i=1;$i<8;$i++)
+                    //for($day_key=0; $day_key<7; $day_key++)
                     {
+                        if($i==7)
+                        {
+                            $day_key=0;
+                        }
+                        else
+                        {
+                            $day_key=$i;
+                        }
                         ?>
                         <tr>
                             <td><?php echo date('l',($day_key+3)*86400);?> </td>
