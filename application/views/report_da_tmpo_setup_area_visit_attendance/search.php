@@ -164,7 +164,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo date('01-M-Y', time()); ?>">
+                    <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
                 </div>
             </div>
             <div class="row show-grid">
@@ -175,20 +175,20 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
                 </div>
             </div>
-            <div class="row show-grid">
+            <!--<div class="row show-grid">
                 <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_ATTENDANCE');?></label>
+                    <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_STATUS_ATTENDANCE');*/?></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <select id="status_attendance" name="report[status_attendance]" class="form-control">
                         <option value="">All</option>
-                        <option value="<?php echo $this->config->item('system_status_pending')?>"><?php echo $this->config->item('system_status_pending')?></option>
-                        <option value="<?php echo $this->config->item('system_status_present')?>"><?php echo $this->config->item('system_status_present')?></option>
-                        <option value="<?php echo $this->config->item('system_status_absent')?>"><?php echo $this->config->item('system_status_absent')?></option>
-                        <option value="<?php echo $this->config->item('system_status_cl')?>"><?php echo $this->config->item('system_status_cl')?></option>
+                        <option value="<?php /*echo $this->config->item('system_status_pending')*/?>"><?php /*echo $this->config->item('system_status_pending')*/?></option>
+                        <option value="<?php /*echo $this->config->item('system_status_present')*/?>"><?php /*echo $this->config->item('system_status_present')*/?></option>
+                        <option value="<?php /*echo $this->config->item('system_status_absent')*/?>"><?php /*echo $this->config->item('system_status_absent')*/?></option>
+                        <option value="<?php /*echo $this->config->item('system_status_cl')*/?>"><?php /*echo $this->config->item('system_status_cl')*/?></option>
                     </select>
                 </div>
-            </div>
+            </div>-->
         </div>
         <div class="row show-grid">
             <div class="col-xs-5">

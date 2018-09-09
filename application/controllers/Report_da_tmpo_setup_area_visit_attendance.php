@@ -188,7 +188,7 @@ class Report_da_tmpo_setup_area_visit_attendance extends Root_Controller
 
         $date_start=$this->input->post('date_start');
         $date_end=$this->input->post('date_end');
-        $status_attendance=$this->input->post('status_attendance');
+        //$status_attendance=$this->input->post('status_attendance');
 
         /*get outlets */
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
@@ -259,10 +259,10 @@ class Report_da_tmpo_setup_area_visit_attendance extends Root_Controller
 
         $this->db->where('areas.status',$this->config->item('system_status_active'));
         $this->db->where_in('areas.outlet_id',$outlet_ids);
-        if($status_attendance)
+        /*if($status_attendance)
         {
             $this->db->where('visit.status_attendance',$status_attendance);
-        }
+        }*/
         $results=$this->db->get()->result_array();
         $visited_areas=array();
         foreach($results as $result)
@@ -276,7 +276,7 @@ class Report_da_tmpo_setup_area_visit_attendance extends Root_Controller
         $items=array();
         foreach($outlets as $outlet)
         {
-            $first_row=true;
+            //$first_row=true;
             $date_time=$date_start;
             for($i=1;$i<=$day;$i++)
             {
@@ -286,7 +286,7 @@ class Report_da_tmpo_setup_area_visit_attendance extends Root_Controller
                 $day_key = date('w', $date_time);
 
 
-                if($first_row)
+                /*if($first_row)
                 {
                     $first_row=false;
                     $item['outlet_name']=$outlet['outlet_name'];
@@ -294,7 +294,8 @@ class Report_da_tmpo_setup_area_visit_attendance extends Root_Controller
                 else
                 {
                     $item['outlet_name']='';
-                }
+                }*/
+                $item['outlet_name']=$outlet['outlet_name'];
                 $item['date_attendance']=$date_string;
                 if($week_odd_even)
                 {
