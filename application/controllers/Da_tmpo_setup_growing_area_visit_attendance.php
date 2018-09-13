@@ -48,6 +48,14 @@ class Da_tmpo_setup_growing_area_visit_attendance extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=='edit_admin')
+        {
+            $this->system_edit_admin($id);
+        }
+        elseif($action=="save_admin")
+        {
+            $this->system_save_admin();
+        }
         elseif($action=="details")
         {
             $this->system_details($id);
@@ -515,6 +523,351 @@ class Da_tmpo_setup_growing_area_visit_attendance extends Root_Controller
         {
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
             $this->system_list();
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+    private function system_edit_admin($id)
+    {
+        if($id>0)
+        {
+            $item_id=$id;
+        }
+        else
+        {
+            $item_id=$this->input->post('id');
+        }
+
+        if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        /*get visit information*/
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
+        $this->db->select('visit.*');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=visit.area_id','INNER');
+        $this->db->select('areas.id area_id,areas.name area_name,areas.address area_address');
+
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
+        $this->db->select('outlet_info.name outlet_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
+        $this->db->select('d.id district_id, d.name district_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->select('t.id territory_id, t.name territory_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->select('zone.id zone_id, zone.name zone_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        $this->db->select('division.id division_id, division.name division_name');
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
+        $this->db->where('areas.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('visit.id',$item_id);
+        $data['item']=$this->db->get()->row_array();
+        if(!$data['item'])
+        {
+            System_helper::invalid_try('edit_admin',$item_id,'Id Non-Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if(!$this->check_my_editable($data['item']))
+        {
+            System_helper::invalid_try('edit_admin',$item_id,'User location not assign');
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
+        $this->db->select('details.*');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.id = details.dealer_id','LEFT');
+        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','LEFT');
+        $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers','lead_farmers.id = details.farmer_id','LEFT');
+        $this->db->select('lead_farmers.name lead_farmers_name');
+
+        /*$this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('farmer.farmer_type_id>', 1);*/
+
+        $this->db->where('details.visit_id',$data['item']['id']);
+        $this->db->where('details.status',$this->config->item('system_status_active'));
+        $results=$this->db->get()->result_array();
+        //echo $this->db->last_query();
+
+        $data['dealers']=array();
+        $data['farmers']=array();
+        foreach($results as $result)
+        {
+            if($result['dealer_id'])
+            {
+                $data['dealers'][]=$result;
+            }
+            if($result['farmer_id'])
+            {
+                $data['farmers'][]=$result;
+            }
+        }
+
+        /*get previous visit details information*/
+        $week_number = date('W', $data['item']['date_visit']);
+        $week_odd_even=($week_number%2);
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
+        $this->db->select('visit.*');
+        $this->db->where('visit.area_id',$data['item']['area_id']);
+        $this->db->where('visit.week_odd_even',$week_odd_even);
+        $this->db->where('visit.date_visit !=',$data['item']['date_visit']);
+        $this->db->where('visit.date_visit < ',$data['item']['date_visit']);
+        $this->db->where('visit.status',$this->config->item('system_status_active'));
+        $this->db->order_by('visit.id', 'DESC');
+        $this->db->limit(1);
+        $result=$this->db->get()->row_array();
+        $result_area_id=0;
+        $data['date_visit_previous']=0;
+        if($result)
+        {
+            $result_area_id=$result['id'];
+            $data['date_visit_previous']=$result['date_visit'];
+        }
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
+        $this->db->select('details.*');
+        $this->db->where('details.visit_id',$result_area_id);
+        $this->db->where('details.status',$this->config->item('system_status_active'));
+        $results=$this->db->get()->result_array();
+        $data['previous_dealers']=array();
+        $data['previous_farmers']=array();
+        foreach($results as $result)
+        {
+            if($result['dealer_id'])
+            {
+                $data['previous_dealers'][$result['dealer_id']]=$result;
+            }
+            if($result['farmer_id'])
+            {
+                $data['previous_farmers'][$result['farmer_id']]=$result;
+            }
+        }
+
+        /*get setup variety items*/
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
+        $this->db->select('varieties.*');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = varieties.crop_id','INNER');
+        $this->db->select('crop.name crop_name, crop.id crop_id');
+
+        $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = varieties.crop_type_id','LEFT');
+        $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
+
+        $this->db->where('varieties.area_id',$data['item']['area_id']);
+        $this->db->where('varieties.month',date('n',$data['item']['date_visit']));
+        $this->db->where('varieties.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('varieties.ordering','ASC');
+        $data['varieties']=$this->db->get()->result_array();
+
+        $date_visit_title='';
+        if($data['date_visit_previous'])
+        {
+            $date_visit_title=" || <span class='text-danger'>Previous visit date: ".System_helper::display_date($data['date_visit_previous'])."</span>";
+        }
+        $data['title']="Growing Area Visit :: Outlet: ".$data['item']['outlet_name'].", Growing Area: ".$data['item']['area_name'].", Address: ".$data['item']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($data['item']['date_visit'])."</span> ".$date_visit_title;
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/edit_admin",$data,true));
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $ajax['system_page_url']=site_url($this->controller_url.'/index/edit_admin/'.$item_id);
+        $this->json_return($ajax);
+    }
+    private function system_save_admin()
+    {
+        $item=$this->input->post('item');
+        $area_id = $item["area_id"];
+        $date_visit = $item["date_visit"];
+        $dealer_items=$this->input->post('dealer_items');
+        $farmer_items=$this->input->post('farmer_items');
+        $user = User_helper::get_user();
+        $time=time();
+        if(!(isset($this->permissions['action7']) && ($this->permissions['action7']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        if(!System_helper::get_time(System_helper::display_date($date_visit)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Visit Date (Save).';
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $converted_date=System_helper::get_time(System_helper::display_date($date_visit));
+            if($converted_date!=$date_visit)
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Invalid ULR (Save).';
+                $this->json_return($ajax);
+            }
+        }
+
+        $week_number = date('W', $date_visit);
+        $week_odd_even=($week_number%2);
+        $day_key = date('w', $date_visit);
+
+        /*if($week_odd_even)
+        {
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_odd='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
+        }
+        else
+        {
+            $result=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_visit_schedules'),'*',array('area_id_even='.$area_id, 'ordering='.$day_key, 'status="'.$this->config->item('system_status_active').'"'),1);
+        }
+        if(!$result)
+        {
+            $ajax['status']=false;
+            $ajax['system_message']="Invalid area.";
+            $this->json_return($ajax);
+        }*/
+
+        $path='images/growing_area_visit/'.$area_id;
+        $dir=(FCPATH).$path;
+        if(!is_dir($dir))
+        {
+            mkdir($dir, 0777);
+        }
+        $uploaded_files = System_helper::upload_file($path);
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
+        $this->db->select('areas.id area_id,areas.name area_name,areas.address area_address');
+
+        $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
+        $this->db->select('outlet_info.name outlet_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
+        $this->db->select('d.id district_id, d.name district_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->select('t.id territory_id, t.name territory_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->select('zone.id zone_id, zone.name zone_name');
+
+        $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        $this->db->select('division.id division_id, division.name division_name');
+        $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
+        $this->db->where('areas.status',$this->config->item('system_status_active'));
+        $this->db->where('areas.id',$area_id);
+        $data['item_head']=$this->db->get()->row_array();
+        if(!$data['item_head'])
+        {
+            System_helper::invalid_try('Save',$item['area_id'],'Id Non-Exists');
+            $ajax['status']=false;
+            $ajax['system_message']='Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if(!$this->check_my_editable($data['item_head']))
+        {
+            System_helper::invalid_try('Save',$area_id,'User location not assign');
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
+        $this->db->where('visit.area_id',$area_id);
+        $this->db->where('visit.date_visit',$date_visit);
+        $this->db->where('visit.status',$this->config->item('system_status_active'));
+        $result=$this->db->get()->row_array();
+
+        $data=array();
+        $data['other_info'] = $item['other_info'];
+        $data['remarks'] = $item['remarks'];
+        //$data['week_odd_even'] = $week_odd_even;
+        $data['remarks_attendance'] = $item['remarks_attendance'];
+        $data['status_attendance'] = $item['status_attendance'];
+        $data['user_updated'] = $user->user_id;
+        $data['date_updated'] = $time;
+        Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit'),$data, array('id='.$result['id']));
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
+        $this->db->select('details.*');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.id = details.dealer_id','LEFT');
+        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','LEFT');
+        $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers','lead_farmers.id = details.farmer_id','LEFT');
+        $this->db->select('lead_farmers.name lead_farmers_name');
+
+        /*$this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('farmer.farmer_type_id>', 1);*/
+
+        $this->db->where('details.visit_id',$result['id']);
+        $this->db->where('details.status',$this->config->item('system_status_active'));
+
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            if($result['dealer_id'])
+            {
+                if(isset($dealer_items[$result['id']]))
+                {
+                    $data=array();
+                    if(isset($uploaded_files['dealer_file_'.$result['id']]) && $uploaded_files['dealer_file_'.$result['id']]['status'])
+                    {
+                        $data['image_name']=$uploaded_files['dealer_file_'.$result['id']]['info']['file_name'];
+                        $data['image_location']=$path.'/'.$data['image_name'];
+                    }
+                    /*$data['visit_id']=$visit_id;
+                    $data['dealer_id']=$result['id'];*/
+                    $data['farmer_id']=0;
+                    $data['description']=$dealer_items[$result['id']]['description'];
+                    $this->db->set('revision_count_dealer', 'revision_count_dealer+1', FALSE);
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data,array('id='.$result['id']));
+                }
+            }
+            if($result['farmer_id'])
+            {
+                if(isset($farmer_items[$result['id']]))
+                {
+                    $data=array();
+                    if(isset($uploaded_files['farmer_file_'.$result['id']]) && $uploaded_files['farmer_file_'.$result['id']]['status'])
+                    {
+                        $data['image_name']=$uploaded_files['farmer_file_'.$result['id']]['info']['file_name'];
+                        $data['image_location']=$path.'/'.$data['image_name'];
+                    }
+                    /*$data['visit_id']=$visit_id;
+                    $data['farmer_id']=$result['id'];*/
+                    $data['dealer_id']=0;
+                    $data['description']=$farmer_items[$result['id']]['description'];
+                    $this->db->set('revision_count_farmer', 'revision_count_farmer+1', FALSE);
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data,array('id='.$result['id']));
+                }
+            }
+        }
+
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list_all();
         }
         else
         {

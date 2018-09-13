@@ -4,7 +4,7 @@ $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
     'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url)
+    'href'=>site_url($CI->controller_url.'/index/list_all')
 );
 $action_buttons[]=array(
     'type'=>'button',
@@ -14,8 +14,10 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
-<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" id="id" name="id" value="<?php echo $item_head['id']; ?>" />
+<form id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_admin');?>" method="post">
+    <input type="hidden" id="date_visit" name="item[date_visit]" value="<?php echo $item['date_visit']; ?>" />
+    <input type="hidden" id="area_id" name="item[area_id]" value="<?php echo $item['area_id']; ?>" />
+    <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -35,7 +37,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['division_name'];?></label>
+                        <label class="control-label"><?php echo $item['division_name'];?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -43,7 +45,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['zone_name'];?></label>
+                        <label class="control-label"><?php echo $item['zone_name'];?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -51,7 +53,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['territory_name'];?></label>
+                        <label class="control-label"><?php echo $item['territory_name'];?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -59,7 +61,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['district_name'];?></label>
+                        <label class="control-label"><?php echo $item['district_name'];?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -67,7 +69,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['outlet_name'];?></label>
+                        <label class="control-label"><?php echo $item['outlet_name'];?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -75,7 +77,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AREA_NAME');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['area_name'];?></label>
+                        <label class="control-label"><?php echo $item['area_name'];?></label>
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -83,7 +85,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AREA_ADDRESS');?></label>
                     </div>
                     <div class="col-sm-4 col-xs-8">
-                        <label class="control-label"><?php echo $item_head['area_address'];?></label>
+                        <label class="control-label"><?php echo $item['area_address'];?></label>
                     </div>
                 </div>
             </div>
@@ -94,7 +96,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_crop_type" href="#">+ Crop & Type Information</a></label>
                 </h4>
             </div>
-            <div id="collapse_crop_type" class="panel-collapse collapse">
+            <div id="collapse_crop_type" class="panel-collapse ">
                 <div class="row show-grid">
                     <?php
                     if(!$varieties)
@@ -145,7 +147,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th>Lead Farmer Name</th>
                         <th>Previous Activity </th>
                         <th>Description</th>
-                        <th>Attachment</th>
+                        <th>Upload Image <small class="text-danger"><i>(Note: Landscape image upload)</i></small></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -162,14 +164,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         foreach($farmers as $farmer)
                         {
-                            if($farmer['image_location'])
-                            {
-                                $farmer_img=$CI->config->item('system_base_url_growing_are_visit').$farmer['image_location'];
-                            }
-                            else
-                            {
-                                $farmer_img=$CI->config->item('system_base_url_growing_are_visit').'images/no_image.jpg';
-                            }
                             ?>
                             <tr>
                                 <td><?php echo $farmer['lead_farmers_name']?></td>
@@ -179,12 +173,15 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     ?>
                                 </td>
                                 <td>
-                                    <?php echo $farmer['description'] ?>
+                                    <textarea name="farmer_items[<?php echo $farmer['id']?>][description]" class="form-control"><?php echo $farmer['description'] ?></textarea>
                                 </td>
                                 <td>
-                                    <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
-                                        <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="<?php echo $farmer['image_name']; ?>">
-                                    </a>
+                                    <input type="file" id="farmer_file_<?php echo $farmer['id']?>" name="farmer_file_<?php echo $farmer['id']?>" class="browse_button" data-preview-container="#preview_farmer_img_<?php echo $farmer['id']?>" data-preview-width="300" style="float: left">
+                                    <div class="preview_farmer_img" id="preview_farmer_img_<?php echo $farmer['id']?>">
+                                        <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$item['area_id'].'/'.$farmer['image_location']; ?>" class="external" target="_blank">
+                                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$farmer['image_location']; ?>" alt="<?php echo $farmer['image_name']; ?>">
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php
@@ -205,7 +202,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         <th>Dealer Name</th>
                         <th>Previous Activity </th>
                         <th>Description</th>
-                        <th>Attachment</th>
+                        <th>Upload Image <small class="text-danger"><i>(Note: Landscape image upload)</i></small></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -222,14 +219,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     {
                         foreach($dealers as $dealer)
                         {
-                            if($dealer['image_location'])
-                            {
-                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').$dealer['image_location'];
-                            }
-                            else
-                            {
-                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').'images/no_image.jpg';
-                            }
                             ?>
                             <tr>
                                 <td><?php echo $dealer['dealer_name']?></td>
@@ -239,39 +228,19 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     ?>
                                 </td>
                                 <td>
-                                    <?php echo $dealer['description'] ?>
+                                    <textarea name="dealer_items[<?php echo $dealer['id']?>][description]" class="form-control"><?php echo $dealer['description'] ?></textarea>
                                 </td>
                                 <td>
-                                    <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
-                                        <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
-                                    </a>
+                                    <input type="file" id="dealer_file_<?php echo $dealer['id']?>" name="dealer_file_<?php echo $dealer['id']?>" class="browse_button" data-preview-container="#preview_dealer_img_<?php echo $dealer['id']?>" data-preview-width="300">
+                                    <div class="preview_dealer_img" id="preview_dealer_img_<?php echo $dealer['id']?>">
+                                        <a href="<?php echo $CI->config->item('system_base_url_growing_are_visit').$dealer['image_location']; ?>" class="external" target="_blank">
+                                            <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_growing_are_visit').$dealer['image_location']; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php
                         }
-                    }
-                    ?>
-                    <tr><td colspan="21">&nbsp;</td></tr>
-                    <?php
-                    if($item_head['other_info'])
-                    {
-                        ?>
-                    <tr>
-                        <td><strong>Others Activities</strong></td>
-                        <td colspan="21"><?php echo nl2br($item_head['other_info']) ?></td>
-                    </tr>
-                    <?php
-                    }
-                    ?>
-                    <?php
-                    if($item_head['remarks'])
-                    {
-                        ?>
-                    <tr>
-                        <td><strong>Remarks</strong></td>
-                        <td colspan="21"><?php echo nl2br($item_head['remarks']) ?></td>
-                    </tr>
-                    <?php
                     }
                     ?>
                     </tbody>
@@ -285,22 +254,39 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks for attendance</label>
+                <label class="control-label pull-right">Others Activities </label>
             </div>
             <div class="col-xs-4">
-                <textarea name="item[remarks_attendance]" class="form-control"></textarea>
+                <textarea name="item[other_info]" class="form-control"><?php echo $item['other_info'] ?></textarea>
             </div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Attendance<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Remarks</label>
+            </div>
+            <div class="col-xs-4">
+                <textarea name="item[remarks]" class="form-control"><?php echo $item['remarks'] ?></textarea>
+            </div>
+        </div>
+        <hr/>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Remarks for attendance</label>
+            </div>
+            <div class="col-xs-4">
+                <textarea name="item[remarks_attendance]" class="form-control"><?php echo $item['remarks_attendance'] ?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Attendance <?php echo $item['status_attendance']?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select id="status_attendance" class="form-control" name="item[status_attendance]">
-                    <option value=""><?php echo $CI->lang->line('SELECT');?></option>
-                    <option value="<?php echo $CI->config->item('system_status_present')?>"><?php echo $CI->config->item('system_status_present')?></option>
-                    <option value="<?php echo $CI->config->item('system_status_absent')?>"><?php echo $CI->config->item('system_status_absent')?></option>
-                    <option value="<?php echo $CI->config->item('system_status_cl')?>"><?php echo $CI->config->item('system_status_cl')?></option>
+                    <option value="<?php echo $CI->config->item('system_status_pending')?>" <?php if($item['status_attendance']==$CI->config->item('system_status_pending')){echo "selected='selected'";}?>><?php echo $CI->lang->line('SELECT');?></option>
+                    <option value="<?php echo $CI->config->item('system_status_present')?>" <?php if($item['status_attendance']==$CI->config->item('system_status_present')){echo "selected='selected'";}?>><?php echo $CI->config->item('system_status_present')?></option>
+                    <option value="<?php echo $CI->config->item('system_status_absent')?>" <?php if($item['status_attendance']==$CI->config->item('system_status_absent')){echo "selected='selected'";}?>><?php echo $CI->config->item('system_status_absent')?></option>
+                    <option value="<?php echo $CI->config->item('system_status_cl')?>" <?php if($item['status_attendance']==$CI->config->item('system_status_cl')){echo "selected='selected'";}?>><?php echo $CI->config->item('system_status_cl')?></option>
                 </select>
             </div>
         </div>

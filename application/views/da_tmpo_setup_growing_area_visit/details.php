@@ -3,8 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $CI=& get_instance();
 $action_buttons=array();
 $action_buttons[]=array(
-    'label'=>$CI->lang->line("ACTION_BACK"),
-    'href'=>site_url($CI->controller_url.'/index/list_previous/')
+    'label'=>$CI->lang->line("ACTION_BACK").' to Previous list',
+    'href'=>site_url($CI->controller_url.'/index/list_previous')
+);
+$action_buttons[]=array(
+    'label'=>$CI->lang->line("ACTION_BACK").' to Pending List',
+    'href'=>site_url($CI->controller_url)
 );
 $action_buttons[]=array(
     'type'=>'button',
