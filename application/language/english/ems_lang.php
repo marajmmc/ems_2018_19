@@ -328,3 +328,6 @@ $lang['LABEL_LOAD_VARIETY'] = 'Load Variety';
 // Area
 $lang['LABEL_AREA_NAME'] = 'Growing Area Name';
 $lang['LABEL_AREA_ADDRESS'] = 'Growing Area Address';
+
+// Printing Page
+$lang['LABEL_PURPOSE'] = 'Purpose';
