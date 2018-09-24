@@ -92,7 +92,7 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
     .blob {
         display:inline-block;
         padding:3px;
-        border: 3px solid #8c8c8c
+        border:3px solid #8c8c8c
     }
     .blob:hover{border:3px solid #3693CF}
 </style>

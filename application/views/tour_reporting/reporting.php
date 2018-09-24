@@ -42,7 +42,9 @@ $img_width = 300;
     }
 
     .blob img {
-        border: 2px dashed #8c8c8c
+        display:inline-block;
+        border:2px dashed #8c8c8c;
+        padding:2px;
     }
 
     .reporting {
