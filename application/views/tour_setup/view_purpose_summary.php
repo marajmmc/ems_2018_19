@@ -6,7 +6,7 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th><?php echo $slno_label; ?></th>
+                    <th style="width:50px"><?php echo $slno_label; ?></th>
                     <th>Purpose</th>
                 </tr>
             </thead>
