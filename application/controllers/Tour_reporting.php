@@ -579,6 +579,10 @@ class Tour_reporting extends Root_Controller
             $this->db->where('tour_reporting.status !=', $this->config->item('system_status_delete'));
             $data['items'] = $this->db->get()->result_array();
 
+
+            $data['item']['image_location_lead_farmer_visit_one'] = "";
+            $data['item']['image_name_lead_farmer_visit_one'] = "";
+
             $data['item']['name'] = $result['name'] . ' (' . $result['employee_id'] . ')';
             $data['title'] = 'Edit Tour Reporting :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_id'] . ' )';
             $data['reporting_date'] = $reporting_date;
@@ -610,7 +614,7 @@ class Tour_reporting extends Root_Controller
         $time = time();
         $user = User_helper::get_user();
 
-        //-----------------------Check Validation----------------------
+        //----------------------------Validation STARTS------------------------------
         if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
         {
             $ajax['status'] = false;
@@ -655,9 +659,11 @@ class Tour_reporting extends Root_Controller
             $ajax['system_message'] = $this->message;
             $this->json_return($ajax);
         }
-        //----------------------------------------------------------
+        //----------------------------Validation ENDS------------------------------
 
         $this->db->trans_start(); //DB Transaction Handle START
+
+        $reporting_ids = $old_reporting_ids = array();
 
         // IN-ACTIVE ALL OLD RECORDS
         $data = array('status' => $this->config->item('system_status_delete'));
@@ -681,13 +687,15 @@ class Tour_reporting extends Root_Controller
                 );
                 $this->db->set('revision_count_reporting', 'revision_count_reporting + 1', FALSE);
                 Query_helper::update($this->config->item('table_ems_tour_reporting'), $update_item, array('id=' . $key));
+
+                $old_reporting_ids[] = $key;
             }
         }
 
         // -------------------------------- INSERT NEW RECORD
         if ($items)
         {
-            foreach ($items as $item)
+            foreach ($items as $index => $item)
             {
                 $item['purpose_additional'] = (isset($item['purpose_additional'])) ? trim($item['purpose_additional']) : '';
                 $purpose_id = $item['purpose'];
@@ -709,6 +717,11 @@ class Tour_reporting extends Root_Controller
                     $Query = Query_helper::update($this->config->item('table_ems_tour_reporting'), $update_item, array('tour_id=' . $item_id, 'date_reporting=' . $reporting_date, 'purpose_id=' . $purpose_id));
                     if ($Query) //IF found in Reporting table, then UPDATE and continue for next.
                     {
+                        $this->db->where('tour_id', $item_id);
+                        $this->db->where('date_reporting', $reporting_date);
+                        $this->db->where('purpose_id', $purpose_id);
+                        $reporting_ids[$index] = $this->db->get($this->config->item('table_ems_tour_reporting'))->row('id');
+
                         continue;
                     }
                 }
@@ -738,6 +751,11 @@ class Tour_reporting extends Root_Controller
                         $Query = Query_helper::update($this->config->item('table_ems_tour_reporting'), $update_item, array('tour_id=' . $item_id, 'date_reporting=' . $reporting_date, 'purpose_id=' . $purpose_id));
                         if ($Query) // IF New Purpose Already exist in Reporting Table, THEN Activate & UPDATE and continue for next.
                         {
+                            $this->db->where('tour_id', $item_id);
+                            $this->db->where('date_reporting', $reporting_date);
+                            $this->db->where('purpose_id', $purpose_id);
+                            $reporting_ids[$index] = $this->db->get($this->config->item('table_ems_tour_reporting'))->row('id');
+
                             continue;
                         }
                     }
@@ -770,9 +788,45 @@ class Tour_reporting extends Root_Controller
                     'date_created' => $time,
                     'user_created' => $user->user_id
                 );
-                Query_helper::add($this->config->item('table_ems_tour_reporting'), $insert_new_items);
+                $reporting_ids[$index] = Query_helper::add($this->config->item('table_ems_tour_reporting'), $insert_new_items);
             }
         }
+
+        // Image Saving
+        $path = 'images/tour_reporting/' . $item_id;
+        $dir = (FCPATH) . str_replace("/", "\\", $path);
+        if (!is_dir($dir))
+        {
+            mkdir(FCPATH . $path, 0777, true);
+        }
+        $uploaded_files = System_helper::upload_file($path);
+        $image_info = array();
+
+        //-----------Image save into DB -START-------------
+        foreach($old_reporting_ids as $old_id){
+            $old_img_key = 'old_image_' . $old_id;
+            if (array_key_exists($old_img_key, $uploaded_files))
+            {
+                $image_info[$old_id] = array(
+                    'image_name' => $uploaded_files[$old_img_key]['info']['file_name'],
+                    'image_location' => $path . '/' . $uploaded_files[$old_img_key]['info']['file_name']
+                );
+            }
+        }
+        foreach($reporting_ids as $KEY => $new_id){
+            $new_img_key = 'new_image_' . $KEY;
+            if (array_key_exists($new_img_key, $uploaded_files))
+            {
+                $image_info[$new_id] = array(
+                    'image_name' => $uploaded_files[$new_img_key]['info']['file_name'],
+                    'image_location' => $path . '/' . $uploaded_files[$new_img_key]['info']['file_name'],
+                );
+            }
+        }
+        foreach($image_info as $rep_id => $image){ // Insert Image name & location into DB
+            Query_helper::update($this->config->item('table_ems_tour_reporting'), $image, array('id=' . $rep_id));
+        }
+        //-----------Image save into DB -END-------------
 
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -804,7 +858,7 @@ class Tour_reporting extends Root_Controller
             }
             $user = User_helper::get_user();
 
-            $data=array();
+            $data = array();
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');

@@ -55,6 +55,10 @@ $action_buttons[]=array(
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
 ?>
+<style>
+    .widget-header{margin-bottom:0 !important;}
+    .jqx-grid{border:none !important;}
+</style>
 
 <div class="row widget">
     <div class="widget-header">
@@ -112,12 +116,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 columnsreorder: true,
                 columns:
                 [
-                    { text: 'Purpose', dataField: 'purpose'},
-                    { text: 'Controller', dataField: 'controller', width:100},
-                    { text: 'Method', dataField: 'method', width:100},
-                    { text: 'Width', dataField: 'width', width:100},
-                    { text: 'Height', dataField: 'height', width:100},
-                    { text: 'Row Per Page', dataField: 'row_per_page', width:100}
+                    { text: 'Purpose', dataField: 'purpose', pinned: true},
+                    { text: 'Controller', dataField: 'controller', width:220},
+                    { text: 'Method', dataField: 'method', width:220},
+                    { text: 'Width', dataField: 'width', cellsalign: 'right', width:70},
+                    { text: 'Height', dataField: 'height', cellsalign: 'right', width:70},
+                    { text: 'Row Per Page', dataField: 'row_per_page', cellsalign: 'right', width:100}
                 ]
             });
     });

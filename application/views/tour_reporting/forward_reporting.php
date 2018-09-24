@@ -38,7 +38,6 @@ if ($all_reporting)
 {
     foreach ($all_reporting as $reporting)
     {
-        //$purposes[$reporting['purpose_id']]['purpose'] =
         $purposes[$reporting['purpose_id']]['reporting'][$reporting['id']] = array(
             "date_reporting" => $reporting['date_reporting'],
             "report_description" => $reporting['report_description'],
@@ -47,6 +46,8 @@ if ($all_reporting)
             "contact_no" => $reporting['contact_no'],
             "profession" => $reporting['profession'],
             "discussion" => $reporting['discussion'],
+            "image_name" => $reporting['image_name'],
+            "image_location" => $reporting['image_location'],
             "date_created" => $reporting['date_created']
         );
     }
@@ -87,6 +88,13 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
         white-space: nowrap
     }
     .entry_date{font-size:0.85em; white-space:nowrap}
+    .blob img{width:300px}
+    .blob {
+        display:inline-block;
+        padding:3px;
+        border: 3px solid #8c8c8c
+    }
+    .blob:hover{border:3px solid #3693CF}
 </style>
 
 <div class="row widget">
@@ -373,7 +381,7 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
                                 ?>
                                 <table class="table table-bordered report-wrap">
                                     <tr>
-                                        <td rowspan="5" style="width:17%">
+                                        <td rowspan="6" style="width:17%">
                                             <b><?php echo System_helper::display_date($report['date_reporting']) ?></b>
                                             <br/><i class="entry_date">( Entry Date &amp; Time:<br/><?php echo System_helper::display_date_time($report['date_created']); ?> )</i>
                                         </td>
@@ -419,6 +427,22 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
                                         </tr>
                                     <?php
                                     }
+                                    if ((trim($report['image_name']) != "") && (trim($report['image_location']) != ""))
+                                    {
+                                        $dir = (FCPATH) . 'images/tour_reporting/' . $item['tour_setup_id'];
+                                        if (is_dir($dir) && file_exists($report['image_location'])) {
+                                            $img_src = base_url($report['image_location']);
+                                        }
+                                        else {
+                                            $img_src = base_url('images/no_image.jpg');
+                                        }
+                                        ?>
+                                        <tr>
+                                            <td><label class="control-label"> Picture </label></td>
+                                            <td colspan="3"><a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="Image Missing" /></a></td>
+                                        </tr>
+                                    <?php
+                                    }
                                     ?>
                                 </table>
                             <?php
@@ -434,14 +458,6 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
             <?php } ?>
         </table>
     </div>
-
-
-
-
-
-
-
-
 
     <div class="clearfix"></div>
 </div>

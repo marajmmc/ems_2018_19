@@ -400,7 +400,6 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
         var top = ((($(window).height() - 550) / 2) + $(window).scrollTop());
         $("#popup_window").jqxWindow({position: { x: left, y: top  }});
 
-        $(document).off("click", ".pop_up");
         $(document).on("click", ".pop_up", function (event) {
             event.preventDefault();
             var id =<?php echo $item['tour_setup_id']; ?>;

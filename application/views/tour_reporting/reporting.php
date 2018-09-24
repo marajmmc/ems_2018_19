@@ -12,6 +12,8 @@ $action_buttons[] = array(
     'data-form' => '#save_form'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
+
+$img_width = 300;
 ?>
 <style>
     .integer_type_positive {
@@ -33,6 +35,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
     .delete-btn-wrap button {
         font-size: 1.5em;
+    }
+
+    .badge {
+        display: none !important
+    }
+
+    .blob img {
+        border: 2px dashed #8c8c8c
     }
 
     .reporting {
@@ -60,6 +70,16 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
     .no-padding-right {
         padding-right: 0 !important;
+    }
+
+    div.reporting {
+        position: relative
+    }
+
+    div.blob {
+        position: absolute;
+        bottom: 105px;
+        right: 0
     }
 
 </style>
@@ -167,206 +187,252 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 </div>
 
 <div>
-    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
 
-    <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
-    <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0"/>
-    <input type="hidden" name="item[date_reporting]" value="<?php echo $reporting_date; ?>"/>
+<input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
+<input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0"/>
+<input type="hidden" name="item[date_reporting]" value="<?php echo $reporting_date; ?>"/>
 
-    <div id="tour_setup_container" style="overflow-x:auto;">
-        <div class="col-xs-12 widget-header" style="font-size:1.2em; margin-bottom:0; border-top:1px solid #cfcfcf">
-            <label class="control-label" style="margin:0">Reporting ( <?php echo System_helper::display_date($reporting_date); ?> )</label>
-        </div>
-        <?php
-        if ($items) // OLD ITEMS
-        {
-            foreach ($items as $info)
-            {
-                ?>
-                <div class="col-xs-12 reporting">
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Purpose <span style="color:#FF0000">*</span></label>
-                        </div>
-                        <div class="col-xs-4">
-                            <label class="control-label"><?php echo $info['purpose']; ?></label>
-                            <input type="hidden" name="old_items[<?php echo $info['report_id']; ?>][purpose]" value="<?php echo $info['purpose_id']; ?>"/>
-                        </div>
-                        <div class="col-xs-4 delete-btn-wrap">
-                            <button class="btn btn-sm btn-danger system_button_add_delete" title="Delete">X</button>
-                        </div>
-                    </div>
+<div id="tour_setup_container" style="overflow-x:auto;">
+<div class="col-xs-12 widget-header" style="font-size:1.2em; margin-bottom:0; border-top:1px solid #cfcfcf">
+    <label class="control-label" style="margin:0">Reporting ( <?php echo System_helper::display_date($reporting_date); ?> )</label>
+</div>
 
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Report (Description)
-                                <span style="color:#FF0000">*</span></label>
-                        </div>
-                        <div class="col-xs-4">
-                            <textarea class="form-control content-report-description" name="old_items[<?php echo $info['report_id']; ?>][report_description]"><?php echo $info['report_description']; ?></textarea>
-                        </div>
-                    </div>
-
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Recommendation <span style="color:#FF0000">*</span></label>
-                        </div>
-                        <div class="col-xs-4">
-                            <textarea class="form-control content-recommendation" name="old_items[<?php echo $info['report_id']; ?>][recommendation]"><?php echo $info['recommendation']; ?></textarea>
-                        </div>
-                    </div>
-
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Contact person (If any)</label>
-                        </div>
-                        <div class="col-xs-4">
-                            <input type="text" class="form-control content-other-name" value="<?php echo $info['name']; ?>" name="old_items[<?php echo $info['report_id']; ?>][other_name]"/>
-                        </div>
-                    </div>
-
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Contact No. (If any)</label>
-                        </div>
-                        <div class="col-xs-4">
-                            <input type="text" class="form-control integer_type_positive content-other-contact" value="<?php echo $info['contact_no']; ?>" name="old_items[<?php echo $info['report_id']; ?>][other_contact]"/>
-                        </div>
-                    </div>
-
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Profession (If any)</label>
-                        </div>
-                        <div class="col-xs-4">
-                            <input type="text" class="form-control content-other-profession" value="<?php echo $info['profession']; ?>" name="old_items[<?php echo $info['report_id']; ?>][other_profession]"/>
-                        </div>
-                    </div>
-
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Discussion (If any)</label>
-                        </div>
-                        <div class="col-xs-4">
-                            <textarea class="form-control content-other-discussion" name="old_items[<?php echo $info['report_id']; ?>][other_discussion]"><?php echo $info['discussion']; ?></textarea>
-                        </div>
-                    </div>
+<?php
+if ($items) // OLD ITEMS
+{
+    foreach ($items as $info)
+    {
+        ?>
+        <div class="col-xs-12 reporting">
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Purpose <span style="color:#FF0000">*</span></label>
                 </div>
-            <?php
-            }
-        }
-        else
-        {
-            ?>
+                <div class="col-xs-4">
+                    <label class="control-label"><?php echo $info['purpose']; ?></label>
+                    <input type="hidden" name="old_items[<?php echo $info['report_id']; ?>][purpose]" value="<?php echo $info['purpose_id']; ?>"/>
+                </div>
+                <div class="col-xs-4 delete-btn-wrap">
+                    <button class="btn btn-sm btn-danger system_button_add_delete" title="Delete">X</button>
+                </div>
+            </div>
 
-            <div class="col-xs-12 reporting">
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Purpose <span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-3 no-padding-right">
-                        <select class="form-control content-purpose" name="items[0][purpose]">
-                            <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                            <?php
-                            if ($item['purposes'])
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Report (Description)
+                        <span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-xs-4">
+                    <textarea class="form-control content-report-description" name="old_items[<?php echo $info['report_id']; ?>][report_description]"><?php echo $info['report_description']; ?></textarea>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Recommendation <span style="color:#FF0000">*</span></label>
+                </div>
+                <div class="col-xs-4">
+                    <textarea class="form-control content-recommendation" name="old_items[<?php echo $info['report_id']; ?>][recommendation]"><?php echo $info['recommendation']; ?></textarea>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Contact person (If any)</label>
+                </div>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control content-other-name" value="<?php echo $info['name']; ?>" name="old_items[<?php echo $info['report_id']; ?>][other_name]"/>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Contact No. (If any)</label>
+                </div>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control integer_type_positive content-other-contact" value="<?php echo $info['contact_no']; ?>" name="old_items[<?php echo $info['report_id']; ?>][other_contact]"/>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Profession (If any)</label>
+                </div>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control content-other-profession" value="<?php echo $info['profession']; ?>" name="old_items[<?php echo $info['report_id']; ?>][other_profession]"/>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Discussion (If any)</label>
+                </div>
+                <div class="col-xs-4">
+                    <textarea class="form-control content-other-discussion" name="old_items[<?php echo $info['report_id']; ?>][other_discussion]"><?php echo $info['discussion']; ?></textarea>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Picture (If any)</label>
+                </div>
+                <div class="col-xs-4">
+                    <input type="file" class="form-control old_browse_button" name="old_image_<?php echo $info['id']; ?>" data-preview-container="#old_image_reporting_<?php echo $info['id']; ?>" data-preview-width="<?php echo $img_width; ?>"/>
+                </div>
+            </div>
+
+            <div class="row show-grid">
+                <div class="col-xs-4">&nbsp;</div>
+                <div class="col-xs-4 blob" id="old_image_reporting_<?php echo $info['id']; ?>">
+                    <div style="width:<?php echo $img_width; ?>px">
+                        <?php
+                        if (trim($info['image_name']) != "")
+                        {
+                            $dir = (FCPATH) . 'images/tour_reporting/' . $info['tour_id'];
+                            if (is_dir($dir) && file_exists($info['image_location']))
                             {
-                                foreach ($item['purposes'] as $row)
-                                {
-                                    ?>
-                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['purpose']; ?></option><?php
-                                }
+                                ?><img width="100%" src="<?php echo base_url($info['image_location']); ?>" alt="Image Missing"/><?php
                             }
+                            else
+                            {
+                                ?><img width="70%" src="<?php echo base_url('images/no_image.jpg'); ?>" alt="Image Missing" /><?php
+                            }
+                        } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+}
+else
+{
+    ?>
+
+    <div class="col-xs-12 reporting">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Purpose <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-xs-3 no-padding-right">
+                <select class="form-control content-purpose" name="items[0][purpose]">
+                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                    <?php
+                    if ($item['purposes'])
+                    {
+                        foreach ($item['purposes'] as $row)
+                        {
                             ?>
-                        </select>
-                    </div>
-                    <div class="col-xs-1" style="text-align:center">
-                        <label class="control-label">- OR -</label>
-                    </div>
-                    <div class="col-xs-3 no-padding-left wrap-additional">
-                        <input type="text" class="form-control content-purpose-additional" name="items[0][purpose_additional]" placeholder="Enter New Purpose"/>
-                        <span>Already in Purpose List.</span>
-                    </div>
-                    <div class="col-xs-1 delete-btn-wrap">
-                        <button class="btn btn-sm btn-danger system_button_add_delete" title="Delete">X</button>
-                    </div>
-                </div>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Report (Description)
-                            <span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-4">
-                        <textarea class="form-control content-report-description" name="items[0][report_description]"></textarea>
-                    </div>
-                </div>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Recommendation
-                            <span style="color:#FF0000">*</span></label>
-                    </div>
-                    <div class="col-xs-4">
-                        <textarea class="form-control content-recommendation" name="items[0][recommendation]"></textarea>
-                    </div>
-                </div>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Contact person (If any)</label>
-                    </div>
-                    <div class="col-xs-4">
-                        <input type="text" class="form-control content-other-name" name="items[0][other_name]"/>
-                    </div>
-                </div>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Contact No. (If any)</label>
-                    </div>
-                    <div class="col-xs-4">
-                        <input type="text" class="form-control integer_type_positive content-other-contact" name="items[0][other_contact]"/>
-                    </div>
-                </div>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Profession (If any)</label>
-                    </div>
-                    <div class="col-xs-4">
-                        <input type="text" class="form-control content-other-profession" name="items[0][other_profession]"/>
-                    </div>
-                </div>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Discussion (If any)</label>
-                    </div>
-                    <div class="col-xs-4">
-                        <textarea class="form-control content-other-discussion" name="items[0][other_discussion]"></textarea>
-                    </div>
-                </div>
+                            <option value="<?php echo $row['id']; ?>"><?php echo $row['purpose']; ?></option><?php
+                        }
+                    }
+                    ?>
+                </select>
             </div>
-        <?php } ?>
-    </div>
-
-    <div class="row show-grid" style="margin:5px 0 0">
-        <div class="col-xs-12">
-            <div class="pull-right" style="display:inline-block">
-                <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
+            <div class="col-xs-1" style="text-align:center">
+                <label class="control-label">- OR -</label>
             </div>
-            <div class="clearfix"></div>
+            <div class="col-xs-3 no-padding-left wrap-additional">
+                <input type="text" class="form-control content-purpose-additional" name="items[0][purpose_additional]" placeholder="Enter New Purpose"/>
+                <span>Already in Purpose List.</span>
+            </div>
+            <div class="col-xs-1 delete-btn-wrap">
+                <button class="btn btn-sm btn-danger system_button_add_delete" title="Delete">X</button>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Report (Description)
+                    <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-xs-4">
+                <textarea class="form-control content-report-description" name="items[0][report_description]"></textarea>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Recommendation <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-xs-4">
+                <textarea class="form-control content-recommendation" name="items[0][recommendation]"></textarea>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Contact person (If any)</label>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" class="form-control content-other-name" name="items[0][other_name]"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Contact No. (If any)</label>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" class="form-control integer_type_positive content-other-contact" name="items[0][other_contact]"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Profession (If any)</label>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" class="form-control content-other-profession" name="items[0][other_profession]"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Discussion (If any)</label>
+            </div>
+            <div class="col-xs-4">
+                <textarea class="form-control content-other-discussion" name="items[0][other_discussion]"></textarea>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Picture (If any)</label>
+            </div>
+            <div class="col-xs-4">
+                <input type="file" class="form-control content-image old_browse_button" name="new_image_0" data-preview-container="#image_reporting_0" data-preview-width="<?php echo $img_width; ?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">&nbsp;</div>
+            <div class="col-xs-4 blob" id="image_reporting_0">
+                <!----- Image blob here ----->
+            </div>
         </div>
     </div>
+<?php } ?>
+</div>
 
-    <div class="row show-grid" style="margin:0">
-        <div class="col-xs-12">
-            <div class="action_button" style="width:100%; text-align:center">
-                <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
-            </div>
+<div class="row show-grid" style="margin:5px 0 0">
+    <div class="col-xs-12">
+        <div class="pull-right" style="display:inline-block">
+            <button type="button" class="btn btn-warning system_button_add_more" data-current-id="0"><?php echo $CI->lang->line('LABEL_ADD_MORE'); ?></button>
         </div>
         <div class="clearfix"></div>
     </div>
+</div>
+
+<div class="row show-grid" style="margin:0">
+    <div class="col-xs-12">
+        <div class="action_button" style="width:100%; text-align:center">
+            <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
 
 </form>
 </div>
@@ -465,6 +531,22 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <textarea class="form-control content-other-discussion"></textarea>
             </div>
         </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Picture (If any)</label>
+            </div>
+            <div class="col-xs-4">
+                <input type="file" class="form-control content-image browse_button" data-preview-width="<?php echo $img_width; ?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">&nbsp;</div>
+            <div class="col-xs-4 blob">
+                <!----- Image blob here ----->
+            </div>
+        </div>
     </div>
 
 </div>
@@ -481,10 +563,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <script type="text/javascript">
 
     jQuery(document).ready(function ($) {
-        $(".datepicker").datepicker({dateFormat: display_date_format});
-
         $(document).off("click", ".system_button_add_more");
         $(document).off("click", ".system_button_add_delete");
+
+        $(".datepicker").datepicker({dateFormat: display_date_format});
+        $(".old_browse_button").filestyle({input: false, icon: false, buttonText: "Upload Picture", buttonName: "btn-primary"});
 
         $(document).on("click", ".system_button_add_more", function (event) {
             var current_id = parseInt($(this).attr('data-current-id'));
@@ -500,9 +583,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             $(content_id + ' .content-other-contact').attr('name', 'items[' + current_id + '][other_contact]');
             $(content_id + ' .content-other-profession').attr('name', 'items[' + current_id + '][other_profession]');
             $(content_id + ' .content-other-discussion').attr('name', 'items[' + current_id + '][other_discussion]');
+            $(content_id + ' .content-image').attr('name', 'new_image_' + current_id);
+
+            $(content_id + ' .content-image').attr('data-preview-container', '#image_reporting_' + current_id);
+            $(content_id + ' .blob').attr('id', 'image_reporting_' + current_id);
+            $(content_id + ' .browse_button').attr('id', 'browse_button_' + current_id);
 
             var content = $(content_id).html();
             $("#tour_setup_container").append(content);
+            $("#browse_button_" + current_id).filestyle({input: false, icon: false, buttonText: "Upload Picture", buttonName: "btn-primary"});
         });
         $(document).on("click", ".system_button_add_delete", function (event) {
             event.preventDefault();

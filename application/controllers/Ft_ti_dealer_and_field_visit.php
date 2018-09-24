@@ -549,6 +549,11 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
         }
         else
         {
+
+            echo '<pre>';
+            print_r($_FILES);
+            echo '</pre>'; die();
+
             $path='images/dealer_and_farmer_visit/'.$item['farmer_id'];
             $dir=(FCPATH).$path;
             if(!is_dir($dir))
