@@ -5,6 +5,7 @@ class Tour_iou_payment extends Root_Controller
     public $message;
     public $permissions;
     public $controller_url;
+    public $locations;
 
     public function __construct()
     {
