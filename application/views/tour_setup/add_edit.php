@@ -260,8 +260,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     jQuery(document).ready(function () {
         $(".datepicker").datepicker({dateFormat: display_date_format});
 
-        $(document).off("click", ".system_button_add_more");
-        $(document).off("click", ".system_button_add_delete");
         $(document).on("click", ".system_button_add_more", function (event) {
             var current_id = parseInt($(this).attr('data-current-id'));
             current_id = current_id + 1;
