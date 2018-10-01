@@ -6,6 +6,10 @@ $config['offline_controllers']=array('home','sys_site_offline');
 $config['external_controllers']=array('home');//user can use them without login
 $config['system_max_actions']=8;
 
+$config['system_site_root_folder']='ems_2018_19';
+$config['system_upload_image_auth_key']='ems_2018_19';
+$config['system_upload_api_url']='http://180.234.223.205/api_file_server/upload';
+
 $config['system_status_yes']='Yes';
 $config['system_status_no']='No';
 $config['system_status_active']='Active';
@@ -30,16 +34,16 @@ $config['system_status_cl']='Casual Leave';
 $config['system_status_extended']='Extended';
 
 
-$config['system_base_url_profile_picture']='http://50.116.76.180/login/';
+$config['system_base_url_profile_picture']='http://180.234.223.205/login_2018_19/';
+$config['system_base_url_picture_setup_print']='http://180.234.223.205/ems_2018_19/';
+$config['system_base_url_dealer_and_farmer_visit']='http://180.234.223.205/ems_2018_19/';
+$config['system_base_url_ft_rnd_demo_setup_fruit_picture']='http://180.234.223.205/ems_2018_19/';
+$config['system_base_url_ft_rnd_demo_picture']='http://180.234.223.205/ems_2018_19/';
 
-$config['system_base_url_dealer_and_farmer_visit']='http://50.116.76.180/ems/';
-$config['system_base_url_ft_rnd_demo_setup_fruit_picture']='http://50.116.76.180/ems/';
-$config['system_base_url_ft_rnd_demo_picture']='http://50.116.76.180/ems/';
+$config['system_base_url_ft_field_visit']='http://180.234.223.205/ems_2018_19/';
+$config['system_base_url_survey_variety']='http://180.234.223.205/ems_2018_19/';
 
-$config['system_base_url_ft_field_visit']='http://localhost/ems_2018_19/';
-$config['system_base_url_survey_variety']='http://localhost/ems_2018_19/';
-
-$config['system_base_url_growing_are_visit']='http://localhost/ems_2018_19/';
+$config['system_base_url_growing_are_visit']='http://180.234.223.205/ems_2018_19/';
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;

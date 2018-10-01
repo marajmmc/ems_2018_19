@@ -251,11 +251,11 @@ class Ft_rnd_demo_picture extends Root_Controller
         $previous_varieties=$this->db->get()->result_array();
 
         $path='images/ft_rnd_demo_picture/'.$id;
-        $dir=(FCPATH).$path;
-        if(!is_dir($dir))
-        {
-            mkdir($dir, 0777);
-        }
+//        $dir=(FCPATH).$path;
+//        if(!is_dir($dir))
+//        {
+//            mkdir($dir, 0777);
+//        }
         $uploaded_files = System_helper::upload_file($path);
         foreach($uploaded_files as $file)
         {

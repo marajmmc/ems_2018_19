@@ -438,11 +438,11 @@ class Ft_field_visit_field_visit extends Root_Controller
         $previous_varieties=$this->db->get()->result_array();
 
         $path='images/field_visit/'.$id;
-        $dir=(FCPATH).$path;
-        if(!is_dir($dir))
-        {
-            mkdir($dir, 0777);
-        }
+//        $dir=(FCPATH).$path;
+//        if(!is_dir($dir))
+//        {
+//            mkdir($dir, 0777);
+//        }
         $uploaded_files = System_helper::upload_file($path);
         foreach($uploaded_files as $file)
         {

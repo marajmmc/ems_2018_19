@@ -169,11 +169,11 @@ class Ft_rnd_demo_setup_fruit_picture extends Root_Controller
         else
         {
             $path='images/ft_rnd_demo_setup_fruit_picture';
-            $dir=(FCPATH).$path;
-            if(!is_dir($dir))
-            {
-                mkdir($dir, 0777);
-            }
+//            $dir=(FCPATH).$path;
+//            if(!is_dir($dir))
+//            {
+//                mkdir($dir, 0777);
+//            }
             $uploaded_files = System_helper::upload_file($path);
             if(array_key_exists('image',$uploaded_files))
             {

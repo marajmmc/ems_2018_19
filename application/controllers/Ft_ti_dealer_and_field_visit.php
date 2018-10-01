@@ -555,11 +555,11 @@ class Ft_ti_dealer_and_field_visit extends Root_Controller
             echo '</pre>'; die();
 
             $path='images/dealer_and_farmer_visit/'.$item['farmer_id'];
-            $dir=(FCPATH).$path;
-            if(!is_dir($dir))
-            {
-                mkdir($dir, 0777);
-            }
+//            $dir=(FCPATH).$path;
+//            if(!is_dir($dir))
+//            {
+//                mkdir($dir, 0777);
+//            }
             $uploaded_files = System_helper::upload_file($path);
             if(array_key_exists('image_dealer_activities',$uploaded_files))
             {

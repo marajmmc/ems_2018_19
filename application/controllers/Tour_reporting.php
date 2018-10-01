@@ -794,11 +794,11 @@ class Tour_reporting extends Root_Controller
 
         // Image Saving
         $path = 'images/tour_reporting/' . $item_id;
-        $dir = (FCPATH) . str_replace("/", "\\", $path);
-        if (!is_dir($dir))
-        {
-            mkdir(FCPATH . $path, 0777, true);
-        }
+//        $dir = (FCPATH) . str_replace("/", "\\", $path);
+//        if (!is_dir($dir))
+//        {
+//            mkdir(FCPATH . $path, 0777, true);
+//        }
         $uploaded_files = System_helper::upload_file($path);
         $image_info = array();
 

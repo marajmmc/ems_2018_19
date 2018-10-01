@@ -265,11 +265,11 @@ class Setup_ft_dealer_file extends Root_Controller
         {
             $allowed_types='pdf|doc|docx|xls|xlsx';
             $path='images/setup_dealer_file/'.$item['farmer_id'];
-            $dir=(FCPATH).$path;
-            if(!is_dir($dir))
-            {
-                mkdir($dir, 0777);
-            }
+//            $dir=(FCPATH).$path;
+//            if(!is_dir($dir))
+//            {
+//                mkdir($dir, 0777);
+//            }
             $uploaded_files = System_helper::upload_file($path,$allowed_types);
             $this->db->trans_start();  //DB Transaction Handle START
             $files=$this->input->post('files');

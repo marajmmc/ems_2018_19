@@ -745,11 +745,11 @@ class Da_tmpo_setup_growing_area_visit_attendance extends Root_Controller
         }*/
 
         $path='images/growing_area_visit/'.$area_id;
-        $dir=(FCPATH).$path;
-        if(!is_dir($dir))
-        {
-            mkdir($dir, 0777);
-        }
+//        $dir=(FCPATH).$path;
+//        if(!is_dir($dir))
+//        {
+//            mkdir($dir, 0777);
+//        }
         $uploaded_files = System_helper::upload_file($path);
 
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');

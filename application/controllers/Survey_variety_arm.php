@@ -623,11 +623,11 @@ class Survey_variety_arm extends Root_Controller
             $this->json_return($ajax);
         }
         $path='images/survey_variety/'.$item['variety_id'];
-        $dir=(FCPATH).$path;
-        if(!is_dir($dir))
-        {
-            mkdir($dir, 0777);
-        }
+//        $dir=(FCPATH).$path;
+//        if(!is_dir($dir))
+//        {
+//            mkdir($dir, 0777);
+//        }
         $uploaded_files=array();
         if($file_type==$this->config->item('system_file_type_video'))
         {
