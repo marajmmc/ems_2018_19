@@ -35,15 +35,7 @@ $config['system_status_extended']='Extended';
 
 
 $config['system_base_url_profile_picture']='http://180.234.223.205/login_2018_19/';
-$config['system_base_url_picture_setup_print']='http://180.234.223.205/ems_2018_19/';
-$config['system_base_url_dealer_and_farmer_visit']='http://180.234.223.205/ems_2018_19/';
-$config['system_base_url_ft_rnd_demo_setup_fruit_picture']='http://180.234.223.205/ems_2018_19/';
-$config['system_base_url_ft_rnd_demo_picture']='http://180.234.223.205/ems_2018_19/';
-
-$config['system_base_url_ft_field_visit']='http://180.234.223.205/ems_2018_19/';
-$config['system_base_url_survey_variety']='http://180.234.223.205/ems_2018_19/';
-
-$config['system_base_url_growing_are_visit']='http://180.234.223.205/ems_2018_19/';
+$config['system_base_url_picture']='http://180.234.223.205/ems_2018_19/';
 
 $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;

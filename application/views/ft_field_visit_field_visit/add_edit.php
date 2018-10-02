@@ -165,7 +165,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 }
                                 ?>
                                 <div class="col-xs-4" id="visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_plot_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_plot_location; ?>">
                                 </div>
                             </td>
                             <td><?php
@@ -199,7 +199,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 }
                                 ?>
                                 <div class="col-xs-4" id="visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_plant_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_plant_location; ?>">
                                 </div>
                             </td>
                             <td><?php
@@ -316,7 +316,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                 }
                                 ?>
                                 <div class="col-xs-4" id="fruit_image_<?php echo $headers['id'].'_'.$variety['variety_id']; ?>">
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </div>
                             </td>
                             <td><?php
@@ -414,7 +414,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                         $image_location=$disease_info['image_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </div>
                             </td>
                             <td>
@@ -465,7 +465,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <input type="hidden" class="variety_id" value="0">
             </td>
             <td>
-                <div class="disease_image_container"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').'images/no_image.jpg';?>"></div>
+                <div class="disease_image_container"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').'images/no_image.jpg';?>"></div>
             </td>
             <td>
                 <input type="file" class="browse_button_new"><br>

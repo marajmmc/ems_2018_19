@@ -120,7 +120,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <label class="control-label">
                         <?php if(sizeof($dealer_info_file)>0){?>
                            <?php foreach($dealer_info_file as $key=>$file){$key++;?>
-                               <a href="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$file['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$key;?></a>
+                               <a href="<?php echo $CI->config->item('system_base_url_picture').$file['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$key;?></a>
                            <?php } ?>
 
                         <?php } ?>
@@ -135,7 +135,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Attachment(Document)</label></td>
-                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_lead_farmer_visit_one']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_one']; ?>"></td>
+                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_lead_farmer_visit_one']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_one']; ?>"></td>
             </tr>
 
             <tr>
@@ -145,7 +145,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Attachment(Document)</label></td>
-                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_lead_farmer_visit_two']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_two']; ?>"></td>
+                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_lead_farmer_visit_two']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_two']; ?>"></td>
             </tr>
 
             <tr>
@@ -155,7 +155,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Attachment(Document)</label></td>
-                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_lead_farmer_visit_three']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_three']; ?>"></td>
+                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_lead_farmer_visit_three']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_three']; ?>"></td>
             </tr>
 
             <tr>
@@ -165,7 +165,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Attachment(Document)</label></td>
-                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_farmer_visit']; ?>" alt="<?php echo $item['image_name_farmer_visit']; ?>"></td>
+                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_farmer_visit']; ?>" alt="<?php echo $item['image_name_farmer_visit']; ?>"></td>
             </tr>
 
             <tr>
@@ -175,7 +175,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
             <tr>
                 <td class="widget-header header_caption"><label class="control-label pull-right">Attachment(Document)</label></td>
-                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_dealer_visit']; ?>" alt="<?php echo $item['image_name_dealer_visit']; ?>"></td>
+                <td colspan="3" class=" header_value"><img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_dealer_visit']; ?>" alt="<?php echo $item['image_name_dealer_visit']; ?>"></td>
             </tr>
 
             <?php if($item['other_activities']){?>

@@ -151,7 +151,7 @@ $CI =& get_instance();
                                         $image_plot_location=$visits_picture[$i][$variety['variety_id']]['image_plot_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_plot_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_plot_location; ?>">
                                 </td>
                                 <td>
                                     <?php
@@ -161,7 +161,7 @@ $CI =& get_instance();
                                         $image_plant_location=$visits_picture[$i][$variety['variety_id']]['image_plant_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_plant_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_plant_location; ?>">
                                 </td>
                                 <td>
                                     <?php
@@ -246,7 +246,7 @@ $CI =& get_instance();
                                         $image_location=$fruits_picture[$headers['id']][$variety['variety_id']]['image_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </td>
                                 <td>
                                     <?php
@@ -341,7 +341,7 @@ $CI =& get_instance();
                                         $image_location=$disease_info['image_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_field_visit').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </td>
                                 <td>
                                     <?php

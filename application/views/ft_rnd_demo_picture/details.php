@@ -137,7 +137,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                         $image_location=$visits_picture[$i][$variety['variety_id']]['image_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_rnd_demo_picture').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </td>
                                 <td>
                                     <?php
@@ -221,7 +221,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                         $image_location=$fruits_picture[$headers['id']][$variety['variety_id']]['image_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_rnd_demo_picture').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </td>
                                 <td>
                                     <?php
@@ -299,7 +299,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                         $image_location=$disease_info['image_location'];
                                     }
                                     ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_rnd_demo_picture').$image_location; ?>">
+                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
                                 </td>
                                 <td>
                                     <?php

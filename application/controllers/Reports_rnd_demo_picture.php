@@ -337,7 +337,7 @@ class Reports_rnd_demo_picture extends Root_Controller
                     $image_url=base_url().'images/no_image.jpg';
                     if(strlen($visit['image_location'])>0)
                     {
-                        $image_url=$this->config->item('system_base_url_ft_rnd_demo_picture').$visit['image_location'];
+                        $image_url=$this->config->item('system_base_url_picture').$visit['image_location'];
                     }
                     $day_visit=System_helper::display_date($item['date_sowing']+24*3600*$visit['day_no']*$item['interval']);
                     $html_row='<div class="pop_up" data-item-no="'.$i.'" data-details-key="visit_pictures_'.$visit['day_no'].'" style="height: 125px;width: 133px;cursor:pointer;">';
@@ -363,7 +363,7 @@ class Reports_rnd_demo_picture extends Root_Controller
                     $image_url=base_url().'images/no_image.jpg';
                     if(strlen($visit['image_location'])>0)
                     {
-                        $image_url=$this->config->item('system_base_url_ft_rnd_demo_picture').$visit['image_location'];
+                        $image_url=$this->config->item('system_base_url_picture').$visit['image_location'];
                     }
                     $day_visit=System_helper::display_date($visit['date_created']);
                     $html_row='<div class="pop_up" data-item-no="'.$i.'" data-details-key="fruit_pictures_'.$visit['picture_id'].'" style="height: 125px;width: 133px;cursor:pointer;">';
@@ -388,7 +388,7 @@ class Reports_rnd_demo_picture extends Root_Controller
                     $image_url=base_url().'images/no_image.jpg';
                     if(strlen($visit['image_location'])>0)
                     {
-                        $image_url=$this->config->item('system_base_url_ft_rnd_demo_picture').$visit['image_location'];
+                        $image_url=$this->config->item('system_base_url_picture').$visit['image_location'];
                     }
 
                     $day_visit=System_helper::display_date($visit['date_created']);

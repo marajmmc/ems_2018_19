@@ -91,7 +91,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <label class="control-label pull-right"></label>
                 </div>
                 <div class="col-xs-4" id="image_variety_info">
-                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_survey_variety').$item['file_location']; ?>" alt="<?php echo $item['file_name']; ?>">
+                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['file_location']; ?>" alt="<?php echo $item['file_name']; ?>">
                 </div>
             </div>
         <?php } else if($file_type==$CI->config->item('system_file_type_video')){?>
@@ -103,7 +103,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <div class="col-xs-4">
                     <div id="video_preview_container_id">
                         <video width="300" controls id="video_preview_id">
-                            <source src="<?php if(strlen($item['file_location'])>0){ echo $CI->config->item('system_base_url_survey_variety').$item['file_location'];}?>" id="competitor_variety_video">
+                            <source src="<?php if(strlen($item['file_location'])>0){ echo $CI->config->item('system_base_url_picture').$item['file_location'];}?>" id="competitor_variety_video">
                         </video>
                     </div>
                     <div>

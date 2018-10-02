@@ -164,11 +164,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             if($farmer['image_location'])
                             {
-                                $farmer_img=$CI->config->item('system_base_url_growing_are_visit').$farmer['image_location'];
+                                $farmer_img=$CI->config->item('system_base_url_picture').$farmer['image_location'];
                             }
                             else
                             {
-                                $farmer_img=$CI->config->item('system_base_url_growing_are_visit').'images/no_image.jpg';
+                                $farmer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
                             }
                             ?>
                             <tr>
@@ -224,11 +224,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             if($dealer['image_location'])
                             {
-                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').$dealer['image_location'];
+                                $dealer_img=$CI->config->item('system_base_url_picture').$dealer['image_location'];
                             }
                             else
                             {
-                                $dealer_img=$CI->config->item('system_base_url_growing_are_visit').'images/no_image.jpg';
+                                $dealer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
                             }
                             ?>
                             <tr>

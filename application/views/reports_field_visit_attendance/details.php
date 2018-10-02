@@ -170,7 +170,7 @@ $CI = & get_instance();
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" id="image_lead_farmer_activities_one">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_lead_farmer_visit_one']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_one']; ?>">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_lead_farmer_visit_one']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_one']; ?>">
             </div>
         </div>
 
@@ -187,7 +187,7 @@ $CI = & get_instance();
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" id="image_lead_farmer_activities_two">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_lead_farmer_visit_two']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_two']; ?>">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_lead_farmer_visit_two']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_two']; ?>">
             </div>
         </div>
 
@@ -204,7 +204,7 @@ $CI = & get_instance();
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" id="image_lead_farmer_activities_three">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_lead_farmer_visit_three']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_three']; ?>">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_lead_farmer_visit_three']; ?>" alt="<?php echo $item['image_name_lead_farmer_visit_three']; ?>">
             </div>
         </div>
 
@@ -221,7 +221,7 @@ $CI = & get_instance();
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" id="image_farmer_activities">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_farmer_visit']; ?>" alt="<?php echo $item['image_name_farmer_visit']; ?>">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_farmer_visit']; ?>" alt="<?php echo $item['image_name_farmer_visit']; ?>">
             </div>
         </div>
 
@@ -238,7 +238,7 @@ $CI = & get_instance();
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" id="image_dealer_activities">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location_dealer_visit']; ?>" alt="<?php echo $item['image_name_dealer_visit']; ?>">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location_dealer_visit']; ?>" alt="<?php echo $item['image_name_dealer_visit']; ?>">
             </div>
         </div>
 

@@ -40,8 +40,8 @@ if ($result)
     $width = $result['width'] * 100;
     $height = $result['height'] * 100;
     $row_per_page = $result['row_per_page'];
-    $header_image = base_url($CI->config->item('system_base_url_picture_setup_print') . $result['image_header_location']);
-    $footer_image = base_url($CI->config->item('system_base_url_picture_setup_print') . $result['image_footer_location']);
+    $header_image = base_url($CI->config->item('system_base_url_picture') . $result['image_header_location']);
+    $footer_image = base_url($CI->config->item('system_base_url_picture') . $result['image_footer_location']);
 }
 
 /*----------------------IOU Items------------------------------*/

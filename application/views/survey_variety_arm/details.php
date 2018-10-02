@@ -145,7 +145,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <?php if($item_image){?>
                     <?php foreach($item_image as $image){?>
                         <div class="col-sm-3 col-xs-4">
-                            <img class="img img-thumbnail img-responsive" style="height: 200px" src="<?php echo $CI->config->item('system_base_url_survey_variety').$image['file_location']; ?>" alt="<?php echo $image['file_name']; ?>">
+                            <img class="img img-thumbnail img-responsive" style="height: 200px" src="<?php echo $CI->config->item('system_base_url_picture').$image['file_location']; ?>" alt="<?php echo $image['file_name']; ?>">
                         </div>
                     <?php } ?>
                 <?php } else{?>
@@ -175,7 +175,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     <?php foreach($item_video as $video){?>
                         <div class="col-sm-3 col-xs-4">
                             <video class="img img-thumbnail img-responsive" style="height: 200px" controls>
-                                <source src="<?php if(isset($video['file_location'])){ echo $CI->config->item('system_base_url_survey_variety').$video['file_location'];}?>">
+                                <source src="<?php if(isset($video['file_location'])){ echo $CI->config->item('system_base_url_picture').$video['file_location'];}?>">
                             </video>
                         </div>
                     <?php } ?>

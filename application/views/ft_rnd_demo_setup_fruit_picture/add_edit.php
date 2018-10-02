@@ -56,7 +56,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="control-label pull-right">Picture</label>
             </div>
             <div class="col-xs-4" id="image">
-                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_ft_rnd_demo_setup_fruit_picture').$item['image_location']; ?>">
+                <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$item['image_location']; ?>">
             </div>
             <div class="col-xs-4">
                 <input type="file" class="browse_button" data-preview-container="#image" name="image">

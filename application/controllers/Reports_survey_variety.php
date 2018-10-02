@@ -209,7 +209,7 @@ class Reports_survey_variety extends Root_Controller
 
             if(isset($files[$result['id']]))
             {
-                $image=$this->config->item('system_base_url_survey_variety').$files[$result['id']];
+                $image=$this->config->item('system_base_url_picture').$files[$result['id']];
             }
             else
             {

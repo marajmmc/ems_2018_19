@@ -113,7 +113,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             <tr>
                                 <td>
                                     <div class="preview_container_file" id="preview_container_file_<?php echo $index+1;?>">
-                                        <a href="<?php echo $CI->config->item('system_base_url_dealer_and_farmer_visit').$item['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$serial; $serial++ ?></a>
+                                        <a href="<?php echo $CI->config->item('system_base_url_picture').$item['image_location']; ?>" class="external btn btn-danger" target="_blank"><?php echo 'File '.$serial; $serial++ ?></a>
                                     </div>
                                 </td>
                                 <td>

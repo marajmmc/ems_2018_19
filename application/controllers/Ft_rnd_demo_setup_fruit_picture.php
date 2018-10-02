@@ -65,7 +65,7 @@ class Ft_rnd_demo_setup_fruit_picture extends Root_Controller
         $items=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),array('id','name','ordering','image_location','image_name'),array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering ASC'));
         foreach($items as &$item)
         {
-            $image=$this->config->item('system_base_url_ft_rnd_demo_setup_fruit_picture').$item['image_location'];
+            $image=$this->config->item('system_base_url_picture').$item['image_location'];
             $item['picture']='<img src="'.$image.'" style="max-height: 100px;max-width: 133px;">';
         }
         $this->json_return($items);
