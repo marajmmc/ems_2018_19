@@ -31,8 +31,8 @@ if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != "
 $width = 8.27 * 100;
 $height = 11.69 * 100;
 $row_per_page = 20;
-$header_image = base_url('images/print/header.jpg');
-$footer_image = base_url('images/print/footer.jpg');
+$header_image = $CI->config->item('system_base_url_picture').'images/print/header.jpg';
+$footer_image = $CI->config->item('system_base_url_picture').'images/print/footer.jpg';
 
 $result = Query_helper::get_info($CI->config->item('table_system_setup_print'), '*', array('controller ="' . $this->controller_url . '"', 'method ="print_requisition"'), 1);
 if ($result)
@@ -40,8 +40,8 @@ if ($result)
     $width = $result['width'] * 100;
     $height = $result['height'] * 100;
     $row_per_page = $result['row_per_page'];
-    $header_image = base_url($CI->config->item('system_base_url_picture') . $result['image_header_location']);
-    $footer_image = base_url($CI->config->item('system_base_url_picture') . $result['image_footer_location']);
+    $header_image = $CI->config->item('system_base_url_picture') . $result['image_header_location'];
+    $footer_image = $CI->config->item('system_base_url_picture') . $result['image_footer_location'];
 }
 
 /*----------------------IOU Items------------------------------*/

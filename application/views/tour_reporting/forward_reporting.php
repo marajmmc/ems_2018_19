@@ -427,23 +427,12 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
                                         </tr>
                                     <?php
                                     }
-                                    if ((trim($report['image_name']) != "") && (trim($report['image_location']) != ""))
-                                    {
-                                        $dir = (FCPATH) . 'images/tour_reporting/' . $item['tour_setup_id'];
-                                        if (is_dir($dir) && file_exists($report['image_location'])) {
-                                            $img_src = base_url($report['image_location']);
-                                        }
-                                        else {
-                                            $img_src = base_url('images/no_image.jpg');
-                                        }
-                                        ?>
-                                        <tr>
-                                            <td><label class="control-label"> Picture </label></td>
-                                            <td colspan="3"><a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="Image Missing" /></a></td>
-                                        </tr>
-                                    <?php
-                                    }
+                                    $img_src = $this->config->item('system_base_url_picture') . $report['image_location'];
                                     ?>
+                                    <tr>
+                                        <td><label class="control-label"> Picture </label></td>
+                                        <td colspan="3"><a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="Image Missing" /></a></td>
+                                    </tr>
                                 </table>
                             <?php
                             }

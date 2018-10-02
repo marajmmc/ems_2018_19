@@ -289,18 +289,9 @@ if ($items) // OLD ITEMS
                 <div class="col-xs-4 blob" id="old_image_reporting_<?php echo $info['id']; ?>">
                     <div style="width:<?php echo $img_width; ?>px">
                         <?php
-                        if (trim($info['image_name']) != "")
-                        {
-                            $dir = (FCPATH) . 'images/tour_reporting/' . $info['tour_id'];
-                            if (is_dir($dir) && file_exists($info['image_location']))
-                            {
-                                ?><img width="100%" src="<?php echo base_url($info['image_location']); ?>" alt="Image Missing"/><?php
-                            }
-                            else
-                            {
-                                ?><img width="70%" src="<?php echo base_url('images/no_image.jpg'); ?>" alt="Image Missing" /><?php
-                            }
-                        } ?>
+                        $img_src = $this->config->item('system_base_url_picture') . $info['image_location'];
+                        ?>
+                        <img width="100%" src="<?php echo $img_src; ?>" alt="No Image Found" />
                     </div>
                 </div>
             </div>

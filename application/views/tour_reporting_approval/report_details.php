@@ -98,24 +98,15 @@ $CI = & get_instance();
         </div>
     <?php
     }
-    if ((trim($item['image_name']) != "") && (trim($item['image_location']) != ""))
-    {
-        $dir = (FCPATH) . 'images/tour_reporting/' . $item['tour_id'];
-        if (is_dir($dir) && file_exists($item['image_location'])) {
-            $img_src = base_url($item['image_location']);
-        }
-        else {
-            $img_src = base_url('images/no_image.jpg');
-        }
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right">Picture:</label>
-            </div>
-            <div class="col-xs-8">
-                <a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="Image Missing" /></a>
-            </div>
+    $img_src = $this->config->item('system_base_url_picture') . $item['image_location'];
+    ?>
+    <div class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Picture:</label>
         </div>
-    <?php } ?>
+        <div class="col-xs-8">
+            <a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="Image Missing" /></a>
+        </div>
+    </div>
 </div>
 <div class="clearfix"></div>
