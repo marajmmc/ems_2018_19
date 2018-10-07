@@ -40,10 +40,12 @@ class Test extends CI_Controller {
         }*/
         echo '<pre>';
         print_r($this->agent);
+        print_r($_SERVER);
         echo '</pre>';
 
         echo '</br>';
-
+        $ip = $this->input->ip_address();
+        echo $ip;
         echo $this->agent->platform(); // Platform info (Windows, Linux, Mac, etc.)
 
     }
