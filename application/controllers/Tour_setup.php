@@ -179,21 +179,27 @@ class Tour_setup extends Root_Controller
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
+
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
         $this->db->select('user.employee_id, user.user_name, user.status');
+
         $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
         $this->db->select('user_info.name,user_info.ordering');
+
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
         $this->db->select('designation.name AS designation');
+
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
+
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_pending'));
-        if ($user->user_group != 1)
+        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
         }
@@ -218,19 +224,18 @@ class Tour_setup extends Root_Controller
         }
         $this->db->order_by('tour_setup.id', 'DESC');
         $items = $this->db->get()->result_array();
-
-        foreach ($items as $key => $item)
+        foreach ($items as &$item)
         {
-            $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
-            $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
-            $items[$key]['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
+            $item['date_from'] = System_helper::display_date($item['date_from']);
+            $item['date_to'] = System_helper::display_date($item['date_to']);
+            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
             if ($item['designation'] == '')
             {
-                $items[$key]['designation'] = '-';
+                $item['designation'] = '-';
             }
             if ($item['department_name'] == '')
             {
-                $items[$key]['department_name'] = '-';
+                $item['department_name'] = '-';
             }
         }
         $this->json_return($items);
@@ -281,20 +286,26 @@ class Tour_setup extends Root_Controller
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
+
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
         $this->db->select('user.employee_id, user.user_name, user.status');
+
         $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
         $this->db->select('user_info.name,user_info.ordering');
+
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
         $this->db->select('designation.name AS designation');
+
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
+
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-        if ($user->user_group != 1)
+        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
         }
@@ -321,18 +332,18 @@ class Tour_setup extends Root_Controller
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
 
-        foreach ($items as $key => $item)
+        foreach ($items as &$item)
         {
-            $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
-            $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
-            $items[$key]['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
+            $item['date_from'] = System_helper::display_date($item['date_from']);
+            $item['date_to'] = System_helper::display_date($item['date_to']);
+            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
             if ($item['designation'] == '')
             {
-                $items[$key]['designation'] = '-';
+                $item['designation'] = '-';
             }
             if ($item['department_name'] == '')
             {
-                $items[$key]['department_name'] = '-';
+                $item['department_name'] = '-';
             }
         }
 
@@ -370,20 +381,26 @@ class Tour_setup extends Root_Controller
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
+
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
         $this->db->select('user.employee_id, user.user_name, user.status');
+        
         $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
         $this->db->select('user_info.name,user_info.ordering');
+        
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
         $this->db->select('designation.name AS designation');
+        
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
+        
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-        if ($user->user_group != 1)
+        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
         {
             $this->db->where('tour_setup.user_id', $user->user_id);
         }
@@ -411,18 +428,18 @@ class Tour_setup extends Root_Controller
         $this->db->order_by('tour_setup.id', 'DESC');
         $items = $this->db->get()->result_array();
 
-        foreach ($items as $key => $item)
+        foreach ($items as &$item)
         {
-            $items[$key]['date_from'] = System_helper::display_date($item['date_from']);
-            $items[$key]['date_to'] = System_helper::display_date($item['date_to']);
-            $items[$key]['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
+            $item['date_from'] = System_helper::display_date($item['date_from']);
+            $item['date_to'] = System_helper::display_date($item['date_to']);
+            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
             if ($item['designation'] == '')
             {
-                $items[$key]['designation'] = '-';
+                $item['designation'] = '-';
             }
             if ($item['department_name'] == '')
             {
-                $items[$key]['department_name'] = '-';
+                $item['department_name'] = '-';
             }
         }
         $this->json_return($items);
@@ -435,10 +452,13 @@ class Tour_setup extends Root_Controller
             $user = User_helper::get_user();
             $this->db->from($this->config->item('table_login_setup_user') . ' user');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name,user_info.ordering');
+            
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation_name');
+            
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
             $this->db->where('user.status', $this->config->item('system_status_active'));
@@ -455,7 +475,7 @@ class Tour_setup extends Root_Controller
                 'title' => '',
                 'date_from' => '',
                 'date_to' => '',
-                'amount_iou_request' => 0.00,
+                'amount_iou_request' => System_helper::get_string_amount(0),
                 'amount_iou_items' => '',
                 'iou_details' => '',
                 'remarks' => ''
@@ -498,16 +518,22 @@ class Tour_setup extends Root_Controller
 
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id, tour_setup.user_id');
+
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
+            
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
+            
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
+            
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
+            
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+            
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
@@ -515,20 +541,20 @@ class Tour_setup extends Root_Controller
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try('Edit', $item_id, 'Edit Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            if (($user->user_group != 1) && ($data['item']['user_id'] != $user->user_id))
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit others Tour');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to Edit others Tour");
+                $ajax['system_message'] = 'Trying to Edit others Tour';
                 $this->json_return($ajax);
             }
-            else if (!$this->check_my_editable($data['item']))
+            if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Tour of other Location');
                 $ajax['status'] = false;
@@ -589,16 +615,22 @@ class Tour_setup extends Root_Controller
         {
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*');
+
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
+            
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
+            
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
+            
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
+            
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+            
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $id);
@@ -606,27 +638,25 @@ class Tour_setup extends Root_Controller
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try('Save', $id, 'Update Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $id, 'Update Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-
-            if (($user->user_group != 1) && ($result['user_id'] != $user->user_id))
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Update others Tour');
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line("Trying to Update others Tour");
                 $this->json_return($ajax);
             }
-            else if (!$this->check_my_editable($result))
+            if (!$this->check_my_editable($result))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Update Tour of other Location');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Trying to Update Tour of other Location';
                 $this->json_return($ajax);
             }
-
             $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_NOT_APPROVED, TOUR_NOT_FORWARDED));
             if (!$ajax['status'])
             {
@@ -641,7 +671,7 @@ class Tour_setup extends Root_Controller
         }
         /*-----------END Permission & Validation Checking-----------*/
 
-        $total_amount_iou_request = 0.0;
+        $total_amount_iou_request = 0;
         foreach ($items_iou as $amount_iou)
         {
             $total_amount_iou_request += $amount_iou;
@@ -783,16 +813,22 @@ class Tour_setup extends Root_Controller
 
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_id, tour_setup.status AS tour_status');
+
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
+
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
@@ -800,20 +836,20 @@ class Tour_setup extends Root_Controller
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try('delete', $item_id, 'Delete Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Delete Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            if (($user->user_group != 1) && ($data['item']['user_id'] != $user->user_id))
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete others Tour');
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line("Trying to Delete others Tour");
                 $this->json_return($ajax);
             }
-            else if (!$this->check_my_editable($data['item']))
+            if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete Tour of other Location');
                 $ajax['status'] = false;
@@ -866,14 +902,16 @@ class Tour_setup extends Root_Controller
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
-        $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
-        $this->db->select('user.id, user.employee_id, user.user_name, user.status');
+
+        /*$this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
+        //$this->db->select('user.id, user.employee_id, user.user_name, user.status');
         $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
-        $this->db->select('user_info.name, user_info.ordering');
+        //$this->db->select('user_info.name, user_info.ordering');
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-        $this->db->select('designation.name AS designation');
+        //$this->db->select('designation.name AS designation');
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-        $this->db->select('department.name AS department_name');
+        //$this->db->select('department.name AS department_name');*/
+
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
         $this->db->where('user_area.revision', 1);
@@ -883,20 +921,20 @@ class Tour_setup extends Root_Controller
         $result = $this->db->get()->row_array();
         if (!$result)
         {
-            System_helper::invalid_try('delete', $item_id, 'Delete Not Exists');
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Delete Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
 
-        if (($user->user_group != 1) && ($result['user_id'] != $user->user_id))
+        if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete others Tour');
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("Trying to Delete others Tour");
             $this->json_return($ajax);
         }
-        else if (!$this->check_my_editable($result))
+        if (!$this->check_my_editable($result))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete Tour of other Location');
             $ajax['status'] = false;
@@ -963,20 +1001,20 @@ class Tour_setup extends Root_Controller
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try('forward', $id, 'Forward Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $id, 'Forward Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            if (($user->user_group != 1) && ($data['item']['user_id'] != $user->user_id))
+            if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward others Tour');
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line("Trying to Forward others Tour");
                 $this->json_return($ajax);
             }
-            else if (!$this->check_my_editable($data['item']))
+            if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward Tour of other Location');
                 $ajax['status'] = false;
@@ -1029,14 +1067,16 @@ class Tour_setup extends Root_Controller
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*');
-        $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
+
+        /* $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
         $this->db->select('user.id, user.employee_id, user.user_name, user.status');
         $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
         $this->db->select('user_info.name, user_info.ordering');
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
         $this->db->select('designation.name AS designation');
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-        $this->db->select('department.name AS department_name');
+        $this->db->select('department.name AS department_name'); */
+
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
         $this->db->where('user_area.revision', 1);
@@ -1046,20 +1086,20 @@ class Tour_setup extends Root_Controller
         $result = $this->db->get()->row_array();
         if (!$result)
         {
-            System_helper::invalid_try('save_forward', $id, 'Forward Not Exists');
+            System_helper::invalid_try(__FUNCTION__, $id, 'Forward Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
 
-        if (($user->user_group != 1) && ($result['user_id'] != $user->user_id))
+        if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
         {
             System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward others Tour');
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("Trying to Forward others Tour");
             $this->json_return($ajax);
         }
-        else if (!$this->check_my_editable($result))
+        if (!$this->check_my_editable($result))
         {
             System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward Tour of other Location');
             $ajax['status'] = false;
@@ -1126,20 +1166,20 @@ class Tour_setup extends Root_Controller
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try('details', $item_id, 'View Details Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'View Details Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
 
-            if (($user->user_group != 1) && ($data['item']['user_id'] != $user->user_id))
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to View Tour Details of others');
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line("Trying to View Tour Details of others");
                 $this->json_return($ajax);
             }
-            else if (!$this->check_my_editable($data['item']))
+            if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to View Tour Details of other Location');
                 $ajax['status'] = false;
@@ -1209,24 +1249,21 @@ class Tour_setup extends Root_Controller
         $items = $this->input->post('items');
         $old_items = $this->input->post('old_items');
         $items_iou = $this->input->post('items_iou');
-        $total_amount_iou_request = 0.0;
-
+        
         if (!$item_head['title'])
         {
             $this->message = 'The Title field is required.';
             return false;
         }
-        /*
-        --- Manual Validation for FROM & TO date comparison ---
-        */
+        /*--- Manual Validation for FROM & TO date comparison ---*/
         $date_from = System_helper::get_time($item_head['date_from']);
         $date_to = System_helper::get_time($item_head['date_to']);
-        if ($date_from == '')
+        if (!$date_from)
         {
             $this->message = 'The ' . $this->lang->line('LABEL_DATE') . ' From field is required.';
             return false;
         }
-        else if ($date_to == '')
+        else if (!$date_to)
         {
             $this->message = 'The ' . $this->lang->line('LABEL_DATE') . ' To field is required.';
             return false;
@@ -1239,8 +1276,9 @@ class Tour_setup extends Root_Controller
         /*
         --- Manual Validation for checking BLANK or EMPTY items ---
         */
+        /* for add*/
         $post_purposes = array();
-        if ($items)
+        if($items)
         {
             foreach ($items as $item)
             {
@@ -1253,7 +1291,8 @@ class Tour_setup extends Root_Controller
                 }
             }
         }
-        if ($old_items)
+        /* for edit*/
+        if($old_items)
         {
             foreach ($old_items as $old_item)
             {
@@ -1271,26 +1310,23 @@ class Tour_setup extends Root_Controller
             $this->message = 'At least one purpose need to save.';
             return false;
         }
-        /*
-        --- Manual Validation for DUPLICATE purpose entry ---
-        */
-        $post_purposes_compare = $post_purposes;
-        $arr_diff = array_diff_assoc($post_purposes_compare, array_unique($post_purposes));
-        if (!empty($arr_diff))
+        /*--- Manual Validation for DUPLICATE purpose entry ---*/
+        //$post_purposes_compare = $post_purposes;
+        $arr_diff = array_diff_assoc($post_purposes, array_unique($post_purposes));
+        if ($arr_diff)
         {
             $this->message = 'Duplicate tour purpose in entry.';
             return false;
         }
-        /*
-        --- Manual Validation for IOU AMOUNT items checking ---
-        */
+        /*--- Manual Validation for IOU AMOUNT items checking ---*/
+        $total_amount_iou_request = 0;
         if ($items_iou)
         {
             foreach ($items_iou as $amount_iou)
             {
                 $total_amount_iou_request += $amount_iou;
             }
-            if ($total_amount_iou_request <= 0.0)
+            if ($total_amount_iou_request<=0)
             {
                 $this->message = $this->lang->line('LABEL_AMOUNT_TOTAL_IOU') . ' cannot be 0 or, negative.';
                 return false;
