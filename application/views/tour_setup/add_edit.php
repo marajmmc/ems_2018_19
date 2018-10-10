@@ -258,6 +258,8 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 <script type="text/javascript">
 
     jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+
         $(".datepicker").datepicker({dateFormat: display_date_format});
 
         $(document).on("click", ".system_button_add_more", function (event) {

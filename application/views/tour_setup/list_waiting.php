@@ -56,11 +56,6 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
     'href' => site_url($CI->controller_url . '/index/list_waiting')
 );
-$action_buttons[] = array(
-    'type' => 'button',
-    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
-    'id' => 'button_jqx_load_more'
-);
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 <div class="row widget">
@@ -83,8 +78,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_waiting'); ?>";
+        system_off_events(); // Triggers
 
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_waiting'); ?>";
         // prepare the data
         var source =
         {
@@ -130,9 +126,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: 'Title', dataField: 'title', hidden: <?php echo $system_preference_items['title']?0:1;?>},
                     { text: 'Date From', dataField: 'date_from', width: '100', hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to', width: '100', hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
-                    { text: 'Forward Status', dataField: 'status_forwarded_tour', filtertype: 'list', width: '110', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_forwarded_tour']?0:1;?>},
-                    { text: 'Approve Status', dataField: 'status_approved_tour', filtertype: 'list', width: '110', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_tour']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
                 ]
             });
     });
