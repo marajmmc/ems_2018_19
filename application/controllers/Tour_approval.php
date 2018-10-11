@@ -165,13 +165,13 @@ class Tour_approval extends Root_Controller
 
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
+        $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_pending'));
         if ($user->user_group != $this->config->item('USER_GROUP_SUPER')) // If not SuperAdmin, Then Only child's Tour list will appear.
         {
             $this->db->where_in('designation.id', $designation_child_ids);
         }
-        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('tour_setup.status_forwarded_tour', $this->config->item('system_status_forwarded'));
-        $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_pending'));
         if ($this->locations['division_id'] > 0)
         {
             $this->db->where('user_area.division_id', $this->locations['division_id']);
