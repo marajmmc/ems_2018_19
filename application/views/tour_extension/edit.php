@@ -159,31 +159,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     <div class="clearfix"></div>
 </form>
 
-<div id="system_content_add_more" style="display:none;">
-    <table>
-        <tbody>
-        <tr>
-            <td>
-                <input type="text" class="form-control purpose"/>
-            </td>
-            <td style="width:1%">
-                <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
 <script type="text/javascript">
 
-    jQuery(document).ready(function ($) {
+    jQuery(document).ready(function ($) 
+    {
         $(".datepicker").datepicker({dateFormat: display_date_format});
 
-        $(document).on("change keyup", ".datepicker", function (event) {
-            var date1 = new Date($("#from_date").val());
-            var date2 = new Date($("#to_date").val());
+        $(document).on("change", ".datepicker", function (event) 
+        {
+            var from_date=$("#from_date").val().split('-');
+            var to_date=$("#to_date").val().split('-');
+            var date1 = new Date(from_date[1]+'/'+from_date[0]+'/'+from_date[2]);
+            var date2 = new Date(to_date[1]+'/'+to_date[0]+'/'+to_date[2]);
             var timeDiff = date2.getTime() - date1.getTime();
             var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            console.log(date1);
             if(timeDiff < 0){
                 $(".new_duration").html('<span class="label label-danger">'+(diffDays-1) + " Day(s)</span>");
             }else{
@@ -191,21 +181,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             }
         });
 
-        $(document).on("click", ".system_button_add_more", function (event) {
-            var current_id = parseInt($(this).attr('data-current-id'));
-            current_id = current_id + 1;
-            $(this).attr('data-current-id', current_id);
-            var content_id = '#system_content_add_more table tbody';
-            $(content_id + ' .purpose').attr('name', 'items[' + current_id + ']');
-            var html = $(content_id).html();
-            $("#tour_setup_container tbody tr.purpose-addMore").before(html);
-        });
-
-        $(document).on("click", ".system_button_add_delete", function (event) {
-            $(this).closest('tr').remove();
-        });
-
-        $(document).on("change keyup", ".iou_item_input", function (event) {
+        $(document).on("input", ".iou_item_input", function (event) {
             var sum = parseFloat(0);
             var item_amount = parseFloat(0);
             $(".iou_item_input").each(function (e) {
@@ -215,13 +191,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
             });
             $(".amount_iou_label").text(get_string_amount(sum));
-        });
-
-        $(document).on("blur", ".iou_item_input", function (event) { // Puts a Zero if blank
-            var iou_value = parseFloat($(this).val());
-            if (iou_value == '' || isNaN(iou_value)) {
-                $(this).val('0');
-            }
         });
     });
 
