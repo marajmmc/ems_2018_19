@@ -276,7 +276,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             $(this).closest('tr').remove();
         });
 
-        $(document).on("change keyup", ".iou_item_input", function (event) {
+        $(document).on("input", ".iou_item_input", function (event) {
             var sum = parseFloat(0);
             var item_amount = parseFloat(0);
             $(".iou_item_input").each(function (e) {
@@ -288,6 +288,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             $(".amount_iou_label").text(get_string_amount(sum));
         });
 
+        /* no needed */
         $(document).on("blur", ".iou_item_input", function (event) { // Puts a Zero if blank
             var iou_value = parseFloat($(this).val());
             if (iou_value == '' || isNaN(iou_value)) {
