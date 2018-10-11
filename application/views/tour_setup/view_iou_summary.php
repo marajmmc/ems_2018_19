@@ -11,7 +11,7 @@ if ($iou_items)
     }
 
     $i = 0;
-    $total_iou_amount = 0.0;
+    $total_iou_amount = 0;
     // EACH IOU Items
     foreach ($iou_items as $key => $iou_item)
     {
@@ -33,7 +33,7 @@ if ($iou_items)
                 ?>
             </div>
             <div class="col-xs-<?php echo $col_2; ?>">
-                <label class="control-label pull-right normal"><?php echo $iou_item['name']; ?>:</label>
+                <label class="control-label pull-right normal" style="font-weight:normal !important;"><?php echo $iou_item['name']; ?>:</label>
             </div>
             <div class="col-xs-<?php echo $col_3; ?>" style="padding-left:0">
                 <label class="control-label pull-right"><?php echo System_helper::get_string_amount($current_iou_amount); ?></label>

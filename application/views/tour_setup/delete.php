@@ -13,13 +13,6 @@ $action_buttons[] = array(
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
-<style>
-    .purpose-list table tr td:first-child {
-        width: 50px
-    }
-    label{margin-top:5px}
-    label.normal{font-weight:normal !important}
-</style>
 
 <div class="row widget">
     <div class="widget-header">
@@ -108,8 +101,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select name="item[status]" class="form-control status-combo">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $this->config->item('system_status_delete'); ?>">Delete</option>
+                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_delete'); ?>">Delete</option>
                 </select>
             </div>
         </div>
@@ -134,8 +127,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == '<?php echo $this->config->item('system_status_delete'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_DELETE'); ?>');
+            if (options == '<?php echo $CI->config->item('system_status_delete'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_DELETE'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }

@@ -735,7 +735,7 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
             <tr>
                 <td>
                     <label class="control-label"> <?php echo $purpose['purpose']; ?> </label>
-                    <?php if ($purpose['type'] && ($purpose['type'] == $this->config->item('system_status_additional'))) {
+                    <?php if ($purpose['type'] && ($purpose['type'] == $CI->config->item('system_status_additional'))) {
                             echo '<br/>(<span>Additional</span>)';
                     } ?>
                 </td>
@@ -794,7 +794,7 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                                     </tr>
                                 <?php
                                 }
-                                $img_src = $this->config->item('system_base_url_picture') . $report['image_location'];
+                                $img_src = $CI->config->item('system_base_url_picture') . $report['image_location'];
                                 ?>
                                 <tr>
                                     <td><label class="control-label"> Picture </label></td>

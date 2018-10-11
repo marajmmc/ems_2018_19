@@ -25,27 +25,6 @@ $action_buttons[] = array(
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 ?>
-<style>
-    .datepicker {
-        cursor: pointer !important;
-    }
-
-    label {
-        margin-top: 5px
-    }
-
-    #purpose-wrap tr td:last-child {
-        width: 1% !important;
-    }
-
-    .right-align {
-        text-align: right !important;
-    }
-
-    .iou-table tr td {
-        padding: 5px;
-    }
-</style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0"/>
@@ -60,7 +39,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Name</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NAME')?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item['name'] ?> (<?php echo $item['employee_id'] ?>)</label>
@@ -69,7 +48,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Designation</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DESIGNATION')?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo ($item['designation']) ? $item['designation'] : 'N/A'; ?></label>
@@ -78,7 +57,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Department</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME')?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo ($item['department_name']) ? $item['department_name'] : 'N/A'; ?></label>
@@ -87,7 +66,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Title <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TITLE')?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item[title]" id="title" class="form-control" value="<?php echo $item['title']; ?>"/>
@@ -172,7 +151,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         {
             $amount_iou_items = array();
         }
-        $total_iou_amt = 0.0;
+        $total_iou_amt = 0;
         ?>
         <div class="row show-grid">
             <div class="col-xs-4">
@@ -180,11 +159,11 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             </div>
 
             <div class="col-xs-4">
-                <table class="iou-table">
+                <table class="table table-bordered">
                     <?php
                     foreach ($iou_items as $key => $iou_item)
                     {
-                        if ($iou_item['status'] == $this->config->item('system_status_inactive'))
+                        if ($iou_item['status'] == $CI->config->item('system_status_inactive'))
                         {
                             if (isset($amount_iou_items[$key]) && ($amount_iou_items[$key] > 0))
                             {
@@ -196,7 +175,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         ?>
                         <tr>
                             <td class="right-align"><?php echo $iou_item['name']; ?> :</td>
-                            <td style="width:35%">
+                            <td >
                                 <?php
                                 $current_iou = 0;
                                 if (isset($amount_iou_items[$key]))
@@ -223,13 +202,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <div class="col-xs-4">
                 BDT.
                 <label class="amount_iou_label"><?php echo System_helper::get_string_amount($total_iou_amt); ?></label>
-                <input type="hidden" id="amount_iou" name="item[amount_iou_request]" value="<?php echo $total_iou_amt; ?>">
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Remarks</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS')?></label>
             </div>
             <div class="col-xs-4">
                 <textarea id="remarks" name="item[remarks]" class="form-control" rows="4"><?php echo $item['remarks'] ?></textarea>
@@ -286,14 +264,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
             });
             $(".amount_iou_label").text(get_string_amount(sum));
-        });
-
-        /* no needed */
-        $(document).on("blur", ".iou_item_input", function (event) { // Puts a Zero if blank
-            var iou_value = parseFloat($(this).val());
-            if (iou_value == '' || isNaN(iou_value)) {
-                $(this).val('0');
-            }
         });
     });
 

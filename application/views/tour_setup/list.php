@@ -8,9 +8,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'label' => 'All List',
         'href' => site_url($CI->controller_url . '/index/list_all')
     );
-}
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
     $action_buttons[] = array(
         'label' => 'Waiting List',
         'href' => site_url($CI->controller_url . '/index/list_waiting')
@@ -135,32 +132,32 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
         $("#system_jqx_container").jqxGrid(
-            {
-                width: '100%',
-                source: dataAdapter,
-                pageable: true,
-                filterable: true,
-                sortable: true,
-                showfilterrow: true,
-                columnsresize: true,
-                pagesize: 50,
-                pagesizeoptions: ['50', '100', '200', '300', '500', '1000', '5000'],
-                selectionmode: 'singlerow',
-                altrows: true,
-                height: '350px',
-                enablebrowserselection: true,
-                columnsreorder: true,
-                columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', pinned: true, dataField: 'id', width: '50', hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: 'Name', pinned: true, dataField: 'name', width: '180', hidden: <?php echo $system_preference_items['name']?0:1;?>},
-                    { text: 'Employee ID', pinned: true, dataField: 'employee_id', filtertype: 'list', width: '80', hidden: <?php echo $system_preference_items['employee_id']?0:1;?>},
-                    { text: 'Department', pinned: true, dataField: 'department_name', filtertype: 'list', width: '80', hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
-                    { text: 'Designation', pinned: true, dataField: 'designation', filtertype: 'list', width: '100', hidden: <?php echo $system_preference_items['designation']?0:1;?>},
-                    { text: 'Title', dataField: 'title', hidden: <?php echo $system_preference_items['title']?0:1;?>},
-                    { text: 'Date From', dataField: 'date_from', width: '100', hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
-                    { text: 'Date To', dataField: 'date_to', width: '100', hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
-                ]
-            });
+        {
+            width: '100%',
+            source: dataAdapter,
+            pageable: true,
+            filterable: true,
+            sortable: true,
+            showfilterrow: true,
+            columnsresize: true,
+            pagesize: 50,
+            pagesizeoptions: ['50', '100', '200', '300', '500', '1000', '5000'],
+            selectionmode: 'singlerow',
+            altrows: true,
+            height: '350px',
+            enablebrowserselection: true,
+            columnsreorder: true,
+            columns: [
+                { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', pinned: true, dataField: 'id', width: '50', hidden: <?php echo $system_preference_items['id']?0:1;?>},
+                { text: 'Name', pinned: true, dataField: 'name', width: '180', hidden: <?php echo $system_preference_items['name']?0:1;?>},
+                { text: 'Employee ID', pinned: true, dataField: 'employee_id', width: '50', hidden: <?php echo $system_preference_items['employee_id']?0:1;?>},
+                { text: 'Department', pinned: true, dataField: 'department_name', filtertype: 'list', width: '150', hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
+                { text: 'Designation', pinned: true, dataField: 'designation', filtertype: 'list', width: '150', hidden: <?php echo $system_preference_items['designation']?0:1;?>},
+                { text: 'Title', dataField: 'title', hidden: <?php echo $system_preference_items['title']?0:1;?>},
+                { text: 'Date From', dataField: 'date_from', width: '100', hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
+                { text: 'Date To', dataField: 'date_to', width: '100', hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
+            ]
+        });
     });
 </script>

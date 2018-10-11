@@ -13,15 +13,6 @@ $action_buttons[] = array(
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
-<style>
-    .purpose-list table tr td:first-child {
-        width: 50px
-    }
-    label{margin-top:5px}
-    label.normal{font-weight:normal !important}
-    .text-danger{color:#FF0000}
-</style>
-
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
@@ -131,8 +122,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </div>
             <div class="col-sm-4 col-xs-8">
                 <select name="item[status_forwarded_tour]" class="form-control status-combo">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $this->config->item('system_status_forwarded'); ?>">Forward</option>
+                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_forwarded'); ?>">Forward</option>
                 </select>
             </div>
         </div>
@@ -158,10 +149,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     jQuery(document).ready(function () {
         system_off_events(); // Triggers
 
-        $(".status-combo").on('change', function (event) {
+        $(".status-combo").on('change', function (event) 
+        {
             var options = $(this).val();
-            if (options == '<?php echo $this->config->item('system_status_forwarded'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $this->lang->line('MSG_CONFIRM_FORWARD'); ?>');
+            if (options == '<?php echo $CI->config->item('system_status_forwarded'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_FORWARD'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }
