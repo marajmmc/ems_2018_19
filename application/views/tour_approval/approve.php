@@ -152,6 +152,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+        
         $(".status-combo").on('change', function (event) {
             $(".remarks-req").css('display','none');
             var options = $(this).val();
