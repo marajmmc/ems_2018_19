@@ -410,7 +410,7 @@ class Tour_reporting extends Root_Controller
 
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
-        $this->db->where('tour_setup.status !="' . $this->config->item('system_status_delete') . '"');
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $this->db->where('tour_setup.status_forwarded_reporting', $this->config->item('system_status_forwarded'));
         $this->db->where('tour_setup.status_approved_reporting', $this->config->item('system_status_pending'));
         $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
@@ -669,7 +669,7 @@ class Tour_reporting extends Root_Controller
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit others Tour Reporting');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to Edit others Tour Reporting");
+                $ajax['system_message'] = 'Trying to Edit others Tour Reporting';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
@@ -1018,7 +1018,7 @@ class Tour_reporting extends Root_Controller
             $data['item'] = $item = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Reporting Forward Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Reporting Forward Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -1028,12 +1028,12 @@ class Tour_reporting extends Root_Controller
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward others Tour Reporting');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to Forward others Tour Reporting");
+                $ajax['system_message'] = 'Trying to Forward others Tour Reporting';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward Tour Reporting of other Location');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Tour Reporting of other Location');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Trying to Forward Tour Reporting of other Location';
                 $this->json_return($ajax);
@@ -1141,20 +1141,10 @@ class Tour_reporting extends Root_Controller
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
 
-        /* $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
-        $this->db->select('user.id, user.employee_id, user.user_name, user.status');
-        $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
-        $this->db->select('user_info.name, user_info.ordering');
-        $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-        $this->db->select('designation.name AS designation');
-        $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
-        $this->db->select('department.name AS department_name');  */
-
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
 
         $this->db->where('user_area.revision', 1);
-        //$this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.id', $item_id);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         $result = $this->db->get()->row_array();
@@ -1170,7 +1160,7 @@ class Tour_reporting extends Root_Controller
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward others Tour Reporting');
             $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("Trying to Forward others Tour Reporting");
+            $ajax['system_message'] = 'Trying to Forward others Tour Reporting';
             $this->json_return($ajax);
         }
         if (!$this->check_my_editable($result))
@@ -1255,14 +1245,14 @@ class Tour_reporting extends Root_Controller
 
             if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to View Tour Details of others');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to View Tour Details of others');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to View Tour Details of others");
+                $ajax['system_message'] = 'Trying to View Tour Details of others';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to View Tour Details of other Location');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to View Tour Details of other Location');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Trying to View Tour Details of other Location';
                 $this->json_return($ajax);
