@@ -56,11 +56,7 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
     'href' => site_url($CI->controller_url . '/index/list_waiting')
 );
-$action_buttons[] = array(
-    'type' => 'button',
-    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
-    'id' => 'button_jqx_load_more'
-);
+
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 <div class="row widget">
@@ -83,8 +79,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <div class="clearfix"></div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_waiting'); ?>";
+        system_off_events(); // Triggers
 
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_waiting'); ?>";
         // prepare the data
         var source =
         {

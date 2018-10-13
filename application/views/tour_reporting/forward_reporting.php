@@ -535,6 +535,8 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_forwarded'); ?>') {

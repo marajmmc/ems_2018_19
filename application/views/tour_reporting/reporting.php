@@ -556,6 +556,8 @@ else
 <script type="text/javascript">
 
     jQuery(document).ready(function ($) {
+        system_off_events(); // Triggers
+
         $(".datepicker").datepicker({dateFormat: display_date_format});
         $(".old_browse_button").filestyle({input: false, icon: false, buttonText: "Upload Picture", buttonName: "btn-primary"});
 

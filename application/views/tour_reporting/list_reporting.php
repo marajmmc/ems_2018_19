@@ -72,6 +72,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     $(document).ready(function () {
+        system_off_events(); // Triggers
+
         var url = "<?php echo site_url($CI->controller_url.'/index/get_reporting_items');?>";
         // prepare the data
         var source =

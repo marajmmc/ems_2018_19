@@ -374,20 +374,6 @@ class Tour_reporting extends Root_Controller
 
     private function system_get_items_waiting()
     {
-        $current_records = $this->input->post('total_records');
-        if (!$current_records)
-        {
-            $current_records = 0;
-        }
-        $pagesize = $this->input->post('pagesize');
-        if (!$pagesize)
-        {
-            $pagesize = 100;
-        }
-        else
-        {
-            $pagesize = $pagesize * 2;
-        }
         $user = User_helper::get_user();
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
@@ -438,7 +424,6 @@ class Tour_reporting extends Root_Controller
             }
         }
         $this->db->order_by('tour_setup.id', 'DESC');
-        $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
 
         foreach ($items as &$item)
@@ -478,7 +463,7 @@ class Tour_reporting extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id');
 
-            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id AND user_info.revision=1', 'INNER');
+            $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
             $this->db->select('user_info.name');
 
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
@@ -555,24 +540,29 @@ class Tour_reporting extends Root_Controller
         }
         $user = User_helper::get_user();
 
-        $this->db->where('id', $item_id);
-        $item = $this->db->get($this->config->item('table_ems_tour_setup'))->row_array();
-        if (!$item)
+        $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
+        $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('user_area.revision', 1);
+        $this->db->where('tour_setup.id', $item_id);
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $result = $this->db->get()->row_array();
+        if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Id Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-
-        if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($item['user_id'] != $user->user_id))
+        if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit others Tour Reporting');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Trying to Edit others Tour Reporting';
             $this->json_return($ajax);
         }
-        if (!$this->check_my_editable($item))
+        if (!$this->check_my_editable($result))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Tour Reporting of other Location');
             $ajax['status'] = false;
@@ -583,8 +573,8 @@ class Tour_reporting extends Root_Controller
         $items = $temp_dates = array();
         $reporting_dates = array(0);
 
-        $date_from = date('Y-m-d H:i:s', $item['date_from']);
-        $day_between_dates = (round(($item['date_to'] - $item['date_from']) / (60 * 60 * 24)) + 1);
+        $date_from = date('Y-m-d H:i:s', $result['date_from']);
+        $day_between_dates = (round(($result['date_to'] - $result['date_from']) / (60 * 60 * 24)) + 1);
         for ($i = 0; $i < $day_between_dates; $i++)
         {
             $reporting_date_format = date('d-M-Y', strtotime($date_from . ' +' . $i . ' day'));
@@ -687,7 +677,7 @@ class Tour_reporting extends Root_Controller
             }
             if (!($reporting_date >= $data['item']['date_from'] && $reporting_date <= $data['item']['date_to']))
             {
-                System_helper::invalid_try('reporting', $item_id, 'Invalid Reporting Date');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Invalid Reporting Date');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'You are Trying with Invalid Reporting Date.';
                 $this->json_return($ajax);
@@ -752,9 +742,12 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $this->db->from($this->config->item('table_ems_tour_setup'));
-        $this->db->select('*');
-        $this->db->where('id', $item_id);
+        $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
+        $this->db->select('tour_setup.*');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('user_area.revision', 1);
+        $this->db->where('tour_setup.id', $item_id);
         $this->db->where('status !=', $this->config->item('system_status_delete'));
         $result = $this->db->get()->row_array();
         if (!$result)
@@ -787,7 +780,7 @@ class Tour_reporting extends Root_Controller
         }
         if (!($reporting_date >= $result['date_from'] && $reporting_date <= $result['date_to']))
         {
-            System_helper::invalid_try('reporting', $item_id, 'Invalid Reporting Date');
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Invalid Reporting Date');
             $ajax['status'] = false;
             $ajax['system_message'] = 'You are Trying with Invalid Reporting Date.';
             $this->json_return($ajax);
@@ -937,7 +930,8 @@ class Tour_reporting extends Root_Controller
         $image_info = array();
 
         //-----------Image save into DB -START-------------
-        foreach($old_reporting_ids as $old_id){
+        foreach ($old_reporting_ids as $old_id)
+        {
             $old_img_key = 'old_image_' . $old_id;
             if (array_key_exists($old_img_key, $uploaded_files))
             {
@@ -947,7 +941,8 @@ class Tour_reporting extends Root_Controller
                 );
             }
         }
-        foreach($reporting_ids as $KEY => $new_id){
+        foreach ($reporting_ids as $KEY => $new_id)
+        {
             $new_img_key = 'new_image_' . $KEY;
             if (array_key_exists($new_img_key, $uploaded_files))
             {
@@ -957,7 +952,8 @@ class Tour_reporting extends Root_Controller
                 );
             }
         }
-        foreach($image_info as $rep_id => $image){ // Insert Image name & location into DB
+        foreach ($image_info as $rep_id => $image)
+        { // Insert Image name & location into DB
             Query_helper::update($this->config->item('table_ems_tour_reporting'), $image, array('id=' . $rep_id));
         }
         //-----------Image save into DB -END-------------
@@ -1024,7 +1020,7 @@ class Tour_reporting extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward others Tour Reporting');
                 $ajax['status'] = false;
@@ -1140,10 +1136,8 @@ class Tour_reporting extends Root_Controller
 
         $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
         $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
-
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-
         $this->db->where('user_area.revision', 1);
         $this->db->where('tour_setup.id', $item_id);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
@@ -1156,7 +1150,7 @@ class Tour_reporting extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
+        if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward others Tour Reporting');
             $ajax['status'] = false;
