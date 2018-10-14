@@ -73,10 +73,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 </div>
 <div class="clearfix"></div>
 <script type="text/javascript">
-    $(document).ready(function ()
-    {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
+    $(document).ready(function (){
+        system_off_events(); // Triggers
 
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all');?>";
         // prepare the data
         var source =
         {
@@ -122,7 +122,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: 'Date From', dataField: 'date_from',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
-                    { text: 'Approve Status', dataField: 'status_approved_reporting',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_reporting']?0:1;?>}
+                    { text: 'Report Approve Status', dataField: 'status_approved_reporting', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_reporting']?0:1;?>},
+                    { text: 'IOU Adjustment Status', dataField: 'status_approved_adjustment',filtertype: 'list',width:'80',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_adjustment']?0:1;?>}
                 ]
             });
     });

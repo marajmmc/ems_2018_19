@@ -551,14 +551,14 @@ class Tour_setup extends Root_Controller
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit others Tour');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Edit others Tour';
+                $ajax['system_message'] = 'You are trying to Edit others Tour';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Tour of other Location');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Edit Tour of other Location';
+                $ajax['system_message'] = 'You are trying to Edit Tour of other Location';
                 $this->json_return($ajax);
             }
 
@@ -643,20 +643,22 @@ class Tour_setup extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+
             if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Update others Tour');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to Update others Tour");
+                $ajax['system_message'] = 'You are trying to Update others Tour';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($result))
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Update Tour of other Location');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Update Tour of other Location';
+                $ajax['system_message'] = 'You are trying to Update Tour of other Location';
                 $this->json_return($ajax);
             }
+
             $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_NOT_APPROVED, TOUR_NOT_FORWARDED));
             if (!$ajax['status'])
             {
@@ -846,14 +848,14 @@ class Tour_setup extends Root_Controller
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete others Tour');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to Delete others Tour");
+                $ajax['system_message'] = 'You are trying to Delete others Tour';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete Tour of other Location');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Delete Tour of other Location';
+                $ajax['system_message'] = 'You are trying to Delete Tour of other Location';
                 $this->json_return($ajax);
             }
 
@@ -922,14 +924,14 @@ class Tour_setup extends Root_Controller
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete others Tour');
             $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("Trying to Delete others Tour");
+            $ajax['system_message'] = 'You are trying to Delete others Tour';
             $this->json_return($ajax);
         }
         if (!$this->check_my_editable($result))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete Tour of other Location');
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Trying to Delete Tour of other Location';
+            $ajax['system_message'] = 'You are trying to Delete Tour of other Location';
             $this->json_return($ajax);
         }
 
@@ -998,7 +1000,7 @@ class Tour_setup extends Root_Controller
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Forward Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Forward Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -1006,16 +1008,16 @@ class Tour_setup extends Root_Controller
 
             if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward others Tour');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward others Tour');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to Forward others Tour");
+                $ajax['system_message'] = 'You are trying to Forward others Tour';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward Tour of other Location');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Tour of other Location');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Forward Tour of other Location';
+                $ajax['system_message'] = 'You are trying to Forward Tour of other Location';
                 $this->json_return($ajax);
             }
 
@@ -1084,14 +1086,14 @@ class Tour_setup extends Root_Controller
         {
             System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward others Tour');
             $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("Trying to Forward others Tour");
+            $ajax['system_message'] = 'You are trying to Forward others Tour';
             $this->json_return($ajax);
         }
         if (!$this->check_my_editable($result))
         {
             System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward Tour of other Location');
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Trying to Forward Tour of other Location';
+            $ajax['system_message'] = 'You are trying to Forward Tour of other Location';
             $this->json_return($ajax);
         }
 
@@ -1168,16 +1170,16 @@ class Tour_setup extends Root_Controller
 
             if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to View Tour Details of others');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to View Tour Details of others');
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("Trying to View Tour Details of others");
+                $ajax['system_message'] = 'You are trying to View Tour Details of others';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($data['item']))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to View Tour Details of other Location');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to View Tour Details of other Location');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to View Tour Details of other Location';
+                $ajax['system_message'] = 'You are trying to View Tour Details of other Location';
                 $this->json_return($ajax);
             }
             
@@ -1243,7 +1245,7 @@ class Tour_setup extends Root_Controller
         $old_items = $this->input->post('old_items');
         $items_iou = $this->input->post('items_iou');
         
-        if (!$item_head['title'])
+        if (!trim($item_head['title']))
         {
             $this->message = 'The Title field is required.';
             return false;

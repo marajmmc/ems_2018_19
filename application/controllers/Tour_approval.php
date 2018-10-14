@@ -343,7 +343,7 @@ class Tour_approval extends Root_Controller
             $this->db->select('user_info.name, user_info.ordering');
 
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $this->db->select('designation.name AS designation');
+            $this->db->select('designation.name AS designation, designation.id AS designation_id');
 
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
@@ -355,10 +355,6 @@ class Tour_approval extends Root_Controller
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-            if ($user->user_group != $this->config->item('USER_GROUP_SUPER')) // If not SuperAdmin, Then Only child's Tour list will appear.
-            {
-                $this->db->where_in('designation.id', $designation_child_ids);
-            }
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
@@ -367,11 +363,19 @@ class Tour_approval extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (!$this->check_my_editable($data['item']))
+
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && (!in_array($data['item']['designation_id'], $designation_child_ids)))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Approve others Tour');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'You are trying to Approve others Tour';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Approve Tour of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'You are trying to Approve Tour of other Location';
                 $this->json_return($ajax);
             }
             $ajax = Tour_helper::tour_status_check($data['item'], array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_NOT_APPROVED, TOUR_FORWARDED));
@@ -423,7 +427,7 @@ class Tour_approval extends Root_Controller
         $this->db->select('user_info.name, user_info.ordering');
 
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-        $this->db->select('designation.name AS designation');
+        $this->db->select('designation.name AS designation, designation.id AS designation_id');
 
         /* $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name'); */
@@ -435,10 +439,6 @@ class Tour_approval extends Root_Controller
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.id', $item_id);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-        if ($user->user_group != $this->config->item('USER_GROUP_SUPER')) // If not SuperAdmin, Then Only child's Tour list will appear.
-        {
-            $this->db->where_in('designation.id', $designation_child_ids);
-        }
         $result = $this->db->get()->row_array();
         if (!$result)
         {
@@ -447,11 +447,19 @@ class Tour_approval extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if (!$this->check_my_editable($result))
+
+        if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && (!in_array($result['designation_id'], $designation_child_ids)))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Approve others Tour');
             $ajax['status'] = false;
             $ajax['system_message'] = 'You are trying to Approve others Tour';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Approve Tour of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'You are trying to Approve Tour of other Location';
             $this->json_return($ajax);
         }
         $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_REPORTING_NOT_APPROVED, TOUR_NOT_APPROVED, TOUR_FORWARDED));
@@ -533,7 +541,7 @@ class Tour_approval extends Root_Controller
             $this->db->select('user_info.name, user_info.ordering');
 
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
-            $this->db->select('designation.name AS designation, designation.id as designation_id');
+            $this->db->select('designation.name AS designation, designation.id AS designation_id');
 
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
@@ -545,10 +553,6 @@ class Tour_approval extends Root_Controller
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
             $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-            if ($user->user_group != $this->config->item('USER_GROUP_SUPER')) // If not SuperAdmin, Then Only child's Tour list will appear.
-            {
-                $this->db->where_in('designation.id', $designation_child_ids);
-            }
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
@@ -557,11 +561,19 @@ class Tour_approval extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (!$this->check_my_editable($data['item']))
+
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && (!in_array($data['item']['designation_id'], $designation_child_ids)))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to View Tour Details of others');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to View Tour Details of others';
+                $ajax['system_message'] = 'You are trying to View Tour Details of others';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($data['item']))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to View Tour Details of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'You are trying to View Tour Details of other Location';
                 $this->json_return($ajax);
             }
 

@@ -817,3 +817,9 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
 
 </div>
 </div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+    });
+</script>

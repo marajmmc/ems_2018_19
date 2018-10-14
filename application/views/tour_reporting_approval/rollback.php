@@ -338,6 +338,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_rollback'); ?>') {

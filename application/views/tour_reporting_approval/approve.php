@@ -396,6 +396,8 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
 
 <script type="text/javascript">
     jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+
         var left = ((($(window).width() - 550) / 2) + $(window).scrollLeft());
         var top = ((($(window).height() - 550) / 2) + $(window).scrollTop());
         $("#popup_window").jqxWindow({position: { x: left, y: top  }});
