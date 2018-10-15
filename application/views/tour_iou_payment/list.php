@@ -1,18 +1,7 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
 
-/*  $flag :-
-        1 = Payment
-        2 = Approve
-        0 = SuperAdmin & others
-*/
-$flag = 0;
-
-$PAYMENT_ACCESS = TRUE;
-if (($user_group != 1) && (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1)))
-{
-    $PAYMENT_ACCESS = FALSE;
-}
+$payment_permission = $approve_permission = false;
 
 $action_buttons = array();
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
@@ -22,9 +11,9 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'href' => site_url($CI->controller_url . '/index/list_all')
     );
 }
-if ((isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1)) && $PAYMENT_ACCESS)
+if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
-    $flag = 1; // 1 - for Payment
+    $payment_permission = true; // for Payment permission
     $action_buttons[] = array
     (
         'type' => 'button',
@@ -80,7 +69,7 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
 }
 if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
 {
-    $flag = 2; // 2 - for Approve
+    $approve_permission = true; // for Approve permission
     $action_buttons[] = array
     (
         'type' => 'button',
@@ -120,9 +109,10 @@ if ($user_group == 1)
 </div>
 <div class="clearfix"></div>
 <script type="text/javascript">
-    $(document).ready(function () {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items/'.$flag);?>";
+    $(document).ready(function ($) {
+        system_off_events(); // Triggers
 
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items/');?>";
         // prepare the data
         var source =
         {
@@ -170,8 +160,7 @@ if ($user_group == 1)
                     { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
                     <?php
-                    $user = User_helper::get_user();
-                    if($user->user_id == 1){ ?>
+                    if($approve_permission && $payment_permission){ ?>
                         , { text: 'IOU Approve Status', dataField: 'status_approved_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>}
                         , { text: 'Payment Status', dataField: 'status_paid_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>}
                     <?php } ?>

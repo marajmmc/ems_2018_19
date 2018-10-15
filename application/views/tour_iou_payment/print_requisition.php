@@ -185,3 +185,9 @@ $num_pages = ceil($total_records / $row_per_page);
     }
     ?>
 </div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        system_off_events(); // Triggers
+    });
+</script>

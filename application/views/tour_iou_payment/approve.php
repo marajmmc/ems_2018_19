@@ -1,5 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
+
 $action_buttons = array();
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
@@ -175,7 +176,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 </div>
 
 <script type="text/javascript">
-    jQuery(document).ready(function () {
+    jQuery(document).ready(function ($) {
+        system_off_events(); // Triggers
+
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
             if (options == '<?php echo $this->config->item('system_status_approved'); ?>') {
