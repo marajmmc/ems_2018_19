@@ -297,6 +297,7 @@ $lang['LABEL_STATUS_PAID_PAYMENT'] = "Payment Status";
 $lang['LABEL_STATUS_FORWARDED_REPORTING'] = "Report Forwarded";
 $lang['LABEL_STATUS_APPROVED_REPORTING'] = "Report Approved";
 $lang['LABEL_STATUS_APPROVED_ADJUSTMENT'] = "Adjustment Status";
+$lang['LABEL_STATUS_EXTENDED_TOUR'] = "Tour Extension";
 
 $lang['LABEL_DATE_CREATED_TIME']='Created Time';
 $lang['LABEL_DATE_UPDATED_TIME']='Updated Time';
