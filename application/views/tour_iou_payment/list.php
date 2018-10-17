@@ -159,8 +159,7 @@ if ($user_group == 1)
                     { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
                     { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>}
-                    <?php
-                    if($approve_permission && $payment_permission){ ?>
+                    <?php if($approve_permission && $payment_permission){ ?>
                         , { text: 'IOU Approve Status', dataField: 'status_approved_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>}
                         , { text: 'Payment Status', dataField: 'status_paid_payment',filtertype: 'list',width:'160',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>}
                     <?php } ?>

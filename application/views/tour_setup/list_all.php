@@ -131,7 +131,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 { text: 'IOU Payment Status', dataField: 'status_paid_payment',filtertype: 'list',width:'80',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>},
                 { text: 'Report Forward Status', dataField: 'status_forwarded_reporting', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_forwarded_reporting']?0:1;?>},
                 { text: 'Report Approve Status', dataField: 'status_approved_reporting', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_reporting']?0:1;?>},
-                { text: 'IOU Adjustment Status', dataField: 'status_approved_adjustment',filtertype: 'list',width:'80',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_adjustment']?0:1;?>}
+                { text: 'IOU Adjustment Status', dataField: 'status_approved_adjustment',filtertype: 'list',width:'80',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_adjustment']?0:1;?>},
+                { text: 'IOU Extension Status', dataField: 'status_extended_tour',filtertype: 'list',width:'80',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_extended_tour']?0:1;?>}
             ]
         });
     });

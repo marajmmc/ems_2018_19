@@ -317,7 +317,7 @@ class Tour_iou_payment extends Root_Controller
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
 
-            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
+            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
 
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
@@ -435,11 +435,10 @@ class Tour_iou_payment extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-
             $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
             $this->db->select('tour_setup.*, tour_setup.id AS tour_setup_id');
 
-            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
+            $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
 
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');

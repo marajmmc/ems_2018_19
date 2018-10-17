@@ -27,32 +27,32 @@ foreach($user_info as $user)
     <div class="row show-grid">
 
         <div class="col-xs-6">
-            <div class="row show-grid">
-                <div class="col-xs-6">
-                    <label class="control-label pull-right">Tour Approve Status</label>
-                </div>
-                <div class="col-xs-6">
-                    <select name="report[status_approve]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('LABEL_SELECT_ALL');?></option>
-                        <option value="<?php echo $CI->config->item('system_status_approved')?>">Approve</option>
-                        <option value="<?php echo $CI->config->item('system_status_pending')?>">Pending</option>
-                        <option value="<?php echo $CI->config->item('system_status_rollback') ?>">Roll Back</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row show-grid">
-                <div class="col-xs-6">
-                    <label class="control-label pull-right">Date Type</label>
-                </div>
-                <div class="col-xs-6">
-                    <select name="report[date_type]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('LABEL_SELECT_ALL');?></option>
-                        <option value="tour_created_time">Tour Created Time</option>
-                        <option value="approve_date_time">Approve Date Time</option>
-                        <option value="reporting_date">Reporting Date</option>
-                    </select>
-                </div>
-            </div>
+<!--            <div class="row show-grid">-->
+<!--                <div class="col-xs-6">-->
+<!--                    <label class="control-label pull-right">Tour Approve Status</label>-->
+<!--                </div>-->
+<!--                <div class="col-xs-6">-->
+<!--                    <select name="report[status_approve]" class="form-control">-->
+<!--                        <option value="">--><?php //echo $this->lang->line('LABEL_SELECT_ALL');?><!--</option>-->
+<!--                        <option value="--><?php //echo $CI->config->item('system_status_approved')?><!--">Approve</option>-->
+<!--                        <option value="--><?php //echo $CI->config->item('system_status_pending')?><!--">Pending</option>-->
+<!--                        <option value="--><?php //echo $CI->config->item('system_status_rollback') ?><!--">Roll Back</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row show-grid">-->
+<!--                <div class="col-xs-6">-->
+<!--                    <label class="control-label pull-right">Date Type</label>-->
+<!--                </div>-->
+<!--                <div class="col-xs-6">-->
+<!--                    <select name="report[date_type]" class="form-control">-->
+<!--                        <option value="">--><?php //echo $this->lang->line('LABEL_SELECT_ALL');?><!--</option>-->
+<!--                        <option value="tour_created_time">Tour Created Time</option>-->
+<!--                        <option value="approve_date_time">Approve Date Time</option>-->
+<!--                        <option value="reporting_date">Reporting Date</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="row show-grid">
                 <div class="col-xs-6">
                     <label class="control-label pull-right">From Date</label>
@@ -220,12 +220,9 @@ foreach($user_info as $user)
 
     jQuery(document).ready(function()
     {
+        system_off_events();
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
-        $(document).off('change', '#division_id');
-        $(document).off('change', '#zone_id');
-        $(document).off('change', '#territory_id');
-
         $(document).on('change','#division_id',function()
         {
             $('#zone_id').val('');
@@ -333,8 +330,6 @@ foreach($user_info as $user)
             }
         });
     });
-</script>
-<script type="text/javascript">
     var employee_info_list_division=JSON.parse('<?php echo json_encode($employee_info_for_division);?>');
     var employee_info_list_zone=JSON.parse('<?php echo json_encode($employee_info_for_zone);?>');
     var employee_info_list_territory=JSON.parse('<?php echo json_encode($employee_info_for_territory);?>');

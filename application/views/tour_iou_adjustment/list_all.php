@@ -1,17 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
-/*  $flag :-
-        1 = Adjustment
-        2 = Approve
-        0 = SuperAdmin & others
-*/
-$flag = 2;
-if ((isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-    && (!isset($CI->permissions['action7']) || ($CI->permissions['action7'] != 1))
-    && ($user_group != 1))
-{
-    $flag = 1;
-}
 
 $action_buttons=array();
 $action_buttons[]=array(
@@ -85,10 +73,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 </div>
 <div class="clearfix"></div>
 <script type="text/javascript">
-    $(document).ready(function ()
-    {
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all/'.$flag);?>";
+    $(document).ready(function ($){
+        system_off_events(); // Triggers
 
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all/');?>";
         // prepare the data
         var source =
         {

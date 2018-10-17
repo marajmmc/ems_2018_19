@@ -3,14 +3,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $CI =& get_instance();
 
 $action_buttons = array();
-if(isset($tour_extension_page) && $tour_extension_page)
+if (isset($tour_extension_page) && $tour_extension_page)
 {
     $action_buttons[] = array(
         'label' => $CI->lang->line("ACTION_BACK") . ' to List',
         'href' => site_url($CI->controller_url)
     );
 }
-else{
+else
+{
     $action_buttons[] = array(
         'label' => $CI->lang->line("ACTION_BACK") . ' to Pending List',
         'href' => site_url($CI->controller_url)
@@ -79,54 +80,101 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
 {
     $is_reporting_rollback = TRUE;
 }
+
+//  For Tour Extension Details
+$has_extended = '';
+if ($item['status_extended_tour'] == $CI->config->item('system_status_extended'))
+{
+    $ext_revision_count = 0;
+    $ext_data = array();
+    $ext_result = $CI->db->order_by('revision_count', 'ASC')->get_where($CI->config->item('table_ems_tour_extension'), array('tour_id' => $item['tour_setup_id']))->result_array();
+
+    $ext_revision_count = sizeof($ext_result);
+    if ($ext_revision_count > 0)
+    {
+        foreach ($ext_result as &$data)
+        {
+            if ($data['revision_count'] == 1)
+            {
+                $ext_data = $data;
+            }
+            $oldest_data = $data;
+        }
+        $item['date_from'] = $oldest_data['date_from'];
+        $item['date_to'] = $oldest_data['date_to'];
+        $has_extended = " &nbsp;( <a class='ext_details text-danger' href='javascript:void()'><i>Extended</i></a> )";
+    }
+    $ext_user = System_helper::get_users_info(array($ext_data['user_updated']));
+}
 ?>
 <style>
     .panel {
         border: none
     }
+
     .normal {
         font-weight: normal !important
     }
+
     .right-align {
         text-align: right !important
     }
+
     .center-align {
         text-align: center !important
     }
+
     span.text-danger {
         font-style: italic;
         color: #FF0000
     }
+
     .summary-wrap .show-grid {
         margin: 0;
     }
+
     .summary-wrap .show-grid:nth-child(2) > div {
         padding-top: 5px;
     }
+
     .panel-heading {
         margin-top: 15px;
         border-top: 1px solid transparent;
     }
+
     .report-wrap:last-child {
         margin: 0;
     }
+
     .no-wrap {
         width: 1%;
         white-space: nowrap
     }
-    .entry_date{font-size:0.85em; white-space:nowrap}
+
+    .entry_date {
+        font-size: 0.85em;
+        white-space: nowrap
+    }
+
     td > span {
         color: #a94442;
         font-weight: bold;
         font-style: italic;
     }
-    .blob img{width:300px}
+
+    .blob img {
+        width: 300px
+    }
+
     .blob {
-        display:inline-block;
-        padding:3px;
+        display: inline-block;
+        padding: 3px;
         border: 3px solid #8c8c8c
     }
-    .blob:hover{border:3px solid #3693CF}
+
+    .blob:hover {
+        border: 3px solid #3693CF
+    }
 </style>
 <div class="row widget">
 <div class="widget-header" style="margin:0">
@@ -145,7 +193,9 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
 <table class="table table-bordered table-responsive system_table_details_view">
 <tr>
     <td class="widget-header header_caption"><label class="control-label pull-right">Name</label></td>
-    <td colspan="3"><label class="control-label"><?php echo $users[$item['user_id']]['name']." (".$item['employee_id'].")"; ?></label></td>
+    <td colspan="3">
+        <label class="control-label"><?php echo $users[$item['user_id']]['name'] . " (" . $item['employee_id'] . ")"; ?></label>
+    </td>
 </tr>
 <tr>
     <td class="widget-header header_caption"><label class="control-label pull-right">Designation</label>
@@ -168,8 +218,8 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
     <td class="widget-header header_caption">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?></label></td>
     <td>
-        <label class="control-label"> From <?php echo System_helper::display_date($item['date_from']) ?>
-            To <?php echo System_helper::display_date($item['date_to']) ?>
+        <label class="control-label">
+            From <?php echo System_helper::display_date($item['date_from']); ?> &nbsp;&nbsp; To <?php echo System_helper::display_date($item['date_to']) . $has_extended;; ?>
         </label>
     </td>
     <td class="widget-header header_caption"><label class="control-label pull-right">Duration</label></td>
@@ -427,7 +477,7 @@ if ($is_reporting_rollback)
 }
 if ($item['status_approved_reporting'] == $CI->config->item('system_status_approved'))
 {
-?>
+    ?>
     <tr>
         <td colspan="4" class="bg-info text-info">
             <label class="control-label">Tour Reporting Approval Information</label>
@@ -460,7 +510,7 @@ if ($item['status_approved_reporting'] == $CI->config->item('system_status_appro
 }
 if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pending'))
 {
-?>
+    ?>
     <tr>
         <td colspan="4" class="bg-info text-info">
             <label class="control-label">Tour IOU Adjustment Information</label>
@@ -515,7 +565,7 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
     <?php
     if ($item['status_approved_adjustment'] == $CI->config->item('system_status_approved'))
     {
-    ?>
+        ?>
         <tr>
             <td class="widget-header header_caption">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVED_BY'); ?></label>
@@ -529,8 +579,46 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                 <label class="control-label"><?php echo System_helper::display_date_time($item['date_approved_adjustment']); ?></label>
             </td>
         </tr>
-<?php
+    <?php
     }
+}
+if ($item['status_extended_tour'] == $CI->config->item('system_status_extended'))
+{
+    ?>
+    <tr id="ext_details">
+        <td colspan="4" class="bg-info text-info">
+            <label class="control-label">Tour Extension Information</label>
+        </td>
+    </tr>
+    <tr>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right">Modified Tour Date</label>
+        </td>
+        <td>
+            <label class="control-label">
+                From <?php echo System_helper::display_date($ext_data['date_from_new']); ?> &nbsp;&nbsp; To <?php echo System_helper::display_date($ext_data['date_to_new']); ?>
+            </label>
+        </td>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right">(Tour Extension) Number of Edit</label>
+        </td>
+        <td>
+            <label class="control-label"><?php echo $oldest_data['revision_count']; ?></label>
+        </td>
+    </tr>
+    <tr>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPDATED_BY'); ?></label>
+        </td>
+        <td><label class="control-label"><?php echo $ext_user[$ext_data['user_updated']]['name']; ?></label></td>
+        <td class="widget-header header_caption">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_UPDATED_TIME'); ?></label>
+        </td>
+        <td>
+            <label class="control-label"><?php echo System_helper::display_date_time($ext_data['date_updated']); ?></label>
+        </td>
+    </tr>
+<?php
 }
 ?>
 
@@ -628,45 +716,44 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                     <?php
                     if ($item['amount_iou_adjustment_items'] && ($item['amount_iou_adjustment_items'] != ''))
                     {
-                    ?>
-                    <div class="row show-grid">
-                        <div class="col-xs-6">
-                            <label class="control-label pull-right normal">
-                                <?php
-                                if ($item['status_approved_adjustment'] == ($CI->config->item('system_status_approved')))
-                                {
-                                    echo '( <b>'.$CI->config->item('system_status_approved').'</b> )';
-                                }
-                                elseif ($item['status_approved_adjustment'] == ($CI->config->item('system_status_forwarded')))
-                                {
-                                    echo '( <b>'.$CI->config->item('system_status_forwarded').'</b> )';
-                                }
-                                ?>
-                                Adjustment:
-                            </label>
+                        ?>
+                        <div class="row show-grid">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right normal">
+                                    <?php
+                                    if ($item['status_approved_adjustment'] == ($CI->config->item('system_status_approved')))
+                                    {
+                                        echo '( <b>' . $CI->config->item('system_status_approved') . '</b> )';
+                                    }
+                                    elseif ($item['status_approved_adjustment'] == ($CI->config->item('system_status_forwarded')))
+                                    {
+                                        echo '( <b>' . $CI->config->item('system_status_forwarded') . '</b> )';
+                                    }
+                                    ?>
+                                    Adjustment: </label>
+                            </div>
+                            <div class="col-xs-6 right-align" style="padding-left:0;">
+                                <label class="control-label adjustment_amount">
+                                    <?php
+                                    $adj_amt = $total_voucher_amount - $total_iou_amount;
+                                    if ($adj_amt > 0)
+                                    {
+                                        $note = "(Pay To Employee)";
+                                    }
+                                    else if ($adj_amt < 0)
+                                    {
+                                        $note = "(Return To Accounts)";
+                                    }
+                                    else
+                                    {
+                                        $note = "(No Adjustment Needed)";
+                                    }
+                                    $note = '<span class="normal">' . $note . '</span> &nbsp;';
+                                    echo $note . System_helper::get_string_amount(abs($adj_amt));
+                                    ?>
+                                </label>
+                            </div>
                         </div>
-                        <div class="col-xs-6 right-align" style="padding-left:0;">
-                            <label class="control-label adjustment_amount">
-                                <?php
-                                $adj_amt = $total_voucher_amount - $total_iou_amount;
-                                if ($adj_amt > 0)
-                                {
-                                    $note = "(Pay To Employee)";
-                                }
-                                else if ($adj_amt < 0)
-                                {
-                                    $note = "(Return To Accounts)";
-                                }
-                                else
-                                {
-                                    $note = "(No Adjustment Needed)";
-                                }
-                                $note = '<span class="normal">' . $note . '</span> &nbsp;';
-                                echo $note . System_helper::get_string_amount(abs($adj_amt));
-                                ?>
-                            </label>
-                        </div>
-                    </div>
                     <?php
                     }
                 }
@@ -735,8 +822,9 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
             <tr>
                 <td>
                     <label class="control-label"> <?php echo $purpose['purpose']; ?> </label>
-                    <?php if ($purpose['type'] && ($purpose['type'] == $this->config->item('system_status_additional'))) {
-                            echo '<br/>(<span>Additional</span>)';
+                    <?php if ($purpose['type'] && ($purpose['type'] == $CI->config->item('system_status_additional')))
+                    {
+                        echo '<br/>(<span>Additional</span>)';
                     } ?>
                 </td>
                 <td>
@@ -794,11 +882,13 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
                                     </tr>
                                 <?php
                                 }
-                                $img_src = $this->config->item('system_base_url_picture') . $report['image_location'];
+                                $img_src = $CI->config->item('system_base_url_picture') . $report['image_location'];
                                 ?>
                                 <tr>
                                     <td><label class="control-label"> Picture </label></td>
-                                    <td colspan="3"><a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="No Image Found" /></a></td>
+                                    <td colspan="3">
+                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob"><img src="<?php echo $img_src; ?>" alt="No Image Found"/></a>
+                                    </td>
                                 </tr>
                             </table>
                         <?php
@@ -817,3 +907,16 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
 
 </div>
 </div>
+
+<script type="application/javascript">
+    jQuery(document).ready(function ($) {
+        system_off_events(); // Triggers
+
+        $('a.ext_details').click(function (e) {
+            e.preventDefault();
+            var $anchor = $('tr#ext_details').offset();
+            window.scrollTo($anchor.left, $anchor.top);
+            return false;
+        });
+    });
+</script>

@@ -5,7 +5,8 @@ $action_buttons=array();
 
 if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_PRINT"),
         'class'=>'button_action_download',
@@ -15,7 +16,8 @@ if(isset($CI->permissions['action4']) && ($CI->permissions['action4']==1))
 }
 if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
 {
-    $action_buttons[]=array(
+    $action_buttons[]=array
+    (
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
         'class'=>'button_action_download',
@@ -41,24 +43,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
-    </div>
-
-    <div style="" class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">From Date :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $employee_info['date_from']?>
-        </div>
-    </div>
-
-    <div style="" class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">To Date :</label>
-        </div>
-        <div class="col-sm-4 col-xs-8">
-            <?php echo $employee_info['date_to']?>
-        </div>
     </div>
 
     <?php
@@ -169,20 +153,23 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',pinned:true,dataField: 'division_name',width:'80',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',pinned:true,dataField: 'territory_name',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE'); ?>',pinned:true,dataField: 'employee',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['employee']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SETUP'); ?>',dataField: 'date_setup',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_setup']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_APPROVE'); ?>',dataField: 'date_approve',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['date_approve']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>',dataField: 'department_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>',dataField: 'designation_name',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['designation_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_TITLE'); ?>',dataField: 'title',width:'230',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['title']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>',dataField: 'amount_iou_request',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('STATUS_APPROVE'); ?>',dataField: 'status_approve',width:'130',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['status_approve']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NO_OF_PURPOSE'); ?>',dataField: 'no_of_purpose',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['no_of_purpose']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_COMPLETE_REPORTING'); ?>',dataField: 'complete_reporting',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['complete_reporting']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_INCOMPLETE_REPORTING'); ?>',dataField: 'incomplete_reporting',width:'130',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['incomplete_reporting']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',pinned:true,dataField: 'division_name',width:'90',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',pinned:true,dataField: 'zone_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',pinned:true,dataField: 'territory_name',width:'90',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>',dataField: 'department_name',width:'150',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>',dataField: 'designation_name',width:'110',filtertype: 'list',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['designation_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TITLE'); ?>',dataField: 'title',filtertype: 'list',width: '200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['title']?0:1;?>},
+                    { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
+                    { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>',dataField: 'amount_iou_request',width:'100',rendered:tooltiprenderer,cellsalign: 'right',hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
+                    { text: 'Forward Status', dataField: 'status_forwarded_tour', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_forwarded_tour']?0:1;?>},
+                    { text: 'Approve Status', dataField: 'status_approved_tour', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_tour']?0:1;?>},
+                    { text: 'IOU Approve Status', dataField: 'status_approved_payment',filtertype: 'list',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>},
+                    { text: 'IOU Payment Status', dataField: 'status_paid_payment',filtertype: 'list',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>},
+                    { text: 'Report Forward Status', dataField: 'status_forwarded_reporting', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_forwarded_reporting']?0:1;?>},
+                    { text: 'Report Approve Status', dataField: 'status_approved_reporting', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_reporting']?0:1;?>},
+                    { text: 'IOU Adjustment Status', dataField: 'status_approved_adjustment',filtertype: 'list',width:'100',rendered:tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_adjustment']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,hidden: <?php echo $system_preference_items['details_button']?0:1;?>}
 
                 ]

@@ -124,6 +124,7 @@ class Tour_setup extends Root_Controller
             $data['status_forwarded_reporting'] = 1;
             $data['status_approved_reporting'] = 1;
             $data['status_approved_adjustment'] = 1;
+            $data['status_extended_tour'] = 1;
         }
         return $data;
     }

@@ -1,5 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
+
 $action_buttons = array();
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_BACK"),
@@ -189,8 +190,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             </td>
                         </tr>
                         <tr>
-                            <td><label class="control-label"> Adjustment: </label></td>
-                            <td colspan="2"><label class="control-label adjustment_amount"> 0.00 </label></td>
+                            <td style="vertical-align:top"><label class="control-label"> Adjustment: </label></td>
+                            <td colspan="2"><label class="control-label adjustment_amount"> <?php echo System_helper::get_string_amount(0); ?> </label></td>
                         </tr>
                     </table>
                 </div>
@@ -211,6 +212,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
+        system_off_events(); // Triggers
         check_input_amount(false); // When page loads 1st time
 
         $(document).on("change keyup", ".iou_adjustment_input", function (event) {
@@ -250,13 +252,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             }
 
             if (note != "") {
-                note = '<span class="normal">' + note + '</span> &nbsp;';
+                note = '<br/><span class="normal">' + note + '</span>';
             }
         } else {
             note = '';
         }
 
-        var final_txt = note + get_string_amount(Math.abs(adj_amt));
+        var final_txt = get_string_amount(Math.abs(adj_amt)) + note;
         $(".adjustment_amount").html(final_txt);
     }
 
