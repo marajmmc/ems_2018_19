@@ -2,35 +2,6 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI =& get_instance();
 
-$action_buttons = array();
-if (isset($tour_extension_page) && $tour_extension_page)
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_BACK") . ' to List',
-        'href' => site_url($CI->controller_url)
-    );
-}
-else
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_BACK") . ' to Pending List',
-        'href' => site_url($CI->controller_url)
-    );
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_BACK") . ' to All list',
-        'href' => site_url($CI->controller_url . '/index/list_all')
-    );
-}
-if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line("ACTION_PRINT"),
-        'onClick' => "window.print()"
-    );
-}
-$CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
-
 $purposes = array();
 /*---------------------Purpose Array---------------------*/
 $CI->db->from($CI->config->item('table_ems_tour_purpose'));
@@ -83,7 +54,7 @@ if (($item['revision_count_rollback_reporting'] > 0) && ($item['status_approved_
 
 //  For Tour Extension Details
 $has_extended = '';
-if (($item['status_extended_tour'] == $CI->config->item('system_status_extended')) && isset($extension_details_view) && ($extension_details_view))
+if ($item['status_extended_tour'] == $CI->config->item('system_status_extended'))
 {
     $ext_revision_count = 0;
     $ext_data = array();
@@ -96,10 +67,6 @@ if (($item['status_extended_tour'] == $CI->config->item('system_status_extended'
         {
             if ($data['revision_count'] == 1)
             {
-                $data['date_from'] = System_helper::display_date($data['date_from']);
-                $data['date_to'] = System_helper::display_date($data['date_to']);
-                $data['date_from_new'] = System_helper::display_date($data['date_from_new']);
-                $data['date_to_new'] = System_helper::display_date($data['date_to_new']);
                 $ext_data = $data;
             }
             $oldest_data = $data;
@@ -222,8 +189,8 @@ if (($item['status_extended_tour'] == $CI->config->item('system_status_extended'
     <td class="widget-header header_caption">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?></label></td>
     <td>
-        <label class="control-label"> From <?php echo System_helper::display_date($item['date_from']) ?>
-            To <?php echo System_helper::display_date($item['date_to']) . $has_extended; ?>
+        <label class="control-label">
+            From <?php echo System_helper::display_date($item['date_from']); ?> &nbsp;&nbsp; To <?php echo System_helper::display_date($item['date_to']) . $has_extended;; ?>
         </label>
     </td>
     <td class="widget-header header_caption"><label class="control-label pull-right">Duration</label></td>
@@ -586,7 +553,7 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
     <?php
     }
 }
-if (($item['status_extended_tour'] == $CI->config->item('system_status_extended')) && isset($extension_details_view) && ($extension_details_view))
+if ($item['status_extended_tour'] == $CI->config->item('system_status_extended'))
 {
     ?>
     <tr id="ext_details">
@@ -600,7 +567,7 @@ if (($item['status_extended_tour'] == $CI->config->item('system_status_extended'
         </td>
         <td>
             <label class="control-label">
-                <?php echo $ext_data['date_from_new'] . ' &nbsp; to &nbsp; ' . $ext_data['date_to_new']; ?>
+                From <?php echo System_helper::display_date($ext_data['date_from_new']); ?> &nbsp;&nbsp; To <?php echo System_helper::display_date($ext_data['date_to_new']); ?>
             </label>
         </td>
         <td class="widget-header header_caption">
@@ -807,7 +774,6 @@ if (($item['status_extended_tour'] == $CI->config->item('system_status_extended'
     </table>
 </div>
 
-
 <div class="panel-heading">
     <h4 class="panel-title">
         <label><a class="external text-danger" data-toggle="collapse" data-target="#collapse5" href="#"> + Report &amp; Purpose Information</a></label>
@@ -911,14 +877,3 @@ if (($item['status_extended_tour'] == $CI->config->item('system_status_extended'
 
 </div>
 </div>
-
-<script type="application/javascript">
-    jQuery(document).ready(function ($){
-        $('a.ext_details').click(function(e){
-            e.preventDefault();
-            var $anchor = $('tr#ext_details').offset();
-            window.scrollTo($anchor.left,$anchor.top);
-            return false;
-        });
-    });
-</script>
