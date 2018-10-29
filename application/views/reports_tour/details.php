@@ -73,7 +73,7 @@ if ($item['status_extended_tour'] == $CI->config->item('system_status_extended')
         }
         $item['date_from'] = $oldest_data['date_from'];
         $item['date_to'] = $oldest_data['date_to'];
-        $has_extended = " &nbsp;( <a class='ext_details text-danger' href='javascript:void()'><i>Extended</i></a> )";
+        $has_extended = " &nbsp;( <i class='text-danger'>Extended</i> )";
     }
     $ext_user = System_helper::get_users_info(array($ext_data['user_updated']));
 }
@@ -190,7 +190,7 @@ if ($item['status_extended_tour'] == $CI->config->item('system_status_extended')
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE'); ?></label></td>
     <td>
         <label class="control-label">
-            From <?php echo System_helper::display_date($item['date_from']); ?> &nbsp;&nbsp; To <?php echo System_helper::display_date($item['date_to']) . $has_extended;; ?>
+            From <?php echo System_helper::display_date($item['date_from']); ?> &nbsp;&nbsp; To <?php echo System_helper::display_date($item['date_to']) . $has_extended; ?>
         </label>
     </td>
     <td class="widget-header header_caption"><label class="control-label pull-right">Duration</label></td>
@@ -556,7 +556,7 @@ if ($item['status_approved_adjustment'] != $CI->config->item('system_status_pend
 if ($item['status_extended_tour'] == $CI->config->item('system_status_extended'))
 {
     ?>
-    <tr id="ext_details">
+    <tr>
         <td colspan="4" class="bg-info text-info">
             <label class="control-label">Tour Extension Information</label>
         </td>
@@ -606,7 +606,7 @@ if ($item['status_extended_tour'] == $CI->config->item('system_status_extended')
     <table class="table table-bordered table-responsive system_table_details_view">
         <tr>
             <td colspan="2"><label class="control-label"> Status: </label></td>
-            <td style="width:50%"><label class="control-label"> Summary: </label></td>
+            <td style="width:65%"><label class="control-label"> Summary: </label></td>
         </tr>
         <tr>
             <td class="widget-header header_caption"><label class="control-label pull-right">IOU Approval</label></td>
@@ -630,7 +630,7 @@ if ($item['status_extended_tour'] == $CI->config->item('system_status_extended')
                     ?>
                     <div class="row show-grid">
                         <div class="col-xs-6 right-align" style="border-bottom:1px solid #000">
-                            <label class="control-label normal"> Item&nbsp;</label>
+                            <label class="control-label normal"> Item<br/>&nbsp;</label>
                         </div>
                         <div class="col-xs-3 right-align" style="border-bottom:1px solid #000">
                             <label class="control-label normal"> Requested / Paid </label>

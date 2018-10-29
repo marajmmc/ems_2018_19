@@ -143,7 +143,7 @@ $CI = & get_instance();
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EMPLOYEE_ID'); ?></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" name="report[employee_id]" class="form-control text-right float_type_positive" value=""/>
+                        <input id="employee_id_input" type="text" name="report[employee_id]" class="form-control text-right float_type_positive" value=""/>
                     </div>
                 </div>
             </div>
@@ -193,9 +193,21 @@ $CI = & get_instance();
 
         $(".date_large").datepicker({dateFormat: display_date_format, changeMonth: true, changeYear: true, yearRange: "2015:+0"});
 
+        $(document).on('change', '#employee_info_id', function () {
+            $('#employee_id_input').val('');
+            clear_location_search_fields()
+        });
+
+        $(document).on('input', '#employee_id_input', function () {
+            $('#employee_info_id').val('');
+            clear_location_search_fields()
+        });
+
         $(document).on('change', '#division_id', function () {
             $('#zone_id').val('');
             $('#territory_id').val('');
+            $('#employee_info_id').val('');
+            $('#employee_id_input').val('');
 
             var division_id = $('#division_id').val();
             $('#zone_id_container').hide();
@@ -225,4 +237,12 @@ $CI = & get_instance();
             }
         });
     });
+
+    function clear_location_search_fields(){
+        $('#division_id').val('');
+        $('#zone_id').val('');
+        $('#territory_id').val('');
+        $('#zone_id_container').hide();
+        $('#territory_id_container').hide();
+    }
 </script>
