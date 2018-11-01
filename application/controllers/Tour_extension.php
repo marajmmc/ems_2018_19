@@ -63,14 +63,12 @@ class Tour_extension extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou_request'] = 1;
-        $data['status_forwarded_tour'] = 1;
-        $data['status_approved_tour'] = 1;
+        $data['status_extended_tour'] = 1;
         $data['status_approved_payment'] = 1;
         $data['status_paid_payment'] = 1;
         $data['status_forwarded_reporting'] = 1;
         $data['status_approved_reporting'] = 1;
         $data['status_approved_adjustment'] = 1;
-        $data['status_extended_tour'] = 1;
         return $data;
     }
 
@@ -153,6 +151,7 @@ class Tour_extension extends Root_Controller
 
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status_approved_tour', $this->config->item('system_status_approved'));
         $this->db->order_by('tour_setup.id', 'DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
@@ -219,7 +218,7 @@ class Tour_extension extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $ajax = Tour_helper::tour_status_check($data['item'], array(TOUR_NOT_REJECTED, TOUR_FORWARDED, TOUR_APPROVED));
+            $ajax = Tour_helper::tour_status_check($data['item'], array(TOUR_NOT_REJECTED, TOUR_APPROVED));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -283,7 +282,7 @@ class Tour_extension extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_FORWARDED, TOUR_APPROVED));
+            $ajax = Tour_helper::tour_status_check($result, array(TOUR_NOT_REJECTED, TOUR_APPROVED));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);

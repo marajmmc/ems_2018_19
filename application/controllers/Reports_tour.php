@@ -273,7 +273,7 @@ class Reports_tour extends Root_Controller
 
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
-        $this->db->where('tour_setup.status!=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
         if ($date_from)
         {
             $this->db->where('tour_setup.date_from >=', System_helper::get_time($date_from));
@@ -282,32 +282,26 @@ class Reports_tour extends Root_Controller
         {
             $this->db->where('tour_setup.date_to <=', System_helper::get_time($date_to));
         }
-
+        if ($division_id > 0)
+        {
+            $this->db->where('divisions.id', $division_id);
+            if ($zone_id > 0)
+            {
+                $this->db->where('zones.id', $zone_id);
+                if ($territory_id > 0)
+                {
+                    $this->db->where('territories.id', $territory_id);
+                }
+            }
+        }
+        // Either from Dropdown or, from Input box
         if (is_numeric($employee_id) && ($employee_id > 0))
         {
             $this->db->where('user.employee_id', $employee_id);
         }
-        else
+        else if ($user_id && ($user_id != ""))
         {
-            if (!$user_id)
-            {
-                if ($division_id > 0)
-                {
-                    $this->db->where('divisions.id', $division_id);
-                    if ($zone_id > 0)
-                    {
-                        $this->db->where('zones.id', $zone_id);
-                        if ($territory_id > 0)
-                        {
-                            $this->db->where('territories.id', $territory_id);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                $this->db->where('tour_setup.user_id', $user_id);
-            }
+            $this->db->where('tour_setup.user_id', $user_id);
         }
         $this->db->order_by('divisions.id, zones.id, territories.id, districts.id, tour_setup.id DESC');
         $this->db->limit($pagesize, $current_records);
