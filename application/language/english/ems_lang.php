@@ -102,6 +102,7 @@ $lang['ACTION'] = 'Action';
 
 $lang['LABEL_ID'] = 'ID';
 $lang['LABEL_ORDER'] = 'Ordering';
+$lang['LABEL_ORDERING'] = 'Ordering';
 $lang['LABEL_ADD_MORE'] = 'Add more';
 $lang['LABEL_SEARCH'] = 'Search';
 $lang['LABEL_DESCRIPTION'] = 'Description';
