@@ -385,19 +385,19 @@ class Tour_setup extends Root_Controller
 
         $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
         $this->db->select('user.employee_id, user.user_name, user.status');
-        
+
         $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
         $this->db->select('user_info.name,user_info.ordering');
-        
+
         $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
         $this->db->select('designation.name AS designation');
-        
+
         $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
         $this->db->select('department.name AS department_name');
-        
+
         $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
         $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-        
+
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
@@ -456,10 +456,10 @@ class Tour_setup extends Root_Controller
 
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name,user_info.ordering');
-            
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation_name');
-            
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
             $this->db->where('user.status', $this->config->item('system_status_active'));
@@ -522,19 +522,19 @@ class Tour_setup extends Root_Controller
 
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
-            
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
-            
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            
+
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
@@ -619,19 +619,19 @@ class Tour_setup extends Root_Controller
 
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
-            
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
-            
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            
+
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $id);
@@ -675,9 +675,13 @@ class Tour_setup extends Root_Controller
         /*-----------END Permission & Validation Checking-----------*/
 
         $total_amount_iou_request = 0;
-        foreach ($items_iou as $amount_iou)
+        foreach ($items_iou as &$item_iou)
         {
-            $total_amount_iou_request += $amount_iou;
+            if (!($item_iou > 0))
+            {
+                $item_iou = 0;
+            }
+            $total_amount_iou_request += $item_iou;
         }
         $item_head['amount_iou_request'] = $total_amount_iou_request; // Common for both INSERT & UPDATE
         $item_head['amount_iou_items'] = json_encode($items_iou); // Common for both INSERT & UPDATE
@@ -921,7 +925,7 @@ class Tour_setup extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
+        if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete others Tour');
             $ajax['status'] = false;
@@ -981,19 +985,19 @@ class Tour_setup extends Root_Controller
 
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id=tour_setup.user_id', 'INNER');
             $this->db->select('user.id, user.employee_id, user.user_name, user.status');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=user.id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
-            
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation');
-            
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            
+
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
@@ -1007,7 +1011,7 @@ class Tour_setup extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
+            if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($data['item']['user_id'] != $user->user_id))
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward others Tour');
                 $ajax['status'] = false;
@@ -1083,7 +1087,7 @@ class Tour_setup extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if (($user->user_group !=  $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
+        if (($user->user_group != $this->config->item('USER_GROUP_SUPER')) && ($result['user_id'] != $user->user_id))
         {
             System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Forward others Tour');
             $ajax['status'] = false;
@@ -1143,19 +1147,19 @@ class Tour_setup extends Root_Controller
 
             $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
             $this->db->select('user.employee_id, user.user_name, user.status');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id=tour_setup.user_id', 'INNER');
             $this->db->select('user_info.name, user_info.ordering');
-            
+
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation, designation.id as designation_id');
-            
+
             $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
             $this->db->select('department.name AS department_name');
-            
+
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-            
+
             $this->db->where('user_area.revision', 1);
             $this->db->where('user_info.revision', 1);
             $this->db->where('tour_setup.id', $item_id);
@@ -1183,7 +1187,7 @@ class Tour_setup extends Root_Controller
                 $ajax['system_message'] = 'You are trying to View Tour Details of other Location';
                 $this->json_return($ajax);
             }
-            
+
             $user_ids = array();
             $user_ids[$data['item']['user_created']] = $data['item']['user_created'];
             $user_ids[$data['item']['user_updated']] = $data['item']['user_updated'];
@@ -1245,7 +1249,7 @@ class Tour_setup extends Root_Controller
         $items = $this->input->post('items');
         $old_items = $this->input->post('old_items');
         $items_iou = $this->input->post('items_iou');
-        
+
         if (!trim($item_head['title']))
         {
             $this->message = 'The Title field is required.';
@@ -1274,7 +1278,7 @@ class Tour_setup extends Root_Controller
         */
         /* for add*/
         $post_purposes = array();
-        if($items)
+        if ($items)
         {
             foreach ($items as $item)
             {
@@ -1288,7 +1292,7 @@ class Tour_setup extends Root_Controller
             }
         }
         /* for edit*/
-        if($old_items)
+        if ($old_items)
         {
             foreach ($old_items as $old_item)
             {
@@ -1318,20 +1322,16 @@ class Tour_setup extends Root_Controller
         $total_amount_iou_request = 0;
         if ($items_iou)
         {
-            foreach ($items_iou as $amount_iou)
+            foreach ($items_iou as $item_iou)
             {
-                $total_amount_iou_request += $amount_iou;
+                $total_amount_iou_request += $item_iou;
             }
-            if ($total_amount_iou_request<=0)
+
+            if ($total_amount_iou_request < 0)
             {
-                $this->message = $this->lang->line('LABEL_AMOUNT_TOTAL_IOU') . ' cannot be 0 or, negative.';
+                $this->message = $this->lang->line('LABEL_AMOUNT_TOTAL_IOU') . ' cannot be Negative.';
                 return false;
             }
-        }
-        else
-        {
-            $this->message = $this->lang->line('LABEL_AMOUNT_TOTAL_IOU') . ' is required.';
-            return false;
         }
 
         return true;

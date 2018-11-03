@@ -15,7 +15,7 @@ if ($iou_items)
     // EACH IOU Items
     foreach ($iou_items as $key => $iou_item)
     {
-        if (!isset($amount_iou_items[$key]) || ($amount_iou_items[$key] <= 0))
+        if (!isset($amount_iou_items[$key]))
         {
             continue;
         }

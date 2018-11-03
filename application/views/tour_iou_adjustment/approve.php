@@ -202,7 +202,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             }
                             else
                             {
-                                $note = "(No Adjustment Needed)";
+                                $note = "";
                             }
                             $note = '<span class="normal">' . $note . '</span> &nbsp;';
                             echo $note . System_helper::get_string_amount(abs($adj_amt));

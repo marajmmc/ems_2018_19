@@ -91,8 +91,9 @@ class Tour_iou_adjustment extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou_request'] = 1;
-        if ( ((isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)) && (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
-            || ($method == 'list_all') )
+        if (((isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)) && (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
+            || ($method == 'list_all')
+        )
         {
             $data['status_approved_adjustment'] = 1;
         }
@@ -361,7 +362,7 @@ class Tour_iou_adjustment extends Root_Controller
     private function system_save_adjustment()
     {
         $id = $this->input->post("id");
-        $items = $this->input->post('items');
+        $items_adj = $this->input->post('items');
         $time = time();
         $user = User_helper::get_user();
 
@@ -390,27 +391,31 @@ class Tour_iou_adjustment extends Root_Controller
         {
             $this->json_return($ajax);
         }
-
-        $total_amount_iou_adj = 0;
-        if ($items)
-        {
-            foreach ($items as $item)
-            {
-                $total_amount_iou_adj += $item;
-            }
-        }
-        if (!$this->check_validation_adjustment($result, $total_amount_iou_adj))
+        if (!$this->check_validation_adjustment())
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->message;
             $this->json_return($ajax);
         }
 
+        $total_amount_iou_adj = 0;
+        if ($items_adj)
+        {
+            foreach ($items_adj as &$item_adj)
+            {
+                if (!($item_adj > 0))
+                {
+                    $item_adj = 0;
+                }
+                $total_amount_iou_adj += $item_adj;
+            }
+        }
+
         $this->db->trans_start(); //DB Transaction Handle START
 
         $item = array();
         $item['amount_iou_adjustment'] = $total_amount_iou_adj;
-        $item['amount_iou_adjustment_items'] = json_encode($items);
+        $item['amount_iou_adjustment_items'] = json_encode($items_adj);
         $item['status_approved_adjustment'] = $this->config->item('system_status_forwarded');
         $item['date_updated_adjustment'] = $time;
         $item['user_updated_adjustment'] = $user->user_id;
@@ -478,7 +483,7 @@ class Tour_iou_adjustment extends Root_Controller
             }
 
             $data['total_iou_amount'] = Tour_helper::calculate_total_iou($data['item']['amount_iou_items']);
-            $data['title'] = 'Tour IOU Adjustment Approval :: '.$data['item']['title'].' ( Tour ID:'.$data['item']['tour_setup_id'].' )';
+            $data['title'] = 'Tour IOU Adjustment Approval :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
             if ($this->message)
@@ -633,18 +638,22 @@ class Tour_iou_adjustment extends Root_Controller
         }
     }
 
-    private function check_validation_adjustment($item, $sum=0)
+    private function check_validation_adjustment()
     {
-        $iou_rqst = Tour_helper::calculate_total_iou($item['amount_iou_items']);
-        if (!($sum > 0))
+        $items_adj = $this->input->post('items');
+        $total_amount_iou_adj = 0;
+        if ($items_adj)
         {
-            $this->message = "Total Voucher Amount cannot be 0 or, negative";
-            return false;
-        }
-        if ($iou_rqst == $sum)
-        {
-            $this->message = "Voucher Amount is Same. No Adjustment Needed.";
-            return false;
+            foreach ($items_adj as $item_adj)
+            {
+                $total_amount_iou_adj += $item_adj;
+            }
+
+            if ($total_amount_iou_adj < 0)
+            {
+                $this->message = "Total Voucher Amount cannot be Negative";
+                return false;
+            }
         }
         return true;
     }

@@ -248,7 +248,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             } else if (adj_amt < 0) {
                 note = "(Return To Accounts)";
             } else {
-                note = "(No Adjustment Needed)";
+                note = "";
             }
 
             if (note != "") {
