@@ -334,3 +334,25 @@ $lang['LABEL_AREA_ADDRESS'] = 'Growing Area Address';
 
 // Printing Page
 $lang['LABEL_PURPOSE'] = 'Purpose';
+
+// Field Day Task
+$lang['LABEL_TOTAL_BUDGET'] = 'Expected Total Budget ';
+$lang['LABEL_COM_VARIETY_NAME'] = 'Competitor Variety';
+$lang['LABEL_STATUS_BUDGET'] = 'Budget Status';
+$lang['LABEL_STATUS_REQUESTED'] = 'Request';
+$lang['LABEL_STATUS_APPROVED'] = 'Approval';
+
+$lang['LABEL_BUDGET_PROPOSAL_DATE'] = 'Budget Proposal Date';
+$lang['LABEL_CROP_TYPE'] = 'Crop Type';
+$lang['LABEL_COMPETITOR_VARIETY'] = 'Competitor Variety';
+$lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
+$lang['LABEL_DEALERS_EVALUATION'] = 'Dealers Feedback/ Opinion';
+$lang['LABEL_SPECIFIC_DIFFERENCE'] = 'Specific Difference with Competitors Variety';
+$lang['LABEL_EXPECTED_DATE'] = 'Expected Date';
+$lang['LABEL_PARTICIPANT_THROUGH_CUSTOMER'] = 'Participant Through Customer';
+$lang['LABEL_PARTICIPANT_THROUGH_OTHERS'] = 'Participant Through Others';
+$lang['LABEL_FIELD_DAY_BUDGET'] = 'Budget For Field Day (BDT)';
+$lang['LABEL_TOTAL_MARKET_SIZE'] = 'Total Market Size (kg)';
+$lang['LABEL_ARM_MARKET_SIZE'] = 'ARM Market Size (kg)';
+$lang['LABEL_NEXT_SALES_TARGET'] = 'Next Year Sales Target (kg)';
+$lang['LABEL_RECOMMENDATION'] = 'Recommendation';
