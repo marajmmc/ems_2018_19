@@ -191,7 +191,7 @@ $CI = & get_instance();
     jQuery(document).ready(function ($) {
         system_off_events(); // Triggers
 
-        $(".date_large").datepicker({dateFormat: display_date_format, changeMonth: true, changeYear: true, yearRange: "2015:+0"});
+        $(".date_large").datepicker({dateFormat: display_date_format, changeMonth: true, changeYear: true, yearRange: "c-2:c+2"});
 
         $(document).on('change', '#employee_info_id', function () {
             $('#employee_id_input').val('');

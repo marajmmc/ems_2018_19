@@ -189,7 +189,7 @@ foreach($user_info as $user)
     jQuery(document).ready(function()
     {
         system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
+        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-2:c+2"});
         $(document).off('change', '#division_id');
         $(document).off('change', '#zone_id');
         $(document).off('change', '#territory_id');
