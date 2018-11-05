@@ -39,7 +39,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_PROPOSAL_DATE'); ?>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
@@ -127,7 +127,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     echo 'display:none';
 } ?>" class="row show-grid" id="competitor_variety_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_COMPETITOR_VARIETY'); ?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_COM_VARIETY_NAME'); ?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="competitor_variety_id" name="item_info[competitor_variety_id]" class="form-control">
@@ -300,6 +300,44 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
+<div style="<?php echo (!(sizeof($outlets) > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="outlet_id_container">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <?php
+        if ($item['id'] > 0)
+        {
+            ?>
+            <label class="control-label"><?php echo $item['outlet_name']; ?></label>
+        <?php
+        }
+        else
+        {
+            ?>
+            <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
+                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                <?php
+                foreach ($outlets as $outlet)
+                {
+                    ?>
+                    <option value="<?php echo $outlet['value'] ?>" <?php if ($outlet['value'] == $item['outlet_id'])
+                    {
+                        echo "selected";
+                    } ?>><?php echo $outlet['text']; ?></option>
+                <?php
+                }
+                ?>
+            </select>
+        <?php
+        }
+        ?>
+
+    </div>
+</div>
+
+<?php /*
 <div style="<?php if (!(sizeof($upazillas) > 0))
 {
     echo 'display:none';
@@ -337,7 +375,8 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         }
         ?>
     </div>
-</div>
+</div> */
+?>
 
 <div class="row show-grid">
     <div class="col-xs-4">
@@ -389,10 +428,42 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php if (!(sizeof($leading_farmers) > 0))
-{
-    echo 'display:none;';
-} ?>" class="row show-grid" id="leading_farmer_container">
+<div data-test="888777" style="<?php echo (!(sizeof($dealers) > 0))? 'display:none;':''; ?>" class="row show-grid" id="dealer_container">
+
+    <div id="dealer_id" class="row show-grid">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"> <?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?></label>
+            </div>
+        </div>
+
+        <?php
+        $total_participant = 0;
+        foreach ($dealers as $item)
+        {
+            if (isset($participants[$item['value']]) || $item['status'] == 'Active')
+            {
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-5">
+                        <label class="control-label pull-right"><?php echo $item['text'] . ' (' . $item['phone_no'] . ')'; ?> <span style="color:#FF0000">*</span></label>
+                    </div>
+                    <div class="col-sm-3 col-xs-9">
+                        <input type="text" name="dealer_participant[<?php echo $item['value']; ?>]" class="form-control integer_type_positive participant_budget" value="<?php if (isset($participants[$item['value']]))
+                        {
+                            $total_participant += $participants[$item['value']]['number'];
+                            echo $participants[$item['value']]['number'];
+                        }?>"/>
+                    </div>
+                </div>
+            <?php
+            }
+        }
+        ?>
+    </div>
+</div>
+
+<div style="<?php echo (!(sizeof($leading_farmers) > 0))? 'display:none;':''; ?>" class="row show-grid" id="leading_farmer_container">
 
     <div id="leading_farmer_id" class="row show-grid">
         <div class="row show-grid">
@@ -667,9 +738,12 @@ jQuery(document).ready(function ($) {
     system_off_events(); // Triggers
 
     $(".datepicker").datepicker({dateFormat: display_date_format});
-    $(document).off("input", ".expense_budget");
-    $(document).off("input", ".participant_budget");
-    var system_all_varieties=JSON.parse('<?php echo json_encode($system_all_varieties);?>');
+    $(".browse_button").filestyle({input: false, icon: false, buttonText: "Upload", buttonName: "btn-primary"});
+
+    var system_all_varieties = JSON.parse('<?php echo json_encode($system_all_varieties);?>');
+
+//    $(document).off("input", ".expense_budget");
+//    $(document).off("input", ".participant_budget");
 
     /*--------------------- CROP RELATED DROPDOWN ---------------------*/
     $(document).on("change", "#crop_id", function () {
@@ -781,13 +855,13 @@ jQuery(document).ready(function ($) {
         $("#zone_id").val("");
         $("#territory_id").val("");
         $("#district_id").val("");
-        $("#upazilla_id").val("");
+        $("#outlet_id").val("");
 
         var division_id = $('#division_id').val();
         $('#zone_id_container').hide();
         $('#territory_id_container').hide();
         $('#district_id_container').hide();
-        $('#upazilla_id_container').hide();
+        $('#outlet_id_container').hide();
         if (division_id > 0) {
             $('#zone_id_container').show();
             if (system_zones[division_id] !== undefined) {
@@ -798,11 +872,12 @@ jQuery(document).ready(function ($) {
     $(document).on("change", "#zone_id", function () {
         $("#territory_id").val("");
         $("#district_id").val("");
-        $("#upazilla_id").val("");
+        $("#outlet_id").val("");
+
         var zone_id = $('#zone_id').val();
         $('#territory_id_container').hide();
         $('#district_id_container').hide();
-        $('#upazilla_id_container').hide();
+        $('#outlet_id_container').hide();
         if (zone_id > 0) {
             $('#territory_id_container').show();
             if (system_territories[zone_id] !== undefined) {
@@ -812,10 +887,11 @@ jQuery(document).ready(function ($) {
     });
     $(document).on("change", "#territory_id", function () {
         $("#district_id").val("");
-        $("#upazilla_id").val("");
+        $("#outlet_id").val("");
+
         var territory_id = $('#territory_id').val();
         $('#district_id_container').hide();
-        $('#upazilla_id_container').hide();
+        $('#outlet_id_container').hide();
         if (territory_id > 0) {
             $('#district_id_container').show();
             if (system_districts[territory_id] !== undefined) {
@@ -823,87 +899,150 @@ jQuery(document).ready(function ($) {
             }
         }
     });
-    $(document).on("change", "#district_id", function () {
-        $("#upazilla_id").val("");
-        $("#leading_farmer_id").val("");
+    $(document).on('change', '#district_id', function () {
+        $('#outlet_id').val('');
+
         var district_id = $('#district_id').val();
+        $('#outlet_id_container').hide();
         if (district_id > 0) {
-            $('#upazilla_id_container').show();
-            $('#leading_farmer_container').hide();
-            $.ajax({
-                url: base_url + "common_controller/get_dropdown_upazillas_by_districtid/",
-                type: 'POST',
-                datatype: "JSON",
-                data: {district_id: district_id},
-                success: function (data, status) {
-
-                },
-                error: function (xhr, desc, err) {
-                    console.log("error");
-
-                }
-            });
-        }
-        else {
-            $('#upazilla_id_container').hide();
-            $('#leading_farmer_container').hide();
+            if (system_outlets[district_id] !== undefined) {
+                $('#outlet_id_container').show();
+                $('#outlet_id').html(get_dropdown_with_select(system_outlets[district_id]));
+            }
         }
     });
-    $(document).on("change", "#upazilla_id", function () {
-        $('#leading_farmer_container').empty();
-        $("#leading_farmer_id").val("");
-        var upazilla_id = $('#upazilla_id').val();
-        if (upazilla_id > 0) {
-            $('#leading_farmer_container').show();
+
+    /* $(document).on("change", "#district_id", function () {
+     $("#upazilla_id").val("");
+     $("#leading_farmer_id").val("");
+     var district_id = $('#district_id').val();
+     if (district_id > 0) {
+     $('#upazilla_id_container').show();
+     $('#leading_farmer_container').hide();
+     $.ajax({
+     url: base_url + "common_controller/get_dropdown_upazillas_by_districtid/",
+     type: 'POST',
+     datatype: "JSON",
+     data: {district_id: district_id},
+     success: function (data, status) {
+
+     },
+     error: function (xhr, desc, err) {
+     console.log("error");
+
+     }
+     });
+     }
+     else {
+     $('#upazilla_id_container').hide();
+     $('#leading_farmer_container').hide();
+     }
+     });
+     $(document).on("change", "#upazilla_id", function () {
+     $('#leading_farmer_container').empty();
+     $("#leading_farmer_id").val("");
+     var upazilla_id = $('#upazilla_id').val();
+     if (upazilla_id > 0) {
+     $('#leading_farmer_container').show();
+     $.ajax({
+     url: base_url + "common_controller/get_leading_farmers_by_upazillaid/",
+     type: 'POST',
+     datatype: "JSON",
+     data: {upazilla_id: upazilla_id, html_container_id: '#leading_farmer_container'},
+     success: function (data, status) {
+
+     },
+     error: function (xhr, desc, err) {
+     console.log("error");
+
+     }
+     });
+     }
+     else {
+     $('#leading_farmer_container').hide();
+     }
+     }); */
+
+    $(document).on("change", "#outlet_id", function (event) {
+        event.preventDefault();
+        var outlet_id = parseInt($(this).val());
+        if (outlet_id > 0) {
+            $('#dealer_container').show();
             $.ajax({
-                url: base_url + "common_controller/get_leading_farmers_by_upazillaid/",
-                type: 'POST',
-                datatype: "JSON",
-                data: {upazilla_id: upazilla_id, html_container_id: '#leading_farmer_container'},
-                success: function (data, status) {
+                    url: "<?php echo site_url($CI->controller_url.'/index/get_dealers/') ?>",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data: {
+                        html_container_id: '#dealer_id',
+                        id: outlet_id
+                    },
+                    success: function (data, status) {
 
-                },
-                error: function (xhr, desc, err) {
-                    console.log("error");
-
-                }
+                    },
+                    error: function (xhr, desc, err) {
+                        console.log("error");
+                    }
             });
-        }
-        else {
-            $('#leading_farmer_container').hide();
+        }else{
+            $('#dealer_container').hide();
         }
     });
+
     /*--------------------- LOCATION RELATED DROPDOWN ( END ) ---------------------*/
 
+//    $(document).on("change", "#upazilla_id", function () {
+//        $('#leading_farmer_container').empty();
+//        $("#leading_farmer_id").val("");
+//        var upazilla_id = $('#upazilla_id').val();
+//        if (upazilla_id > 0) {
+//            $('#leading_farmer_container').show();
+//            $.ajax({
+//                url: base_url + "common_controller/get_leading_farmers_by_upazillaid/",
+//                type: 'POST',
+//                datatype: "JSON",
+//                data: {upazilla_id: upazilla_id, html_container_id: '#leading_farmer_container'},
+//                success: function (data, status) {
+//
+//                },
+//                error: function (xhr, desc, err) {
+//                    console.log("error");
+//
+//                }
+//            });
+//        }
+//        else {
+//            $('#leading_farmer_container').hide();
+//        }
+//    });
 
-    $(document).on("input", ".expense_budget", function () {
-        //findTotal();
-        var total_budget = 0;
-        $(".expense_budget").each(function (index, element) {
-            if ($(this).val() == parseFloat($(this).val())) {
-                total_budget = total_budget + parseFloat($(this).val());
-            }
-        });
-        if (total_budget >= 0) {
-            $('#total_budget_container').show();
-        }
-        $('#total_budget').html(number_format(total_budget, 2));
-    });
 
-    $(document).on("input", ".participant_budget", function () {
-        //findTotal_participant();
-        var total_participant = 0;
-        $(".participant_budget").each(function (index, element) {
-            if ($(this).val() == parseFloat($(this).val())) {
-                total_participant = total_participant + parseInt($(this).val());
-            }
-        });
-        if (total_participant >= 0) {
-            $('#total_participant_container').show();
-        }
-        $('#no_of_participant').html(number_format(total_participant));
-    });
+    /* $(document).on("input", ".expense_budget", function () {
+     //findTotal();
+     var total_budget = 0;
+     $(".expense_budget").each(function (index, element) {
+     if ($(this).val() == parseFloat($(this).val())) {
+     total_budget = total_budget + parseFloat($(this).val());
+     }
+     });
+     if (total_budget >= 0) {
+     $('#total_budget_container').show();
+     }
+     $('#total_budget').html(number_format(total_budget, 2));
+     });
 
-    $(".browse_button").filestyle({input: false, icon: false, buttonText: "Upload", buttonName: "btn-primary"});
+     $(document).on("input", ".participant_budget", function () {
+     //findTotal_participant();
+     var total_participant = 0;
+     $(".participant_budget").each(function (index, element) {
+     if ($(this).val() == parseFloat($(this).val())) {
+     total_participant = total_participant + parseInt($(this).val());
+     }
+     });
+     if (total_participant >= 0) {
+     $('#total_participant_container').show();
+     }
+     $('#no_of_participant').html(number_format(total_participant));
+     }); */
+
 });
 </script>

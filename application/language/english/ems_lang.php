@@ -214,7 +214,7 @@ $lang['LABEL_DIVISION_NAME'] = 'Division';
 $lang['LABEL_ZONE_NAME'] = 'Zone';
 $lang['LABEL_TERRITORY_NAME'] = 'Territory';
 $lang['LABEL_DISTRICT_NAME'] = 'District';
-$lang['LABEL_UPAZILLA_NAME'] = 'Upazila';
+$lang['LABEL_UPAZILLA_NAME'] = 'Upazilla';
 $lang['LABEL_UNION_NAME'] = 'Union';
 
 //crop classification
@@ -336,19 +336,20 @@ $lang['LABEL_AREA_ADDRESS'] = 'Growing Area Address';
 $lang['LABEL_PURPOSE'] = 'Purpose';
 
 // Field Day Task
-$lang['LABEL_TOTAL_BUDGET'] = 'Expected Total Budget ';
+$lang['LABEL_FDB_NO'] = 'FDB No';
+$lang['LABEL_FDB_PROPOSAL_DATE'] = 'Proposal Date';
+$lang['LABEL_EXPECTED_DATE'] = 'Expected Date';
+$lang['LABEL_TOTAL_BUDGET'] = 'Expected Total Budget';
+$lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_COM_VARIETY_NAME'] = 'Competitor Variety';
 $lang['LABEL_STATUS_BUDGET'] = 'Budget Status';
 $lang['LABEL_STATUS_REQUESTED'] = 'Request';
 $lang['LABEL_STATUS_APPROVED'] = 'Approval';
 
-$lang['LABEL_BUDGET_PROPOSAL_DATE'] = 'Budget Proposal Date';
-$lang['LABEL_CROP_TYPE'] = 'Crop Type';
-$lang['LABEL_COMPETITOR_VARIETY'] = 'Competitor Variety';
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
 $lang['LABEL_DEALERS_EVALUATION'] = 'Dealers Feedback/ Opinion';
 $lang['LABEL_SPECIFIC_DIFFERENCE'] = 'Specific Difference with Competitors Variety';
-$lang['LABEL_EXPECTED_DATE'] = 'Expected Date';
+$lang['LABEL_PARTICIPANT_THROUGH_DEALER'] = 'Participant Through Dealer';
 $lang['LABEL_PARTICIPANT_THROUGH_CUSTOMER'] = 'Participant Through Customer';
 $lang['LABEL_PARTICIPANT_THROUGH_OTHERS'] = 'Participant Through Others';
 $lang['LABEL_FIELD_DAY_BUDGET'] = 'Budget For Field Day (BDT)';

@@ -19,6 +19,7 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
+        $this->load->helper('fd_budget');
     }
 
     public function index($action = "list", $id = 0)
@@ -59,6 +60,10 @@ class Fd_budget extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif ($action == "get_dealers")
+        {
+            $this->system_get_dealers($id);
+        }
         elseif ($action == "set_preference")
         {
             $this->system_set_preference('list');
@@ -75,8 +80,8 @@ class Fd_budget extends Root_Controller
 
     private function get_preference_headers($method)
     {
-        $data['id'] = 1;
-        $data['date'] = 1;
+        $data['fdb_no'] = 1;
+        $data['fdb_proposal_date'] = 1;
         $data['expected_date'] = 1;
         $data['total_budget'] = 1;
         $data['crop_name'] = 1;
@@ -145,7 +150,7 @@ class Fd_budget extends Root_Controller
         $this->db->select('fd_budget_details.*');
 
         $this->db->join($this->config->item('table_ems_fd_budget') . ' fd_budget', 'fd_budget.id = fd_budget_details.budget_id', 'INNER');
-        $this->db->select('fd_budget.*');
+        $this->db->select('fd_budget.*, fd_budget.id AS fdb_no, fd_budget.date AS fdb_proposal_date');
 
         $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety', 'variety.id = fd_budget_details.variety_id', 'INNER');
         $this->db->select('variety.name variety_name');
@@ -351,7 +356,7 @@ class Fd_budget extends Root_Controller
             $data['zones'] = array();
             $data['territories'] = array();
             $data['districts'] = array();
-            $data['upazillas'] = array();
+            $data['outlets'] = array();
             if ($this->locations['division_id'] > 0)
             {
                 $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $this->locations['division_id']));
@@ -373,20 +378,19 @@ class Fd_budget extends Root_Controller
             $data['crop_varieties'] = array();
             $data['competitor_varieties'] = array();
             $data['participants'] = array();
+            $data['dealers'] = array();
             $data['leading_farmers'] = array();
             $data['total'] = '';
 
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering ASC'));
             $data['expense_budget'] = array();
 
-            /*--------------------- Competitor variety (Variety 2 - ARM & other varieties) ---------------------*/
-            $results_all_crop_varieties = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'CONCAT(name, " - ", whose) text', 'crop_type_id'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering'));
-            $data['system_all_varieties']=array();
-            foreach($results_all_crop_varieties as $result)
-            {
-                $data['system_all_varieties'][$result['crop_type_id']][]=$result;
-            }
-            /*--------------------- Competitor variety (Variety 2 - ARM & other varieties) (END)----------------*/
+            $data['system_all_varieties'] = Fd_budget_helper::get_dropdown_all_crop_variety();
+//            $data['system_all_upazillas'] = Fd_budget_helper::get_dropdown_all_upazilla();
+//            $data['system_all_leading_farmers'] = Fd_budget_helper::get_dropdown_all_leading_farmer();
+            $oid = '273';
+            Fd_budget_helper::get_all_area_dealers_by_outlet_id($oid);
+
 
             $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering ASC'));
             $data['file_details'] = array();
@@ -531,9 +535,12 @@ class Fd_budget extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
+*/
     private function system_save()
     {
+        pr($this->input->post());
+
+
         $id = $this->input->post('id');
         $item = $this->input->post('item');
         $user = User_helper::get_user();
@@ -611,6 +618,40 @@ class Fd_budget extends Root_Controller
         }
     }
 
+    private function system_get_dealers($id = 0)
+    {
+        if ($id > 0)
+        {
+            $item_id = $id;
+        }
+        else
+        {
+            $item_id = $this->input->post('id');
+        }
+        $html_container_id = $this->input->post('html_container_id');
+        $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER');
+        $data['items'] = Fd_budget_helper::get_all_area_dealers_by_outlet_id($item_id);
+        foreach ($data['items'] as &$item)
+        {
+            $item['value'] = $item['dealer_id'];
+            $item['text'] = $item['dealer_name'];
+            $item['phone_no'] = $item['mobile_no'];
+        }
+
+        if ($data['items'])
+        {
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view($this->controller_url . "/input_fields_with_item", $data, true));
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("SET_LEADING_DEALER");
+            $this->json_return($ajax);
+        }
+    }
+
     private function check_validation()
     {
         $this->load->library('form_validation');
@@ -624,7 +665,4 @@ class Fd_budget extends Root_Controller
         }
         return true;
     }
-
-
-    */
 }
