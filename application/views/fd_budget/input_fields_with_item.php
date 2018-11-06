@@ -2,22 +2,30 @@
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"> <?php echo (isset($label)) ? $label : "LIST"; ?> : </label>
+        <label class="control-label pull-right"> <?php echo (isset($label)) ? $label : "FIELD LABEL"; ?> : </label>
     </div>
 </div>
 <?php
+//$tmp =array();
 foreach ($items as $item)
 {
+    /*if(array_key_exists($item['value'], $tmp)){
+        $tmp[$item['value']] = $tmp[$item['value']]+1;
+    }else{
+        $tmp[$item['value']]=1;
+    }*/
     ?>
     <div class="row show-grid">
         <div class="col-xs-6">
-            <label style="font-weight:normal" class="control-label pull-right"><?php echo $item['text'] . ' ( ' . $item['phone_no'] . ' )'; ?> <span style="color:#FF0000">*</span></label>
+            <label style="font-weight:normal" class="control-label pull-right"><?php echo $item['text'] . ' ( ' . $item['phone_no'] . ' )'; ?>
+                <span style="color:#FF0000">*</span></label>
         </div>
         <div class="col-xs-2">
-            <input type="text" name="dealer_participant[<?php echo $item['value']; ?>]" class="form-control integer_type_positive participant_budget" value=""/>
-            <!-- farmer_participant -->
+            <input type="text" name="<?php echo $name_index . '[' . $item['value'] . ']'; ?>" class="form-control integer_type_positive participant_budget" value="0"/>
+            <!--<input type="text" name="dealer_participant[<?php /*echo $item['value']; */ ?>]" class="form-control integer_type_positive participant_budget" value=""/>-->
         </div>
     </div>
 <?php
 }
+//pr($tmp, 0);
 ?>

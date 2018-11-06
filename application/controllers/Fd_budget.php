@@ -5,6 +5,7 @@ class Fd_budget extends Root_Controller
     public $message;
     public $permissions;
     public $controller_url;
+    public $locations;
 
     public function __construct()
     {
@@ -63,6 +64,10 @@ class Fd_budget extends Root_Controller
         elseif ($action == "get_dealers")
         {
             $this->system_get_dealers($id);
+        }
+        elseif ($action == "get_leading_farmers")
+        {
+            $this->system_get_leading_farmers($id);
         }
         elseif ($action == "set_preference")
         {
@@ -388,8 +393,6 @@ class Fd_budget extends Root_Controller
             $data['system_all_varieties'] = Fd_budget_helper::get_dropdown_all_crop_variety();
 //            $data['system_all_upazillas'] = Fd_budget_helper::get_dropdown_all_upazilla();
 //            $data['system_all_leading_farmers'] = Fd_budget_helper::get_dropdown_all_leading_farmer();
-            $oid = '273';
-            Fd_budget_helper::get_all_area_dealers_by_outlet_id($oid);
 
 
             $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering ASC'));
@@ -536,6 +539,7 @@ class Fd_budget extends Root_Controller
         }
     }
 */
+
     private function system_save()
     {
         pr($this->input->post());
@@ -630,11 +634,47 @@ class Fd_budget extends Root_Controller
         }
         $html_container_id = $this->input->post('html_container_id');
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER');
-        $data['items'] = Fd_budget_helper::get_all_area_dealers_by_outlet_id($item_id);
+        $data['name_index'] = 'dealer_participant';
+        $data['items'] = Fd_budget_helper::get_all_area_dealers_by_outlet($item_id);
         foreach ($data['items'] as &$item)
         {
             $item['value'] = $item['dealer_id'];
             $item['text'] = $item['dealer_name'];
+            $item['phone_no'] = $item['mobile_no'];
+        }
+
+        if ($data['items'])
+        {
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view($this->controller_url . "/input_fields_with_item", $data, true));
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("SET_LEADING_DEALER");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_get_leading_farmers($id = 0)
+    {
+        if ($id > 0)
+        {
+            $item_id = $id;
+        }
+        else
+        {
+            $item_id = $this->input->post('id');
+        }
+        $html_container_id = $this->input->post('html_container_id');
+        $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER');
+        $data['name_index'] = 'farmer_participant';
+        $data['items'] = Fd_budget_helper::get_all_area_lead_farmers_by_outlet($item_id);
+        foreach ($data['items'] as &$item)
+        {
+            $item['value'] = $item['lead_farmers_id'];
+            $item['text'] = $item['name'];
             $item['phone_no'] = $item['mobile_no'];
         }
 
