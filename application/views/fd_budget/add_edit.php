@@ -89,7 +89,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 <div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="variety_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_1_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
@@ -109,7 +109,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 <div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="competitor_variety_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_COM_VARIETY_NAME'); ?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_2_NAME'); ?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <select id="competitor_variety_id" name="item_info[competitor_variety_id]" class="form-control">
@@ -369,7 +369,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="diff_wth_com" name="item_info[diff_wth_com]"><?php echo $item_info['diff_wth_com']; ?></textarea>
+        <textarea class="form-control" id="diff_between_varieties" name="item_info[diff_between_varieties]"><?php echo $item_info['diff_between_varieties']; ?></textarea>
     </div>
 </div>
 
@@ -784,6 +784,7 @@ jQuery(document).ready(function ($) {
     $(document).off("input", ".expense_budget");
     $(document).off("input", ".participant_budget");
 
+
     /*--------------------- CROP RELATED DROPDOWN ---------------------*/
     $(document).on("change", "#crop_id", function () {
         $("#crop_type_id").val("");
@@ -817,74 +818,7 @@ jQuery(document).ready(function ($) {
             $('#variety_id_container').hide();
             $('#competitor_variety_id_container').hide();
         }
-
-        /* var current_id=$(this).attr('data-current-id');
-         $("#variety_id_"+current_id).val('');
-         $("#pack_size_id_"+current_id).val('');
-         $("#quantity_request_"+current_id).val('');
-         $("#quantity_request_kg_"+current_id).html('');
-
-         $("#quantity_min_"+current_id).html('');
-         $("#quantity_max_"+current_id).html('');
-         $("#stock_outlet_"+current_id).html('');
-         //$("#quantity_max_transferable_"+current_id).html('');
-         $("#stock_available_pkt_"+current_id).html('');
-         $("#stock_available_"+current_id).html('');
-
-         var crop_type_id=$('#crop_type_id_'+current_id).val();
-         $('#variety_id_'+current_id).hide();
-         $('#pack_size_id_'+current_id).hide();
-         $('#quantity_request_'+current_id).hide();
-         if(crop_type_id>0 && system_varieties[crop_type_id]!=undefined)
-         {
-         $('#variety_id_'+current_id).show();
-         $('#variety_id_'+current_id).html(get_dropdown_with_select(system_varieties[crop_type_id]));
-         }
-         calculate_total(); */
     });
-
-
-    /* $(document).on("change", "#crop_type_id", function () {
-     $("#variety_id").val("");
-     $("#competitor_variety_id").val("");
-     var crop_type_id = $('#crop_type_id').val();
-     if (crop_type_id > 0) {
-     $('#variety_id_container').show();
-     $('#competitor_variety_id_container').show();
-     $.ajax({
-     url: base_url + "common_controller/get_dropdown_arm_and_upcoming_varieties_by_croptypeid/",
-     type: 'POST',
-     datatype: "JSON",
-     data: {crop_type_id: crop_type_id},
-     success: function (data, status) {
-
-     },
-     error: function (xhr, desc, err) {
-     console.log("error");
-
-     }
-     });
-
-     $.ajax({
-     url: base_url + "common_controller/get_dropdown_competitor_varieties_by_croptypeid/",
-     type: 'POST',
-     datatype: "JSON",
-     data: {crop_type_id: crop_type_id},
-     success: function (data, status) {
-
-     },
-     error: function (xhr, desc, err) {
-     console.log("error");
-
-     }
-     });
-
-     }
-     else {
-     $('#variety_id_container').hide();
-     $('#competitor_variety_id_container').hide();
-     }
-     }); */
     /*--------------------- CROP RELATED DROPDOWN ( END )-------------*/
 
 
@@ -949,58 +883,6 @@ jQuery(document).ready(function ($) {
             }
         }
     });
-
-    /* $(document).on("change", "#district_id", function () {
-     $("#upazilla_id").val("");
-     $("#leading_farmer_id").val("");
-     var district_id = $('#district_id').val();
-     if (district_id > 0) {
-     $('#upazilla_id_container').show();
-     $('#leading_farmer_container').hide();
-     $.ajax({
-     url: base_url + "common_controller/get_dropdown_upazillas_by_districtid/",
-     type: 'POST',
-     datatype: "JSON",
-     data: {district_id: district_id},
-     success: function (data, status) {
-
-     },
-     error: function (xhr, desc, err) {
-     console.log("error");
-
-     }
-     });
-     }
-     else {
-     $('#upazilla_id_container').hide();
-     $('#leading_farmer_container').hide();
-     }
-     });
-     $(document).on("change", "#upazilla_id", function () {
-     $('#leading_farmer_container').empty();
-     $("#leading_farmer_id").val("");
-     var upazilla_id = $('#upazilla_id').val();
-     if (upazilla_id > 0) {
-     $('#leading_farmer_container').show();
-     $.ajax({
-     url: base_url + "common_controller/get_leading_farmers_by_upazillaid/",
-     type: 'POST',
-     datatype: "JSON",
-     data: {upazilla_id: upazilla_id, html_container_id: '#leading_farmer_container'},
-     success: function (data, status) {
-
-     },
-     error: function (xhr, desc, err) {
-     console.log("error");
-
-     }
-     });
-     }
-     else {
-     $('#leading_farmer_container').hide();
-     }
-     }); */
-
     $(document).on("change", "#outlet_id", function (event) {
         event.preventDefault();
         var outlet_id = parseInt($(this).val());
@@ -1022,7 +904,7 @@ jQuery(document).ready(function ($) {
             });
 
             $.ajax({
-                url: "<?php echo site_url($CI->controller_url.'/index/get_leading_farmers/') ?>",
+                url: "<?php echo site_url($CI->controller_url.'/index/get_lead_farmers/') ?>",
                 type: 'POST',
                 datatype: "JSON",
                 data: {
@@ -1044,33 +926,7 @@ jQuery(document).ready(function ($) {
             $('#leading_farmer_container').hide();
         }
     });
-
     /*--------------------- LOCATION RELATED DROPDOWN ( END ) ---------------------*/
-
-//    $(document).on("change", "#upazilla_id", function () {
-//        $('#leading_farmer_container').empty();
-//        $("#leading_farmer_id").val("");
-//        var upazilla_id = $('#upazilla_id').val();
-//        if (upazilla_id > 0) {
-//            $('#leading_farmer_container').show();
-//            $.ajax({
-//                url: base_url + "common_controller/get_leading_farmers_by_upazillaid/",
-//                type: 'POST',
-//                datatype: "JSON",
-//                data: {upazilla_id: upazilla_id, html_container_id: '#leading_farmer_container'},
-//                success: function (data, status) {
-//
-//                },
-//                error: function (xhr, desc, err) {
-//                    console.log("error");
-//
-//                }
-//            });
-//        }
-//        else {
-//            $('#leading_farmer_container').hide();
-//        }
-//    });
 
 
     /* Calculate Total Budget Expense */
@@ -1098,39 +954,6 @@ jQuery(document).ready(function ($) {
         });
         $('#no_of_participant').text(total);
     });
-
-    /*
-     $(document).on("input", ".expense_budget", function () {
-     //findTotal();
-     var total_budget = 0;
-     $(".expense_budget").each(function (index, element) {
-     if ($(this).val() == parseFloat($(this).val())) {
-     total_budget = total_budget + parseFloat($(this).val());
-     }
-     });
-     if (total_budget >= 0) {
-     $('#total_budget_container').show();
-     }
-     $('#total_budget').html(number_format(total_budget, 2));
-     });
-
-
-
-     $(document).on("input", ".participant_budget", function () {
-     //findTotal_participant();
-     var total_participant = 0;
-     $(".participant_budget").each(function (index, element) {
-     if ($(this).val() == parseFloat($(this).val())) {
-     total_participant = total_participant + parseInt($(this).val());
-     }
-     });
-     if (total_participant >= 0) {
-     $('#total_participant_container').show();
-     }
-     $('#no_of_participant').html(number_format(total_participant));
-     });
-     */
-
 });
 
 </script>

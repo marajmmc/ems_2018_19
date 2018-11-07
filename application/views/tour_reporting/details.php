@@ -631,7 +631,7 @@ if ($item['status_extended_tour'] == $CI->config->item('system_status_extended')
     </h4>
 </div>
 
-<div id="collapse4" class="panel-collapse collapse">
+<div id="collapse4" class="panel-collapse collapse in">
     <table class="table table-bordered table-responsive system_table_details_view">
         <tr>
             <td colspan="2"><label class="control-label"> Status: </label></td>
@@ -810,7 +810,7 @@ if ($item['status_extended_tour'] == $CI->config->item('system_status_extended')
     </h4>
 </div>
 
-<div id="collapse5" class="panel-collapse collapse">
+<div id="collapse5" class="panel-collapse collapse in">
     <table class="table table-bordered table-responsive system_table_details_view">
         <tr>
             <td class="center-align" style="width:20%"><label class="control-label"> Purpose </label></td>

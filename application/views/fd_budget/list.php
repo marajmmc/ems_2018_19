@@ -148,44 +148,22 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-
-
-                    <?php /*
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'fdb_no', width: '100', cellsalign: 'right', hidden: true, pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_BUDGET_PROPOSAL_DATE'); ?>', dataField: 'date', width: '120', cellsalign: 'right', pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '120', cellsalign: 'right', pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '130', cellsalign: 'right', pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', filtertype: 'list', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_COMPETITOR_VARIETY'); ?>', dataField: 'com_variety_name', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width: '100', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '100', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '100', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width: '130', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name', width: '130', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_BUDGET'); ?>', dataField: 'status_budget', width: '110', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUESTED'); ?>', dataField: 'status_requested', width: '100', cellsalign: 'right', filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED'); ?>', dataField: 'status_approved', width: '100', cellsalign: 'right', filtertype: 'list'}
-                    */ ?>
-
-
                     { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'fdb_no', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['fdb_no']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>', dataField: 'fdb_proposal_date', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['fdb_proposal_date']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['expected_date']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>', dataField: 'fdb_proposal_date', width: '100', hidden: <?php echo $system_preference_items['fdb_proposal_date']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '100', hidden: <?php echo $system_preference_items['expected_date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['total_budget']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '100', cellsalign: 'right', filtertype: 'list', hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['variety_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_COM_VARIETY_NAME'); ?>', dataField: 'com_variety_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['com_variety_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width: '100', cellsalign: 'right', filtertype: 'list', hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_BUDGET'); ?>', dataField: 'status_budget', width: '100', cellsalign: 'right', filtertype: 'list', hidden: <?php echo $system_preference_items['status_budget']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUESTED'); ?>', dataField: 'status_requested', width: '100', cellsalign: 'right', filtertype: 'list', hidden: <?php echo $system_preference_items['status_requested']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED'); ?>', dataField: 'status_approved', width: '100', cellsalign: 'right', filtertype: 'list', hidden: <?php echo $system_preference_items['status_approved']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '100', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width: '100', hidden: <?php echo $system_preference_items['variety_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_COM_VARIETY_NAME'); ?>', dataField: 'com_variety_name', width: '100', hidden: <?php echo $system_preference_items['com_variety_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '100', hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '100', hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width: '100', hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '100', hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_BUDGET'); ?>', dataField: 'status_budget', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['status_budget']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUESTED'); ?>', dataField: 'status_requested', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['status_requested']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED'); ?>', dataField: 'status_approved', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['status_approved']?0:1;?>}
                 ]
             });
     });
