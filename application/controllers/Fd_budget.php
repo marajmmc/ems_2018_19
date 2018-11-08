@@ -342,7 +342,6 @@ class Fd_budget extends Root_Controller
                 'diff_between_varieties' => '',
                 'no_of_participant' => '',
                 'expected_date' => '',
-                'total_budget' => 0,
                 'arm_market_size' => '',
                 'total_market_size' => '',
                 'sales_target' => ''
@@ -362,17 +361,15 @@ class Fd_budget extends Root_Controller
                     if ($this->locations['territory_id'] > 0)
                     {
                         $data['districts'] = Query_helper::get_info($this->config->item('table_login_setup_location_districts'), array('id value', 'name text'), array('territory_id =' . $this->locations['territory_id']));
-                        if ($this->locations['district_id'] > 0)
-                        {
-                            $data['upazillas'] = Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'), array('id value', 'name text'), array('district_id =' . $this->locations['district_id'], 'status !="' . $this->config->item('system_status_delete') . '"'));
-                        }
                     }
                 }
             }
-            $data['crops'] = Query_helper::get_info($this->config->item('table_login_setup_classification_crops'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
-            $data['crop_types'] = array();
-            $data['crop_varieties'] = array();
-            $data['competitor_varieties'] = array();
+
+            $data['crops'] = Query_helper::get_info($this->config->item('table_login_setup_classification_crops'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
+            $data['crop_types'] = Query_helper::get_info($this->config->item('table_login_setup_classification_crop_types'), array('id value', 'name text'), array('crop_id =' . $data['item_info']['crop_id']));
+            $data['crop_varieties'] = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'name text'), array('crop_type_id =' . $data['item_info']['crop_type_id']));
+            $data['competitor_varieties'] = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'name text'), array('crop_type_id =' . $data['item_info']['crop_type_id'], 'whose ="Competitor"'));
+
             $data['participants'] = array();
             $data['dealers'] = array();
             $data['leading_farmers'] = array();
@@ -403,6 +400,193 @@ class Fd_budget extends Root_Controller
             $this->json_return($ajax);
         }
     }
+
+    private function system_edit($id)
+    {
+        if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
+        {
+            if ($id > 0)
+            {
+                $item_id = $id;
+            }
+            else
+            {
+                $item_id = $this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details');
+            $this->db->select('fd_budget_details.*');
+
+            $this->db->join($this->config->item('table_ems_fd_budget') . ' fd_budget', 'fd_budget.id = fd_budget_details.budget_id', 'INNER');
+            $this->db->select('fd_budget.date AS fdb_proposal_date, fd_budget.remarks');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety', 'variety.id = fd_budget_details.variety_id', 'INNER');
+            $this->db->select('variety.name AS variety_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.competitor_variety_id', 'LEFT');
+            $this->db->select('variety1.name AS com_variety_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety.crop_type_id', 'INNER');
+            $this->db->select('crop_type.id AS crop_type_id, crop_type.name AS crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
+            $this->db->select('crop.id AS crop_id, crop.name AS crop_name');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.id = fd_budget_details.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+            $this->db->select('cus_info.name AS outlet_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+            $this->db->select('district.id AS district_id, district.name AS district_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
+            $this->db->select('territory.id AS territory_id, territory.name AS territory_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
+            $this->db->select('zone.id AS zone_id, zone.name AS zone_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
+            $this->db->select('division.id AS division_id, division.name AS division_name');
+
+            $this->db->where('fd_budget.status_budget !=', $this->config->item('system_status_delete'));
+            $this->db->where('fd_budget.id', $item_id);
+            $this->db->where('fd_budget_details.revision', 1);
+            $this->db->order_by('fd_budget.id', 'DESC');
+            $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data['item'] = Array(
+                'id' => $result['budget_id'],
+                'date' => $result['fdb_proposal_date'],
+                'remarks' => $result['remarks']
+            );
+            $data['item_info'] = Array(
+                'crop_id' => $result['crop_id'],
+                'crop_type_id' => $result['crop_type_id'],
+                'variety_id' => $result['variety_id'],
+                'competitor_variety_id' => $result['competitor_variety_id'],
+                'division_id' => $result['division_id'],
+                'zone_id' => $result['zone_id'],
+                'territory_id' => $result['territory_id'],
+                'district_id' => $result['district_id'],
+                'outlet_id' => $result['outlet_id'],
+                'address' => $result['address'],
+                'present_condition' => $result['present_condition'],
+                'farmers_evaluation' => $result['farmers_evaluation'],
+                'diff_between_varieties' => $result['diff_between_varieties'],
+                'no_of_participant' => $result['no_of_participant'],
+                'expected_date' => $result['expected_date'],
+                'participant_through_customer' => $result['participant_through_customer'],
+                'participant_through_others' => $result['participant_through_others'],
+                'arm_market_size' => $result['total_market_size'],
+                'total_market_size' => $result['arm_market_size'],
+                'sales_target' => $result['sales_target']
+            );
+
+            $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
+            $data['zones'] = array();
+            $data['territories'] = array();
+            $data['districts'] = array();
+            $data['outlets'] = array();
+            if ($this->locations['division_id'] > 0)
+            {
+                $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $this->locations['division_id']));
+                if ($this->locations['zone_id'] > 0)
+                {
+                    $data['territories'] = Query_helper::get_info($this->config->item('table_login_setup_location_territories'), array('id value', 'name text'), array('zone_id =' . $this->locations['zone_id']));
+                    if ($this->locations['territory_id'] > 0)
+                    {
+                        $data['districts'] = Query_helper::get_info($this->config->item('table_login_setup_location_districts'), array('id value', 'name text'), array('territory_id =' . $this->locations['territory_id']));
+                        if ($this->locations['district_id'] > 0)
+                        {
+                            $this->db->from($this->config->item('table_login_csetup_customer') . ' customer');
+                            $this->db->select('customer.id AS value');
+                            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = customer.id', 'INNER');
+                            $this->db->select('cus_info.name AS text');
+                            $this->db->where('cus_info.district_id', $this->locations['district_id']);
+                            $this->db->where('cus_info.type', $this->config->item('system_customer_type_outlet_id'));
+                            $this->db->where('cus_info.revision', 1);
+                            $data['outlets'] = $this->db->get()->row_array();
+                        }
+                    }
+                }
+            }
+
+            $data['crops'] = Query_helper::get_info($this->config->item('table_login_setup_classification_crops'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
+//            $data['crop_types'] = array();
+//            $data['crop_varieties'] = array();
+//            $data['competitor_varieties'] = array();
+
+
+            $data['crop_types'] = Query_helper::get_info($this->config->item('table_login_setup_classification_crop_types'), array('id value', 'name text'), array('crop_id =' . $data['item_info']['crop_id']));
+            $data['crop_varieties'] = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'name text'), array('crop_type_id =' . $data['item_info']['crop_type_id']));
+            $data['competitor_varieties'] = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'name text'), array('crop_type_id =' . $data['item_info']['crop_type_id'], 'whose ="Competitor"'));
+
+
+
+            $dealers_by_outlet = Fd_budget_helper::get_all_area_dealers_by_outlet($result['outlet_id']);
+            $data['dealers'] = array();
+            foreach ($dealers_by_outlet as $item)
+            {
+                $data['dealers'][] = array(
+                    'value' => $item['dealer_id'],
+                    'text' => $item['dealer_name'],
+                    'phone_no' => $item['mobile_no']
+                );
+            }
+
+            $lead_farmers_by_outlet = Fd_budget_helper::get_all_area_lead_farmers_by_outlet($result['outlet_id']);
+            $data['leading_farmers'] = array();
+            foreach ($lead_farmers_by_outlet as $item)
+            {
+                $data['leading_farmers'][] = array(
+                    'value' => $item['lead_farmers_id'],
+                    'text' => $item['name'],
+                    'phone_no' => $item['mobile_no']
+                );
+            }
+
+            $data['participants'] = array();
+            $participant_result = Query_helper::get_info($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), '*', array('budget_id =' . $item_id, 'revision=1'));
+            foreach ($participant_result as $result)
+            {
+                $data['participants'][$result['dealer_leadfarmer_id']] = $result;
+            }
+
+            $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
+            $data['expense_budget'] = array();
+            $budget_result = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_expense'), '*', array('budget_id =' . $item_id, 'revision=1'));
+            foreach ($budget_result as $result)
+            {
+                $data['expense_budget'][$result['item_id']] = $result;
+            }
+
+            $data['system_all_varieties'] = Fd_budget_helper::get_dropdown_all_crop_variety();
+            $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering ASC'));
+            $data['file_details'] = array();
+
+            $data['title'] = "Edit Field Day Budget ( ID:" . $result['budget_id'] . " )";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit/' . $item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
 
     /*
 
@@ -449,8 +633,6 @@ class Fd_budget extends Root_Controller
 
     private function system_save()
     {
-        //pr($this->input->post());
-
         $id = $this->input->post('id');
         $item_head = $this->input->post('item');
         $items = $this->input->post('item_info');
@@ -498,7 +680,6 @@ class Fd_budget extends Root_Controller
         {
             $no_of_participant += $items['participant_through_others'];
         }
-
         if ($expense_budget && !empty($expense_budget))
         {
             foreach ($expense_budget as $value)
@@ -523,35 +704,31 @@ class Fd_budget extends Root_Controller
         $items['no_of_participant'] = $no_of_participant;
         $items['total_budget'] = $total_budget;
 
-//        pr($item_head, 0);
-//        pr($items, 0);
-//        pr($expense_budget, 0);
-//        pr($dealer_participant, 0);
-//        pr($farmer_participant);
-
         $this->db->trans_start(); //DB Transaction Handle START
 
         if ($id > 0) // EDIT
         {
             $budget_id = $id;
-            /* Details Table Revision Update */
+            /* Master Table Update */
+            $item_head['date_created'] = $time;
+            $item_head['user_created'] = $user->user_id;
+            Query_helper::update($this->config->item('table_ems_fd_budget'), $item_head, array("budget_id =" . $budget_id));
+
+            /* Revision Update for (1)Details Table (2)Expense Table (3)Dealer, Lead Farmer Participant Table */
             $this->db->where('budget_id', $budget_id);
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_ems_fd_budget_details'));
 
-            /* Expense Table Revision Update */
             $this->db->where('budget_id', $budget_id);
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_ems_fd_budget_details_expense'));
 
-            /* Dealer, Lead Farmer Participant Table Revision Update */
             $this->db->where('budget_id', $budget_id);
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'));
         }
         else // ADD
-        {
-            /* Master Table Insert */
+        { /* Master Table Insert */
             $item_head['date_created'] = $time;
             $item_head['user_created'] = $user->user_id;
             $budget_id = Query_helper::add($this->config->item('table_ems_fd_budget'), $item_head);
@@ -577,45 +754,39 @@ class Fd_budget extends Root_Controller
             );
             Query_helper::add($this->config->item('table_ems_fd_budget_details_expense'), $data);
         }
-        /* Expense Table Insert ( EDIT & ADD ) */
-        foreach ($farmer_participant as $key => $value)
-        {
-            $data = array(
-                'budget_id' => $budget_id,
-                'item_id' => $key,
-                'amount' => $value,
-                'user_created' => $user->user_id,
-                'date_created' => $time,
-                'revision' => 1
-            );
-            Query_helper::add($this->config->item('table_ems_fd_budget_details_expense'), $data);
-        }
+
         /* Dealer Participant & Farmer Participant Table Insert ( EDIT & ADD ) */
-        foreach ($dealer_participant as $key => $value)
+        if ($dealer_participant && !empty($dealer_participant))
         {
-            $data = array(
-                'budget_id' => $budget_id,
-                'participant_type' => 1, // 1 for Dealer Participant
-                'dealer_leadfarmer_id' => $key,
-                'participant_number' => $value,
-                'user_created' => $user->user_id,
-                'date_created' => $time,
-                'revision' => 1
-            );
-            Query_helper::add($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), $data);
+            foreach ($dealer_participant as $key => $value)
+            {
+                $data = array(
+                    'budget_id' => $budget_id,
+                    'participant_type' => 1, // 1 for Dealer Participant
+                    'dealer_leadfarmer_id' => $key,
+                    'participant_number' => $value,
+                    'user_created' => $user->user_id,
+                    'date_created' => $time,
+                    'revision' => 1
+                );
+                Query_helper::add($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), $data);
+            }
         }
-        foreach ($farmer_participant as $key => $value)
+        if ($farmer_participant && !empty($farmer_participant))
         {
-            $data = array(
-                'budget_id' => $budget_id,
-                'participant_type' => 2, // 2 for Lead farmer Participant
-                'dealer_leadfarmer_id' => $key,
-                'participant_number' => $value,
-                'user_created' => $user->user_id,
-                'date_created' => $time,
-                'revision' => 1
-            );
-            Query_helper::add($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), $data);
+            foreach ($farmer_participant as $key => $value)
+            {
+                $data = array(
+                    'budget_id' => $budget_id,
+                    'participant_type' => 2, // 2 for Lead farmer Participant
+                    'dealer_leadfarmer_id' => $key,
+                    'participant_number' => $value,
+                    'user_created' => $user->user_id,
+                    'date_created' => $time,
+                    'revision' => 1
+                );
+                Query_helper::add($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), $data);
+            }
         }
 
         $this->db->trans_complete(); //DB Transaction Handle END
@@ -632,82 +803,6 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
-
-        /* $id = $this->input->post('id');
-        $item = $this->input->post('item');
-        $user = User_helper::get_user();
-        $time = time();
-
-        // Validation Checking
-        if ($id > 0) // EDIT
-        {
-            if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-
-            $result = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), '*', array('id =' . $id, 'status != "' . $this->config->item('system_status_delete') . '"'), 1);
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Update Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-        }
-        else // ADD
-        {
-            if (!(isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)))
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->json_return($ajax);
-            }
-        }
-
-        if (!$this->check_validation())
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->message;
-            $this->json_return($ajax);
-        }
-
-        $this->db->trans_start(); //DB Transaction Handle START
-        if ($id > 0) // EDIT
-        {
-            $item['date_updated'] = $time;
-            $item['user_updated'] = $user->user_id;
-            Query_helper::update($this->config->item('table_ems_setup_fd_picture_category'), $item, array('id=' . $id));
-        }
-        else // ADD
-        {
-            $item['date_created'] = $time;
-            $item['user_created'] = $user->user_id;
-            Query_helper::add($this->config->item('table_ems_setup_fd_picture_category'), $item);
-        }
-        $this->db->trans_complete(); //DB Transaction Handle END
-
-        if ($this->db->trans_status() === TRUE)
-        {
-            $save_and_new = $this->input->post('system_save_new_status');
-            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
-            if ($save_and_new == 1)
-            {
-                $this->system_add();
-            }
-            else
-            {
-                $this->system_list();
-            }
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
-            $this->json_return($ajax);
-        } */
     }
 
     private function system_get_dealers($id = 0)
@@ -801,6 +896,29 @@ class Fd_budget extends Root_Controller
         $this->form_validation->set_rules('item_info[arm_market_size]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
         $this->form_validation->set_rules('item_info[total_market_size]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
         $this->form_validation->set_rules('item[remarks]', 'TI ' . $this->lang->line('LABEL_RECOMMENDATION'), 'required');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
+            return false;
+        }
+
+        $expense_budget = $this->input->post('expense_budget');
+        $total_budget = 0;
+        if ($expense_budget && !empty($expense_budget))
+        {
+            foreach ($expense_budget as $value)
+            {
+                if (is_numeric($value) && ($value > 0))
+                {
+                    $total_budget += $value;
+                }
+            }
+        }
+        if (!($total_budget > 0))
+        {
+            $this->message = $this->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET') . ' cannot be zero or, negative';
+            return false;
+        }
 
         /*if ($upazilla_id)
         {
@@ -848,11 +966,6 @@ class Fd_budget extends Root_Controller
             }
         }*/
 
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->message = validation_errors();
-            return false;
-        }
         /*if (!$ids)
         {
             $this->message = $this->lang->line('SET_LEADING_FARMER');
@@ -865,20 +978,4 @@ class Fd_budget extends Root_Controller
         } */
         return true;
     }
-
-
-    /*    private function check_validation()
-        {
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('item[name]', $this->lang->line('LABEL_NAME'), 'required|trim');
-            $this->form_validation->set_rules('item[ordering]', $this->lang->line('LABEL_ORDER'), 'required');
-            $this->form_validation->set_rules('item[status]', $this->lang->line('LABEL_STATUS'), 'required');
-            if ($this->form_validation->run() == FALSE)
-            {
-                $this->message = validation_errors();
-                return false;
-            }
-            return true;
-        }*/
-
 }

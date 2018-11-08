@@ -25,7 +25,7 @@ $action_buttons[] = array(
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 ?>
-
+<style>label{margin-top:5px}</style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
 <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
 
@@ -383,32 +383,34 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
+<?php $total_participant = 0; ?>
+
 <div style="<?php echo (!(sizeof($dealers) > 0)) ? 'display:none;' : ''; ?>" class="row show-grid" id="dealer_container">
 
     <div id="dealer_id" class="row show-grid">
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"> <?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?> : </label>
             </div>
         </div>
 
         <?php
-        $total_participant = 0;
         foreach ($dealers as $dealer)
         {
             if (isset($participants[$dealer['value']]) || $dealer['status'] == $this->config->item('system_status_active'))
             {
                 ?>
                 <div class="row show-grid">
-                    <div class="col-xs-5">
-                        <label class="control-label pull-right"><?php echo $dealer['text'] . ' (' . $dealer['phone_no'] . ')'; ?>
+                    <div class="col-xs-6">
+                        <label style="font-weight:normal" class="control-label pull-right"><?php echo $dealer['text'] . ' (' . $dealer['phone_no'] . ')'; ?>
                             <span style="color:#FF0000">*</span></label>
                     </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <input type="text" name="dealer_participant[<?php echo $dealer['value']; ?>]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($participants[$dealer['value']]))
+                    <div class="col-xs-2">
+                        <input type="text" name="dealer_participant[<?php echo $dealer['value']; ?>]" class="form-control integer_type_positive participant_budget" value="<?php
+                        if (isset($participants[$dealer['value']]))
                         {
-                            $total_participant += $participants[$dealer['value']]['number'];
-                            echo $participants[$dealer['value']]['number'];
+                            $total_participant += $participants[$dealer['value']]['participant_number'];
+                            echo $participants[$dealer['value']]['participant_number'];
                         }?>"/>
                     </div>
                 </div>
@@ -424,27 +426,27 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     <div id="leading_farmer_id" class="row show-grid">
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER'); ?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER'); ?> : </label>
             </div>
         </div>
 
         <?php
-        $total_participant = 0;
         foreach ($leading_farmers as $lead_farmer)
         {
             if (isset($participants[$lead_farmer['value']]) || $lead_farmer['status'] == $this->config->item('system_status_active'))
             {
                 ?>
                 <div class="row show-grid">
-                    <div class="col-xs-5">
-                        <label class="control-label pull-right"><?php echo $lead_farmer['text'] . ' (' . $lead_farmer['phone_no'] . ')'; ?>
-                            <span style="color:#FF0000;">*</span></label>
+                    <div class="col-xs-6">
+                        <label style="font-weight:normal" class="control-label pull-right"><?php echo $lead_farmer['text'] . ' (' . $lead_farmer['phone_no'] . ')'; ?>
+                            <span style="color:#FF0000">*</span></label>
                     </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <input type="text" name="farmer_participant[<?php echo $lead_farmer['value']; ?>]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($participants[$lead_farmer['value']]))
+                    <div class="col-xs-2">
+                        <input type="text" name="farmer_participant[<?php echo $lead_farmer['value']; ?>]" class="form-control integer_type_positive participant_budget" value="<?php
+                        if (isset($participants[$lead_farmer['value']]))
                         {
-                            $total_participant += $participants[$lead_farmer['value']]['number'];
-                            echo $participants[$lead_farmer['value']]['number'];
+                            $total_participant += $participants[$lead_farmer['value']]['participant_number'];
+                            echo $participants[$lead_farmer['value']]['participant_number'];
                         }?>"/>
                     </div>
                 </div>
@@ -571,9 +573,6 @@ foreach ($expense_items as $expense)
     }
 }
 
-*/
-?>
-
 <div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="total_budget_container">
     <div class="col-xs-5">
         <label class="control-label pull-right">Total Budget (Tk.)</label>
@@ -582,6 +581,9 @@ foreach ($expense_items as $expense)
         <label id="total_budget"><?php echo number_format($total_budget, 2); ?></label>
     </div>
 </div>
+
+*/
+?>
 
 <div class="row show-grid">
     <div class="col-xs-4">
@@ -896,7 +898,9 @@ jQuery(document).ready(function ($) {
                     id: outlet_id
                 },
                 success: function (data, status) {
-
+                    if(data.status){
+                        $('#dealer_container').show();
+                    }
                 },
                 error: function (xhr, desc, err) {
                     console.log("error");
@@ -912,15 +916,14 @@ jQuery(document).ready(function ($) {
                     id: outlet_id
                 },
                 success: function (data, status) {
-
+                    if(data.status){
+                        $('#leading_farmer_container').show();
+                    }
                 },
                 error: function (xhr, desc, err) {
                     console.log("error");
                 }
             });
-
-            $('#dealer_container').show();
-            $('#leading_farmer_container').show();
         } else {
             $('#dealer_container').hide();
             $('#leading_farmer_container').hide();

@@ -29,10 +29,6 @@ class Fd_budget_helper extends Root_Controller
 
         $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = area_dealers.area_id', 'INNER');
 
-        /* $CI->db->where('farmer.status', $CI->config->item('system_status_active'));
-        $CI->db->where('dealers.status', $CI->config->item('system_status_active'));
-        $CI->db->where('farmer.farmer_type_id >', 1); */
-
         $CI->db->where('areas.outlet_id', $outlet_id);
         $CI->db->group_by('area_dealers.dealer_id');
         $CI->db->order_by('area_dealers.ordering', 'ASC');
@@ -50,7 +46,6 @@ class Fd_budget_helper extends Root_Controller
 
         $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = lead_farmers.area_id', 'INNER');
         $CI->db->select('lead_farmers.*, lead_farmers.id AS lead_farmers_id');
-
 
         $CI->db->where('areas.status', $CI->config->item('system_status_active'));
         $CI->db->where('lead_farmers.status', $CI->config->item('system_status_active'));

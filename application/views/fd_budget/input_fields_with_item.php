@@ -6,10 +6,11 @@
     </div>
 </div>
 <?php
-//$tmp =array();
+//$tmp =array();  // For Debugging
 foreach ($items as $item)
 {
-    /*if(array_key_exists($item['value'], $tmp)){
+    /*   // For Debugging
+    if(array_key_exists($item['value'], $tmp)){
         $tmp[$item['value']] = $tmp[$item['value']]+1;
     }else{
         $tmp[$item['value']]=1;
@@ -22,10 +23,9 @@ foreach ($items as $item)
         </div>
         <div class="col-xs-2">
             <input type="text" name="<?php echo $name_index . '[' . $item['value'] . ']'; ?>" class="form-control integer_type_positive participant_budget" value="0"/>
-            <!--<input type="text" name="dealer_participant[<?php /*echo $item['value']; */ ?>]" class="form-control integer_type_positive participant_budget" value=""/>-->
         </div>
     </div>
 <?php
 }
-//pr($tmp, 0);
+//pr($tmp, 0);  // For Debugging
 ?>
