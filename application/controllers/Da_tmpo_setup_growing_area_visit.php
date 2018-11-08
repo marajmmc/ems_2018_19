@@ -438,35 +438,34 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         $this->db->where('visit.date_visit !=',$date_visit);
         $this->db->where('visit.date_visit < ',$date_visit);
         $this->db->where('visit.status',$this->config->item('system_status_active'));
-        $this->db->order_by('visit.id', 'DESC');
-        $this->db->limit(1);
-        $result=$this->db->get()->row_array();
-        $result_area_id=0;
-        $data['date_visit_previous']=0;
-        if($result)
+        //$this->db->order_by('visit.id', 'DESC');
+        //$this->db->limit(1);
+        $results=$this->db->get()->result_array();
+        $result_area_ids[0]=0;
+        $data['previous_visits']=array();
+        foreach($results as $result)
         {
-            $result_area_id=$result['id'];
-            $data['date_visit_previous']=$result['date_visit'];
+            $result_area_ids[$result['id']]=$result['id'];
+            $data['previous_visits'][$result['id']]=$result;
         }
 
         /*get previous visit details information*/
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
         $this->db->select('details.*');
-        $this->db->where('details.visit_id',$result_area_id);
+        $this->db->where_in('details.visit_id',$result_area_ids);
         $this->db->where('details.status',$this->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
-
         $data['previous_dealers']=array();
         $data['previous_farmers']=array();
         foreach($results as $result)
         {
             if($result['dealer_id'])
             {
-                $data['previous_dealers'][$result['dealer_id']]=$result;
+                $data['previous_dealers'][$result['visit_id']][$result['dealer_id']]=$result;
             }
             if($result['farmer_id'])
             {
-                $data['previous_farmers'][$result['farmer_id']]=$result;
+                $data['previous_farmers'][$result['visit_id']][$result['farmer_id']]=$result;
             }
         }
 
@@ -563,12 +562,8 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             }
 
         }
-        $date_visit_title='';
-        if($data['date_visit_previous'])
-        {
-            $date_visit_title=" || <span class='text-danger'>Previous visit date: ".System_helper::display_date($data['date_visit_previous'])."</span>";
-        }
-        $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($date_visit)."</span> ".$date_visit_title;
+
+        $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($date_visit)."</span> ";
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
         if($this->message)
@@ -931,20 +926,20 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->db->where('visit.date_visit !=',$data['item_head']['date_visit']);
             $this->db->where('visit.date_visit < ',$data['item_head']['date_visit']);
             $this->db->where('visit.status',$this->config->item('system_status_active'));
-            $this->db->order_by('visit.id', 'DESC');
-            $this->db->limit(1);
-            $result=$this->db->get()->row_array();
-            $result_area_id=0;
-            $data['date_visit_previous']=0;
-            if($result)
+            /*$this->db->order_by('visit.id', 'DESC');
+            $this->db->limit(1);*/
+            $results=$this->db->get()->result_array();
+            $result_area_ids[0]=0;
+            $data['previous_visits']=array();
+            foreach($results as $result)
             {
-                $result_area_id=$result['id'];
-                $data['date_visit_previous']=$result['date_visit'];
+                $result_area_ids[$result['id']]=$result['id'];
+                $data['previous_visits'][$result['id']]=$result;
             }
 
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
             $this->db->select('details.*');
-            $this->db->where('details.visit_id',$result_area_id);
+            $this->db->where_in('details.visit_id',$result_area_ids);
             $this->db->where('details.status',$this->config->item('system_status_active'));
             $results=$this->db->get()->result_array();
             $data['previous_dealers']=array();
@@ -953,11 +948,11 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             {
                 if($result['dealer_id'])
                 {
-                    $data['previous_dealers'][$result['dealer_id']]=$result;
+                    $data['previous_dealers'][$result['visit_id']][$result['dealer_id']]=$result;
                 }
                 if($result['farmer_id'])
                 {
-                    $data['previous_farmers'][$result['farmer_id']]=$result;
+                    $data['previous_farmers'][$result['visit_id']][$result['farmer_id']]=$result;
                 }
             }
 
@@ -977,12 +972,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->db->order_by('varieties.ordering','ASC');
             $data['varieties']=$this->db->get()->result_array();
 
-            $date_visit_title='';
-            if($data['date_visit_previous'])
-            {
-                $date_visit_title=" || <span class='text-danger'>Previous visit date: ".System_helper::display_date($data['date_visit_previous'])."</span>";
-            }
-            $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($data['item_head']['date_visit']).'</span> '.$date_visit_title;
+            $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($data['item_head']['date_visit']).'</span> ';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)

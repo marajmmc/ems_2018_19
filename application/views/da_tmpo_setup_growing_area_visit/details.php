@@ -202,171 +202,298 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 </div>
             </div>
         </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-12">
-                <table class="table table-responsive table-bordered">
-                    <thead>
-                    <tr>
-                        <th class="text-center bg-success" colspan="4">
-                            Lead Farmer Information
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Lead Farmer Name</th>
-                        <th>Previous Activity </th>
-                        <th>Description</th>
-                        <th>Attachment</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    if(!$farmers)
-                    {
-                        ?>
-                        <tr>
-                            <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no lead farmer setup.</strong></td>
-                        </tr>
-                    <?php
-                    }
-                    else
-                    {
-                        foreach($farmers as $farmer)
-                        {
-                            if($farmer['image_location'])
+        <?php
+        foreach($previous_visits as $previous_visit)
+        {
+            ?>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_previous_visit_<?php echo $previous_visit['id']?>" href="#">+ <?php echo System_helper::display_date($previous_visit['date_visit'])?></a></label>
+                    </h4>
+                </div>
+                <div id="collapse_previous_visit_<?php echo $previous_visit['id']?>" class="panel-collapse collapse ">
+                    <div class="row show-grid">
+                        <br/>
+                        <table class="table table-responsive table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center bg-success" colspan="4">
+                                    Lead Farmer Information
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Lead Farmer Name</th>
+                                <th>Description</th>
+                                <th>Image</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            if(!$farmers)
                             {
-                                $farmer_img=$CI->config->item('system_base_url_picture').$farmer['image_location'];
+                                ?>
+                                <tr>
+                                    <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no lead farmer setup.</strong></td>
+                                </tr>
+                            <?php
                             }
                             else
                             {
-                                $farmer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                foreach($farmers as $farmer)
+                                {
+                                    if($farmer['image_location'])
+                                    {
+                                        $farmer_img=$CI->config->item('system_base_url_picture').$farmer['image_location'];
+                                    }
+                                    else
+                                    {
+                                        $farmer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td style="width: 200px;"><?php echo $farmer['lead_farmers_name']?></td>
+                                        <td style="width: 800px;">
+                                            <?php
+                                            echo isset($previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['description'])?nl2br($previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['description']):'--';
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
+                                                <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="<?php echo $farmer['image_name']; ?>">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
                             }
                             ?>
+                            </tbody>
+                            <thead>
                             <tr>
-                                <td><?php echo $farmer['lead_farmers_name']?></td>
-                                <td>
-                                    <?php
-                                    echo isset($previous_farmers[$farmer['farmer_id']]['description'])?$previous_farmers[$farmer['farmer_id']]['description']:'--';
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php echo $farmer['description'] ?>
-                                </td>
-                                <td>
-                                    <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
-                                        <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="<?php echo $farmer['image_name']; ?>">
-                                    </a>
-                                </td>
+                                <th colspan="4">&nbsp;</th>
                             </tr>
-                        <?php
-                        }
-                    }
-                    ?>
-                    </tbody>
-                    <thead>
-                    <tr>
-                        <th colspan="4">&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <th class="text-center bg-success" colspan="4">
-                            Dealer Information
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Dealer Name</th>
-                        <th>Previous Activity </th>
-                        <th>Description</th>
-                        <th>Attachment</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    if(!$dealers)
-                    {
-                        ?>
-                        <tr>
-                            <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no dealer setup.</strong></td>
-                        </tr>
-                        <?php
-                    }
-                    else
-                    {
-                        foreach($dealers as $dealer)
-                        {
-                            if($dealer['image_location'])
+                            <tr>
+                                <th class="text-center bg-success" colspan="4">
+                                    Dealer Information
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Dealer Name</th>
+                                <th>Description</th>
+                                <th>Image</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            if(!$dealers)
                             {
-                                $dealer_img=$CI->config->item('system_base_url_picture').$dealer['image_location'];
+                                ?>
+                                <tr>
+                                    <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no dealer setup.</strong></td>
+                                </tr>
+                            <?php
                             }
                             else
                             {
-                                $dealer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                foreach($dealers as $dealer)
+                                {
+                                    if($dealer['image_location'])
+                                    {
+                                        $dealer_img=$CI->config->item('system_base_url_picture').$dealer['image_location'];
+                                    }
+                                    else
+                                    {
+                                        $dealer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $dealer['dealer_name']?></td>
+                                        <td>
+                                            <?php
+                                            echo isset($previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['description'])?nl2br($previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['description']):'--';
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
+                                                <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
                             }
                             ?>
-                            <tr>
-                                <td><?php echo $dealer['dealer_name']?></td>
-                                <td>
-                                    <?php
-                                    echo isset($previous_dealers[$dealer['dealer_id']]['description'])?$previous_dealers[$dealer['dealer_id']]['description']:'--';
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php echo $dealer['description'] ?>
-                                </td>
-                                <td>
-                                    <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
-                                        <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                    }
-                    ?>
-                    <tr><td colspan="21">&nbsp;</td></tr>
-                    <?php
-                    if($item_head['other_info'])
-                    {
-                        ?>
-                    <tr>
-                        <td><strong>Others Activities</strong></td>
-                        <td colspan="21"><?php echo $item_head['other_info'] ?></td>
-                    </tr>
-                    <?php
-                    }
-                    ?>
-                    <?php
-                    if($item_head['remarks'])
-                    {
-                        ?>
-                    <tr>
-                        <td><strong>Remarks</strong></td>
-                        <td colspan="21"><?php echo $item_head['remarks'] ?></td>
-                    </tr>
-                    <?php
-                    }
-                    ?>
-                    <?php
-                    if($item_head['remarks_attendance'])
-                    {
-                        ?>
-                    <tr>
-                        <td><strong>Remarks for attendance</strong></td>
-                        <td colspan="21"><?php echo $item_head['remarks_attendance'] ?></td>
-                    </tr>
-                    <?php
-                    }
-                    ?>
-                    <tr>
-                        <td><strong>Attendance</strong></td>
-                        <td colspan="21"><?php echo $item_head['status_attendance'] ?></td>
-                    </tr>
-                    </tbody>
-                </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="col-xs-12">
-                <table class="table table-responsive table-bordered">
+        <?php
+        }
+        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_previous_visit_<?php echo $item_head['area_id']?>" href="#">+ <?php echo System_helper::display_date($item_head['date_visit'])?></a></label>
+                </h4>
+            </div>
+            <div id="collapse_previous_visit_<?php echo $item_head['area_id']?>" class="panel-collapse ">
+                <div class="row show-grid">
+                    <div class="col-xs-12">
+                        <br/>
+                        <table class="table table-responsive table-bordered">
+                            <thead>
+                            <tr>
+                                <th class="text-center bg-success" colspan="4">
+                                    Lead Farmer Information
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Lead Farmer Name</th>
+                                <th>Description</th>
+                                <th>Attachment</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            if(!$farmers)
+                            {
+                                ?>
+                                <tr>
+                                    <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no lead farmer setup.</strong></td>
+                                </tr>
+                            <?php
+                            }
+                            else
+                            {
+                                foreach($farmers as $farmer)
+                                {
+                                    if($farmer['image_location'])
+                                    {
+                                        $farmer_img=$CI->config->item('system_base_url_picture').$farmer['image_location'];
+                                    }
+                                    else
+                                    {
+                                        $farmer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $farmer['lead_farmers_name']?></td>
+                                        <td>
+                                            <?php echo nl2br($farmer['description']) ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
+                                                <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="<?php echo $farmer['image_name']; ?>">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+                            }
+                            ?>
+                            </tbody>
+                            <thead>
+                            <tr>
+                                <th colspan="4">&nbsp;</th>
+                            </tr>
+                            <tr>
+                                <th class="text-center bg-success" colspan="4">
+                                    Dealer Information
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Dealer Name</th>
+                                <th>Description</th>
+                                <th>Attachment</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            if(!$dealers)
+                            {
+                                ?>
+                                <tr>
+                                    <td colspan="21" class="text-center bg-danger text-danger"><strong>There is no dealer setup.</strong></td>
+                                </tr>
+                            <?php
+                            }
+                            else
+                            {
+                                foreach($dealers as $dealer)
+                                {
+                                    if($dealer['image_location'])
+                                    {
+                                        $dealer_img=$CI->config->item('system_base_url_picture').$dealer['image_location'];
+                                    }
+                                    else
+                                    {
+                                        $dealer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $dealer['dealer_name']?></td>
+                                        <td>
+                                            <?php echo nl2br($dealer['description']) ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
+                                                <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+                            }
+                            ?>
+                            <tr><td colspan="21">&nbsp;</td></tr>
+                            <?php
+                            if($item_head['other_info'])
+                            {
+                                ?>
+                                <tr>
+                                    <td><strong>Others Activities</strong></td>
+                                    <td colspan="21"><?php echo $item_head['other_info'] ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if($item_head['remarks'])
+                            {
+                                ?>
+                                <tr>
+                                    <td><strong>Remarks</strong></td>
+                                    <td colspan="21"><?php echo $item_head['remarks'] ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if($item_head['remarks_attendance'])
+                            {
+                                ?>
+                                <tr>
+                                    <td><strong>Remarks for attendance</strong></td>
+                                    <td colspan="21"><?php echo $item_head['remarks_attendance'] ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                            <tr>
+                                <td><strong>Attendance</strong></td>
+                                <td colspan="21"><?php echo $item_head['status_attendance'] ?></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-12">
+                        <table class="table table-responsive table-bordered">
 
-                </table>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
