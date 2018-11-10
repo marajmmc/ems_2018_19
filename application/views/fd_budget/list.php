@@ -28,6 +28,12 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/edit')
     );
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'Upload Picture',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/edit_image')
+    );
 }
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
@@ -154,8 +160,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['total_budget']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '100', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width: '100', hidden: <?php echo $system_preference_items['variety_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_COM_VARIETY_NAME'); ?>', dataField: 'com_variety_name', width: '100', hidden: <?php echo $system_preference_items['com_variety_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>', dataField: 'variety1_name', width: '100', hidden: <?php echo $system_preference_items['variety1_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '100', hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width: '100', filtertype: 'list', hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '100', hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '100', hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},

@@ -25,7 +25,9 @@ $action_buttons[] = array(
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 ?>
-<style>label{margin-top:5px}</style>
+<style>label {
+        margin-top: 5px
+    }</style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
 <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
 
@@ -87,19 +89,19 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="variety_id_container">
+<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="variety1_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_1_NAME'); ?>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <select id="variety_id" name="item_info[variety_id]" class="form-control">
+        <select id="variety1_id" name="item_info[variety1_id]" class="form-control">
             <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
             <?php
-            foreach ($crop_varieties as $variety)
+            foreach ($crop_varieties1 as $variety1)
             {
                 ?>
-                <option value="<?php echo $variety['value'] ?>" <?php echo ($variety['value'] == $item_info['variety_id']) ? "selected" : ""; ?>><?php echo $variety['text']; ?></option>
+                <option value="<?php echo $variety1['value'] ?>" <?php echo ($variety1['value'] == $item_info['variety1_id']) ? "selected" : ""; ?>><?php echo $variety1['text']; ?></option>
             <?php
             }
             ?>
@@ -107,18 +109,18 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="competitor_variety_id_container">
+<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="variety2_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_2_NAME'); ?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <select id="competitor_variety_id" name="item_info[competitor_variety_id]" class="form-control">
+        <select id="variety2_id" name="item_info[variety2_id]" class="form-control">
             <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
             <?php
-            foreach ($competitor_varieties as $competitor)
+            foreach ($crop_varieties2 as $variety2)
             {
                 ?>
-                <option value="<?php echo $competitor['value'] ?>" <?php echo ($competitor['value'] == $item_info['competitor_variety_id']) ? "selected" : ""; ?>><?php echo $competitor['text']; ?></option>
+                <option value="<?php echo $variety2['value'] ?>" <?php echo ($variety2['value'] == $item_info['variety2_id']) ? "selected" : ""; ?>><?php echo $variety2['text']; ?></option>
             <?php
             }
             ?>
@@ -159,7 +161,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!(sizeof($zones) > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="zone_id_container">
+<div style="<?php echo (!(sizeof($zones) > 0) && !($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="zone_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -175,7 +177,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         else
         {
             ?>
-            <select id="zone_id" class="form-control" ">
+            <select id="zone_id" class="form-control">
                 <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
                 <?php
                 foreach ($zones as $zone)
@@ -192,7 +194,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!(sizeof($territories) > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="territory_id_container">
+<div style="<?php echo (!(sizeof($territories) > 0) && !($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="territory_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -225,7 +227,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!(sizeof($districts) > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="district_id_container">
+<div style="<?php echo (!(sizeof($districts) > 0) && !($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="district_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -258,80 +260,25 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!(sizeof($outlets) > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="outlet_id_container">
+<div style="<?php echo (!(sizeof($outlets) > 0) && !($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="outlet_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <?php
-        if ($item['id'] > 0)
-        {
-            ?>
-            <label class="control-label"><?php echo $item['outlet_name']; ?></label>
-        <?php
-        }
-        else
-        {
-            ?>
-            <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
-                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                <?php
-                foreach ($outlets as $outlet)
-                {
-                    ?>
-                    <option value="<?php echo $outlet['value'] ?>" <?php echo ($outlet['value'] == $item['outlet_id']) ? "selected" : ""; ?>><?php echo $outlet['text']; ?></option>
-                <?php
-                }
+        <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
+            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+            <?php
+            foreach ($outlets as $outlet)
+            {
                 ?>
-            </select>
-        <?php
-        }
-        ?>
-
+                <option value="<?php echo $outlet['value'] ?>" <?php echo ($outlet['value'] == $item_info['outlet_id']) ? "selected" : ""; ?>><?php echo $outlet['text']; ?></option>
+            <?php
+            }
+            ?>
+        </select>
     </div>
 </div>
-
-<?php /*
-<div style="<?php if (!(sizeof($upazillas) > 0))
-{
-    echo 'display:none';
-} ?>" class="row show-grid" id="upazilla_id_container">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <?php
-        if ($CI->locations['upazilla_id'] > 0)
-        {
-            ?>
-            <label class="control-label"><?php echo $CI->locations['upazilla_name']; ?></label>
-        <?php
-        }
-        else
-        {
-            ?>
-            <select id="upazilla_id" name="item_info[upazilla_id]" class="form-control">
-                <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                <?php
-                foreach ($upazillas as $upazilla)
-                {
-                    ?>
-                    <option value="<?php echo $upazilla['value'] ?>" <?php if ($upazilla['value'] == $item_info['upazilla_id'])
-                    {
-                        echo "selected";
-                    } ?>><?php echo $upazilla['text']; ?></option>
-                <?php
-                }
-                ?>
-            </select>
-        <?php
-        }
-        ?>
-    </div>
-</div> */
-?>
 
 <div class="row show-grid">
     <div class="col-xs-4">
@@ -385,7 +332,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 <?php $total_participant = 0; ?>
 
-<div style="<?php echo (!(sizeof($dealers) > 0)) ? 'display:none;' : ''; ?>" class="row show-grid" id="dealer_container">
+<div style="<?php echo (!(sizeof($dealers) > 0) && !($item['id'] > 0)) ? 'display:none;' : ''; ?>" class="row show-grid" id="dealer_container">
 
     <div id="dealer_id" class="row show-grid">
         <div class="row show-grid">
@@ -421,7 +368,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<div style="<?php echo (!(sizeof($leading_farmers) > 0)) ? 'display:none;' : ''; ?>" class="row show-grid" id="leading_farmer_container">
+<div style="<?php echo (!(sizeof($leading_farmers) > 0) && !($item['id'] > 0)) ? 'display:none;' : ''; ?>" class="row show-grid" id="leading_farmer_container">
 
     <div id="leading_farmer_id" class="row show-grid">
         <div class="row show-grid">
@@ -542,49 +489,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 </div>
 
-<?php /*
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FIELD_DAY_BUDGET'); ?></label>
-    </div>
-</div>
-
-<?php
-$total_budget = 0;
-foreach ($expense_items as $expense)
-{
-    if (isset($expense_budget[$expense['value']]) || $expense['status'] == $this->config->item('system_status_active'))
-    {
-        ?>
-        <div class="row show-grid">
-            <div class="col-xs-5">
-                <label class="control-label pull-right"><?php echo $expense['text']; ?>
-                    <span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-3 col-xs-9">
-                <input type="text" name="expense_budget[<?php echo $expense['value']; ?>]" class="expense_budget form-control float_type_positive" value="<?php if (isset($expense_budget[$expense['value']]))
-                {
-                    $total_budget += $expense_budget[$expense['value']]['amount'];
-                    echo $expense_budget[$expense['value']]['amount'];
-                }?>"/>
-            </div>
-        </div>
-    <?php
-    }
-}
-
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="total_budget_container">
-    <div class="col-xs-5">
-        <label class="control-label pull-right">Total Budget (Tk.)</label>
-    </div>
-    <div class="col-sm-3 col-xs-9">
-        <label id="total_budget"><?php echo number_format($total_budget, 2); ?></label>
-    </div>
-</div>
-
-*/
-?>
-
 <div class="row show-grid">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?>
@@ -634,329 +538,206 @@ foreach ($expense_items as $expense)
     </div>
 </div>
 
-<?php /*
-<div class="row show-grid">
-    <div class="col-xs-12">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th style="width:20%">Picture Type</th>
-                <th style="width:40%" colspan="2">Variety 1</th>
-                <th style="width:40%" colspan="2">Variety 2</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td rowspan="2">1</td>
-                    <td>2</td>
-                    <td style="width:1%">3</td>
-                    <td>4</td>
-                    <td style="width:1%">5</td>
-                </tr>
-                <tr>
-                    <!--<td>1</td>-->
-                    <td colspan="2">2</td>
-                    <!--<td style="width:1%">3</td>-->
-                    <td colspan="2">4</td>
-                    <!--<td style="width:1%">5</td>-->
-                </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
-*/ ?>
-
-
-
-<?php /* <div id="image" class="panel-collapse">
-    <div id="files_container" class="panel-collapse">
-        <div style="overflow-x: auto;" class="row show-grid">
-
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th style="min-width:60px;">Image Type</th>
-                    <th style="max-width:350px;" colspan="2">ARM</th>
-                    <th style="max-width:350px;" colspan="2">Competitor</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php
-                foreach ($picture_categories as $pic_cat)
-                {
-                    ?>
-                    <tr>
-                        <td style="min-width:60px;" ><b><?php echo $pic_cat['text']; ?></b></td>
-                        <td style="max-width:270px; max-height:200px;">
-                            <div class="col-xs-4" id="image_arm_<?php echo $pic_cat['value']; ?>">
-                                <?php
-                                $image = 'images/no_image.jpg';
-
-                                if ((isset($file_details[$pic_cat['value']])) && (strlen($file_details[$pic_cat['value']]['arm_file_location']) > 0))
-                                {
-                                    $image = $file_details[$pic_cat['value']]['arm_file_location'];
-                                }
-                                ?>
-                                <img style="max-width:270px;max-height:200px;" src="<?php echo $CI->config->item('system_base_url_picture') . $image; ?>">
-                            </div>
-                        </td>
-                        <td style="max-width:80px; ">
-                            <input type="file" class="browse_button" data-preview-container="#image_arm_<?php echo $pic_cat['value']; ?>" name="arm_<?php echo $pic_cat['value']; ?>">
-                            <?php if ($item['id'] > 0)
-                            {
-                                ?>
-                                <input type="hidden" name="image_info[<?php echo $pic_cat['value']; ?>][arm_file_name]" value="<?php echo $file_details[$pic_cat['value']]['arm_file_name'] ?>">
-                                <input type="hidden" name="image_info[<?php echo $pic_cat['value']; ?>][arm_file_location]" value="<?php echo $file_details[$pic_cat['value']]['arm_file_location'] ?>">
-                            <?php } ?>
-                        </td>
-
-                        <td style="max-width:270px;max-height:200px;">
-                            <div class="col-xs-4" id="image_com_<?php echo $pic_cat['value']; ?>">
-                                <?php
-                                $image = 'images/no_image.jpg';
-                                if ((isset($file_details[$pic_cat['value']])) && (strlen($file_details[$pic_cat['value']]['competitor_file_location']) > 0))
-                                {
-                                    $image = $file_details[$pic_cat['value']]['competitor_file_location'];
-                                }
-                                ?>
-                                <img style="max-width:270px;max-height:200px;" src="<?php echo $CI->config->item('system_base_url_picture') . $image; ?>">
-                            </div>
-                        </td>
-                        <td style="min-width:80px;">
-                            <input type="file" class="browse_button" data-preview-container="#image_com_<?php echo $pic_cat['value']; ?>" name="competitor_<?php echo $pic_cat['value']; ?>">
-                            <?php if ($item['id'] > 0)
-                            {
-                                ?>
-                                <input type="hidden" name="image_info[<?php echo $pic_cat['value']; ?>][competitor_file_name]" value="<?php echo $file_details[$pic_cat['value']]['competitor_file_name'] ?>">
-                                <input type="hidden" name="image_info[<?php echo $pic_cat['value']; ?>][competitor_file_location]" value="<?php echo $file_details[$pic_cat['value']]['competitor_file_location'] ?>">
-                            <?php } ?>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td style="min-width:60px; border: none;"></td>
-                        <td style="min-width:210px;border: none;">
-                            <label>Remarks :</label>
-                            <textarea class="form-control arm_remarks" name="arm_file_details_remarks[<?php echo $pic_cat['value']; ?>]"><?php if (isset($file_details[$pic_cat['value']]))
-                                {
-                                    echo $file_details[$pic_cat['value']]['arm_file_remarks'];
-                                } ?></textarea>
-                        </td>
-                        <td style="min-width:60px;border: none;"></td>
-                        <td style="min-width:210px;border: none;">
-                            <label>Remarks :</label>
-                            <textarea class="form-control com_remarks" name="com_file_details_remarks[<?php echo $pic_cat['value']; ?>]"><?php if (isset($file_details[$pic_cat['value']]))
-                                {
-                                    echo $file_details[$pic_cat['value']]['competitor_file_remarks'];
-                                } ?></textarea>
-                        </td>
-                        <td style="min-width:60px;border: none;"></td>
-
-                    </tr>
-
-                <?php } ?>
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>  */
-?>
-
-
-</div>
-
 <div class="clearfix"></div>
+
 </form>
 
 <script type="text/javascript">
 
-jQuery(document).ready(function ($) {
-    system_off_events(); // Triggers
+    jQuery(document).ready(function ($) {
+        system_off_events(); // Triggers
 
-    $(".datepicker").datepicker({dateFormat: display_date_format});
-    $(".browse_button").filestyle({input: false, icon: false, buttonText: "Upload", buttonName: "btn-primary"});
+        $(".datepicker").datepicker({dateFormat: display_date_format});
 
-    var system_all_varieties = JSON.parse('<?php echo json_encode($system_all_varieties);?>');
+        var system_all_varieties = JSON.parse('<?php echo json_encode($system_all_varieties);?>');
 
-    $(document).off("change", "#crop_id");
-    $(document).off("change", "#crop_type_id");
-    $(document).off("change", "#outlet_id");
+        $(document).off("change", "#crop_id");
+        $(document).off("change", "#crop_type_id");
+        $(document).off("change", "#outlet_id");
 
-    $(document).off("input", ".expense_budget");
-    $(document).off("input", ".participant_budget");
-
-
-    /*--------------------- CROP RELATED DROPDOWN ---------------------*/
-    $(document).on("change", "#crop_id", function () {
-        $("#crop_type_id").val("");
-        $("#variety_id").val("");
-        $("#competitor_variety_id").val("");
-
-        var crop_id = $('#crop_id').val();
-        $('#crop_type_id_container').hide();
-        $('#variety_id_container').hide();
-        $('#competitor_variety_id_container').hide();
-        if (crop_id > 0) {
-            $('#crop_type_id_container').show();
-            if (system_types[crop_id] !== undefined) {
-                $("#crop_type_id").html(get_dropdown_with_select(system_types[crop_id]));
-            }
-        }
-    });
-
-    $(document).on("change", "#crop_type_id", function () {
-        $("#variety_id").val("");
-        $("#competitor_variety_id").val("");
-        var crop_type_id = $('#crop_type_id').val();
-        if (crop_type_id > 0) {
-            $('#variety_id_container').show();
-            $('#competitor_variety_id_container').show();
-
-            $('#variety_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
-            $('#competitor_variety_id').html(get_dropdown_with_select(system_all_varieties[crop_type_id]));
-        }
-        else {
-            $('#variety_id_container').hide();
-            $('#competitor_variety_id_container').hide();
-        }
-    });
-    /*--------------------- CROP RELATED DROPDOWN ( END )-------------*/
+        $(document).off("input", ".expense_budget");
+        $(document).off("input", ".participant_budget");
 
 
-    /*--------------------- LOCATION RELATED DROPDOWN -----------------------------*/
-    $(document).on("change", "#division_id", function () {
-        $("#zone_id").val("");
-        $("#territory_id").val("");
-        $("#district_id").val("");
-        $("#outlet_id").val("");
+        /*--------------------- CROP RELATED DROPDOWN ---------------------*/
+        $(document).on("change", "#crop_id", function () {
+            $("#crop_type_id").val("");
+            $("#variety1_id").val("");
+            $("#variety2_id").val("");
 
-        var division_id = $('#division_id').val();
-        $('#zone_id_container').hide();
-        $('#territory_id_container').hide();
-        $('#district_id_container').hide();
-        $('#outlet_id_container').hide();
-        if (division_id > 0) {
-            $('#zone_id_container').show();
-            if (system_zones[division_id] !== undefined) {
-                $("#zone_id").html(get_dropdown_with_select(system_zones[division_id]));
-            }
-        }
-    });
-    $(document).on("change", "#zone_id", function () {
-        $("#territory_id").val("");
-        $("#district_id").val("");
-        $("#outlet_id").val("");
-
-        var zone_id = $('#zone_id').val();
-        $('#territory_id_container').hide();
-        $('#district_id_container').hide();
-        $('#outlet_id_container').hide();
-        if (zone_id > 0) {
-            $('#territory_id_container').show();
-            if (system_territories[zone_id] !== undefined) {
-                $("#territory_id").html(get_dropdown_with_select(system_territories[zone_id]));
-            }
-        }
-    });
-    $(document).on("change", "#territory_id", function () {
-        $("#district_id").val("");
-        $("#outlet_id").val("");
-
-        var territory_id = $('#territory_id').val();
-        $('#district_id_container').hide();
-        $('#outlet_id_container').hide();
-        if (territory_id > 0) {
-            $('#district_id_container').show();
-            if (system_districts[territory_id] !== undefined) {
-                $("#district_id").html(get_dropdown_with_select(system_districts[territory_id]));
-            }
-        }
-    });
-    $(document).on('change', '#district_id', function () {
-        $('#outlet_id').val('');
-
-        var district_id = $('#district_id').val();
-        $('#outlet_id_container').hide();
-        if (district_id > 0) {
-            if (system_outlets[district_id] !== undefined) {
-                $('#outlet_id_container').show();
-                $('#outlet_id').html(get_dropdown_with_select(system_outlets[district_id]));
-            }
-        }
-    });
-    $(document).on("change", "#outlet_id", function (event) {
-        event.preventDefault();
-        var outlet_id = parseInt($(this).val());
-        if (outlet_id > 0) {
-            $.ajax({
-                url: "<?php echo site_url($CI->controller_url.'/index/get_dealers/') ?>",
-                type: 'POST',
-                datatype: "JSON",
-                data: {
-                    html_container_id: '#dealer_id',
-                    id: outlet_id
-                },
-                success: function (data, status) {
-                    if(data.status){
-                        $('#dealer_container').show();
-                    }
-                },
-                error: function (xhr, desc, err) {
-                    console.log("error");
+            var crop_id = $('#crop_id').val();
+            $('#crop_type_id_container').hide();
+            $('#variety1_id_container').hide();
+            $('#variety2_id_container').hide();
+            if (crop_id > 0) {
+                $('#crop_type_id_container').show();
+                if (system_types[crop_id] !== undefined) {
+                    $("#crop_type_id").html(get_dropdown_with_select(system_types[crop_id]));
                 }
-            });
+            }
+        });
 
-            $.ajax({
-                url: "<?php echo site_url($CI->controller_url.'/index/get_lead_farmers/') ?>",
-                type: 'POST',
-                datatype: "JSON",
-                data: {
-                    html_container_id: '#leading_farmer_id',
-                    id: outlet_id
-                },
-                success: function (data, status) {
-                    if(data.status){
-                        $('#leading_farmer_container').show();
-                    }
-                },
-                error: function (xhr, desc, err) {
-                    console.log("error");
-                }
-            });
-        } else {
+        $(document).on("change", "#crop_type_id", function () {
+            $("#variety1_id").val("");
+            $("#variety2_id").val("");
+            var crop_type_id = $('#crop_type_id').val();
+            if (crop_type_id > 0) {
+                $('#variety1_id_container').show();
+                $('#variety2_id_container').show();
+
+                $('#variety1_id').html(get_dropdown_with_select(system_varieties[crop_type_id]));
+                $('#variety2_id').html(get_dropdown_with_select(system_all_varieties[crop_type_id]));
+            }
+            else {
+                $('#variety1_id_container').hide();
+                $('#variety2_id_container').hide();
+            }
+        });
+        /*--------------------- CROP RELATED DROPDOWN ( END )-------------*/
+
+
+        /*--------------------- LOCATION RELATED DROPDOWN -----------------------------*/
+        $(document).on("change", "#division_id", function () {
+            $("#zone_id").val("");
+            $("#territory_id").val("");
+            $("#district_id").val("");
+            $("#outlet_id").val("");
+
+            var division_id = $('#division_id').val();
+            $('#zone_id_container').hide();
+            $('#territory_id_container').hide();
+            $('#district_id_container').hide();
+            $('#outlet_id_container').hide();
             $('#dealer_container').hide();
             $('#leading_farmer_container').hide();
-        }
-    });
-    /*--------------------- LOCATION RELATED DROPDOWN ( END ) ---------------------*/
-
-
-    /* Calculate Total Budget Expense */
-    $(document).on("input", ".expense_budget", function () {
-        var total = parseFloat(0);
-        var item = parseFloat(0);
-        $(".expense_budget").each(function (index, element) {
-            item = parseFloat($(this).val());
-            if (!isNaN(item) && (item > 0)) {
-                total += item;
+            if (division_id > 0) {
+                $('#zone_id_container').show();
+                if (system_zones[division_id] !== undefined) {
+                    $("#zone_id").html(get_dropdown_with_select(system_zones[division_id]));
+                }
             }
         });
-        $('#total_budget').text(get_string_amount(total));
-    });
+        $(document).on("change", "#zone_id", function () {
+            $("#territory_id").val("");
+            $("#district_id").val("");
+            $("#outlet_id").val("");
 
-    /* Calculate Total Participant */
-    $(document).on("input", ".participant_budget", function () {
-        var total = parseInt(0);
-        var item = parseInt(0);
-        $(".participant_budget").each(function (index, element) {
-            item = parseInt($(this).val());
-            if (!isNaN(item) && (item > 0)) {
-                total += item;
+            var zone_id = $('#zone_id').val();
+            $('#territory_id_container').hide();
+            $('#district_id_container').hide();
+            $('#outlet_id_container').hide();
+            $('#dealer_container').hide();
+            $('#leading_farmer_container').hide();
+            if (zone_id > 0) {
+                $('#territory_id_container').show();
+                if (system_territories[zone_id] !== undefined) {
+                    $("#territory_id").html(get_dropdown_with_select(system_territories[zone_id]));
+                }
             }
         });
-        $('#no_of_participant').text(total);
+        $(document).on("change", "#territory_id", function () {
+            $("#district_id").val("");
+            $("#outlet_id").val("");
+
+            var territory_id = $('#territory_id').val();
+            $('#district_id_container').hide();
+            $('#outlet_id_container').hide();
+            $('#dealer_container').hide();
+            $('#leading_farmer_container').hide();
+            if (territory_id > 0) {
+                $('#district_id_container').show();
+                if (system_districts[territory_id] !== undefined) {
+                    $("#district_id").html(get_dropdown_with_select(system_districts[territory_id]));
+                }
+            }
+        });
+        $(document).on('change', '#district_id', function () {
+            $('#outlet_id').val('');
+
+            var district_id = $('#district_id').val();
+            $('#outlet_id_container').hide();
+            $('#dealer_container').hide();
+            $('#leading_farmer_container').hide();
+            if (district_id > 0) {
+                if (system_outlets[district_id] !== undefined) {
+                    $('#outlet_id_container').show();
+                    $('#outlet_id').html(get_dropdown_with_select(system_outlets[district_id]));
+                }
+            }
+        });
+        $(document).on("change", "#outlet_id", function (event) {
+            event.preventDefault();
+            var outlet_id = parseInt($(this).val());
+            if (outlet_id > 0) {
+                $.ajax({
+                    url: "<?php echo site_url($CI->controller_url.'/index/get_dealers/') ?>",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data: {
+                        html_container_id: '#dealer_id',
+                        id: outlet_id
+                    },
+                    success: function (data, status) {
+                        if (data.status) {
+                            $('#dealer_container').show();
+                        }
+                    },
+                    error: function (xhr, desc, err) {
+                        console.log("error");
+                    }
+                });
+
+                $.ajax({
+                    url: "<?php echo site_url($CI->controller_url.'/index/get_lead_farmers/') ?>",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data: {
+                        html_container_id: '#leading_farmer_id',
+                        id: outlet_id
+                    },
+                    success: function (data, status) {
+                        if (data.status) {
+                            $('#leading_farmer_container').show();
+                        }
+                    },
+                    error: function (xhr, desc, err) {
+                        console.log("error");
+                    }
+                });
+            } else {
+                $('#dealer_container').hide();
+                $('#leading_farmer_container').hide();
+            }
+        });
+        /*--------------------- LOCATION RELATED DROPDOWN ( END ) ---------------------*/
+
+
+        /* Calculate Total Budget Expense */
+        $(document).on("input", ".expense_budget", function () {
+            var total = parseFloat(0);
+            var item = parseFloat(0);
+            $(".expense_budget").each(function (index, element) {
+                item = parseFloat($(this).val());
+                if (!isNaN(item) && (item > 0)) {
+                    total += item;
+                }
+            });
+            $('#total_budget').text(get_string_amount(total));
+        });
+
+        /* Calculate Total Participant */
+        $(document).on("input", ".participant_budget", function () {
+            var total = parseInt(0);
+            var item = parseInt(0);
+            $(".participant_budget").each(function (index, element) {
+                item = parseInt($(this).val());
+                if (!isNaN(item) && (item > 0)) {
+                    total += item;
+                }
+            });
+            $('#no_of_participant').text(total);
+        });
     });
-});
 
 </script>
