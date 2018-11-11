@@ -41,6 +41,14 @@ class Tour_iou_adjustment extends Root_Controller
         {
             $this->system_get_items_all();
         }
+        elseif ($action == "list_waiting")
+        {
+            $this->system_list_waiting();
+        }
+        elseif ($action == "get_items_waiting")
+        {
+            $this->system_get_items_waiting();
+        }
         elseif ($action == "adjustment")
         {
             $this->system_edit_adjustment($id);
@@ -57,13 +65,17 @@ class Tour_iou_adjustment extends Root_Controller
         {
             $this->system_save_approve();
         }
-        elseif ($action == "set_preference")
+        elseif ($action == "set_preference_list")
         {
             $this->system_set_preference('list');
         }
-        elseif ($action == "set_preference_all")
+        elseif ($action == "set_preference_list_all")
         {
             $this->system_set_preference('list_all');
+        }
+        elseif ($action == "set_preference_list_waiting")
+        {
+            $this->system_set_preference('list_waiting');
         }
         elseif ($action == "save_preference")
         {
@@ -91,10 +103,13 @@ class Tour_iou_adjustment extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou_request'] = 1;
-        if (((isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)) && (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
-            || ($method == 'list_all')
-        )
+        if ($method == 'list_all' || $method == 'list_waiting')
         {
+            $data['status_forwarded_reporting'] = 1;
+        }
+        if ($method == 'list_all')
+        {
+            $data['status_approved_reporting'] = 1;
             $data['status_approved_adjustment'] = 1;
         }
         return $data;
@@ -109,7 +124,7 @@ class Tour_iou_adjustment extends Root_Controller
             $data['preference_method_name'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_' . $method);
             $this->json_return($ajax);
         }
         else
@@ -194,15 +209,7 @@ class Tour_iou_adjustment extends Root_Controller
         {
             $item['date_from'] = System_helper::display_date($item['date_from']);
             $item['date_to'] = System_helper::display_date($item['date_to']);
-            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
-            if ($item['designation'] == '')
-            {
-                $item['designation'] = '-';
-            }
-            if ($item['department_name'] == '')
-            {
-                $item['department_name'] = '-';
-            }
+            $item['amount_iou_request'] = Tour_helper::calculate_total_iou($item['amount_iou_items']);
         }
 
         $this->json_return($items);
@@ -272,7 +279,8 @@ class Tour_iou_adjustment extends Root_Controller
         $this->db->where('user_area.revision', 1);
         $this->db->where('user_info.revision', 1);
         $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('tour_setup.status_approved_reporting', $this->config->item('system_status_approved'));
+        $this->db->where('tour_setup.status_paid_payment', $this->config->item('system_status_paid'));
+        /* $this->db->where('tour_setup.status_approved_reporting', $this->config->item('system_status_approved')); */
         $this->db->order_by('tour_setup.id DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
@@ -281,15 +289,71 @@ class Tour_iou_adjustment extends Root_Controller
         {
             $item['date_from'] = System_helper::display_date($item['date_from']);
             $item['date_to'] = System_helper::display_date($item['date_to']);
-            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
-            if ($item['designation'] == '')
+            $item['amount_iou_request'] = Tour_helper::calculate_total_iou($item['amount_iou_items']);
+        }
+
+        $this->json_return($items);
+    }
+
+    private function system_list_waiting()
+    {
+        $user = User_helper::get_user();
+        $method = 'list_waiting';
+        if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
+        {
+            $data['user_group'] = $user->user_group;
+            $data['title'] = "Tour Waiting List for IOU Adjustment";
+            $ajax['status'] = true;
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_waiting", $data, true));
+            if ($this->message)
             {
-                $item['designation'] = '-';
+                $ajax['system_message'] = $this->message;
             }
-            if ($item['department_name'] == '')
-            {
-                $item['department_name'] = '-';
-            }
+            $ajax['system_page_url'] = site_url($this->controller_url . "/index/list_waiting");
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    public function system_get_items_waiting()
+    {
+        $this->db->from($this->config->item('table_ems_tour_setup') . ' tour_setup');
+        $this->db->select('tour_setup.*');
+
+        $this->db->join($this->config->item('table_login_setup_user') . ' user', 'user.id = tour_setup.user_id', 'INNER');
+        $this->db->select('user.employee_id');
+
+        $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
+        $this->db->select('user_info.name');
+
+        $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
+        $this->db->select('designation.name AS designation');
+
+        $this->db->join($this->config->item('table_login_setup_department') . ' department', 'department.id = user_info.department_id', 'LEFT');
+        $this->db->select('department.name AS department_name');
+
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = tour_setup.user_id', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
+        $this->db->where('user_area.revision', 1);
+        $this->db->where('user_info.revision', 1);
+        $this->db->where('tour_setup.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('tour_setup.status_paid_payment', $this->config->item('system_status_paid'));
+        $this->db->where('tour_setup.status_approved_reporting !=', $this->config->item('system_status_approved'));
+        $this->db->order_by('tour_setup.id DESC');
+        $items = $this->db->get()->result_array();
+
+        foreach ($items as &$item)
+        {
+            $item['date_from'] = System_helper::display_date($item['date_from']);
+            $item['date_to'] = System_helper::display_date($item['date_to']);
+            $item['amount_iou_request'] = Tour_helper::calculate_total_iou($item['amount_iou_items']);
         }
 
         $this->json_return($items);

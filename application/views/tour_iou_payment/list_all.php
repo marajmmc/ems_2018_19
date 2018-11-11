@@ -48,7 +48,7 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     $action_buttons[] = array
     (
         'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference_all')
+        'href' => site_url($CI->controller_url . '/index/set_preference_list_all')
     );
 }
 $action_buttons[] = array(
@@ -91,10 +91,18 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'int' },
-                <?php foreach($system_preference_items as $key => $value){ ?>
-                { name: '<?php echo $key; ?>', type: 'string' },
-                <?php } ?>
+                <?php
+                foreach($system_preference_items as $key => $value){
+                    if($key=='id')
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'number' }, <?php
+                    }
+                    else
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'string' }, <?php
+                    }
+                }
+                ?>
             ],
             id: 'id',
             type: 'POST',
@@ -123,16 +131,23 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', pinned: true, dataField: 'id', width: '50', hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: 'Name', pinned: true, dataField: 'name', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['name']?0:1;?>},
-                    { text: 'Employee ID', pinned: true, dataField: 'employee_id', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['employee_id']?0:1;?>},
-                    { text: 'Department', pinned: true, dataField: 'department_name', filtertype: 'list', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
-                    { text: 'Designation', pinned: true, dataField: 'designation', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['designation']?0:1;?>},
-                    { text: 'Title', dataField: 'title', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
-                    { text: 'Date From', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
-                    { text: 'Date To', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>},
-                    { text: 'IOU Approve Status', dataField: 'status_approved_payment', filtertype: 'list', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>},
-                    { text: 'Payment Status', dataField: 'status_paid_payment', filtertype: 'list', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', pinned: true, dataField: 'name', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE_ID'); ?>', pinned: true, dataField: 'employee_id', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['employee_id']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DEPARTMENT_NAME'); ?>', pinned: true, dataField: 'department_name', filtertype: 'list', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['department_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DESIGNATION_NAME'); ?>', pinned: true, dataField: 'designation', filtertype: 'list', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['designation']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TITLE'); ?>', dataField: 'title', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['title']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_FROM'); ?>', dataField: 'date_from', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_from']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TO'); ?>', dataField: 'date_to', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_to']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_IOU_REQUEST'); ?>', dataField: 'amount_iou_request', width: '100', cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_iou_request']?0:1;?>,
+                        cellsrenderer: function (row, column, value, defaultHtml, columnSettings, record) {
+                            var element = $(defaultHtml);
+                            element.html(get_string_amount(value));
+                            return element[0].outerHTML;
+                        }
+                    },
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED_PAYMENT'); ?>', dataField: 'status_approved_payment', filtertype: 'list', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_PAID_PAYMENT'); ?>', dataField: 'status_paid_payment', filtertype: 'list', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_paid_payment']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED_ADJUSTMENT'); ?>', dataField: 'status_approved_adjustment', filtertype: 'list', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_adjustment']?0:1;?>}
                 ]
             });
     });

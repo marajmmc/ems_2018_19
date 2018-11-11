@@ -57,11 +57,11 @@ class Tour_iou_payment extends Root_Controller
         {
             $this->system_save_approve();
         }
-        elseif ($action == "set_preference")
+        elseif ($action == "set_preference_list")
         {
             $this->system_set_preference('list');
         }
-        elseif ($action == "set_preference_all")
+        elseif ($action == "set_preference_list_all")
         {
             $this->system_set_preference('list_all');
         }
@@ -95,12 +95,11 @@ class Tour_iou_payment extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou_request'] = 1;
-        if (((isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)) && (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
-            || ($method == 'list_all')
-        )
+        if ($method == 'list_all')
         {
             $data['status_approved_payment'] = 1;
             $data['status_paid_payment'] = 1;
+            $data['status_approved_adjustment'] = 1;
         }
         return $data;
     }
@@ -114,7 +113,7 @@ class Tour_iou_payment extends Root_Controller
             $data['preference_method_name'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_' . $method);
             $this->json_return($ajax);
         }
         else
@@ -201,15 +200,7 @@ class Tour_iou_payment extends Root_Controller
         {
             $item['date_from'] = System_helper::display_date($item['date_from']);
             $item['date_to'] = System_helper::display_date($item['date_to']);
-            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
-            if ($item['designation'] == '')
-            {
-                $item['designation'] = '-';
-            }
-            if ($item['department_name'] == '')
-            {
-                $item['department_name'] = '-';
-            }
+            $item['amount_iou_request'] = Tour_helper::calculate_total_iou($item['amount_iou_items']);
         }
 
         $this->json_return($items);
@@ -288,15 +279,7 @@ class Tour_iou_payment extends Root_Controller
         {
             $item['date_from'] = System_helper::display_date($item['date_from']);
             $item['date_to'] = System_helper::display_date($item['date_to']);
-            $item['amount_iou_request'] = System_helper::get_string_amount($item['amount_iou_request']);
-            if ($item['designation'] == '')
-            {
-                $item['designation'] = '-';
-            }
-            if ($item['department_name'] == '')
-            {
-                $item['department_name'] = '-';
-            }
+            $item['amount_iou_request'] = Tour_helper::calculate_total_iou($item['amount_iou_items']);
         }
 
         $this->json_return($items);
