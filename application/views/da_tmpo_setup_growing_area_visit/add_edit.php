@@ -100,7 +100,7 @@ echo "</pre>";*/
                     <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_crop_type" href="#">+ Crop & Type Information</a></label>
                 </h4>
             </div>
-            <div id="collapse_crop_type" class="panel-collapse ">
+            <div id="collapse_crop_type" class="panel-collapse collapse in">
                 <div class="row show-grid">
                     <?php
                     if(!$varieties)
@@ -259,6 +259,44 @@ echo "</pre>";*/
                                 }
                             }
                             ?>
+                            <tr><td colspan="21">&nbsp;</td></tr>
+                            <?php
+                            if($previous_visit['other_info'])
+                            {
+                                ?>
+                                <tr>
+                                    <td><strong>Others Activities</strong></td>
+                                    <td colspan="21"><?php echo $previous_visit['other_info'] ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if($previous_visit['remarks'])
+                            {
+                                ?>
+                                <tr>
+                                    <td><strong>Remarks</strong></td>
+                                    <td colspan="21"><?php echo $previous_visit['remarks'] ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                            <?php
+                            if($previous_visit['remarks_attendance'])
+                            {
+                                ?>
+                                <tr>
+                                    <td><strong>Remarks for attendance</strong></td>
+                                    <td colspan="21"><?php echo $previous_visit['remarks_attendance'] ?></td>
+                                </tr>
+                            <?php
+                            }
+                            ?>
+                            <tr>
+                                <td><strong>Attendance</strong></td>
+                                <td colspan="21"><?php echo $previous_visit['status_attendance'] ?></td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -267,16 +305,15 @@ echo "</pre>";*/
         <?php
         }
         ?>
-
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_previous_visit_<?php echo $item['area_id']?>" href="#">+ <?php echo System_helper::display_date($item['date_visit'])?></a></label>
+                    <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_previous_visit_<?php echo $item['area_id']?>" href="#">+ <?php echo System_helper::display_date($item['date_visit'])?> (Current Visit)</a></label>
                 </h4>
             </div>
-            <div id="collapse_previous_visit_<?php echo $item['area_id']?>" class="panel-collapse ">
+            <div id="collapse_previous_visit_<?php echo $item['area_id']?>" class="panel-collapse collapse in">
                 <div class="row show-grid">
-                    <div class="col-xs-12" style="overflow-x: scroll">
+                    <div class="col-xs-12" style="overflow-x: auto">
                         <br/>
                         <table class="table table-responsive table-bordered ">
                             <thead>

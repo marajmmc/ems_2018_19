@@ -879,8 +879,14 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
 
             $user_ids=array();
             $user_ids[$data['item_head']['user_created']]=$data['item_head']['user_created'];
-            $user_ids[$data['item_head']['user_updated']]=$data['item_head']['user_updated'];
-            $user_ids[$data['item_head']['user_attendance']]=$data['item_head']['user_attendance'];
+            if($data['item_head']['user_updated'])
+            {
+                $user_ids[$data['item_head']['user_updated']]=$data['item_head']['user_updated'];
+            }
+            if($data['item_head']['user_attendance'])
+            {
+                $user_ids[$data['item_head']['user_attendance']]=$data['item_head']['user_attendance'];
+            }
             $data['users']=System_helper::get_users_info($user_ids);
 
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
@@ -893,14 +899,9 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers','lead_farmers.id = details.farmer_id','LEFT');
             $this->db->select('lead_farmers.name lead_farmers_name');
 
-            /*$this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('farmer.farmer_type_id>', 1);*/
-
             $this->db->where('details.visit_id',$data['item_head']['id']);
             $this->db->where('details.status',$this->config->item('system_status_active'));
             $results=$this->db->get()->result_array();
-            //echo $this->db->last_query();
-
             $data['dealers']=array();
             $data['farmers']=array();
             foreach($results as $result)
@@ -926,8 +927,6 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->db->where('visit.date_visit !=',$data['item_head']['date_visit']);
             $this->db->where('visit.date_visit < ',$data['item_head']['date_visit']);
             $this->db->where('visit.status',$this->config->item('system_status_active'));
-            /*$this->db->order_by('visit.id', 'DESC');
-            $this->db->limit(1);*/
             $results=$this->db->get()->result_array();
             $result_area_ids[0]=0;
             $data['previous_visits']=array();
