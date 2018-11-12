@@ -130,7 +130,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'fdb_no', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['fdb_no']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'id', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>', dataField: 'fdb_proposal_date', pinned: true, width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['fdb_proposal_date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['expected_date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '100', rendered: tooltiprenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['total_budget']?0:1;?>,
