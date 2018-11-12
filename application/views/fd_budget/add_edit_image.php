@@ -115,12 +115,13 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         <td rowspan="2"><?php echo $picture_category['text']; ?></td>
                         <td id="image_variety1_<?php echo $picture_category['value']; ?>">
                             <?php
-                            if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['variety1_file_location']) > 0))
+                            if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['variety1_file_location']) != ""))
                             {
-                                $image = $file_details[$picture_category['value']]['variety1_file_location'];
+                                $img_src = $file_details[$picture_category['value']]['variety1_file_location'];
                                 ?>
-                                <a href="<?php echo $img_src; ?>" target="_blank" class="blob">
-                                    <img src="<?php echo $img_src; ?>" alt="Picture Missing"/> </a>
+                                <a href="<?php echo $CI->config->item('system_base_url_picture') . $image; ?>" target="_blank" class="blob">
+                                    <img src="<?php echo $CI->config->item('system_base_url_picture') . $image; ?>" alt="Picture Missing"/>
+                                </a>
                             <?php
                             }
                             else
@@ -138,12 +139,13 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
                         <td id="image_variety2_<?php echo $picture_category['value']; ?>">
                             <?php
-                            if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['variety2_file_location']) > 0))
+                            if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['variety2_file_location']) != ""))
                             {
-                                $image = $file_details[$picture_category['value']]['variety2_file_location'];
+                                $img_src = $file_details[$picture_category['value']]['variety2_file_location'];
                                 ?>
-                                <a href="<?php echo $img_src; ?>" target="_blank" class="blob">
-                                    <img src="<?php echo $img_src; ?>" alt="Picture Missing"/> </a>
+                                <a href="<?php echo $CI->config->item('system_base_url_picture') . $img_src; ?>" target="_blank" class="blob">
+                                    <img src="<?php echo $CI->config->item('system_base_url_picture') . $img_src; ?>" alt="Picture Missing"/>
+                                </a>
                             <?php
                             }
                             else

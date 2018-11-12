@@ -5,38 +5,13 @@ $action_buttons = array();
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(
+        'label' => 'Pending List',
+        'href' => site_url($CI->controller_url . '/index/list')
+    );
+    $action_buttons[] = array(
         'label' => 'All List',
         'href' => site_url($CI->controller_url . '/index/list_all')
     );
-    $action_buttons[] = array(
-        'label' => 'Waiting List',
-        'href' => site_url($CI->controller_url . '/index/list_waiting')
-    );
-}
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_NEW"),
-        'href' => site_url($CI->controller_url . '/index/add')
-    );
-}
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line("ACTION_EDIT"),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit')
-    );
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Upload Picture',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit_image')
-    );
-}
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
     $action_buttons[] = array(
         'type' => 'button',
         'label' => $CI->lang->line("ACTION_DETAILS"),
@@ -68,22 +43,13 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     $action_buttons[] = array
     (
         'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference_list')
-    );
-}
-if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'type' => 'button',
-        'label' => 'Forward',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/forward')
+        'href' => site_url($CI->controller_url . '/index/set_preference_list_all')
     );
 }
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
-    'href' => site_url($CI->controller_url . '/index/list')
+    'href' => site_url($CI->controller_url . '/index/list_all')
+
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
@@ -110,7 +76,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     $(document).ready(function () {
         system_off_events(); // Triggers
 
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items'); ?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all'); ?>";
         // prepare the data
         var source =
         {
@@ -164,7 +130,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'id', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'fdb_no', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['fdb_no']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>', dataField: 'fdb_proposal_date', pinned: true, width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['fdb_proposal_date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['expected_date']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '100', rendered: tooltiprenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['total_budget']?0:1;?>,

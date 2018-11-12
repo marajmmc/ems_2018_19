@@ -3,11 +3,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Fd_budget_helper extends Root_Controller
 {
-    /* ARM & other Competitor varieties */
-    public static function get_dropdown_all_crop_variety()
+    /* ARM & Upcoming varieties */
+    public static function get_dropdown_arm_and_upcoming_crop_variety($crop_type_id = 0)
     {
         $CI =& get_instance();
-        $results = Query_helper::get_info($CI->config->item('table_login_setup_classification_varieties'), array('id value', 'CONCAT(name, " ( ", whose, " )") text', 'crop_type_id'), array('status ="' . $CI->config->item('system_status_active') . '"'), 0, 0, array('whose', 'ordering'));
+        $condition = array(
+            'status ="' . $CI->config->item('system_status_active') . '"',
+            'whose !="Competitor"'
+        );
+        if (is_numeric($crop_type_id) && ($crop_type_id > 0))
+        {
+            $condition[] = 'crop_type_id =' . $crop_type_id;
+        }
+
+        $results = Query_helper::get_info($CI->config->item('table_login_setup_classification_varieties'), array('id value', 'CONCAT(name, " ( ", whose, " )") text', 'crop_type_id'), $condition, 0, 0, array('whose', 'ordering'));
+        $data = array();
+        foreach ($results as $result)
+        {
+            $data[$result['crop_type_id']][] = $result;
+        }
+        return $data;
+    }
+
+    /* All varieties */
+    public static function get_dropdown_all_crop_variety($crop_type_id = 0)
+    {
+        $CI =& get_instance();
+        $condition = array(
+            'status ="' . $CI->config->item('system_status_active') . '"'
+        );
+        if (is_numeric($crop_type_id) && ($crop_type_id > 0))
+        {
+            $condition[] = 'crop_type_id =' . $crop_type_id;
+        }
+
+        $results = Query_helper::get_info($CI->config->item('table_login_setup_classification_varieties'), array('id value', 'CONCAT(name, " ( ", whose, " )") text', 'crop_type_id'), $condition, 0, 0, array('whose', 'ordering'));
         $data = array();
         foreach ($results as $result)
         {

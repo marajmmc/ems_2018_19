@@ -44,7 +44,7 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     $action_buttons[] = array
     (
         'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference')
+        'href' => site_url($CI->controller_url . '/index/set_preference_list')
     );
 }
 $action_buttons[] = array(
@@ -82,11 +82,18 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'int' },
                 <?php
-                foreach($system_preference_items as $key => $value){ ?>
-                { name: '<?php echo $key; ?>', type: 'string' },
-                <?php } ?>
+                foreach($system_preference_items as $key => $value){
+                    if($key=='id')
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'number' }, <?php
+                    }
+                    else
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'string' }, <?php
+                    }
+                }
+                ?>
             ],
             id: 'id',
             type: 'POST',

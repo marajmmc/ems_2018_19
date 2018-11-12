@@ -36,7 +36,7 @@ class Setup_fd_picture_category extends Root_Controller
         {
             $this->system_save();
         }
-        elseif ($action == "set_preference")
+        elseif ($action == "set_preference_list")
         {
             $this->system_set_preference('list');
         }
@@ -52,11 +52,15 @@ class Setup_fd_picture_category extends Root_Controller
 
     private function get_preference_headers($method)
     {
-        $data['id'] = 1;
-        $data['name'] = 1;
-        $data['description'] = 1;
-        $data['ordering'] = 1;
-        $data['status'] = 1;
+        $data = array();
+        if ($method == 'list')
+        {
+            $data['id'] = 1;
+            $data['name'] = 1;
+            $data['description'] = 1;
+            $data['ordering'] = 1;
+            $data['status'] = 1;
+        }
         return $data;
     }
 
@@ -69,7 +73,7 @@ class Setup_fd_picture_category extends Root_Controller
             $data['preference_method_name'] = $method;
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view("preference_add_edit", $data, true));
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference');
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/set_preference_' . $method);
             $this->json_return($ajax);
         }
         else
@@ -108,16 +112,6 @@ class Setup_fd_picture_category extends Root_Controller
     private function system_get_items()
     {
         $items = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('*'), array(), 0, 0, array('ordering ASC'));
-        if (!empty($items))
-        {
-            foreach ($items as &$item)
-            {
-                if (trim($item['description']) == "")
-                {
-                    $item['description'] = ' - ';
-                }
-            }
-        }
         $this->json_return($items);
     }
 

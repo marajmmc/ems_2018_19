@@ -12,9 +12,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'label' => 'Waiting List',
         'href' => site_url($CI->controller_url . '/index/list_waiting')
     );
-}
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
     $action_buttons[] = array(
         'type' => 'button',
         'label' => $CI->lang->line("ACTION_DETAILS"),
@@ -46,7 +43,7 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     $action_buttons[] = array
     (
         'label' => 'Preference',
-        'href' => site_url($CI->controller_url . '/index/set_preference')
+        'href' => site_url($CI->controller_url . '/index/set_preference_list_all')
     );
 }
 $action_buttons[] = array(
@@ -74,6 +71,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     </div>
 </div>
 <div class="clearfix"></div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         system_off_events(); // Triggers
@@ -84,15 +82,26 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'int' },
                 <?php
-                foreach($system_preference_items as $key => $value){ ?>
-                { name: '<?php echo $key; ?>', type: 'string' },
-                <?php } ?>
+                foreach($system_preference_items as $key => $value)
+                {
+                    if($key=='id')
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'number' }, <?php
+                    }
+                    else
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'string' }, <?php
+                    }
+                }
+                ?>
             ],
             id: 'id',
             type: 'POST',
             url: url
+        };
+        var tooltiprenderer = function (element) {
+            $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
         };
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
@@ -121,22 +130,28 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'id', width: '100', cellsalign: 'right', hidden: true, pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_BUDGET_PROPOSAL_DATE'); ?>', dataField: 'date', width: '120', cellsalign: 'right', pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '120', cellsalign: 'right', pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '130', cellsalign: 'right', pinned: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', filtertype: 'list', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_COMPETITOR_VARIETY'); ?>', dataField: 'com_variety_name', width: '120', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width: '100', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '100', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '100', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width: '130', cellsalign: 'right', hidden: true},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name', width: '130', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_BUDGET'); ?>', dataField: 'status_budget', width: '110', cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUESTED'); ?>', dataField: 'status_requested', width: '100', cellsalign: 'right', filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVAL'); ?>', dataField: 'status_approved', width: '100', cellsalign: 'right', filtertype: 'list'}
+                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'fdb_no', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['fdb_no']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>', dataField: 'fdb_proposal_date', pinned: true, width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['fdb_proposal_date']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['expected_date']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '100', rendered: tooltiprenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['total_budget']?0:1;?>,
+                        cellsrenderer: function (row, column, value, defaultHtml, columnSettings, record) {
+                            var element = $(defaultHtml);
+                            element.html(get_string_amount(value));
+                            return element[0].outerHTML;
+                        }
+                    },
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>', dataField: 'variety1_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety1_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['division_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_BUDGET'); ?>', dataField: 'status_budget', width: '100', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_budget']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_REQUESTED'); ?>', dataField: 'status_requested', width: '100', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_requested']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED'); ?>', dataField: 'status_approved', width: '100', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_approved']?0:1;?>}
                 ]
             });
     });
