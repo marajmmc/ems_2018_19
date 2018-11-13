@@ -1,9 +1,8 @@
 <?php
 // Field Day Task
-$lang['LABEL_FDB_NO'] = 'FDB No';
-$lang['LABEL_FDB_PROPOSAL_DATE'] = 'Proposal Date';
-$lang['LABEL_EXPECTED_DATE'] = 'Expected Date';
-$lang['LABEL_TOTAL_BUDGET'] = 'Expected Total Budget';
+$lang['LABEL_DATE_PROPOSAL'] = 'Proposal Date';
+$lang['LABEL_DATE_EXPECTED'] = 'Expected Date';
+$lang['LABEL_AMOUNT_BUDGET_TOTAL'] = 'Expected Total Budget';
 $lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_VARIETY1_NAME'] = 'Variety 1';
 $lang['LABEL_VARIETY2_NAME'] = 'Variety 2';
@@ -27,4 +26,5 @@ $lang['LABEL_ARM_MARKET_SIZE'] = 'ARM Market Size (kg)';
 $lang['LABEL_NEXT_SALES_TARGET'] = 'Next Year Sales Target (kg)';
 $lang['LABEL_RECOMMENDATION'] = 'Recommendation';
 
+$lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
 $lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';

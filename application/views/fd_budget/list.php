@@ -156,25 +156,24 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 enablebrowserselection: true,
                 columnsreorder: true,
                 columns: [
-                    {
-                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', datafield: '', pinned: true, width: '50', columntype: 'number', cellsalign: 'right', sortable: false, filterable: false,
+                    { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', datafield: '', pinned: true, width: '50', columntype: 'number', cellsalign: 'right', sortable: false, filterable: false,
                         cellsrenderer: function (row, column, value, defaultHtml, columnSettings, record) {
                             var element = $(defaultHtml);
                             element.html(value + 1);
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_NO'); ?>', dataField: 'id', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>', dataField: 'fdb_proposal_date', pinned: true, width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['fdb_proposal_date']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>', dataField: 'expected_date', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['expected_date']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_TOTAL_BUDGET'); ?>', dataField: 'total_budget', width: '100', rendered: tooltiprenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['total_budget']?0:1;?>,
+                    { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_PROPOSAL'); ?>', dataField: 'date_proposal', pinned: true, width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_proposal']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_expected']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_BUDGET_TOTAL'); ?>', dataField: 'amount_budget_total', width: '100', rendered: tooltiprenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_budget_total']?0:1;?>,
                         cellsrenderer: function (row, column, value, defaultHtml, columnSettings, record) {
                             var element = $(defaultHtml);
                             element.html(get_string_amount(value));
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>', dataField: 'variety1_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety1_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>},

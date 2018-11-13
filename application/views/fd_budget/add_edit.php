@@ -43,11 +43,11 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FDB_PROPOSAL_DATE'); ?>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PROPOSAL'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item[date]" id="date" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date']); ?>" readonly/>
+        <input type="text" name="item[date_proposal]" id="date_proposal" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_proposal']); ?>" readonly/>
     </div>
 </div>
 
@@ -324,11 +324,11 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EXPECTED_DATE'); ?>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[expected_date]" id="expected_date" class="form-control datepicker" value="<?php echo System_helper::display_date($item_info['expected_date']); ?>" readonly/>
+        <input type="text" name="item_info[date_expected]" id="date_expected" class="form-control datepicker" value="<?php echo System_helper::display_date($item_info['date_expected']); ?>" readonly/>
     </div>
 </div>
 
@@ -406,10 +406,10 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000;">*</span></label>
     </div>
     <div class="col-xs-4">
-        <input type="text" name="item_info[participant_through_customer]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_through_customer']))
+        <input type="text" name="item_info[participant_customers]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_customers']))
         {
-            $total_participant += $item_info['participant_through_customer'];
-            echo $item_info['participant_through_customer'];
+            $total_participant += $item_info['participant_customers'];
+            echo $item_info['participant_customers'];
         } ?>"/>
     </div>
 </div>
@@ -420,10 +420,10 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000;">*</span></label>
     </div>
     <div class="col-xs-4">
-        <input type="text" name="item_info[participant_through_others]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_through_others']))
+        <input type="text" name="item_info[participant_others]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_others']))
         {
-            $total_participant += $item_info['participant_through_others'];
-            echo $item_info['participant_through_others'];
+            $total_participant += $item_info['participant_others'];
+            echo $item_info['participant_others'];
         } ?>"/>
     </div>
 </div>
@@ -488,9 +488,9 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[total_market_size]" id="total_market_size" class="form-control float_type_positive" value="<?php if ($item_info['total_market_size'])
+        <input type="text" name="item_info[quantity_market_size_total]" id="quantity_market_size_total" class="form-control float_type_positive" value="<?php if ($item_info['quantity_market_size_total'])
         {
-            echo $item_info['total_market_size'];
+            echo $item_info['quantity_market_size_total'];
         } ?>"/>
     </div>
 </div>
@@ -501,9 +501,9 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[arm_market_size]" id="arm_market_size" class="form-control float_type_positive" value="<?php if ($item_info['arm_market_size'])
+        <input type="text" name="item_info[quantity_market_size_arm]" id="quantity_market_size_arm" class="form-control float_type_positive" value="<?php if ($item_info['quantity_market_size_arm'])
         {
-            echo $item_info['arm_market_size'];
+            echo $item_info['quantity_market_size_arm'];
         } ?>"/>
     </div>
 </div>
@@ -514,9 +514,9 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[sales_target]" id="sales_target" class="form-control float_type_positive" value="<?php if ($item_info['sales_target'])
+        <input type="text" name="item_info[quantity_sales_target]" id="quantity_sales_target" class="form-control float_type_positive" value="<?php if ($item_info['quantity_sales_target'])
         {
-            echo $item_info['sales_target'];
+            echo $item_info['quantity_sales_target'];
         } ?>"/>
     </div>
 </div>
@@ -527,7 +527,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="remarks" name="item[remarks]"><?php echo $item['remarks']; ?></textarea>
+        <textarea class="form-control" id="remarks_budget" name="item_info[remarks_budget]"><?php echo $item_info['remarks_budget']; ?></textarea>
     </div>
 </div>
 
@@ -540,27 +540,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 jQuery(document).ready(function ($) {
     system_off_events(); // Triggers
-
     $(".datepicker").datepicker({dateFormat: display_date_format});
-
-    var arm_and_upcoming_crop_variety = [];
-    var all_crop_variety = [];
-
-    $.ajax({
-        url: "<?php echo site_url($CI->controller_url.'/index/get_fd_budget_varieties/') ?>",
-        type: 'POST',
-        datatype: "JSON",
-        data: { },
-        success: function (data, status) {
-            if (data.status) {
-                arm_and_upcoming_crop_variety = data.arm_and_upcoming_crop_variety;
-                all_crop_variety = data.all_crop_variety;
-            }
-        },
-        error: function (xhr, desc, err) {
-            console.log("error");
-        }
-    });
 
     $(document).off("input", ".expense_budget");
     $(document).off("input", ".participant_budget");
@@ -591,11 +571,20 @@ jQuery(document).ready(function ($) {
         $("#variety2_id").val('');
         var crop_type_id = $('#crop_type_id').val();
         if (crop_type_id > 0) {
+            $.ajax({
+                url: "<?php echo site_url($CI->controller_url.'/index/get_fd_budget_varieties/') ?>",
+                type: 'POST',
+                datatype: "JSON",
+                data: { id: crop_type_id },
+                success: function (data, status) {
+
+                },
+                error: function (xhr, desc, err) {
+                    console.log("error");
+                }
+            });
             $('#variety1_id_container').show();
             $('#variety2_id_container').show();
-
-            $('#variety1_id').html(get_dropdown_with_select(arm_and_upcoming_crop_variety[crop_type_id]));
-            $('#variety2_id').html(get_dropdown_with_select(all_crop_variety[crop_type_id]));
         }
         else {
             $('#variety1_id_container').hide();
@@ -625,6 +614,7 @@ jQuery(document).ready(function ($) {
                 $("#zone_id").html(get_dropdown_with_select(system_zones[division_id]));
             }
         }
+        calculate_total_participants('reset');
     });
     $(document).on("change", "#zone_id", function () {
         $("#territory_id").val('');
@@ -643,6 +633,7 @@ jQuery(document).ready(function ($) {
                 $("#territory_id").html(get_dropdown_with_select(system_territories[zone_id]));
             }
         }
+        calculate_total_participants('reset');
     });
     $(document).on("change", "#territory_id", function () {
         $("#district_id").val('');
@@ -659,8 +650,9 @@ jQuery(document).ready(function ($) {
                 $("#district_id").html(get_dropdown_with_select(system_districts[territory_id]));
             }
         }
+        calculate_total_participants('reset');
     });
-    $(document).on('change', '#district_id', function () {
+    $(document).on("change", "#district_id", function () {
         $('#outlet_id').val('');
 
         var district_id = $('#district_id').val();
@@ -673,9 +665,9 @@ jQuery(document).ready(function ($) {
                 $('#outlet_id').html(get_dropdown_with_select(system_outlets[district_id]));
             }
         }
+        calculate_total_participants('reset');
     });
-    $(document).on("change", "#outlet_id", function (event) {
-        event.preventDefault();
+    $(document).on("change", "#outlet_id", function () {
         var outlet_id = parseInt($(this).val());
         if (outlet_id > 0) {
             $.ajax({
@@ -717,8 +709,30 @@ jQuery(document).ready(function ($) {
             $('#dealer_container').hide();
             $('#leading_farmer_container').hide();
         }
+
+        calculate_total_participants('reset');
     });
     /*--------------------- LOCATION RELATED DROPDOWN ( END ) ---------------------*/
+
+    /* Calculate Total Participant */
+    $(document).on("input", ".participant_budget", function () {
+        calculate_total_participants('');
+    });
+
+    function calculate_total_participants(action){
+        if(action=='reset'){
+            $(".participant_budget").val(0);
+        }
+        var total = parseInt(0);
+        var item = parseInt(0);
+        $(".participant_budget").each(function (index, element) {
+            item = parseInt($(this).val());
+            if (!isNaN(item) && (item > 0)) {
+                total += item;
+            }
+        });
+        $('#no_of_participant').text(total);
+    }
 
     /* Calculate Total Budget Expense */
     $(document).on("input", ".expense_budget", function () {
@@ -731,19 +745,6 @@ jQuery(document).ready(function ($) {
             }
         });
         $('#total_budget').text(get_string_amount(total));
-    });
-
-    /* Calculate Total Participant */
-    $(document).on("input", ".participant_budget", function () {
-        var total = parseInt(0);
-        var item = parseInt(0);
-        $(".participant_budget").each(function (index, element) {
-            item = parseInt($(this).val());
-            if (!isNaN(item) && (item > 0)) {
-                total += item;
-            }
-        });
-        $('#no_of_participant').text(total);
     });
 });
 </script>

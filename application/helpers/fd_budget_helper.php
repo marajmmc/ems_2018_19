@@ -1,22 +1,25 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Fd_budget_helper extends Root_Controller
+class Fd_budget_helper
 {
     /* ARM & Upcoming varieties */
-    public static function get_dropdown_arm_and_upcoming_crop_variety($crop_type_id = 0)
+    public static function get_variety_arm_upcoming($crop_type_id = 0)
     {
         $CI =& get_instance();
-        $condition = array(
-            'status ="' . $CI->config->item('system_status_active') . '"',
-            'whose !="Competitor"'
-        );
+
+        $CI->db->from($CI->config->item('table_login_setup_classification_varieties'));
+        $CI->db->select('id AS value, CONCAT(name, " ( ", whose, " )") AS text, crop_type_id');
+
+        $CI->db->where('status', $CI->config->item('system_status_active'));
+        $CI->db->where('whose !=', 'Competitor');
         if (is_numeric($crop_type_id) && ($crop_type_id > 0))
         {
-            $condition[] = 'crop_type_id =' . $crop_type_id;
+            $CI->db->where('crop_type_id', $crop_type_id);
         }
+        $CI->db->order_by('whose, ordering');
+        $results = $CI->db->get()->result_array();
 
-        $results = Query_helper::get_info($CI->config->item('table_login_setup_classification_varieties'), array('id value', 'CONCAT(name, " ( ", whose, " )") text', 'crop_type_id'), $condition, 0, 0, array('whose', 'ordering'));
         $data = array();
         foreach ($results as $result)
         {
@@ -26,18 +29,21 @@ class Fd_budget_helper extends Root_Controller
     }
 
     /* All varieties */
-    public static function get_dropdown_all_crop_variety($crop_type_id = 0)
+    public static function get_variety_all($crop_type_id = 0)
     {
         $CI =& get_instance();
-        $condition = array(
-            'status ="' . $CI->config->item('system_status_active') . '"'
-        );
+
+        $CI->db->from($CI->config->item('table_login_setup_classification_varieties'));
+        $CI->db->select('id AS value, CONCAT(name, " ( ", whose, " )") AS text, crop_type_id');
+
+        $CI->db->where('status', $CI->config->item('system_status_active'));
         if (is_numeric($crop_type_id) && ($crop_type_id > 0))
         {
-            $condition[] = 'crop_type_id =' . $crop_type_id;
+            $CI->db->where('crop_type_id', $crop_type_id);
         }
+        $CI->db->order_by('whose, ordering');
+        $results = $CI->db->get()->result_array();
 
-        $results = Query_helper::get_info($CI->config->item('table_login_setup_classification_varieties'), array('id value', 'CONCAT(name, " ( ", whose, " )") text', 'crop_type_id'), $condition, 0, 0, array('whose', 'ordering'));
         $data = array();
         foreach ($results as $result)
         {
@@ -46,8 +52,8 @@ class Fd_budget_helper extends Root_Controller
         return $data;
     }
 
-    /* Outlet wise Dealers */
-    public static function get_all_area_dealers_by_outlet($outlet_id)
+    /* Outlet wise GA Dealers */
+    public static function get_dealers_ga($outlet_id)
     {
         $CI =& get_instance();
 
@@ -66,8 +72,8 @@ class Fd_budget_helper extends Root_Controller
         return $result;
     }
 
-    /* Outlet wise Lead Farmers */
-    public static function get_all_area_lead_farmers_by_outlet($outlet_id)
+    /* Outlet wise GA Lead Farmers */
+    public static function get_lead_farmers_ga($outlet_id)
     {
         $CI =& get_instance();
 

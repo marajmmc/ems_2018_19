@@ -116,9 +116,9 @@ class Fd_budget extends Root_Controller
     {
         $data = array();
         $data['id'] = 1;
-        $data['fdb_proposal_date'] = 1;
-        $data['expected_date'] = 1;
-        $data['total_budget'] = 1;
+        $data['date_proposal'] = 1;
+        $data['date_expected'] = 1;
+        $data['amount_budget_total'] = 1;
         $data['crop_name'] = 1;
         $data['crop_type_name'] = 1;
         $data['variety1_name'] = 1;
@@ -131,8 +131,6 @@ class Fd_budget extends Root_Controller
         if ($method == 'list_all')
         {
             $data['status_budget'] = 1;
-            $data['status_requested'] = 1;
-            $data['status_approved'] = 1;
         }
         return $data;
     }
@@ -142,6 +140,7 @@ class Fd_budget extends Root_Controller
         $user = User_helper::get_user();
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
         {
+            $data = array();
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['preference_method_name'] = $method;
             $ajax['status'] = true;
@@ -163,6 +162,7 @@ class Fd_budget extends Root_Controller
         {
             $user = User_helper::get_user();
             $method = 'list';
+            $data = array();
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['title'] = "Field Day Budget Pending List";
             $ajax['status'] = true;
@@ -185,15 +185,12 @@ class Fd_budget extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-        $this->db->select('fd_budget.*, fd_budget.id AS budget_id, fd_budget.date AS fdb_proposal_date, fd_budget.total_budget');
+        $this->db->select('fd_budget.*, fd_budget.id AS budget_id');
 
-        $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
-        $this->db->select('fd_budget_details.expected_date');
-
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $this->db->select('variety1.name variety1_name');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -202,7 +199,7 @@ class Fd_budget extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.id = fd_budget_details.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -232,13 +229,13 @@ class Fd_budget extends Root_Controller
                 }
             }
         }
-        $this->db->where('fd_budget_details.revision', 1);
+        $this->db->where('fd_budget.status_budget', $this->config->item('system_status_pending'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
         {
-            $item['fdb_proposal_date'] = System_helper::display_date($item['fdb_proposal_date']);
-            $item['expected_date'] = System_helper::display_date($item['expected_date']);
+            $item['date_proposal'] = System_helper::display_date($item['date_proposal']);
+            $item['date_expected'] = System_helper::display_date($item['date_expected']);
         }
         $this->json_return($items);
     }
@@ -249,6 +246,7 @@ class Fd_budget extends Root_Controller
         {
             $user = User_helper::get_user();
             $method = 'list_all';
+            $data = array();
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['title'] = "Field Day Budget All List";
             $ajax['status'] = true;
@@ -285,15 +283,12 @@ class Fd_budget extends Root_Controller
             $pagesize = $pagesize * 2;
         }
         $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-        $this->db->select('fd_budget.*, fd_budget.id AS budget_id, fd_budget.date AS fdb_proposal_date, fd_budget.total_budget');
+        $this->db->select('fd_budget.*, fd_budget.id AS budget_id');
 
-        $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
-        $this->db->select('fd_budget_details.expected_date');
-
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $this->db->select('variety1.name variety1_name');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -302,7 +297,7 @@ class Fd_budget extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.id = fd_budget_details.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -332,14 +327,13 @@ class Fd_budget extends Root_Controller
                 }
             }
         }
-        $this->db->where('fd_budget_details.revision', 1);
         $this->db->order_by('fd_budget.id', 'DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
         {
-            $item['fdb_proposal_date'] = System_helper::display_date($item['fdb_proposal_date']);
-            $item['expected_date'] = System_helper::display_date($item['expected_date']);
+            $item['date_proposal'] = System_helper::display_date($item['date_proposal']);
+            $item['date_expected'] = System_helper::display_date($item['date_expected']);
         }
         $this->json_return($items);
     }
@@ -350,6 +344,7 @@ class Fd_budget extends Root_Controller
         {
             $user = User_helper::get_user();
             $method = 'list_waiting';
+            $data = array();
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['title'] = "Field Day Budget Waiting List";
             $ajax['status'] = true;
@@ -372,15 +367,12 @@ class Fd_budget extends Root_Controller
     private function system_get_items_waiting()
     {
         $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-        $this->db->select('fd_budget.*, fd_budget.id AS budget_id, fd_budget.date AS fdb_proposal_date, fd_budget.total_budget');
+        $this->db->select('fd_budget.*, fd_budget.id AS budget_id');
 
-        $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
-        $this->db->select('fd_budget_details.expected_date');
-
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $this->db->select('variety1.name variety1_name');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -389,7 +381,7 @@ class Fd_budget extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.id = fd_budget_details.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -419,13 +411,13 @@ class Fd_budget extends Root_Controller
                 }
             }
         }
-        $this->db->where('fd_budget_details.revision', 1);
+        $this->db->where('fd_budget.status_budget', $this->config->item('system_status_forwarded'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
         {
-            $item['fdb_proposal_date'] = System_helper::display_date($item['fdb_proposal_date']);
-            $item['expected_date'] = System_helper::display_date($item['expected_date']);
+            $item['date_proposal'] = System_helper::display_date($item['date_proposal']);
+            $item['date_expected'] = System_helper::display_date($item['date_expected']);
         }
         $this->json_return($items);
     }
@@ -435,10 +427,11 @@ class Fd_budget extends Root_Controller
         if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
             $time = time();
+            $data = array();
             $data['item'] = Array(
                 'id' => 0,
-                'date' => $time,
-                'remarks' => ''
+                'date_proposal' => $time,
+                'participant_total' => 0
             );
             $data['item_info'] = Array(
                 'crop_id' => '',
@@ -454,11 +447,11 @@ class Fd_budget extends Root_Controller
                 'present_condition' => '',
                 'farmers_evaluation' => '',
                 'diff_between_varieties' => '',
-                'no_of_participant' => '',
-                'expected_date' => '',
-                'arm_market_size' => '',
-                'total_market_size' => '',
-                'sales_target' => ''
+                'date_expected' => '',
+                'quantity_market_size_total' => '',
+                'quantity_market_size_arm' => '',
+                'quantity_sales_target' => '',
+                'remarks_budget' => ''
             );
 
             $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
@@ -491,7 +484,6 @@ class Fd_budget extends Root_Controller
 
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering ASC'));
             $data['expense_budget'] = array();
-            $data['system_all_varieties'] = Fd_budget_helper::get_dropdown_all_crop_variety();
 
             $data['title'] = "Create new Field Day Budget";
             $ajax['status'] = true;
@@ -524,10 +516,10 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.id AS budget_id, fd_budget.date AS fdb_proposal_date, fd_budget.remarks');
+            $this->db->select('fd_budget.date_proposal');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
-            $this->db->select('fd_budget_details.*, fd_budget_details.expected_date');
+            $this->db->select('fd_budget_details.*');
 
             $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
             $this->db->select('variety1.name AS variety1_name');
@@ -569,12 +561,11 @@ class Fd_budget extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $data = array();
             $data['item'] = Array(
                 'id' => $result['budget_id'],
-                'date' => $result['fdb_proposal_date'],
-                'remarks' => $result['remarks']
+                'date_proposal' => $result['date_proposal']
             );
-
             $data['item_info'] = Array(
                 'crop_id' => $result['crop_id'],
                 'crop_type_id' => $result['crop_type_id'],
@@ -589,18 +580,20 @@ class Fd_budget extends Root_Controller
                 'present_condition' => $result['present_condition'],
                 'farmers_evaluation' => $result['farmers_evaluation'],
                 'diff_between_varieties' => $result['diff_between_varieties'],
-                'expected_date' => $result['expected_date'],
-                'participant_through_customer' => $result['participant_through_customer'],
-                'participant_through_others' => $result['participant_through_others'],
-                'arm_market_size' => $result['total_market_size'],
-                'total_market_size' => $result['arm_market_size'],
-                'sales_target' => $result['sales_target']
+                'date_expected' => $result['date_expected'],
+                'participant_customers' => $result['participant_customers'],
+                'participant_others' => $result['participant_others'],
+                'quantity_market_size_total' => $result['quantity_market_size_total'],
+                'quantity_market_size_arm' => $result['quantity_market_size_arm'],
+                'quantity_sales_target' => $result['quantity_sales_target'],
+                'remarks_budget' => $result['remarks_budget']
             );
 
             $query_division_id = ($this->locations['division_id'] > 0) ? $this->locations['division_id'] : $result['division_id'];
             $query_zone_id = ($this->locations['zone_id'] > 0) ? $this->locations['zone_id'] : $result['zone_id'];
             $query_territory_id = ($this->locations['territory_id'] > 0) ? $this->locations['territory_id'] : $result['territory_id'];
             $query_district_id = ($this->locations['district_id'] > 0) ? $this->locations['division_id'] : $result['district_id'];
+
             $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
             $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $query_division_id));
             $data['territories'] = Query_helper::get_info($this->config->item('table_login_setup_location_territories'), array('id value', 'name text'), array('zone_id =' . $query_zone_id));
@@ -614,19 +607,12 @@ class Fd_budget extends Root_Controller
             $data['outlets'] = $this->db->get()->result_array();
 
             $data['crop_types'] = Query_helper::get_info($this->config->item('table_login_setup_classification_crop_types'), array('id value', 'name text'), array('crop_id =' . $data['item_info']['crop_id']));
-            /*
-            $data['crop_varieties1'] = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'name text'), array('crop_type_id =' . $data['item_info']['crop_type_id']));
-            $data['crop_varieties2'] = Query_helper::get_info($this->config->item('table_login_setup_classification_varieties'), array('id value', 'name text'), array('crop_type_id =' . $data['item_info']['crop_type_id'], 'whose ="Competitor"'));
-            */
-            $data['crop_varieties1'] = Fd_budget_helper::get_dropdown_arm_and_upcoming_crop_variety($data['item_info']['crop_type_id']);
+            $data['crop_varieties1'] = Fd_budget_helper::get_variety_arm_upcoming($data['item_info']['crop_type_id']);
             $data['crop_varieties1'] = $data['crop_varieties1'][$data['item_info']['crop_type_id']];
-            $data['crop_varieties2'] = Fd_budget_helper::get_dropdown_all_crop_variety($data['item_info']['crop_type_id']);
+            $data['crop_varieties2'] = Fd_budget_helper::get_variety_all($data['item_info']['crop_type_id']);
             $data['crop_varieties2'] = $data['crop_varieties2'][$data['item_info']['crop_type_id']];
 
-            //pr($data['crop_varieties1'],0);
-            //pr($data['crop_varieties2']);
-
-            $dealers_by_outlet = Fd_budget_helper::get_all_area_dealers_by_outlet($result['outlet_id']);
+            $dealers_by_outlet = Fd_budget_helper::get_dealers_ga($result['outlet_id']);
             $data['dealers'] = array();
             foreach ($dealers_by_outlet as $item)
             {
@@ -637,7 +623,7 @@ class Fd_budget extends Root_Controller
                 );
             }
 
-            $lead_farmers_by_outlet = Fd_budget_helper::get_all_area_lead_farmers_by_outlet($result['outlet_id']);
+            $lead_farmers_by_outlet = Fd_budget_helper::get_lead_farmers_ga($result['outlet_id']);
             $data['leading_farmers'] = array();
             foreach ($lead_farmers_by_outlet as $item)
             {
@@ -648,46 +634,29 @@ class Fd_budget extends Root_Controller
                 );
             }
 
-
             $data['participants'] = array();
-            $participants_data = json_decode($result['dealer_farmer_participants'], true);
-
+            $participants_data = json_decode($result['participants_dealer_farmer'], true);
             $dealer_participant = $participants_data['dealer_participant'];
-            if(sizeof($dealer_participant) > 0){
-                foreach($dealer_participant as $id => $val){
+            if (sizeof($dealer_participant) > 0)
+            {
+                foreach ($dealer_participant as $id => $val)
+                {
                     $data['participants'][$id] = $val;
                 }
             }
-
             $farmer_participant = $participants_data['farmer_participant'];
-            if(sizeof($farmer_participant) > 0){
-                foreach($farmer_participant as $id => $val){
+            if (sizeof($farmer_participant) > 0)
+            {
+                foreach ($farmer_participant as $id => $val)
+                {
                     $data['participants'][$id] = $val;
                 }
             }
-
-            //pr($dealer_farmer_participants,0);
-            //pr($dealer_farmer_participants,0);
-            //pr($data['participants'], 0);
-//            $participant_result = Query_helper::get_info($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), '*', array('budget_id =' . $item_id, 'revision=1'));
-//
-//            foreach ($participant_result as $result)
-//            {
-//                $data['participants'][$result['dealer_leadfarmer_id']] = $result;
-//            }
-            //pr($data['participants']);
 
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
             $data['expense_budget'] = array();
 
-//            $budget_result = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_expense'), '*', array('budget_id =' . $item_id, 'revision=1'));
-//            foreach ($budget_result as $result)
-//            {
-//                $data['expense_budget'][$result['item_id']] = $result;
-//            }
-//            pr($budget_result);
-
-            $budget_result = json_decode($result['expense_budget_items']);
+            $budget_result = json_decode($result['amount_expense_items'], true);
             foreach ($budget_result as $id => $val)
             {
                 $data['expense_budget'][$id] = $val;
@@ -722,7 +691,7 @@ class Fd_budget extends Root_Controller
 
         $user = User_helper::get_user();
         $time = time();
-        $total_budget = $no_of_participant = 0;
+        $total_budget = $participant_total = 0;
 
         // Permission Checking
         if (!((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)) || (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))))
@@ -738,7 +707,7 @@ class Fd_budget extends Root_Controller
             {
                 if (is_numeric($value) && ($value > 0))
                 {
-                    $no_of_participant += $value;
+                    $participant_total += $value;
                 }
             }
         }
@@ -748,17 +717,17 @@ class Fd_budget extends Root_Controller
             {
                 if (is_numeric($value) && ($value > 0))
                 {
-                    $no_of_participant += $value;
+                    $participant_total += $value;
                 }
             }
         }
-        if (is_numeric($item_info['participant_through_customer']) && ($item_info['participant_through_customer'] > 0))
+        if (is_numeric($item_info['participant_customers']) && ($item_info['participant_customers'] > 0))
         {
-            $no_of_participant += $item_info['participant_through_customer'];
+            $participant_total += $item_info['participant_customers'];
         }
-        if (is_numeric($item_info['participant_through_others']) && ($item_info['participant_through_others'] > 0))
+        if (is_numeric($item_info['participant_others']) && ($item_info['participant_others'] > 0))
         {
-            $no_of_participant += $item_info['participant_through_others'];
+            $participant_total += $item_info['participant_others'];
         }
         if ($expense_budget && !empty($expense_budget))
         {
@@ -770,7 +739,6 @@ class Fd_budget extends Root_Controller
                 }
             }
         }
-
         // Validation Checking
         if (!$this->check_validation())
         {
@@ -779,51 +747,34 @@ class Fd_budget extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $item_head['date'] = System_helper::get_time($item_head['date']);
-        $item_head['no_of_participant'] = $no_of_participant;
-        $item_head['total_budget'] = $total_budget;
-
+        $item_head['outlet_id'] = $item_info['outlet_id'];
+        $item_head['variety1_id'] = $item_info['variety1_id'];
+        $item_head['variety2_id'] = $item_info['variety2_id'];
+        $item_head['date_proposal'] = System_helper::get_time($item_head['date_proposal']);
+        $item_head['date_expected'] = System_helper::get_time($item_info['date_expected']);
+        $item_head['participant_total'] = $participant_total;
+        $item_head['amount_budget_total'] = $total_budget;
 
         $participants = array(
             'dealer_participant' => $dealer_participant,
             'farmer_participant' => $farmer_participant
         );
-        $item_info['dealer_farmer_participants'] = json_encode($participants);
-        $item_info['expected_date'] = System_helper::get_time($item_info['expected_date']);
-        $item_info['expense_budget_items'] = json_encode($expense_budget);
-
-
-//        pr($item_head,0);
-//        pr($item_info);
-
+        $item_info['participants_dealer_farmer'] = json_encode($participants);
+        $item_info['date_expected'] = System_helper::get_time($item_info['date_expected']);
+        $item_info['amount_expense_items'] = json_encode($expense_budget);
 
         $this->db->trans_start(); //DB Transaction Handle START
-
         if ($id > 0) // EDIT
-        {
+        { /* Master Table Update */
             $budget_id = $id;
-            /* Master Table Update */
-            $item_head['date_created'] = $time;
-            $item_head['user_created'] = $user->user_id;
             Query_helper::update($this->config->item('table_ems_fd_budget'), $item_head, array("id =" . $budget_id));
-
-            /* Revision Update for (1)Details Table (2)Expense Table (3)Dealer, Lead Farmer Participant Table */
+            /* Revision Update for Details Table */
             $this->db->where('budget_id', $budget_id);
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_ems_fd_budget_details'));
-
-/*            $this->db->where('budget_id', $budget_id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_ems_fd_budget_details_expense'));
-
-            $this->db->where('budget_id', $budget_id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'));*/
         }
         else // ADD
         { /* Master Table Insert */
-            $item_head['date_created'] = $time;
-            $item_head['user_created'] = $user->user_id;
             $budget_id = Query_helper::add($this->config->item('table_ems_fd_budget'), $item_head);
         }
 
@@ -833,54 +784,6 @@ class Fd_budget extends Root_Controller
         $item_info['user_created'] = $user->user_id;
         $item_info['revision'] = 1;
         Query_helper::add($this->config->item('table_ems_fd_budget_details'), $item_info);
-
-//        /* Expense Table Insert ( EDIT & ADD ) */
-//        foreach ($expense_budget as $key => $value)
-//        {
-//            $data = array(
-//                'budget_id' => $budget_id,
-//                'item_id' => $key,
-//                'amount' => $value,
-//                'user_created' => $user->user_id,
-//                'date_created' => $time,
-//                'revision' => 1
-//            );
-//            Query_helper::add($this->config->item('table_ems_fd_budget_details_expense'), $data);
-//        }
-//
-//        /* Dealer Participant & Farmer Participant Table Insert ( EDIT & ADD ) */
-//        if ($dealer_participant && !empty($dealer_participant))
-//        {
-//            foreach ($dealer_participant as $key => $value)
-//            {
-//                $data = array(
-//                    'budget_id' => $budget_id,
-//                    'participant_type' => 1, // 1 for Dealer Participant
-//                    'dealer_leadfarmer_id' => $key,
-//                    'participant_number' => $value,
-//                    'user_created' => $user->user_id,
-//                    'date_created' => $time,
-//                    'revision' => 1
-//                );
-//                Query_helper::add($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), $data);
-//            }
-//        }
-//        if ($farmer_participant && !empty($farmer_participant))
-//        {
-//            foreach ($farmer_participant as $key => $value)
-//            {
-//                $data = array(
-//                    'budget_id' => $budget_id,
-//                    'participant_type' => 2, // 2 for Lead farmer Participant
-//                    'dealer_leadfarmer_id' => $key,
-//                    'participant_number' => $value,
-//                    'user_created' => $user->user_id,
-//                    'date_created' => $time,
-//                    'revision' => 1
-//                );
-//                Query_helper::add($this->config->item('table_ems_fd_budget_dealer_leadfarmer_participant'), $data);
-//            }
-//        }
 
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -910,10 +813,12 @@ class Fd_budget extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $this->db->from($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details');
+            $data = array();
 
-            $this->db->join($this->config->item('table_ems_fd_budget') . ' fd_budget', 'fd_budget.id = fd_budget_details.budget_id', 'INNER');
+            $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
             $this->db->select('fd_budget.id, fd_budget.date AS fdb_proposal_date');
+
+            $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
 
             $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
             $this->db->select('variety1.name AS variety1_name');
@@ -1072,7 +977,7 @@ class Fd_budget extends Root_Controller
         $data = array();
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER');
         $data['name_index'] = 'dealer_participant';
-        $data['items'] = Fd_budget_helper::get_all_area_dealers_by_outlet($item_id);
+        $data['items'] = Fd_budget_helper::get_dealers_ga($item_id);
         foreach ($data['items'] as &$item)
         {
             $item['value'] = $item['dealer_id'];
@@ -1108,7 +1013,7 @@ class Fd_budget extends Root_Controller
         $data = array();
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER');
         $data['name_index'] = 'farmer_participant';
-        $data['items'] = Fd_budget_helper::get_all_area_lead_farmers_by_outlet($item_id);
+        $data['items'] = Fd_budget_helper::get_lead_farmers_ga($item_id);
         foreach ($data['items'] as &$item)
         {
             $item['value'] = $item['lead_farmers_id'];
@@ -1130,21 +1035,40 @@ class Fd_budget extends Root_Controller
         }
     }
 
-    public function system_get_fd_budget_varieties()
+    public function system_get_fd_budget_varieties($id = 0)
     {
-        $ajax = array();
-        $ajax['arm_and_upcoming_crop_variety'] = Fd_budget_helper::get_dropdown_arm_and_upcoming_crop_variety();
-        $ajax['all_crop_variety'] = Fd_budget_helper::get_dropdown_all_crop_variety();
-
-        if ($ajax)
+        if ($id > 0)
         {
-            $ajax['status'] = true;
+            $crop_type_id = $id;
+        }
+        else
+        {
+            $crop_type_id = $this->input->post('id');
+        }
+        $variety_arm_upcoming = Fd_budget_helper::get_variety_arm_upcoming($crop_type_id);
+        $variety_all = Fd_budget_helper::get_variety_all($crop_type_id);
+
+        $arm_upcoming['items'] = (sizeof($variety_arm_upcoming) > 0) ? $variety_arm_upcoming[$crop_type_id] : array();
+        $all['items'] = (sizeof($variety_all) > 0) ? $variety_all[$crop_type_id] : array();
+
+        $ajax = array();
+        $ajax['system_content'][] = array("id" => "#variety1_id", "html" => $this->load->view("dropdown_with_select", $arm_upcoming, true));
+        $ajax['system_content'][] = array("id" => "#variety2_id", "html" => $this->load->view("dropdown_with_select", $all, true));
+        if (!(sizeof($variety_arm_upcoming) > 0))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = "No data found for " . $this->lang->line('LABEL_VARIETY1_NAME');
+            $this->json_return($ajax);
+        }
+        elseif (!(sizeof($variety_all) > 0))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = "No data found for " . $this->lang->line('LABEL_VARIETY2_NAME');
             $this->json_return($ajax);
         }
         else
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("SET_LEADING_FARMER_AND_DEALER");
+            $ajax['status'] = true;
             $this->json_return($ajax);
         }
     }
@@ -1152,7 +1076,7 @@ class Fd_budget extends Root_Controller
     private function check_validation()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('item[date]', $this->lang->line('LABEL_DATE'), 'required');
+        $this->form_validation->set_rules('item[date_proposal]', $this->lang->line('LABEL_DATE'), 'required');
         $this->form_validation->set_rules('item_info[variety1_id]', $this->lang->line('LABEL_VARIETY_NAME'), 'required');
         $this->form_validation->set_rules('item_info[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required');
 
@@ -1161,14 +1085,14 @@ class Fd_budget extends Root_Controller
         $this->form_validation->set_rules('item_info[farmers_evaluation]', $this->lang->line('LABEL_DEALERS_EVALUATION'), 'required');
         $this->form_validation->set_rules('item_info[diff_between_varieties]', $this->lang->line('LABEL_SPECIFIC_DIFFERENCE'), 'required');
 
-        $this->form_validation->set_rules('item_info[expected_date]', $this->lang->line('LABEL_EXPECTED_DATE'), 'required');
-        $this->form_validation->set_rules('item_info[participant_through_customer]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_CUSTOMER'), 'required|numeric');
-        $this->form_validation->set_rules('item_info[participant_through_others]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[date_expected]', $this->lang->line('LABEL_EXPECTED_DATE'), 'required');
+        $this->form_validation->set_rules('item_info[participant_customers]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_CUSTOMER'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[participant_others]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'), 'required|numeric');
 
-        $this->form_validation->set_rules('item_info[sales_target]', $this->lang->line('LABEL_NEXT_SALES_TARGET'), 'required|numeric');
-        $this->form_validation->set_rules('item_info[arm_market_size]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
-        $this->form_validation->set_rules('item_info[total_market_size]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
-        $this->form_validation->set_rules('item[remarks]', 'TI ' . $this->lang->line('LABEL_RECOMMENDATION'), 'required');
+        $this->form_validation->set_rules('item_info[quantity_market_size_total]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_arm]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_sales_target]', $this->lang->line('LABEL_NEXT_SALES_TARGET'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[remarks_budget]', 'TI ' . $this->lang->line('LABEL_RECOMMENDATION'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
@@ -1187,68 +1111,11 @@ class Fd_budget extends Root_Controller
                 }
             }
         }
-        if (!($total_budget > 0))
+        if (!($total_budget >= 0))
         {
-            $this->message = $this->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET') . ' cannot be zero or, negative';
+            $this->message = $this->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET') . ' cannot be Negative';
             return false;
         }
-
-        /*if ($upazilla_id)
-        {
-            $farmers = Query_helper::get_info($this->config->item('table_setup_fsetup_leading_farmer'), array('id value', 'CONCAT(name," (",phone_no,")") text', 'status'), array('upazilla_id=' . $upazilla_id), 0, 0, array('ordering ASC'));
-            $check = array();
-            $fmr = array();
-            foreach ($farmers as $farmer)
-            {
-                $check[$farmer['value']] = $farmer['value'];
-                $fmr[$farmer['value']] = $farmer['text'];
-            }
-            if ($ids)
-            {
-                foreach ($ids as $key => $id)
-                {
-                    if (!in_array($key, $check))
-                    {
-                        $this->message = 'Invalid Try';
-                        return false;
-                    }
-                }
-                foreach ($ids as $index => $id)
-                {
-                    if (!$id)
-                    {
-                        $this->form_validation->set_rules('farmer_participant[' . $index . ']', $fmr[$index], 'required');
-                    }
-                }
-            }
-        }
-        if ($expense_budget)
-        {
-            $expenses = Query_helper::get_info($this->config->item('table_setup_fd_bud_expense_items'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-            $expense = array();
-            foreach ($expenses as $exp)
-            {
-                $expense[$exp['value']] = $exp['text'];
-            }
-            foreach ($expense_budget as $index => $exp)
-            {
-                if (!$exp)
-                {
-                    $this->form_validation->set_rules('expense_budget[' . $index . ']', $expense[$index], 'required');
-                }
-            }
-        }*/
-
-        /*if (!$ids)
-        {
-            $this->message = $this->lang->line('SET_LEADING_FARMER');
-            return false;
-        }
-        if (!$expense_budget)
-        {
-            $this->message = $this->lang->line('SET_BUDGET_EXPENSE_ITEMS');
-            return false;
-        } */
         return true;
     }
 }
