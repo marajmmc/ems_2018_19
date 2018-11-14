@@ -93,15 +93,13 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-12">
-                <table class="table table-bordered">
-                    <thead>
+                <div style="overflow-x:scroll">
+                    <table class="table table-bordered">
                     <tr>
                         <th style="width:26%">Picture Category</th>
                         <th style="width:37%" colspan="2"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
                         <th style="width:37%" colspan="2"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
                     </tr>
-                    </thead>
-                    <tbody>
                     <?php
                     if (isset($picture_categories) && (sizeof($picture_categories) > 0))
                     {
@@ -184,14 +182,15 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         <?php
                         }
                     } ?>
-                    </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
+        <div class="clearfix"></div>
     </div>
-    <div class="clearfix"></div>
 
+    <div class="clearfix"></div>
 </form>
 
 <script type="text/javascript">
