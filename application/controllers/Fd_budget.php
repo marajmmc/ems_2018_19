@@ -190,7 +190,7 @@ class Fd_budget extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $this->db->select('variety1.name variety1_name');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'INNER');
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -288,7 +288,7 @@ class Fd_budget extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $this->db->select('variety1.name variety1_name');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'INNER');
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -372,7 +372,7 @@ class Fd_budget extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $this->db->select('variety1.name variety1_name');
 
-        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
+        $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'INNER');
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -524,7 +524,7 @@ class Fd_budget extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
             $this->db->select('variety1.name AS variety1_name');
 
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'LEFT');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'INNER');
             $this->db->select('variety2.name AS variety2_name');
 
             $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -816,15 +816,13 @@ class Fd_budget extends Root_Controller
             $data = array();
 
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.id, fd_budget.date AS fdb_proposal_date');
+            $this->db->select('fd_budget.*');
 
-            $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
+            $this->db->select('CONCAT(variety1.name, " ( ", variety1.whose, " )") AS variety1_name');
 
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
-            $this->db->select('variety1.name AS variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'LEFT');
-            $this->db->select('variety2.name AS variety2_name');
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'INNER');
+            $this->db->select('CONCAT(variety2.name, " ( ", variety2.whose, " )") AS variety2_name');
 
             $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
             $this->db->select('crop_type.name AS crop_type_name');
@@ -834,7 +832,6 @@ class Fd_budget extends Root_Controller
 
             $this->db->where('fd_budget.status_budget !=', $this->config->item('system_status_delete'));
             $this->db->where('fd_budget.id', $item_id);
-            $this->db->where('fd_budget_details.revision', 1);
             $this->db->order_by('fd_budget.id', 'DESC');
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
@@ -845,18 +842,24 @@ class Fd_budget extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('ordering ASC'));
-
-            $data['file_details'] = array();
-            $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status ="' . $this->config->item('system_status_active') . '"'));
-            foreach ($results as $result)
+            $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_deleted') . '"'));
+            if (sizeof($results) > 0)
             {
-                $data['file_details'][$result['category_id']] = array(
-                    'variety1_file_location' => $result['variety1_file_location'],
-                    'variety1_file_remarks' => $result['variety1_file_remarks'],
-                    'variety2_file_location' => $result['variety2_file_location'],
-                    'variety2_file_remarks' => $result['variety2_file_remarks'],
-                );
+                $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
+                foreach ($results as $result)
+                {
+                    $data['file_details'][$result['category_id']] = array(
+                        'file_location_variety1' => $result['file_location_variety1'],
+                        'remarks_variety1' => $result['remarks_variety1'],
+                        'file_location_variety2' => $result['file_location_variety2'],
+                        'remarks_variety2' => $result['remarks_variety2'],
+                    );
+                }
+            }
+            else
+            {
+                $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+                $data['file_details'] = array();
             }
 
             $data['title'] = "Edit Field Day Budget Picture ( ID:" . $data['item']['id'] . " )";
@@ -880,12 +883,9 @@ class Fd_budget extends Root_Controller
     private function system_save_image()
     {
         $item_id = $this->input->post('id');
-        $variety1_file_remarks = $this->input->post('variety1_file_remarks');
-        $variety2_file_remarks = $this->input->post('variety2_file_remarks');
-
+        $item_info = $this->input->post('item_info');
         $user = User_helper::get_user();
         $time = time();
-
         // Permission Checking
         if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
         {
@@ -894,71 +894,73 @@ class Fd_budget extends Root_Controller
             $this->json_return($ajax);
         }
 
+        $insert_data = array(); // Main array for INSERT
+
+        $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_deleted') . '"'));
+        if (sizeof($results) > 0) // EDIT
+        {
+            foreach ($results as $result)
+            {
+                $insert_data[$result['category_id']] = array(
+                    'file_name_variety1' => $result['file_name_variety1'],
+                    'file_location_variety1' => $result['file_location_variety1'],
+                    'remarks_variety1' => $result['remarks_variety1'],
+
+                    'file_name_variety2' => $result['file_name_variety2'],
+                    'file_location_variety2' => $result['file_location_variety2'],
+                    'remarks_variety2' => $result['remarks_variety2'],
+                );
+            }
+        }
+
+        foreach ($item_info as $category_id => $info) // Submitted remarks
+        {
+            $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
+            $insert_data[$category_id]['remarks_variety2'] = $info['remarks_variety2'];
+        }
+
         $path = 'images/fd_budget_variety/' . $item_id;
         $uploaded_files = System_helper::upload_file($path);
-        if ($uploaded_files && (sizeof($uploaded_files) > 0))
+        if ($uploaded_files && (sizeof($uploaded_files) > 0)) // File Upload
         {
-            $this->db->trans_start(); //DB Transaction Handle START
-
-            $items_by_category = array();
-            $category_ids = array();
             foreach ($uploaded_files as $key => $uploaded_file)
             {
                 list($index1, $variety_id, $index2, $category_id) = explode("_", $key);
                 if ($uploaded_file['status'])
                 {
-                    $remarks = '';
-                    if ($variety_id == 1)
-                    {
-                        $remarks = $variety1_file_remarks[$category_id];
-                    }
-                    elseif ($variety_id == 2)
-                    {
-                        $remarks = $variety2_file_remarks[$category_id];
-                    }
-                    $category_ids[] = $category_id;
-                    $items_by_category[$category_id]['budget_id'] = $item_id;
-                    $items_by_category[$category_id]['variety' . $variety_id . '_file_name'] = $uploaded_file['info']['file_name'];
-                    $items_by_category[$category_id]['variety' . $variety_id . '_file_location'] = $path . '/' . $uploaded_file['info']['file_name'];
-                    $items_by_category[$category_id]['variety' . $variety_id . '_file_remarks'] = $remarks;
+                    $insert_data[$category_id]['file_name_variety' . $variety_id] = $uploaded_file['info']['file_name'];
+                    $insert_data[$category_id]['file_location_variety' . $variety_id] = $path . '/' . $uploaded_file['info']['file_name'];
                 }
             }
-            //Update Revision
-            $this->db->where('budget_id', $item_id);
-            $this->db->where_in('category_id', $category_ids);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_ems_fd_budget_details_picture'));
+        }
 
-            foreach ($items_by_category as $category_id => $item_by_category)
-            { //Insert New Image
-                $items = $item_by_category;
-                $items['budget_id'] = $item_id;
-                $items['category_id'] = $category_id;
-                $items['date_created'] = $time;
-                $items['user_created'] = $user->user_id;
-                $items['revision'] = 1;
-                Query_helper::add($this->config->item('table_ems_fd_budget_details_picture'), $items);
-            }
+        $this->db->trans_start(); //DB Transaction Handle START
+        //Update Revision
+        $this->db->where('budget_id', $item_id);
+        $this->db->set('revision', 'revision+1', FALSE);
+        $this->db->update($this->config->item('table_ems_fd_budget_details_picture'));
+        //Insert New Image
+        foreach ($insert_data as $category_id => $item)
+        {
+            $item['budget_id'] = $item_id;
+            $item['category_id'] = $category_id;
+            $item['date_created'] = $time;
+            $item['user_created'] = $user->user_id;
+            $item['revision'] = 1;
+            Query_helper::add($this->config->item('table_ems_fd_budget_details_picture'), $item);
+        }
+        $this->db->trans_complete(); //DB Transaction Handle END
 
-            $this->db->trans_complete(); //DB Transaction Handle END
-
-            if ($this->db->trans_status() === TRUE)
-            {
-                $ajax['status'] = true;
-                $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
-                $this->system_list();
-            }
-            else
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
-                $this->json_return($ajax);
-            }
+        if ($this->db->trans_status() === TRUE)
+        {
+            $ajax['status'] = true;
+            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
         }
         else
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = "File file was Selected/ Uploaded";
+            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
             $this->json_return($ajax);
         }
     }
@@ -1085,7 +1087,7 @@ class Fd_budget extends Root_Controller
         $this->form_validation->set_rules('item_info[farmers_evaluation]', $this->lang->line('LABEL_DEALERS_EVALUATION'), 'required');
         $this->form_validation->set_rules('item_info[diff_between_varieties]', $this->lang->line('LABEL_SPECIFIC_DIFFERENCE'), 'required');
 
-        $this->form_validation->set_rules('item_info[date_expected]', $this->lang->line('LABEL_EXPECTED_DATE'), 'required');
+        $this->form_validation->set_rules('item_info[date_expected]', $this->lang->line('LABEL_DATE_EXPECTED'), 'required');
         $this->form_validation->set_rules('item_info[participant_customers]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_CUSTOMER'), 'required|numeric');
         $this->form_validation->set_rules('item_info[participant_others]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'), 'required|numeric');
 

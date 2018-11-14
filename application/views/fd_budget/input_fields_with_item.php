@@ -6,15 +6,8 @@
     </div>
 </div>
 <?php
-//$tmp =array();  // For Debugging
 foreach ($items as $item)
 {
-    /*// For Debugging
-    if(array_key_exists($item['value'], $tmp)){
-        $tmp[$item['value']] = $tmp[$item['value']]+1;
-    }else{
-        $tmp[$item['value']]=1;
-    }*/
     ?>
     <div class="row show-grid">
         <div class="col-xs-6">
@@ -27,5 +20,4 @@ foreach ($items as $item)
     </div>
 <?php
 }
-//pr($tmp, 0);  // For Debugging
 ?>
