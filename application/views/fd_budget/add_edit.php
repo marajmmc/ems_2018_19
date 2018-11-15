@@ -369,7 +369,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <div id="leading_farmer_id" class="row show-grid">
                 <div class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER'); ?> : </label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?> : </label>
                     </div>
                 </div>
 
@@ -528,10 +528,15 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             </div>
         </div>
 
+        <div class="clearfix"></div>
     </div>
-    <div class="clearfix"></div>
-
 </form>
+
+<!--------Shows Previous Update History, when EDIT Mode-------->
+
+<?php echo $previous_update_history; ?>
+
+<!-----Shows Previous Update History, when EDIT Mode(END)------>
 
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
