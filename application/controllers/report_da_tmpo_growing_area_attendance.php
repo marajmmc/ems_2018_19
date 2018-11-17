@@ -145,6 +145,24 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
 
             $data['options']=$reports;
 
+            $date_start=$reports['date_start'];
+            $date_end=$reports['date_end'];
+            $number_of_days=(round(($date_end-$date_start) / (60*60*24))) ;
+
+            $number_of_friday=0;
+            $start = new DateTime(System_helper::display_date($date_start));
+            $end   = new DateTime(System_helper::display_date($date_end));
+            $interval = DateInterval::createFromDateString('1 day');
+            $period = new DatePeriod($start, $interval, $end);
+            foreach ($period as $dt)
+            {
+                if ($dt->format('N') == 5)
+                {
+                    $number_of_friday++;
+                }
+            }
+            $data['number_of_days']=$number_of_days;
+            $data['number_of_friday']=$number_of_friday;
 
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['title']="Growing Area Attendance Report";
@@ -177,9 +195,20 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
 
         $date_start=$this->input->post('date_start');
         $date_end=$this->input->post('date_end');
+        $number_of_days=(round(($date_end-$date_start) / (60*60*24))) ;
 
-        $number_of_days=30;
         $number_of_friday=0;
+        $start = new DateTime(System_helper::display_date($date_start));
+        $end   = new DateTime(System_helper::display_date($date_end));
+        $interval = DateInterval::createFromDateString('1 day');
+        $period = new DatePeriod($start, $interval, $end);
+        foreach ($period as $dt)
+        {
+            if ($dt->format('N') == 5)
+            {
+                $number_of_friday++;
+            }
+        }
 
         /*get outlets */
         $this->db->from($this->config->item('table_login_csetup_cus_info').' outlet_info');
@@ -216,11 +245,12 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
             }
         }
         $outlets=$this->db->get()->result_array();
-        $outlet_ids=array();
         $outlet_ids[0]=0;
+        $outlet_info=array();
         foreach($outlets as $result)
         {
             $outlet_ids[$result['outlet_id']]=$result['outlet_id'];
+            $outlet_info[$result['outlet_id']]=$result;
         }
 
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
@@ -234,6 +264,9 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=visit.area_id','INNER');
         $this->db->select('areas.outlet_id');
 
+        $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=visit.user_created AND user_info.revision = 1','INNER');
+        $this->db->select('user_info.name visit_employee_name');
+
         $this->db->where('visit.date_visit >=',$date_start);
         $this->db->where('visit.date_visit <=',$date_end);
         $this->db->where_in('areas.outlet_id',$outlet_ids);
@@ -244,6 +277,8 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
         foreach($results as $result)
         {
             $info=$this->initialize_row($result,$number_of_days,$number_of_friday);
+            $info['employee_name']=$result['visit_employee_name'];
+            $info['outlet_name']=isset($outlet_info[$result['outlet_id']])?$outlet_info[$result['outlet_id']]['outlet_name']:'';
             $items[]=$info;
         }
         $this->json_return($items);
@@ -278,162 +313,6 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("preference_add_edit",$data,true));
             $ajax['system_page_url']=site_url($this->controller_url.'/index/set_preference_transfer');
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-    private function system_details($id)
-    {
-        if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
-        {
-            if($id>0)
-            {
-                $item_id=$id;
-            }
-            else
-            {
-                $item_id=$this->input->post('id');
-            }
-            /*get area information*/
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
-            $this->db->select('visit.*');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas').' areas','areas.id=visit.area_id','INNER');
-            $this->db->select('areas.id area_id,areas.name area_name,areas.address area_address');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info').' outlet_info','outlet_info.customer_id=areas.outlet_id AND outlet_info.revision=1','INNER');
-            $this->db->select('outlet_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_districts').' d','d.id = outlet_info.district_id','INNER');
-            $this->db->select('d.id district_id, d.name district_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_territories').' t','t.id = d.territory_id','INNER');
-            $this->db->select('t.id territory_id, t.name territory_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-            $this->db->select('zone.id zone_id, zone.name zone_name');
-
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            $this->db->select('division.id division_id, division.name division_name');
-            $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
-            $this->db->where('areas.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('visit.id',$item_id);
-            $data['item_head']=$this->db->get()->row_array();
-            if(!$data['item_head'])
-            {
-                System_helper::invalid_try('Save',$item_id,'Id Non-Exists');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
-                $this->json_return($ajax);
-            }
-
-            $user_ids=array();
-            $user_ids[$data['item_head']['user_created']]=$data['item_head']['user_created'];
-            if($data['item_head']['user_updated'])
-            {
-                $user_ids[$data['item_head']['user_updated']]=$data['item_head']['user_updated'];
-            }
-            if($data['item_head']['user_attendance'])
-            {
-                $user_ids[$data['item_head']['user_attendance']]=$data['item_head']['user_attendance'];
-            }
-            $data['users']=System_helper::get_users_info($user_ids);
-
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
-            $this->db->select('details.*');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.id = details.dealer_id','LEFT');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','LEFT');
-            $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers','lead_farmers.id = details.farmer_id','LEFT');
-            $this->db->select('lead_farmers.name lead_farmers_name');
-
-            $this->db->where('details.visit_id',$data['item_head']['id']);
-            $this->db->where('details.status',$this->config->item('system_status_active'));
-            $results=$this->db->get()->result_array();
-
-            $data['dealers']=array();
-            $data['farmers']=array();
-            foreach($results as $result)
-            {
-                if($result['dealer_id'])
-                {
-                    $data['dealers'][]=$result;
-                }
-                if($result['farmer_id'])
-                {
-                    $data['farmers'][]=$result;
-                }
-            }
-
-            /*get previous visit details information*/
-            $week_number = date('W', $data['item_head']['date_visit']);
-            $week_odd_even=($week_number%2);
-
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit').' visit');
-            $this->db->select('visit.*');
-            $this->db->where('visit.area_id',$data['item_head']['area_id']);
-            $this->db->where('visit.week_odd_even',$week_odd_even);
-            $this->db->where('visit.date_visit !=',$data['item_head']['date_visit']);
-            $this->db->where('visit.date_visit < ',$data['item_head']['date_visit']);
-            $this->db->where('visit.status',$this->config->item('system_status_active'));
-            $results=$this->db->get()->result_array();
-            $result_area_ids[0]=0;
-            $data['previous_visits']=array();
-            foreach($results as $result)
-            {
-                $result_area_ids[$result['id']]=$result['id'];
-                $data['previous_visits'][$result['id']]=$result;
-            }
-
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
-            $this->db->select('details.*');
-            $this->db->where_in('details.visit_id',$result_area_ids);
-            $this->db->where('details.status',$this->config->item('system_status_active'));
-            $results=$this->db->get()->result_array();
-            $data['previous_dealers']=array();
-            $data['previous_farmers']=array();
-            foreach($results as $result)
-            {
-                if($result['dealer_id'])
-                {
-                    $data['previous_dealers'][$result['visit_id']][$result['dealer_id']]=$result;
-                }
-                if($result['farmer_id'])
-                {
-                    $data['previous_farmers'][$result['visit_id']][$result['farmer_id']]=$result;
-                }
-            }
-
-            /*get setup variety items*/
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_varieties').' varieties');
-            $this->db->select('varieties.*');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crop','crop.id = varieties.crop_id','INNER');
-            $this->db->select('crop.name crop_name, crop.id crop_id');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_type','crop_type.id = varieties.crop_type_id','LEFT');
-            $this->db->select('crop_type.name crop_type_name, crop_type.id crop_type_id');
-
-            $this->db->where('varieties.area_id',$data['item_head']['area_id']);
-            $this->db->where('varieties.month',date('n',$data['item_head']['date_visit']));
-            $this->db->where('varieties.status !=',$this->config->item('system_status_delete'));
-            $this->db->order_by('varieties.ordering','ASC');
-            $data['varieties']=$this->db->get()->result_array();
-            $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($data['item_head']['date_visit']).'</span> ';
-            $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#popup_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
-            if($this->message)
-            {
-                $ajax['system_message']=$this->message;
-            }
-            $ajax['system_page_url']=site_url($this->controller_url);
             $this->json_return($ajax);
         }
         else

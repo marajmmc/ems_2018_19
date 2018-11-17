@@ -45,6 +45,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $CI->load->view('preference',array('system_preference_items'=>$system_preference_items));
     }
     ?>
+    <div class="col-xs-12 well well-sm">
+        <button class="btn btn-success" type="button">
+            Number of Visit Day's <span class="badge"><?php echo $number_of_days?></span>
+        </button>
+        <button class="btn btn-warning" type="button">
+            Number of Friday's <span class="badge bg-danger"><?php echo $number_of_friday?></span>
+        </button>
+    </div>
     <div class="col-xs-12" id="system_jqx_container">
 
     </div>
@@ -115,13 +123,13 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     [
                         { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE_NAME'); ?>', dataField: 'employee_name',filtertype: 'list',pinned:true,width:'200',hidden: <?php echo $system_preference_items['employee_name']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name',filtertype: 'list',pinned:true,width:'200',hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_DAY'); ?>', dataField: 'number_of_day',width:'150',hidden: <?php echo $system_preference_items['number_of_day']?0:1;?>},
+                        //{ text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_DAY'); ?>', dataField: 'number_of_day',width:'150',hidden: <?php echo $system_preference_items['number_of_day']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_AREA_VISIT'); ?>', dataField: 'number_of_area_visit',width:'150',hidden: <?php echo $system_preference_items['number_of_area_visit']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_PRESENT'); ?>', dataField: 'number_of_present',width:'150',hidden: <?php echo $system_preference_items['number_of_present']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_ABSENT'); ?>', dataField: 'number_of_absent',width:'150',hidden: <?php echo $system_preference_items['number_of_absent']?0:1;?>},
                         { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_LEAVE'); ?>', dataField: 'number_of_leave',width:'150',hidden: <?php echo $system_preference_items['number_of_leave']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_ND'); ?>', dataField: 'number_of_nd',width:'150',hidden: <?php echo $system_preference_items['number_of_nd']?0:1;?>},
-                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_FRIDAY'); ?>', dataField: 'number_of_friday',width:'150',hidden: <?php echo $system_preference_items['number_of_friday']?0:1;?>}
+                        { text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_ND'); ?>', dataField: 'number_of_nd',width:'150',hidden: <?php echo $system_preference_items['number_of_nd']?0:1;?>}
+                        //{ text: '<?php echo $CI->lang->line('LABEL_NUMBER_OF_FRIDAY'); ?>', dataField: 'number_of_friday',width:'150',hidden: <?php echo $system_preference_items['number_of_friday']?0:1;?>}
                     ]
             });
     });
