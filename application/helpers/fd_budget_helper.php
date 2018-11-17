@@ -95,6 +95,7 @@ class Fd_budget_helper
     public static function get_fd_budget_history($view_location, $budget_id = 0)
     {
         $CI =& get_instance();
+        $data = array();
 
         $CI->db->from($CI->config->item('table_ems_fd_budget') . ' fd_budget');
         $CI->db->select('fd_budget.date_proposal, fd_budget.status_budget');
@@ -131,117 +132,65 @@ class Fd_budget_helper
 
         $CI->db->where('fd_budget.status_budget !=', $CI->config->item('system_status_delete'));
         $CI->db->where('fd_budget.id', $budget_id);
-        //$CI->db->where('fd_budget_details.revision', 1);
         $CI->db->order_by('fd_budget_details.revision');
-        $results = $CI->db->get()->result_array();
+        $data['items'] = $CI->db->get()->result_array();
 
-        $data = array();
-        $data['items'] = $results;
-        //pr($results);
+        foreach ($data['items'] as &$result)
+        {
+            $user_ids = array($result['user_created'] => $result['user_created']); // Getting Name of Created By
+            $result['user_info'] = System_helper::get_users_info($user_ids);
+
+            $result_data = Fd_budget_helper::get_dealers_ga($result['outlet_id']);
+            $dealers_by_outlet = array();
+            foreach ($result_data as $item)
+            {
+                $dealers_by_outlet[$item['dealer_id']] = $item;
+            }
+            $result_data = Fd_budget_helper::get_lead_farmers_ga($result['outlet_id']);
+            $lead_farmers_by_outlet = array();
+            foreach ($result_data as $item)
+            {
+                $lead_farmers_by_outlet[$item['lead_farmers_id']] = $item;
+            }
+
+            $result_data = json_decode($result['participants_dealer_farmer'], TRUE);
+            $result['dealers'] = array();
+            foreach ($result_data['dealer_participant'] as $key => $value)
+            {
+                if (isset($dealers_by_outlet[$key]) && ($value > 0))
+                {
+                    $dealers_by_outlet[$key]['participant'] = $value;
+                    $result['dealers'][] = $dealers_by_outlet[$key];
+                }
+            }
+            $result['lead_farmers'] = array();
+            foreach ($result_data['farmer_participant'] as $key => $value)
+            {
+                if (isset($lead_farmers_by_outlet[$key]) && ($value > 0))
+                {
+                    $lead_farmers_by_outlet[$key]['participant'] = $value;
+                    $result['lead_farmers'][] = $lead_farmers_by_outlet[$key];
+                }
+            }
+
+            $result_expense_items = Query_helper::get_info($CI->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
+            $budget_result = json_decode($result['amount_expense_items'], TRUE);
+            $result['expense_items'] = array();
+            foreach ($result_expense_items as &$item)
+            {
+                if ((isset($budget_result[$item['id']])) && ($budget_result[$item['id']] > 0))
+                {
+                    if ($item['status'] == $CI->config->item('system_status_inactive'))
+                    {
+                        $item['name'] = $item['name'] . ' <b>(' . $item['status'] . ')</b>';
+                    }
+                    $item['amount'] = $budget_result[$item['id']];
+                    $result['expense_items'][] = $item;
+                }
+            }
+        }
 
         $html = $CI->load->view($view_location, $data, true);
         return $html;
-
-        /*$data = array();
-        $data['item'] = Array(
-            'id' => $result['budget_id'],
-            'date_proposal' => System_helper::display_date($result['date_proposal']),
-            'crop_name' => $result['crop_name'],
-            'crop_type_name' => $result['crop_type_name'],
-            'variety1_name' => $result['variety1_name'],
-            'variety2_name' => $result['variety2_name'],
-            'division_name' => $result['division_name'],
-            'zone_name' => $result['zone_name'],
-            'territory_name' => $result['territory_name'],
-            'district_name' => $result['district_name'],
-            'outlet_name' => $result['outlet_name'],
-            'address' => $result['address'],
-            'present_condition' => $result['present_condition'],
-            'farmers_evaluation' => $result['farmers_evaluation'],
-            'diff_between_varieties' => $result['diff_between_varieties'],
-            'date_expected' => System_helper::display_date($result['date_expected']),
-            'participant_customers' => $result['participant_customers'],
-            'participant_others' => $result['participant_others'],
-            'quantity_market_size_total' => $result['quantity_market_size_total'],
-            'quantity_market_size_arm' => $result['quantity_market_size_arm'],
-            'quantity_sales_target' => $result['quantity_sales_target'],
-            'remarks_budget' => $result['remarks_budget']
-        );
-
-        $result_data = Fd_budget_helper::get_dealers_ga($result['outlet_id']);
-        $data['dealers_by_outlet'] = array();
-        foreach ($result_data as $item)
-        {
-            $data['dealers_by_outlet'][$item['dealer_id']] = $item;
-        }
-        $result_data = Fd_budget_helper::get_lead_farmers_ga($result['outlet_id']);
-        $data['lead_farmers_by_outlet'] = array();
-        foreach ($result_data as $item)
-        {
-            $data['lead_farmers_by_outlet'][$item['lead_farmers_id']] = $item;
-        }
-
-        $result_data = json_decode($result['participants_dealer_farmer'], TRUE);
-        foreach ($result_data['dealer_participant'] as $key => $value)
-        {
-            if (!($value > 0))
-            {
-                unset($data['dealers_by_outlet'][$key]);
-            }
-            else
-            {
-                $data['dealers_by_outlet'][$key]['participant'] = $value;
-            }
-        }
-        foreach ($result_data['farmer_participant'] as $key => $value)
-        {
-            if (!($value > 0))
-            {
-                unset($data['lead_farmers_by_outlet'][$key]);
-            }
-            else
-            {
-                $data['lead_farmers_by_outlet'][$key]['participant'] = $value;
-            }
-        }
-
-        $data['expense_items'] = Query_helper::get_info($CI->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
-        $budget_result = json_decode($result['amount_expense_items'], TRUE);
-        foreach ($data['expense_items'] as $key => &$item)
-        {
-            if ($item['status'] == $CI->config->item('system_status_inactive'))
-            {
-                $item['name'] = $item['name'] . ' <b>(' . $item['status'] . ')</b>';
-            }
-
-            if (!($budget_result[$item['id']] > 0))
-            {
-                unset($data['expense_items'][$key]);
-            }
-            else
-            {
-                $item['amount'] = $budget_result[$item['id']];
-            }
-        }
-
-        $results = Query_helper::get_info($CI->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $budget_id, 'revision=1', 'status !="' . $CI->config->item('system_status_deleted') . '"'));
-        if (sizeof($results) > 0)
-        {
-            $data['picture_categories'] = Query_helper::get_info($CI->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-            foreach ($results as $result)
-            {
-                $data['file_details'][$result['category_id']] = array(
-                    'file_location_variety1' => $result['file_location_variety1'],
-                    'remarks_variety1' => $result['remarks_variety1'],
-                    'file_location_variety2' => $result['file_location_variety2'],
-                    'remarks_variety2' => $result['remarks_variety2'],
-                );
-            }
-        }
-        else
-        {
-            $data['picture_categories'] = Query_helper::get_info($CI->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $CI->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
-            $data['file_details'] = array();
-        }*/
     }
 }

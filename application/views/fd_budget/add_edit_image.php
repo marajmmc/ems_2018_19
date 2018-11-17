@@ -171,12 +171,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                 <td colspan="2">
                                     <label>Remarks :</label>
                                     <?php $txt = (isset($file_details[$picture_category['value']])) ? $file_details[$picture_category['value']]['remarks_variety1'] : ""; ?>
-                                    <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety1]"><?php echo nl2br($txt); ?></textarea>
+                                    <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety1]"><?php echo $txt; ?></textarea>
                                 </td>
                                 <td colspan="2">
                                     <label>Remarks :</label>
                                     <?php $txt = (isset($file_details[$picture_category['value']])) ? $file_details[$picture_category['value']]['remarks_variety2'] : ""; ?>
-                                    <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety2]"><?php echo nl2br($txt); ?></textarea>
+                                    <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety2]"><?php echo $txt; ?></textarea>
                                 </td>
                             </tr>
                         <?php

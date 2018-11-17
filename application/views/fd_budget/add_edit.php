@@ -24,6 +24,9 @@ $action_buttons[] = array(
     'data-form' => '#save_form'
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
+
+//pr($item,0);
+//pr($item_info,0);
 ?>
 <style> label { margin-top:5px; } </style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
@@ -44,7 +47,11 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="item[date_proposal]" id="date_proposal" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_proposal']); ?>" readonly/>
+                <?php if($item['id'] > 0){ ?>
+                    <label class="control-label"><?php echo System_helper::display_date($item['date_proposal']); ?></label>
+                <?php } else { ?>
+                    <input type="text" name="item[date_proposal]" id="date_proposal" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_proposal']); ?>" readonly/>
+                <?php } ?>
             </div>
         </div>
 
@@ -54,17 +61,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <?php
-                    foreach ($crops as $crop)
-                    {
+                <?php if($item['id'] > 0){ ?>
+                    <label class="control-label"><?php echo $item_info['crop_name']; ?></label>
+                <?php } else { ?>
+                    <select id="crop_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach ($crops as $crop)
+                        {
+                            ?>
+                            <option value="<?php echo $crop['value'] ?>" <?php echo ($crop['value'] == $item_info['crop_id']) ? "selected" : ""; ?>><?php echo $crop['text']; ?></option>
+                        <?php
+                        }
                         ?>
-                        <option value="<?php echo $crop['value'] ?>" <?php echo ($crop['value'] == $item_info['crop_id']) ? "selected" : ""; ?>><?php echo $crop['text']; ?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                    </select>
+                <?php } ?>
             </div>
         </div>
 
@@ -74,17 +85,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_type_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <?php
-                    foreach ($crop_types as $type)
-                    {
+                <?php if($item['id'] > 0){ ?>
+                    <label class="control-label"><?php echo $item_info['crop_type_name']; ?></label>
+                <?php } else { ?>
+                    <select id="crop_type_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach ($crop_types as $type)
+                        {
+                            ?>
+                            <option value="<?php echo $type['value'] ?>" <?php echo ($type['value'] == $item_info['crop_type_id']) ? "selected" : ""; ?>><?php echo $type['text']; ?></option>
+                        <?php
+                        }
                         ?>
-                        <option value="<?php echo $type['value'] ?>" <?php echo ($type['value'] == $item_info['crop_type_id']) ? "selected" : ""; ?>><?php echo $type['text']; ?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                    </select>
+                <?php } ?>
             </div>
         </div>
 
@@ -94,17 +109,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="variety1_id" name="item_info[variety1_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <?php
-                    foreach ($crop_varieties1 as $variety1)
-                    {
+                <?php if($item['id'] > 0){ ?>
+                    <label class="control-label"><?php echo $item_info['variety1_name']; ?></label>
+                <?php } else { ?>
+                    <select id="variety1_id" name="item_info[variety1_id]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach ($crop_varieties1 as $variety1)
+                        {
+                            ?>
+                            <option value="<?php echo $variety1['value'] ?>" <?php echo ($variety1['value'] == $item_info['variety1_id']) ? "selected" : ""; ?>><?php echo $variety1['text']; ?></option>
+                        <?php
+                        }
                         ?>
-                        <option value="<?php echo $variety1['value'] ?>" <?php echo ($variety1['value'] == $item_info['variety1_id']) ? "selected" : ""; ?>><?php echo $variety1['text']; ?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                    </select>
+                <?php } ?>
             </div>
         </div>
 
@@ -113,17 +132,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="variety2_id" name="item_info[variety2_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                    <?php
-                    foreach ($crop_varieties2 as $variety2)
-                    {
+                <?php if($item['id'] > 0){ ?>
+                    <label class="control-label"><?php echo $item_info['variety2_name']; ?></label>
+                <?php } else { ?>
+                    <select id="variety2_id" name="item_info[variety2_id]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach ($crop_varieties2 as $variety2)
+                        {
+                            ?>
+                            <option value="<?php echo $variety2['value'] ?>" <?php echo ($variety2['value'] == $item_info['variety2_id']) ? "selected" : ""; ?>><?php echo $variety2['text']; ?></option>
+                        <?php
+                        }
                         ?>
-                        <option value="<?php echo $variety2['value'] ?>" <?php echo ($variety2['value'] == $item_info['variety2_id']) ? "selected" : ""; ?>><?php echo $variety2['text']; ?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                    </select>
+                <?php } ?>
             </div>
         </div>
 
@@ -142,19 +165,23 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
                 else
                 {
+                    if($item['id'] > 0){
                     ?>
-                    <select id="division_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                        <?php
-                        foreach ($divisions as $division)
-                        {
+                        <label class="control-label"><?php echo $item_info['division_name']; ?></label>
+                    <?php } else { ?>
+                        <select id="division_id" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                            <?php
+                            foreach ($divisions as $division)
+                            {
+                                ?>
+                                <option value="<?php echo $division['value'] ?>" <?php echo ($division['value'] == $item_info['division_id']) ? "selected" : ""; ?>><?php echo $division['text']; ?></option>
+                            <?php
+                            }
                             ?>
-                            <option value="<?php echo $division['value'] ?>" <?php echo ($division['value'] == $item_info['division_id']) ? "selected" : ""; ?>><?php echo $division['text']; ?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
+                        </select>
                 <?php
+                    }
                 }
                 ?>
             </div>
@@ -175,19 +202,23 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
                 else
                 {
-                    ?>
-                    <select id="zone_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                        <?php
-                        foreach ($zones as $zone)
-                        {
-                            ?>
-                            <option value="<?php echo $zone['value'] ?>" <?php echo ($zone['value'] == $item_info['zone_id']) ? "selected" : ""; ?>><?php echo $zone['text']; ?></option>
-                        <?php
-                        }
+                    if($item['id'] > 0){
                         ?>
-                    </select>
-                <?php
+                        <label class="control-label"><?php echo $item_info['zone_name']; ?></label>
+                    <?php } else { ?>
+                        <select id="zone_id" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                            <?php
+                            foreach ($zones as $zone)
+                            {
+                                ?>
+                                <option value="<?php echo $zone['value'] ?>" <?php echo ($zone['value'] == $item_info['zone_id']) ? "selected" : ""; ?>><?php echo $zone['text']; ?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    <?php
+                    }
                 }
                 ?>
             </div>
@@ -208,19 +239,23 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
                 else
                 {
-                    ?>
-                    <select id="territory_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                        <?php
-                        foreach ($territories as $territory)
-                        {
-                            ?>
-                            <option value="<?php echo $territory['value'] ?>" <?php echo ($territory['value'] == $item_info['territory_id']) ? "selected" : ""; ?>><?php echo $territory['text']; ?></option>
-                        <?php
-                        }
+                    if($item['id'] > 0){
                         ?>
-                    </select>
-                <?php
+                        <label class="control-label"><?php echo $item_info['territory_name']; ?></label>
+                    <?php } else { ?>
+                        <select id="territory_id" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                            <?php
+                            foreach ($territories as $territory)
+                            {
+                                ?>
+                                <option value="<?php echo $territory['value'] ?>" <?php echo ($territory['value'] == $item_info['territory_id']) ? "selected" : ""; ?>><?php echo $territory['text']; ?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    <?php
+                    }
                 }
                 ?>
             </div>
@@ -241,19 +276,23 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
                 else
                 {
-                    ?>
-                    <select id="district_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
-                        <?php
-                        foreach ($districts as $district)
-                        {
-                            ?>
-                            <option value="<?php echo $district['value'] ?>" <?php echo ($district['value'] == $item_info['district_id']) ? "selected" : ""; ?>><?php echo $district['text']; ?></option>
-                        <?php
-                        }
+                    if($item['id'] > 0){
                         ?>
-                    </select>
-                <?php
+                        <label class="control-label"><?php echo $item_info['district_name']; ?></label>
+                    <?php } else { ?>
+                        <select id="district_id" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT'); ?></option>
+                            <?php
+                            foreach ($districts as $district)
+                            {
+                                ?>
+                                <option value="<?php echo $district['value'] ?>" <?php echo ($district['value'] == $item_info['district_id']) ? "selected" : ""; ?>><?php echo $district['text']; ?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    <?php
+                    }
                 }
                 ?>
             </div>
@@ -265,17 +304,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
-                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                    <?php
-                    foreach ($outlets as $outlet)
-                    {
+                <?php if($item['id'] > 0){ ?>
+                    <label class="control-label"><?php echo $item_info['outlet_name']; ?></label>
+                <?php } else { ?>
+                    <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
+                        <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach ($outlets as $outlet)
+                        {
+                            ?>
+                            <option value="<?php echo $outlet['value'] ?>" <?php echo ($outlet['value'] == $item_info['outlet_id']) ? "selected" : ""; ?>><?php echo $outlet['text']; ?></option>
+                        <?php
+                        }
                         ?>
-                        <option value="<?php echo $outlet['value'] ?>" <?php echo ($outlet['value'] == $item_info['outlet_id']) ? "selected" : ""; ?>><?php echo $outlet['text']; ?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                    </select>
+                <?php } ?>
             </div>
         </div>
 
@@ -354,7 +397,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                             if (isset($participants[$dealer['value']]))
                             {
                                 $total_participant += $participants[$dealer['value']];
-                                echo $participants[$dealer['value']];
+                                echo ((int) $participants[$dealer['value']]);
                             }?>"/>
                         </div>
                     </div>
@@ -387,7 +430,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                             if (isset($participants[$lead_farmer['value']]))
                             {
                                 $total_participant += $participants[$lead_farmer['value']];
-                                echo $participants[$lead_farmer['value']];
+                                echo ((int) $participants[$lead_farmer['value']]);
                             }?>"/>
                         </div>
                     </div>
@@ -520,7 +563,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo 'TI ' . $this->lang->line('LABEL_RECOMMENDATION'); ?>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_RECOMMENDATION'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">

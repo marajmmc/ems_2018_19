@@ -355,7 +355,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                     {
                                         $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety1'];
                                         ?>
-                                        <a href="<?php echo $img_src; ?>" target="_blank" class="blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
+                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
                                             <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
                                         </a>
                                     <?php
@@ -375,7 +375,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                     {
                                         $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety2'];
                                         ?>
-                                        <a href="<?php echo $img_src; ?>" target="_blank" class="blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
+                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
                                             <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
                                         </a>
                                     <?php
