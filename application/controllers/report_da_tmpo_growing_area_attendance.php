@@ -68,6 +68,7 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
             $data['number_of_leave']= 1;
             $data['number_of_nd']= 1;
             $data['number_of_friday']= 1;
+            $data['number_of_extra_days']= 1;
         }
         return $data;
     }
@@ -299,6 +300,7 @@ class Report_da_tmpo_growing_area_attendance extends Root_Controller
         $row['number_of_leave']= $info['number_of_leave'];
         $row['number_of_nd']= $info['number_of_nd'];
         $row['number_of_friday']= $number_of_friday;
+        $row['number_of_extra_days']= ($number_of_days-$number_of_friday-$info['number_of_area_visit']);
 
         return $row;
     }

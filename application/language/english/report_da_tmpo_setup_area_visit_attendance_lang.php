@@ -13,3 +13,4 @@ $lang['LABEL_NUMBER_OF_ABSENT'] = 'Number of Absent';
 $lang['LABEL_NUMBER_OF_LEAVE'] = 'Number of Leave';
 $lang['LABEL_NUMBER_OF_ND'] = 'Number of ND';
 $lang['LABEL_NUMBER_OF_FRIDAY'] = 'Number of Friday';
+$lang['LABEL_NUMBER_OF_EXTRA_DAYS'] = 'Number of Extra Days';
