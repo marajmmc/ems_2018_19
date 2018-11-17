@@ -1077,26 +1077,22 @@ class Fd_budget extends Root_Controller
             }
 
             $result_data = json_decode($result['participants_dealer_farmer'], TRUE);
+            $data['dealers'] = array();
             foreach ($result_data['dealer_participant'] as $key => $value)
             {
-                if (!($value > 0))
-                {
-                    unset($data['dealers_by_outlet'][$key]);
-                }
-                else
+                if (isset($data['dealers_by_outlet'][$key]) && ($value > 0))
                 {
                     $data['dealers_by_outlet'][$key]['participant'] = $value;
+                    $data['dealers'][] = $data['dealers_by_outlet'][$key];
                 }
             }
+            $data['lead_farmers'] = array();
             foreach ($result_data['farmer_participant'] as $key => $value)
             {
-                if (!($value > 0))
-                {
-                    unset($data['lead_farmers_by_outlet'][$key]);
-                }
-                else
+                if (isset($data['lead_farmers_by_outlet'][$key]) && ($value > 0))
                 {
                     $data['lead_farmers_by_outlet'][$key]['participant'] = $value;
+                    $data['lead_farmers'][] = $data['lead_farmers_by_outlet'][$key];
                 }
             }
 

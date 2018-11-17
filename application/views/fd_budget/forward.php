@@ -165,7 +165,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <table style="width:100%">
                     <?php
                     $sub_total_participant = $total_participant = 0;
-                    foreach ($dealers_by_outlet as $dealer)
+                    foreach ($dealers as $dealer)
                     {
                         ?>
                         <tr>
@@ -198,7 +198,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <table style="width:100%">
                     <?php
                     $sub_total_participant = 0;
-                    foreach ($lead_farmers_by_outlet as $farmer)
+                    foreach ($lead_farmers as $farmer)
                     {
                         ?>
                         <tr>
