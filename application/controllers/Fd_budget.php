@@ -747,19 +747,22 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), array('*'), array('id=' . $id, 'status_budget !="' . $this->config->item('system_status_delete') . '"'), 1);
-        if (!$result)
+        if ($id > 0) // EDIT
         {
-            System_helper::invalid_try(__FUNCTION__, $id, 'Edit Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
-        if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'This Budget has been Forwarded Already';
-            $this->json_return($ajax);
+            $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), array('*'), array('id=' . $id, 'status_budget !="' . $this->config->item('system_status_delete') . '"'), 1);
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $id, 'Edit Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Budget has been Forwarded Already';
+                $this->json_return($ajax);
+            }
         }
 
         if ($dealer_participant && !empty($dealer_participant))
