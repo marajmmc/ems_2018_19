@@ -103,10 +103,10 @@ class Fd_budget_helper
         $CI->db->join($CI->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
         $CI->db->select('fd_budget_details.*');
 
-        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
+        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
         $CI->db->select('variety1.name AS variety1_name');
 
-        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'INNER');
+        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'INNER');
         $CI->db->select('variety2.name AS variety2_name');
 
         $CI->db->join($CI->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
@@ -115,7 +115,7 @@ class Fd_budget_helper
         $CI->db->join($CI->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
         $CI->db->select('crop.name AS crop_name');
 
-        $CI->db->join($CI->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.id = fd_budget_details.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $CI->config->item('system_customer_type_outlet_id'), 'INNER');
+        $CI->db->join($CI->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $CI->config->item('system_customer_type_outlet_id'), 'INNER');
         $CI->db->select('cus_info.name AS outlet_name');
 
         $CI->db->join($CI->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');

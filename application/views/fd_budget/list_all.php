@@ -16,7 +16,7 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'type' => 'button',
         'label' => $CI->lang->line("ACTION_DETAILS"),
         'class' => 'button_jqx_action',
-        'data-action-link' => '' //site_url($CI->controller_url . '/index/details')
+        'data-action-link' => site_url($CI->controller_url . '/index/details')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
@@ -50,6 +50,11 @@ $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
     'href' => site_url($CI->controller_url . '/index/list_all')
 
+);
+$action_buttons[] = array(
+    'type' => 'button',
+    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
+    'id' => 'button_jqx_load_more'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>

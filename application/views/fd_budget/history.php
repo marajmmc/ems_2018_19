@@ -13,12 +13,20 @@ $count = sizeof($items);
     <div class="row show-grid">
         <div class="col-xs-12">
             <div class="panel panel-default">
-                <?php foreach ($items as $key => $item){ ?>
 
+                <?php
+                $i=1;
+                foreach ($items as $key => $item)
+                {
+                    ?>
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <label><a class="external text-danger" data-toggle="collapse" data-target="#collapse<?php echo $key; ?>" href="#">
-                                    + Revision: <?php echo ($count-$item['revision']+1).' ('.$item['revision'].')'; ?>
+                                    + Revision:
+                                    <?php
+                                    echo ($count-$item['revision']+1).' ('.$item['revision'].')';
+                                    echo ($i==1)? " - LATEST":"";
+                                    ?>
                             </a></label>
                         </h4>
                     </div>
@@ -349,7 +357,11 @@ $count = sizeof($items);
                         </div>
                     </div>
 
-                <?php } ?>
+                <?php
+                    $i++;
+                }
+                ?>
+
             </div>
         </div>
         <div class="clearfix"></div>

@@ -24,9 +24,6 @@ $action_buttons[] = array(
     'data-form' => '#save_form'
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
-
-//pr($item,0);
-//pr($item_info,0);
 ?>
 <style> label { margin-top:5px; } </style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
@@ -129,7 +126,8 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="variety2_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>
+                    <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <?php if($item['id'] > 0){ ?>
@@ -446,11 +444,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000;">*</span></label>
             </div>
             <div class="col-xs-4">
-                <input type="text" name="item_info[participant_customers]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_customers']))
-                {
+                <input type="text" name="item_info[participant_customers]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_customers'])){
                     $total_participant += $item_info['participant_customers'];
                     echo $item_info['participant_customers'];
-                } ?>"/>
+                } else {
+                    echo 0;
+                }?>"/>
             </div>
         </div>
 
@@ -460,11 +459,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000;">*</span></label>
             </div>
             <div class="col-xs-4">
-                <input type="text" name="item_info[participant_others]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_others']))
-                {
+                <input type="text" name="item_info[participant_others]" class="participant_budget form-control integer_type_positive" value="<?php if (isset($item_info['participant_others'])){
                     $total_participant += $item_info['participant_others'];
                     echo $item_info['participant_others'];
-                } ?>"/>
+                } else {
+                    echo 0;
+                }?>"/>
             </div>
         </div>
 
@@ -491,7 +491,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     {
                         ?>
                         <tr>
-                            <td class="right-align">
+                            <td class="right-align" style="width:60%">
                                 <label class="control-label" style="font-weight:normal"><?php echo $expense['text']; ?> :</label>
                             </td>
                             <td>
@@ -789,6 +789,13 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 }
             });
             $('#total_budget').text(get_string_amount(total));
+        });
+
+        $(document).on("blur", ".integer_type_positive, .float_type_positive", function () {
+            var value = $(this).val();
+            if(value == ""){
+                $(this).val(0)
+            }
         });
     });
 </script>

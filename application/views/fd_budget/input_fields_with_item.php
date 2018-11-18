@@ -5,6 +5,7 @@
         <label class="control-label pull-right"> <?php echo (isset($label)) ? $label : "FIELD LABEL"; ?> : </label>
     </div>
 </div>
+
 <?php
 foreach ($items as $item)
 {
