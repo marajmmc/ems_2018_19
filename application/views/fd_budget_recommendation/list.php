@@ -8,17 +8,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'label' => 'All List',
         'href' => site_url($CI->controller_url . '/index/list_all')
     );
-    $action_buttons[] = array(
-        'label' => 'Waiting List',
-        'href' => site_url($CI->controller_url . '/index/list_waiting')
-    );
-}
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_NEW"),
-        'href' => site_url($CI->controller_url . '/index/add')
-    );
 }
 if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
@@ -28,9 +17,6 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/edit')
     );
-}
-if ((isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1)))
-{
     $action_buttons[] = array(
         'type' => 'button',
         'label' => 'Upload Picture',
@@ -45,15 +31,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'label' => $CI->lang->line("ACTION_DETAILS"),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/details')
-    );
-}
-if (isset($CI->permissions['action3']) && ($CI->permissions['action3'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line("ACTION_DELETE"),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/delete')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))

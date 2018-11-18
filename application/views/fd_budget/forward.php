@@ -321,100 +321,117 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         </div>
     </div>
 
+
     <div class="row show-grid">
         <div class="col-xs-12">
-            <div style="overflow-x:scroll">
-                <table class="table table-bordered">
-                    <tr>
-                        <th style="width:26%">Picture Category</th>
-                        <th style="width:37%"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
-                        <th style="width:37%"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
-                    </tr>
-                    <?php
-                    if (isset($picture_categories) && (sizeof($picture_categories) > 0))
-                    {
-                        $image_style = "max-height:180px";
-                        $base_path = $CI->config->item('system_base_url_picture');
-                        foreach ($picture_categories as $picture_category)
-                        {
-                            ?>
-                            <tr>
-                                <td rowspan="2">
-                                    <?php
-                                    if ($picture_category['status'] == $CI->config->item('system_status_inactive'))
-                                    {
-                                        $picture_category['text'] .= ' <br/>( <b class="text-danger">' . $CI->config->item('system_status_inactive') . '</b> )';
-                                    }
-                                    echo $picture_category['text'];
-                                    ?>
-                                </td>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <label><a class="external text-danger" data-toggle="collapse" data-target="#collapse1" href="#">+ Uploaded Image</a></label>
+                    </h4>
+                </div>
 
-                                <td id="image_variety1_<?php echo $picture_category['value']; ?>">
-                                    <?php
-                                    if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['file_location_variety1']) != ""))
-                                    {
-                                        $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety1'];
-                                        ?>
-                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
-                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
-                                        </a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        $img_src = $base_path . 'images/no_image.jpg';
-                                        ?>
-                                        <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="No Image Found" /><?php
-                                    }
-                                    ?>
-                                </td>
+                <div id="collapse1" class="panel-collapse collapse">
 
-                                <td id="image_variety2_<?php echo $picture_category['value']; ?>">
+                    <div class="row show-grid">
+                        <div class="col-xs-12">
+                            <div style="overflow-x:scroll">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th style="width:26%">Picture Category</th>
+                                        <th style="width:37%"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
+                                        <th style="width:37%"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
+                                    </tr>
                                     <?php
-                                    if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['file_location_variety2']) != ""))
+                                    if (isset($picture_categories) && (sizeof($picture_categories) > 0))
                                     {
-                                        $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety2'];
-                                        ?>
-                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
-                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
-                                        </a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        $img_src = $base_path . 'images/no_image.jpg';
-                                        ?>
-                                        <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="No Image Found" /><?php
-                                    }
-                                    ?>
-                                </td>
-                            </tr>
-                            <?php
-                            $rem_v1 = $rem_v2 = "&nbsp;";
-                            if(isset($file_details[$picture_category['value']]))
-                            {
-                                if($file_details[$picture_category['value']]['remarks_variety1'] != "")
-                                {
-                                    $rem_v1 = '<label>Remarks:</label> ' . $file_details[$picture_category['value']]['remarks_variety1'];
-                                }
-                                if($file_details[$picture_category['value']]['remarks_variety2'] != "")
-                                {
-                                    $rem_v2 = '<label>Remarks:</label> ' . $file_details[$picture_category['value']]['remarks_variety2'];
-                                }
-                            }
-                            ?>
-                            <tr>
-                                <td>
-                                    <?php echo nl2br($rem_v1); ?>
-                                </td>
-                                <td>
-                                    <?php echo nl2br($rem_v2); ?>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                    } ?>
-                </table>
+                                        $image_style = "max-height:180px";
+                                        $base_path = $CI->config->item('system_base_url_picture');
+                                        foreach ($picture_categories as $picture_category)
+                                        {
+                                            ?>
+                                            <tr>
+                                                <td rowspan="2">
+                                                    <?php
+                                                    if ($picture_category['status'] == $CI->config->item('system_status_inactive'))
+                                                    {
+                                                        $picture_category['text'] .= ' <br/>( <b class="text-danger">' . $CI->config->item('system_status_inactive') . '</b> )';
+                                                    }
+                                                    echo $picture_category['text'];
+                                                    ?>
+                                                </td>
+
+                                                <td id="image_variety1_<?php echo $picture_category['value']; ?>">
+                                                    <?php
+                                                    if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['file_location_variety1']) != ""))
+                                                    {
+                                                        $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety1'];
+                                                        ?>
+                                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
+                                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
+                                                        </a>
+                                                    <?php
+                                                    }
+                                                    else
+                                                    {
+                                                        $img_src = $base_path . 'images/no_image.jpg';
+                                                        ?>
+                                                        <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="No Image Found" /><?php
+                                                    }
+                                                    ?>
+                                                </td>
+
+                                                <td id="image_variety2_<?php echo $picture_category['value']; ?>">
+                                                    <?php
+                                                    if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['file_location_variety2']) != ""))
+                                                    {
+                                                        $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety2'];
+                                                        ?>
+                                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob" style="display:inline-block; padding:3px; border:3px solid #8c8c8c">
+                                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
+                                                        </a>
+                                                    <?php
+                                                    }
+                                                    else
+                                                    {
+                                                        $img_src = $base_path . 'images/no_image.jpg';
+                                                        ?>
+                                                        <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="No Image Found" /><?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                            $rem_v1 = $rem_v2 = "&nbsp;";
+                                            if(isset($file_details[$picture_category['value']]))
+                                            {
+                                                if($file_details[$picture_category['value']]['remarks_variety1'] != "")
+                                                {
+                                                    $rem_v1 = '<label>Remarks:</label> ' . $file_details[$picture_category['value']]['remarks_variety1'];
+                                                }
+                                                if($file_details[$picture_category['value']]['remarks_variety2'] != "")
+                                                {
+                                                    $rem_v2 = '<label>Remarks:</label> ' . $file_details[$picture_category['value']]['remarks_variety2'];
+                                                }
+                                            }
+                                            ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo nl2br($rem_v1); ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo nl2br($rem_v2); ?>
+                                                </td>
+                                            </tr>
+                                        <?php
+                                        }
+                                    } ?>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>

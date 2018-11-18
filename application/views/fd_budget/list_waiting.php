@@ -123,7 +123,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', pinned: true, width: '60', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', pinned: true, width: '160', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', pinned: true, width: '160', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_PROPOSAL'); ?>', dataField: 'date_proposal', pinned: true, width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_proposal']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>', dataField: 'date_expected', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_expected']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT_BUDGET_TOTAL'); ?>', dataField: 'amount_budget_total', width: '100', rendered: tooltiprenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['amount_budget_total']?0:1;?>,

@@ -8,8 +8,7 @@ $lang['LABEL_VARIETY1_NAME'] = 'Variety 1';
 $lang['LABEL_VARIETY2_NAME'] = 'Variety 2';
 $lang['LABEL_COM_VARIETY_NAME'] = 'Competitor Variety';
 $lang['LABEL_STATUS_BUDGET'] = 'Budget Status';
-$lang['LABEL_STATUS_REQUESTED'] = 'Request Status';
-$lang['LABEL_STATUS_APPROVED'] = 'Approval Status';
+$lang['LABEL_STATUS_BUDGET_RECOMMENDATION'] = 'Recommendation Status';
 
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
 $lang['LABEL_DEALERS_EVALUATION'] = 'Dealers/ Farmers Evaluation';
