@@ -113,7 +113,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['address']); ?></label>
+            <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['address']); ?></label>
         </div>
     </div>
 
@@ -122,7 +122,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['present_condition']); ?></label>
+            <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['present_condition']); ?></label>
         </div>
     </div>
 
@@ -131,7 +131,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['farmers_evaluation']); ?></label>
+            <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['farmers_evaluation']); ?></label>
         </div>
     </div>
 
@@ -140,7 +140,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['diff_between_varieties']); ?></label>
+            <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['diff_between_varieties']); ?></label>
         </div>
     </div>
 

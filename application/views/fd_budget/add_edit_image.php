@@ -196,6 +196,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
         system_off_events(); // Triggers
+        system_preset({controller:'<?php echo $CI->router->class; ?>'});
         $(".browse_button").filestyle({input: false, icon: false, buttonText: "Upload", buttonName: "btn-primary"});
     });
 </script>

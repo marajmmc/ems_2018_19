@@ -2,8 +2,8 @@
 $CI = & get_instance();
 
 $count = sizeof($items);
+if($count > 0){
 ?>
-
 <div class="row widget">
     <div class="widget-header">
         <div class="title">Edit History</div>
@@ -204,7 +204,7 @@ $count = sizeof($items);
                                             {
                                                 ?>
                                                 <tr>
-                                                    <td style="text-align:right"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['mobile_no'] . ' )'; ?> :</td>
+                                                    <td style="text-align:right"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
                                                     <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $dealer['participant']; ?></td>
                                                 </tr>
                                                 <?php
@@ -236,7 +236,7 @@ $count = sizeof($items);
                                             {
                                                 ?>
                                                 <tr>
-                                                    <td style="text-align:right"><?php echo $farmer['name'] . ' ( ' . $farmer['mobile_no'] . ' )'; ?> :</td>
+                                                    <td style="text-align:right"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
                                                     <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $farmer['participant']; ?></td>
                                                 </tr>
                                                 <?php
@@ -367,4 +367,4 @@ $count = sizeof($items);
         <div class="clearfix"></div>
     </div>
 </div>
-
+<?php } ?>

@@ -2,8 +2,8 @@
 $CI = & get_instance();
 
 $count = sizeof($items);
+if($count > 0){
 ?>
-
 <div class="row widget">
     <div class="widget-header">
         <div class="title">Edit History</div>
@@ -367,4 +367,4 @@ $count = sizeof($items);
         <div class="clearfix"></div>
     </div>
 </div>
-
+<?php } ?>

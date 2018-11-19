@@ -699,7 +699,7 @@ class Fd_budget_recommendation extends Root_Controller
                 $data['expense_budget'][$id] = $val;
             }
 
-            $data['previous_update_history'] = Fd_budget_helper::get_fd_budget_history($this->controller_url . "/history", $item_id);
+            $data['items_history']['items'] = Fd_budget_helper::get_fd_budget_history($item_id);
 
             $data['title'] = "Edit Field Day Budget ( ID:" . $result['budget_id'] . " )";
             $ajax['status'] = true;
@@ -721,8 +721,6 @@ class Fd_budget_recommendation extends Root_Controller
 
     private function system_save()
     {
-        $this->system_list();
-
         pr($this->input->post());
 
 //        $id = $this->input->post('id');

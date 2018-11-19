@@ -142,7 +142,7 @@ class Fd_budget extends Root_Controller
         $data['outlet_name'] = 1;
         if ($method == 'list_all')
         {
-            $data['status_budget'] = 1;
+            $data['status_budget_forward'] = 1;
         }
         return $data;
     }
@@ -242,7 +242,7 @@ class Fd_budget extends Root_Controller
             }
         }
         $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('fd_budget.status_budget', $this->config->item('system_status_pending'));
+        $this->db->where('fd_budget.status_budget_forward', $this->config->item('system_status_pending'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
@@ -426,7 +426,7 @@ class Fd_budget extends Root_Controller
             }
         }
         $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('fd_budget.status_budget', $this->config->item('system_status_forwarded'));
+        $this->db->where('fd_budget.status_budget_forward', $this->config->item('system_status_forwarded'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
@@ -470,10 +470,12 @@ class Fd_budget extends Root_Controller
             );
 
             $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
-            $data['zones'] = array();
+
+          /*  $data['zones'] = array();
             $data['territories'] = array();
             $data['districts'] = array();
             $data['outlets'] = array();
+
             if ($this->locations['division_id'] > 0)
             {
                 $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $this->locations['division_id']));
@@ -491,16 +493,15 @@ class Fd_budget extends Root_Controller
             $data['crop_types'] = array();
             $data['crop_varieties1'] = array();
             $data['crop_varieties2'] = array();
+            $data['total'] = '';   */
 
             $data['participants'] = array();
             $data['dealers'] = array();
             $data['leading_farmers'] = array();
-            $data['total'] = '';
-
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
             $data['expense_budget'] = array();
 
-            $data['previous_update_history'] = "";
+            $data['items_history']['items'] = array();
 
             $data['title'] = "Create new Field Day Budget";
             $ajax['status'] = true;
@@ -533,7 +534,7 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -570,6 +571,7 @@ class Fd_budget extends Root_Controller
             $this->db->where('fd_budget_details.revision', 1);
             $this->db->order_by('fd_budget.id', 'DESC');
             $result = $this->db->get()->row_array();
+
             if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
@@ -577,19 +579,21 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
+            if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'This Budget has been Forwarded Already';
                 $this->json_return($ajax);
             }
 
+
             $data = array();
             $data['item'] = Array(
                 'id' => $result['budget_id'],
                 'date_proposal' => $result['date_proposal']
-            );
-            $data['item_info'] = Array(
+            );$data['item_info']=$result;
+
+            /*$data['item_info'] = Array(
                 'crop_id' => $result['crop_id'],
                 'crop_type_id' => $result['crop_type_id'],
                 'variety1_id' => $result['variety1_id'],
@@ -621,9 +625,12 @@ class Fd_budget extends Root_Controller
                 'quantity_market_size_arm' => $result['quantity_market_size_arm'],
                 'quantity_sales_target' => $result['quantity_sales_target'],
                 'remarks_budget' => $result['remarks_budget']
-            );
+            ); */
 
-            $query_division_id = ($this->locations['division_id'] > 0) ? $this->locations['division_id'] : $result['division_id'];
+//            pr($result, 0);
+//            pr($data['item_info']);
+
+        /*    $query_division_id = ($this->locations['division_id'] > 0) ? $this->locations['division_id'] : $result['division_id'];
             $query_zone_id = ($this->locations['zone_id'] > 0) ? $this->locations['zone_id'] : $result['zone_id'];
             $query_territory_id = ($this->locations['territory_id'] > 0) ? $this->locations['territory_id'] : $result['territory_id'];
             $query_district_id = ($this->locations['district_id'] > 0) ? $this->locations['division_id'] : $result['district_id'];
@@ -644,29 +651,35 @@ class Fd_budget extends Root_Controller
             $data['crop_varieties1'] = Fd_budget_helper::get_variety_arm_upcoming($data['item_info']['crop_type_id']);
             $data['crop_varieties1'] = $data['crop_varieties1'][$data['item_info']['crop_type_id']];
             $data['crop_varieties2'] = Fd_budget_helper::get_variety_all($data['item_info']['crop_type_id']);
-            $data['crop_varieties2'] = $data['crop_varieties2'][$data['item_info']['crop_type_id']];
+            $data['crop_varieties2'] = $data['crop_varieties2'][$data['item_info']['crop_type_id']];  */
 
-            $dealers_by_outlet = Fd_budget_helper::get_dealers_ga($result['outlet_id']);
-            $data['dealers'] = array();
-            foreach ($dealers_by_outlet as $item)
-            {
-                $data['dealers'][] = array(
-                    'value' => $item['dealer_id'],
-                    'text' => $item['dealer_name'],
-                    'phone_no' => $item['mobile_no']
-                );
-            }
+            $data['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
 
-            $lead_farmers_by_outlet = Fd_budget_helper::get_lead_farmers_ga($result['outlet_id']);
-            $data['leading_farmers'] = array();
-            foreach ($lead_farmers_by_outlet as $item)
-            {
-                $data['leading_farmers'][] = array(
-                    'value' => $item['lead_farmers_id'],
-                    'text' => $item['name'],
-                    'phone_no' => $item['mobile_no']
-                );
-            }
+            //pr($data['dealers'], 0);
+
+//            $data['dealers'] = array();
+//            foreach ($dealers_by_outlet as $item)
+//            {
+//                $data['dealers'][] = array(
+////                    'value' => $item['dealer_id'],
+////                    'text' => $item['dealer_name'],
+////                    'phone_no' => $item['mobile_no']
+//                );
+//            }
+
+            $data['leading_farmers'] = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
+
+            //pr($data['leading_farmers']);
+
+//            $data['leading_farmers'] = array();
+//            foreach ($lead_farmers_by_outlet as $item)
+//            {
+//                $data['leading_farmers'][] = array(
+//                    'value' => $item['lead_farmers_id'],
+//                    'text' => $item['name'],
+//                    'phone_no' => $item['mobile_no']
+//                );
+//            }
 
             $data['participants'] = array();
             $participants_data = json_decode($result['participants_dealer_farmer'], true);
@@ -687,16 +700,17 @@ class Fd_budget extends Root_Controller
                 }
             }
 
-            $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-            $data['expense_budget'] = array();
 
+            $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
             $budget_result = json_decode($result['amount_expense_items'], true);
+
+            $data['expense_budget'] = array();
             foreach ($budget_result as $id => $val)
             {
                 $data['expense_budget'][$id] = $val;
             }
 
-            $data['previous_update_history'] = Fd_budget_helper::get_fd_budget_history($this->controller_url . "/history", $item_id);
+            $data['items_history']['items'] = Fd_budget_helper::get_fd_budget_history($item_id);
 
             $data['title'] = "Edit Field Day Budget ( ID:" . $result['budget_id'] . " )";
             $ajax['status'] = true;
@@ -746,7 +760,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
+            if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'This Budget has been Forwarded Already';
@@ -816,7 +830,7 @@ class Fd_budget extends Root_Controller
         if ($id > 0) // EDIT
         {
             $item_head['variety1_id'] = $item_info['variety1_id'] = $result['variety1_id'];
-            $item_head['variety2_id'] = $item_info['variety2_id'] = $result['variety1_id'];
+            $item_head['variety2_id'] = $item_info['variety2_id'] = $result['variety2_id'];
             $item_head['outlet_id'] = $item_info['outlet_id'] = $result['outlet_id'];
             $budget_id = $id;
             /* Master Table Update */
@@ -898,7 +912,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status_budget'] == $this->config->item('system_status_forwarded'))
+            if ($data['item']['status_budget_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'This Budget has been Forwarded Already';
@@ -964,7 +978,7 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
+        if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = 'This Budget has been Forwarded Already';
@@ -1055,7 +1069,7 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -1099,7 +1113,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
+            if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Forwarded Already. Cannot Delete Now.';
@@ -1132,13 +1146,13 @@ class Fd_budget extends Root_Controller
                 'remarks_budget' => $result['remarks_budget']
             );
 
-            $result_data = Fd_budget_helper::get_dealers_ga($result['outlet_id']);
+            $result_data = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
             $data['dealers_by_outlet'] = array();
             foreach ($result_data as $item)
             {
                 $data['dealers_by_outlet'][$item['dealer_id']] = $item;
             }
-            $result_data = Fd_budget_helper::get_lead_farmers_ga($result['outlet_id']);
+            $result_data = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
             $data['lead_farmers_by_outlet'] = array();
             foreach ($result_data as $item)
             {
@@ -1223,8 +1237,6 @@ class Fd_budget extends Root_Controller
 
     private function system_save_delete()
     {
-        //pr($this->input->post());
-
         $item_id = $this->input->post('id');
         $item = $this->input->post('item');
         $user = User_helper::get_user();
@@ -1258,7 +1270,7 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if ($result['status_budget'] != $this->config->item('system_status_pending'))
+        if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = 'This Budget has been Forwarded Already';
@@ -1298,7 +1310,7 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -1342,7 +1354,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($result['status_budget'] == $this->config->item('system_status_forwarded'))
+            if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'This Budget has been Forwarded Already';
@@ -1375,13 +1387,13 @@ class Fd_budget extends Root_Controller
                 'remarks_budget' => $result['remarks_budget']
             );
 
-            $result_data = Fd_budget_helper::get_dealers_ga($result['outlet_id']);
+            $result_data = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
             $data['dealers_by_outlet'] = array();
             foreach ($result_data as $item)
             {
                 $data['dealers_by_outlet'][$item['dealer_id']] = $item;
             }
-            $result_data = Fd_budget_helper::get_lead_farmers_ga($result['outlet_id']);
+            $result_data = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
             $data['lead_farmers_by_outlet'] = array();
             foreach ($result_data as $item)
             {
@@ -1478,7 +1490,7 @@ class Fd_budget extends Root_Controller
             $this->json_return($ajax);
         }
         //validation
-        if ($item['status_budget'] != $this->config->item('system_status_forwarded'))
+        if ($item['status_budget_forward'] != $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = ($this->lang->line('LABEL_FORWARD')) . ' field is required.';
@@ -1493,7 +1505,7 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if ($result['status_budget'] != $this->config->item('system_status_pending'))
+        if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = 'This Budget has been Forwarded Already';
@@ -1501,8 +1513,8 @@ class Fd_budget extends Root_Controller
         }
 
         $this->db->trans_start(); //DB Transaction Handle START
-        $item['date_forwarded_budget'] = $time;
-        $item['user_forwarded_budget'] = $user->user_id;
+        $item['date_budget_forwarded'] = $time;
+        $item['user_budget_forwarded'] = $user->user_id;
         Query_helper::update($this->config->item('table_ems_fd_budget'), $item, array("id = " . $item_id));
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -1534,13 +1546,13 @@ class Fd_budget extends Root_Controller
         $data = array();
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER');
         $data['name_index'] = 'dealer_participant';
-        $data['items'] = Fd_budget_helper::get_dealers_ga($item_id);
-        foreach ($data['items'] as &$item)
+        $data['items'] = Fd_budget_helper::get_dealers_growing_area($item_id);
+        /* foreach ($data['items'] as &$item)
         {
             $item['value'] = $item['dealer_id'];
             $item['text'] = $item['dealer_name'];
             $item['phone_no'] = $item['mobile_no'];
-        }
+        } */
 
         if ($data['items'])
         {
@@ -1570,13 +1582,13 @@ class Fd_budget extends Root_Controller
         $data = array();
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER');
         $data['name_index'] = 'farmer_participant';
-        $data['items'] = Fd_budget_helper::get_lead_farmers_ga($item_id);
-        foreach ($data['items'] as &$item)
+        $data['items'] = Fd_budget_helper::get_lead_farmers_growing_area($item_id);
+        /* foreach ($data['items'] as &$item)
         {
             $item['value'] = $item['lead_farmers_id'];
             $item['text'] = $item['name'];
             $item['phone_no'] = $item['mobile_no'];
-        }
+        } */
 
         if ($data['items'])
         {
@@ -1608,7 +1620,6 @@ class Fd_budget extends Root_Controller
         $arm_upcoming['items'] = (sizeof($variety_arm_upcoming) > 0) ? $variety_arm_upcoming[$crop_type_id] : array();
         $all['items'] = (sizeof($variety_all) > 0) ? $variety_all[$crop_type_id] : array();
 
-        $ajax = array();
         $ajax['system_content'][] = array("id" => "#variety1_id", "html" => $this->load->view("dropdown_with_select", $arm_upcoming, true));
         $ajax['system_content'][] = array("id" => "#variety2_id", "html" => $this->load->view("dropdown_with_select", $all, true));
         if (!(sizeof($variety_arm_upcoming) > 0))
