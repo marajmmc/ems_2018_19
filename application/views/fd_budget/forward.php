@@ -23,7 +23,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PROPOSAL'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['date_proposal']; ?></label>
+            <label class="control-label"><?php echo System_helper::display_date($item['date_proposal']); ?></label>
         </div>
     </div>
 
@@ -149,7 +149,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo $item['date_expected']; ?></label>
+            <label class="control-label"><?php echo System_helper::display_date($item['date_expected']); ?></label>
         </div>
     </div>
 
@@ -165,11 +165,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <table style="width:100%">
                     <?php
                     $sub_total_participant = $total_participant = 0;
-                    foreach ($dealers as $dealer)
+                    foreach ($dealers as &$dealer)
                     {
+                        $dealer['participant'] = (isset($dealer['participant']))? $dealer['participant']:0;
                         ?>
                         <tr>
-                            <td style="text-align:right"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['mobile_no'] . ' )'; ?> :</td>
+                            <td style="text-align:right"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
                             <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $dealer['participant']; ?></td>
                         </tr>
                         <?php
@@ -198,11 +199,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <table style="width:100%">
                     <?php
                     $sub_total_participant = 0;
-                    foreach ($lead_farmers as $farmer)
+                    foreach ($lead_farmers as &$farmer)
                     {
+                        $farmer['participant'] = (isset($farmer['participant']))? $farmer['participant']:0;
                         ?>
                         <tr>
-                            <td style="text-align:right"><?php echo $farmer['name'] . ' ( ' . $farmer['mobile_no'] . ' )'; ?> :</td>
+                            <td style="text-align:right"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
                             <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $farmer['participant']; ?></td>
                         </tr>
                         <?php
@@ -317,7 +319,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['remarks_budget']); ?></label>
+            <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
         </div>
     </div>
 
@@ -331,7 +333,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     </h4>
                 </div>
 
-                <div id="collapse1" class="panel-collapse collapse">
+                <div id="collapse1" class="panel-collapse collapse in">
 
                     <div class="row show-grid">
                         <div class="col-xs-12">
@@ -437,7 +439,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     </div>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_forward'); ?>" method="post">
-        <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
+        <input type="hidden" id="id" name="id" value="<?php echo $item['budget_id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-4">

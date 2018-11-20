@@ -134,57 +134,50 @@ class Fd_budget_helper
         $CI->db->order_by('fd_budget_details.revision');
         $results = $CI->db->get()->result_array();
 
+        $expense_items = Query_helper::get_info($CI->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
+
         foreach ($results as &$result)
         {
             $user_ids = array($result['user_created'] => $result['user_created']); // Getting Name of Created By
             $result['user_info'] = System_helper::get_users_info($user_ids);
 
-            $result_data = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
-            $dealers_by_outlet = array();
-            foreach ($result_data as $item)
-            {
-                $dealers_by_outlet[$item['dealer_id']] = $item;
-            }
-            $result_data = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
-            $lead_farmers_by_outlet = array();
-            foreach ($result_data as $item)
-            {
-                $lead_farmers_by_outlet[$item['lead_farmers_id']] = $item;
-            }
-
+            $result['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
+            $result['lead_farmers'] = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
             $result_data = json_decode($result['participants_dealer_farmer'], TRUE);
-            $result['dealers'] = array();
-            foreach ($result_data['dealer_participant'] as $key => $value)
+
+            foreach ($result['dealers'] as $key => $value)
             {
-                if (isset($dealers_by_outlet[$key]) && ($value > 0))
+                if (isset($result_data['dealer_participant'][$value['dealer_id']]))
                 {
-                    $dealers_by_outlet[$key]['participant'] = $value;
-                    $result['dealers'][] = $dealers_by_outlet[$key];
+                    $result['dealers'][$key]['participant'] = $result_data['dealer_participant'][$value['dealer_id']];
+                }else{
+                    unset($result['dealers'][$value['dealer_id']]);
                 }
             }
-            $result['lead_farmers'] = array();
-            foreach ($result_data['farmer_participant'] as $key => $value)
+            foreach ($result['lead_farmers'] as $key => $value)
             {
-                if (isset($lead_farmers_by_outlet[$key]) && ($value > 0))
+                if (isset($result_data['farmer_participant'][$value['lead_farmers_id']]))
                 {
-                    $lead_farmers_by_outlet[$key]['participant'] = $value;
-                    $result['lead_farmers'][] = $lead_farmers_by_outlet[$key];
+                    $result['lead_farmers'][$key]['participant'] = $result_data['farmer_participant'][$value['lead_farmers_id']];
+                }else{
+                    unset($result['lead_farmers'][$value['lead_farmers_id']]);
                 }
             }
 
-            $result_expense_items = Query_helper::get_info($CI->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
-            $budget_result = json_decode($result['amount_expense_items'], TRUE);
-            $result['expense_items'] = array();
-            foreach ($result_expense_items as &$item)
+            $result['expense_items'] = $expense_items;
+            $result_data = json_decode($result['amount_expense_items'], TRUE);
+            foreach ($result['expense_items'] as $key => $value)
             {
-                if ((isset($budget_result[$item['id']])) && ($budget_result[$item['id']] > 0))
+                if (isset($result_data[$value['id']]))
                 {
-                    if ($item['status'] == $CI->config->item('system_status_inactive'))
-                    {
-                        $item['name'] = $item['name'] . ' <b>(' . $item['status'] . ')</b>';
-                    }
-                    $item['amount'] = $budget_result[$item['id']];
-                    $result['expense_items'][] = $item;
+                    $result['expense_items'][$key]['amount'] = $result_data[$value['id']];
+                }else{
+                    $result['expense_items'][$key]['amount'] = 0;
+                }
+
+                if ($value['status'] == $CI->config->item('system_status_inactive'))
+                {
+                    $result['expense_items'][$key]['name'] = $value['name'] . ' <b>(' . $value['status'] . ')</b>';
                 }
             }
         }

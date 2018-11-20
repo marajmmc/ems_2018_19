@@ -149,7 +149,7 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo nl2br($item['address']); ?></label>
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['address']); ?></label>
                                 </div>
                             </div>
 
@@ -158,7 +158,7 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo nl2br($item['present_condition']); ?></label>
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['present_condition']); ?></label>
                                 </div>
                             </div>
 
@@ -167,7 +167,7 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo nl2br($item['farmers_evaluation']); ?></label>
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['farmers_evaluation']); ?></label>
                                 </div>
                             </div>
 
@@ -176,7 +176,7 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo nl2br($item['diff_between_varieties']); ?></label>
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['diff_between_varieties']); ?></label>
                                 </div>
                             </div>
 
@@ -202,10 +202,11 @@ if($count > 0){
                                             $sub_total_participant = $total_participant = 0;
                                             foreach ($item['dealers'] as $dealer)
                                             {
+                                                $participant = ($dealer['participant'] >0)? '<b>'.$dealer['participant'].'</b>' : 0;
                                                 ?>
                                                 <tr>
                                                     <td style="text-align:right"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
-                                                    <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $dealer['participant']; ?></td>
+                                                    <td style="text-align:right; width:10%; padding:5px"><?php echo $participant; ?></td>
                                                 </tr>
                                                 <?php
                                                 $total_participant += $dealer['participant'];
@@ -234,10 +235,11 @@ if($count > 0){
                                             $sub_total_participant = 0;
                                             foreach ($item['lead_farmers'] as $farmer)
                                             {
+                                                $participant = ($farmer['participant'] >0)? '<b>'.$farmer['participant'].'</b>' : 0;
                                                 ?>
                                                 <tr>
                                                     <td style="text-align:right"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
-                                                    <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $farmer['participant']; ?></td>
+                                                    <td style="text-align:right; width:10%; padding:5px"><?php echo $participant; ?></td>
                                                 </tr>
                                                 <?php
                                                 $total_participant += $farmer['participant'];
@@ -350,7 +352,7 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo nl2br($item['remarks_budget']); ?></label>
+                                    <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
                                 </div>
                             </div>
 

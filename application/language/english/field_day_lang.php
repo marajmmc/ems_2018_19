@@ -1,14 +1,14 @@
 <?php
 // Field Day Task
-$lang['LABEL_DATE_PROPOSAL'] = 'Proposal Date';
-$lang['LABEL_DATE_EXPECTED'] = 'Expected Date';
+$lang['LABEL_DATE_PROPOSAL'] = 'Budget Proposal Date';
+$lang['LABEL_DATE_EXPECTED'] = 'Expected Date of Field Day';
 $lang['LABEL_AMOUNT_BUDGET_TOTAL'] = 'Expected Total Budget';
 $lang['LABEL_CROP_TYPE'] = 'Crop Type';
-$lang['LABEL_VARIETY1_NAME'] = 'Variety 1';
-$lang['LABEL_VARIETY2_NAME'] = 'Variety 2';
+$lang['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
+$lang['LABEL_VARIETY2_NAME'] = 'Variety (Compare with)';
 $lang['LABEL_COM_VARIETY_NAME'] = 'Competitor Variety';
-$lang['LABEL_STATUS_BUDGET'] = 'Budget Status';
-$lang['LABEL_STATUS_BUDGET_RECOMMENDATION'] = 'Recommendation Status';
+$lang['LABEL_STATUS_BUDGET_FORWARD'] = 'Budget Status';
+$lang['LABEL_STATUS_RECOMMENDATION'] = 'Recommendation Status';
 
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
 $lang['LABEL_DEALERS_EVALUATION'] = 'Dealers/ Farmers Evaluation';

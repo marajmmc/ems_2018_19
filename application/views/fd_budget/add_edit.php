@@ -554,7 +554,7 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[quantity_market_size_arm]" id="quantity_market_size_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_arm']) ? $item_info['quantity_market_size_arm'] : ""; ?>"/>
+        <input type="text" name="item_info[quantity_market_size_arm]" id="quantity_market_size_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_arm']) ? $item_info['quantity_market_size_arm'] : 0; ?>"/>
     </div>
 </div>
 
@@ -564,7 +564,7 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[quantity_sales_target]" id="quantity_sales_target" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_sales_target']) ? $item_info['quantity_sales_target'] : ""; ?>"/>
+        <input type="text" name="item_info[quantity_sales_target]" id="quantity_sales_target" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_sales_target']) ? $item_info['quantity_sales_target'] : 0; ?>"/>
     </div>
 </div>
 
@@ -574,7 +574,7 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="remarks_budget" name="item_info[remarks_budget]"><?php echo $item_info['remarks_budget']; ?></textarea>
+        <textarea class="form-control" id="remarks" name="item_info[remarks]"><?php echo $item_info['remarks']; ?></textarea>
     </div>
 </div>
 
@@ -596,8 +596,11 @@ jQuery(document).ready(function ($) {
     $(document).off("input", ".expense_budget");
     $(document).off("input", ".participant_budget");
 
+    <?php /*
     var fd_crop_id = '<?php echo $item_info['crop_id']; ?>';
     $("#crop_id").html(get_dropdown_with_select(system_crops, fd_crop_id));
+    */ ?>
+    $("#crop_id").html(get_dropdown_with_select(system_crops));
 
     /*--------------------- CROP RELATED DROPDOWN ---------------------*/
     $(document).on("change", "#crop_id", function () {
