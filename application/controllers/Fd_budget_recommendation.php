@@ -400,9 +400,6 @@ class Fd_budget_recommendation extends Root_Controller
 
     private function system_save()
     {
-//        echo "==>>>> ";
-//        pr($this->input->post());
-
         $item_id = $this->input->post('id');
         $item_info = $this->input->post('item_info');
         $dealer_participant = $this->input->post('dealer_participant');
@@ -499,6 +496,7 @@ class Fd_budget_recommendation extends Root_Controller
         $item_info['present_condition'] = $result['present_condition'];
         $item_info['farmers_evaluation'] = $result['farmers_evaluation'];
         $item_info['diff_between_varieties'] = $result['diff_between_varieties'];
+        $item_info['remarks'] = $result['remarks'];
         $participants = array(
             'dealer_participant' => $dealer_participant,
             'farmer_participant' => $farmer_participant
