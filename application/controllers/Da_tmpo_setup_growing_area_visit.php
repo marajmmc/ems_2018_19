@@ -297,8 +297,9 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         }
         $this->db->where('outlet_info.type',$this->config->item('system_customer_type_outlet_id'));
         $this->db->where('areas.status',$this->config->item('system_status_active'));
-        $this->db->order_by('areas.outlet_id','ASC');
-        $this->db->order_by('areas.ordering','ASC');
+        /*$this->db->order_by('areas.outlet_id','ASC');
+        $this->db->order_by('areas.ordering','ASC');*/
+        $this->db->order_by('visit.date_visit','DESC');
         //$this->db->group_by('areas.id');
         $this->db->limit($pagesize,$current_records);
         $results=$this->db->get()->result_array();
