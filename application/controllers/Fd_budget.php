@@ -459,6 +459,22 @@ class Fd_budget extends Root_Controller
                 'remarks' => ''
             );
             $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
+            if ($this->locations['division_id'] > 0)
+            {
+                $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $this->locations['division_id']));
+                if ($this->locations['zone_id'] > 0)
+                {
+                    $data['territories'] = Query_helper::get_info($this->config->item('table_login_setup_location_territories'), array('id value', 'name text'), array('zone_id =' . $this->locations['zone_id']));
+                    if ($this->locations['territory_id'] > 0)
+                    {
+                        $data['districts'] = Query_helper::get_info($this->config->item('table_login_setup_location_districts'), array('id value', 'name text'), array('territory_id =' . $this->locations['territory_id']));
+                        if ($this->locations['district_id'] > 0)
+                        {
+                            $data['outlets'] = Query_helper::get_info($this->config->item('table_login_csetup_cus_info'), array('customer_id value', 'name text'), array('district_id =' . $this->locations['district_id'], 'revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id')));
+                        }
+                    }
+                }
+            }
 
             $data['participants'] = array();
             $data['dealers'] = array();
@@ -534,13 +550,19 @@ class Fd_budget extends Root_Controller
             $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
             $this->db->where('fd_budget.id', $item_id);
             $this->db->where('fd_budget_details.revision', 1);
-            $this->db->order_by('fd_budget.id', 'DESC');
             $result = $this->db->get()->row_array();
             if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Field Day Budget of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
             if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
@@ -608,12 +630,25 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-            $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), array('*'), array('id=' . $id, 'status !="' . $this->config->item('system_status_delete') . '"'), 1);
+            $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+            $this->db->select('fd_budget.*');
+            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+            $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+            $this->db->where('fd_budget.id', $id);
+            $result = $this->db->get()->row_array();
             if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Edit Field Day Budget of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
             if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
@@ -694,7 +729,7 @@ class Fd_budget extends Root_Controller
         $item_head['date_created'] = $time;
         $item_head['user_created'] = $user->user_id;
 
-            $this->db->trans_start(); //DB Transaction Handle START
+        $this->db->trans_start(); //DB Transaction Handle START
         if ($id > 0) //EDIT
         {
             $budget_id = $id;
@@ -753,8 +788,6 @@ class Fd_budget extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $data = array();
-
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
             $this->db->select('fd_budget.*');
 
@@ -770,31 +803,43 @@ class Fd_budget extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
             $this->db->select('crop.name AS crop_name');
 
+            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
             $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
             $this->db->where('fd_budget.id', $item_id);
-            $this->db->order_by('fd_budget.id', 'DESC');
-            $data['item'] = $this->db->get()->row_array();
-            if (!$data['item'])
+            $result = $this->db->get()->row_array();
+            if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status_budget_forward'] == $this->config->item('system_status_forwarded'))
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Field Day Budget Picture of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
+                $this->json_return($ajax);
+            }
+            if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'This Budget has been Forwarded Already';
                 $this->json_return($ajax);
             }
 
-            $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
-            if ($results)
+            $data = array();
+            $data['item'] = $result;
+
+            $result_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+            if ($result_data)
             {
                 $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-                foreach ($results as $result)
+                foreach ($result_data as $value)
                 {
-                    $data['file_details'][$result['category_id']] = $result;
+                    $data['file_details'][$value['category_id']] = $value;
                 }
             }
             else
@@ -834,12 +879,26 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), array('*'), array('id=' . $item_id, 'status !="' . $this->config->item('system_status_delete') . '"'), 1);
+
+        $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+        $this->db->select('fd_budget.*');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('fd_budget.id', $item_id);
+        $result = $this->db->get()->row_array();
         if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Field Day Budget Picture of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
             $this->json_return($ajax);
         }
         if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
@@ -968,13 +1027,19 @@ class Fd_budget extends Root_Controller
             $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
             $this->db->where('fd_budget.id', $item_id);
             $this->db->where('fd_budget_details.revision', 1);
-            $this->db->order_by('fd_budget.id', 'DESC');
             $result = $this->db->get()->row_array();
             if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Delete Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete Field Day Budget of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Delete Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
             if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
@@ -996,7 +1061,9 @@ class Fd_budget extends Root_Controller
                 if (isset($result_data['dealer_participant'][$value['dealer_id']]) && ($result_data['dealer_participant'][$value['dealer_id']] > 0))
                 {
                     $value['participant'] = $result_data['dealer_participant'][$value['dealer_id']];
-                }else{
+                }
+                else
+                {
                     unset($data['dealers'][$value['dealer_id']]);
                 }
             }
@@ -1005,7 +1072,9 @@ class Fd_budget extends Root_Controller
                 if (isset($result_data['farmer_participant'][$value['lead_farmers_id']]) && ($result_data['farmer_participant'][$value['lead_farmers_id']] > 0))
                 {
                     $value['participant'] = $result_data['farmer_participant'][$value['lead_farmers_id']];
-                }else{
+                }
+                else
+                {
                     unset($data['lead_farmers'][$value['lead_farmers_id']]);
                 }
             }
@@ -1017,7 +1086,9 @@ class Fd_budget extends Root_Controller
                 if (isset($result_data[$value['id']]))
                 {
                     $value['amount'] = $result_data[$value['id']];
-                }else{
+                }
+                else
+                {
                     $value['amount'] = 0;
                 }
 
@@ -1087,12 +1158,25 @@ class Fd_budget extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), '*', array('id =' . $item_id, 'status !="' . $this->config->item('system_status_delete') . '"'), 1);
+        $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+        $this->db->select('fd_budget.*');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('fd_budget.id', $item_id);
+        $result = $this->db->get()->row_array();
         if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Delete Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Delete Field Day Budget of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to Delete Field Day Budget of other Location';
             $this->json_return($ajax);
         }
         if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
@@ -1170,13 +1254,19 @@ class Fd_budget extends Root_Controller
             $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
             $this->db->where('fd_budget.id', $item_id);
             $this->db->where('fd_budget_details.revision', 1);
-            $this->db->order_by('fd_budget.id', 'DESC');
             $result = $this->db->get()->row_array();
             if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Field Day Budget of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
             if ($result['status_budget_forward'] == $this->config->item('system_status_forwarded'))
@@ -1198,7 +1288,9 @@ class Fd_budget extends Root_Controller
                 if (isset($result_data['dealer_participant'][$value['dealer_id']]) && ($result_data['dealer_participant'][$value['dealer_id']] > 0))
                 {
                     $value['participant'] = $result_data['dealer_participant'][$value['dealer_id']];
-                }else{
+                }
+                else
+                {
                     unset($data['dealers'][$value['dealer_id']]);
                 }
             }
@@ -1207,7 +1299,9 @@ class Fd_budget extends Root_Controller
                 if (isset($result_data['farmer_participant'][$value['lead_farmers_id']]) && ($result_data['farmer_participant'][$value['lead_farmers_id']] > 0))
                 {
                     $value['participant'] = $result_data['farmer_participant'][$value['lead_farmers_id']];
-                }else{
+                }
+                else
+                {
                     unset($data['lead_farmers'][$value['lead_farmers_id']]);
                 }
             }
@@ -1219,7 +1313,9 @@ class Fd_budget extends Root_Controller
                 if (isset($result_data[$value['id']]))
                 {
                     $value['amount'] = $result_data[$value['id']];
-                }else{
+                }
+                else
+                {
                     $value['amount'] = 0;
                 }
 
@@ -1282,13 +1378,25 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = ($this->lang->line('LABEL_FORWARD')) . ' field is required.';
             $this->json_return($ajax);
         }
-
-        $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), '*', array('id =' . $item_id, 'status !="' . $this->config->item('system_status_delete') . '"'), 1);
+        $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+        $this->db->select('fd_budget.*');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('fd_budget.id', $item_id);
+        $result = $this->db->get()->row_array();
         if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Forward Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Field Day Budget of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to Edit Forward Day Budget of other Location';
             $this->json_return($ajax);
         }
         if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
@@ -1411,6 +1519,27 @@ class Fd_budget extends Root_Controller
             $ajax['status'] = true;
             $this->json_return($ajax);
         }
+    }
+
+    private function check_my_editable($item)
+    {
+        if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
+        {
+            return false;
+        }
+        if (($this->locations['zone_id'] > 0) && ($this->locations['zone_id'] != $item['zone_id']))
+        {
+            return false;
+        }
+        if (($this->locations['territory_id'] > 0) && ($this->locations['territory_id'] != $item['territory_id']))
+        {
+            return false;
+        }
+        if (($this->locations['district_id'] > 0) && ($this->locations['district_id'] != $item['district_id']))
+        {
+            return false;
+        }
+        return true;
     }
 
     private function check_validation()

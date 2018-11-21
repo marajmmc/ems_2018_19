@@ -27,11 +27,11 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 $total_participant = 0;
 ?>
-
 <style>label {
         margin-top: 5px;
     }</style>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
+
 <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
 
 <div class="row widget">
@@ -187,12 +187,18 @@ $total_participant = 0;
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
-    <div class="col-sm-4 col-xs-4">
+    <div class="col-sm-4 col-xs-8">
         <?php
         if ($item['id'] > 0)
         {
             ?>
             <label class="control-label"><?php echo $item_info['division_name']; ?></label>
+        <?php
+        }
+        else if ($CI->locations['division_id'] > 0)
+        {
+            ?>
+            <label class="control-label"><?php echo $CI->locations['division_name']; ?></label>
         <?php
         }
         else
@@ -215,7 +221,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="zone_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['zone_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="zone_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -228,13 +234,25 @@ $total_participant = 0;
             <label class="control-label"><?php echo $item_info['zone_name']; ?></label>
         <?php
         }
+        else if ($CI->locations['zone_id'] > 0)
+        {
+            ?>
+            <label class="control-label"><?php echo $CI->locations['zone_name']; ?></label>
+        <?php
+        }
         else
         {
             ?>
             <select id="zone_id" class="form-control">
-
-                <!--Data comes from DIVISION OnChange-->
-
+                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                <?php
+                foreach ($zones as $zone)
+                {
+                    ?>
+                    <option value="<?php echo $zone['value'] ?>"><?php echo $zone['text']; ?></option>
+                <?php
+                }
+                ?>
             </select>
         <?php
         }
@@ -242,7 +260,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="territory_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['territory_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="territory_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -255,13 +273,25 @@ $total_participant = 0;
             <label class="control-label"><?php echo $item_info['territory_name']; ?></label>
         <?php
         }
+        else if ($CI->locations['territory_id'] > 0)
+        {
+            ?>
+            <label class="control-label"><?php echo $CI->locations['territory_name']; ?></label>
+        <?php
+        }
         else
         {
             ?>
             <select id="territory_id" class="form-control">
-
-                <!--Data comes from ZONE OnChange-->
-
+                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                <?php
+                foreach ($territories as $territory)
+                {
+                    ?>
+                    <option value="<?php echo $territory['value'] ?>"><?php echo $territory['text']; ?></option>
+                <?php
+                }
+                ?>
             </select>
         <?php
         }
@@ -269,7 +299,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="district_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['district_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="district_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -282,13 +312,25 @@ $total_participant = 0;
             <label class="control-label"><?php echo $item_info['district_name']; ?></label>
         <?php
         }
+        elseif ($CI->locations['district_id'] > 0)
+        {
+            ?>
+            <label class="control-label"><?php echo $CI->locations['district_name']; ?></label>
+        <?php
+        }
         else
         {
             ?>
             <select id="district_id" class="form-control">
-
-                <!--Data comes from TERRITORY OnChange-->
-
+                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                <?php
+                foreach ($districts as $district)
+                {
+                    ?>
+                    <option value="<?php echo $district['value'] ?>"><?php echo $district['text']; ?></option>
+                <?php
+                }
+                ?>
             </select>
         <?php
         }
@@ -296,7 +338,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="outlet_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['district_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="outlet_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -313,11 +355,19 @@ $total_participant = 0;
         {
             ?>
             <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
-
-                <!--Data comes from DISTRICT OnChange-->
-
+                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                <?php
+                foreach ($outlets as $outlet)
+                {
+                    ?>
+                    <option value="<?php echo $outlet['value'] ?>"><?php echo $outlet['text']; ?></option>
+                <?php
+                }
+                ?>
             </select>
-        <?php } ?>
+        <?php
+        }
+        ?>
     </div>
 </div>
 
@@ -580,6 +630,7 @@ $total_participant = 0;
 
 <div class="clearfix"></div>
 </div>
+
 </form>
 
 <!--------Shows Previous Update History, when EDIT Mode-------->
