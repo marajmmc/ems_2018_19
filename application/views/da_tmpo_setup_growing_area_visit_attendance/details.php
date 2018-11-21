@@ -220,9 +220,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             foreach($farmers as $farmer)
                             {
-                                if($farmer['image_location'])
+                                if(isset($previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['image_location']) && $previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['image_location'])
                                 {
-                                    $farmer_img=$CI->config->item('system_base_url_picture').$farmer['image_location'];
+                                    $farmer_img=$CI->config->item('system_base_url_picture').$previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['image_location'];
                                 }
                                 else
                                 {
@@ -238,7 +238,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     </td>
                                     <td>
                                         <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
-                                            <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="<?php echo $farmer['image_name']; ?>">
+                                            <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="Lead Farmer Visit Picture">
                                         </a>
                                     </td>
                                 </tr>
@@ -276,9 +276,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                         {
                             foreach($dealers as $dealer)
                             {
-                                if($dealer['image_location'])
+                                if(isset($previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['image_location']) && $previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['image_location'])
                                 {
-                                    $dealer_img=$CI->config->item('system_base_url_picture').$dealer['image_location'];
+                                    $dealer_img=$CI->config->item('system_base_url_picture').$previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['image_location'];
                                 }
                                 else
                                 {
@@ -294,7 +294,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                                     </td>
                                     <td>
                                         <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
-                                            <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                            <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="Dealer Visit Picture">
                                         </a>
                                     </td>
                                 </tr>
