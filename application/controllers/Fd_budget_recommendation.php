@@ -58,6 +58,18 @@ class Fd_budget_recommendation extends Root_Controller
         {
             $this->system_save_image();
         }
+        elseif ($action == "forward")
+        {
+            $this->system_forward($id);
+        }
+        elseif ($action == "save_forward")
+        {
+            $this->system_save_forward();
+        }
+        /*elseif ($action == "details")
+        {
+            $this->system_details($id);
+        }*/
         elseif ($action == "set_preference_list_all")
         {
             $this->system_set_preference('list_all');
@@ -362,6 +374,13 @@ class Fd_budget_recommendation extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Field Day Budget of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
+                $this->json_return($ajax);
+            }
             if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -431,6 +450,9 @@ class Fd_budget_recommendation extends Root_Controller
         $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
         $this->db->select('fd_budget_details.*');
 
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
         $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
         $this->db->where('fd_budget.id', $item_id);
         $this->db->where('fd_budget_details.revision', 1);
@@ -440,6 +462,13 @@ class Fd_budget_recommendation extends Root_Controller
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Field Day Budget of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
             $this->json_return($ajax);
         }
         if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
@@ -503,7 +532,7 @@ class Fd_budget_recommendation extends Root_Controller
         $item_info['present_condition'] = $result['present_condition'];
         $item_info['farmers_evaluation'] = $result['farmers_evaluation'];
         $item_info['diff_between_varieties'] = $result['diff_between_varieties'];
-        $item_info['remarks'] = $result['remarks'];
+
         $participants = array(
             'dealer_participant' => $dealer_participant,
             'farmer_participant' => $farmer_participant
@@ -532,6 +561,7 @@ class Fd_budget_recommendation extends Root_Controller
         $item_info['revision'] = 1;
         Query_helper::add($this->config->item('table_ems_fd_budget_details'), $item_info, FALSE);
         $this->db->trans_complete(); //DB Transaction Handle END
+
         if ($this->db->trans_status() === TRUE)
         {
             $ajax['status'] = true;
@@ -558,8 +588,6 @@ class Fd_budget_recommendation extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $data = array();
-
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
             $this->db->select('fd_budget.*');
 
@@ -575,30 +603,43 @@ class Fd_budget_recommendation extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
             $this->db->select('crop.name AS crop_name');
 
+            $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+            $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+
             $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
             $this->db->where('fd_budget.id', $item_id);
-            $data['item'] = $this->db->get()->row_array();
-            if (!$data['item'])
+            $result = $this->db->get()->row_array();
+            if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($data['item']['status_recommendation'] == $this->config->item('system_status_forwarded'))
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Field Day Budget Picture of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
+                $this->json_return($ajax);
+            }
+            if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'This Budget has been Forwarded Already';
                 $this->json_return($ajax);
             }
 
-            $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
-            if ($results)
+            $data = array();
+            $data['item'] = $result;
+
+            $result_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+            if ($result_data)
             {
                 $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-                foreach ($results as $result)
+                foreach ($result_data as $value)
                 {
-                    $data['file_details'][$result['category_id']] = $result;
+                    $data['file_details'][$value['category_id']] = $value;
                 }
             }
             else
@@ -638,12 +679,26 @@ class Fd_budget_recommendation extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), array('*'), array('id=' . $item_id, 'status !="' . $this->config->item('system_status_delete') . '"'), 1);
+
+        $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+        $this->db->select('fd_budget.*');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('fd_budget.id', $item_id);
+        $result = $this->db->get()->row_array();
         if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Field Day Budget Picture of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
             $this->json_return($ajax);
         }
         if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
@@ -724,171 +779,225 @@ class Fd_budget_recommendation extends Root_Controller
         }
     }
 
-//    private function system_save_forward()
-//    {
-//        $item_id = $this->input->post('id');
-//        $item = $this->input->post('item');
-//        $user = User_helper::get_user();
-//        $time = time();
-//        // Permission Checking
-//        if (!(isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-//            $this->json_return($ajax);
-//        }
-//        //validation
-//        if ($item['status_budget_forward'] != $this->config->item('system_status_forwarded'))
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = ($this->lang->line('LABEL_FORWARD')) . ' field is required.';
-//            $this->json_return($ajax);
-//        }
-//
-//        $result = Query_helper::get_info($this->config->item('table_ems_fd_budget'), '*', array('id =' . $item_id, 'status !="' . $this->config->item('system_status_delete') . '"'), 1);
-//        if (!$result)
-//        {
-//            System_helper::invalid_try(__FUNCTION__, $item_id, 'Forward Not Exists');
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = 'Invalid Try.';
-//            $this->json_return($ajax);
-//        }
-//        if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = 'This Budget has been Forwarded Already';
-//            $this->json_return($ajax);
-//        }
-//
-//        $this->db->trans_start(); //DB Transaction Handle START
-//        $item['date_forwarded_budget'] = $time;
-//        $item['user_forwarded_budget'] = $user->user_id;
-//        Query_helper::update($this->config->item('table_ems_fd_budget'), $item, array("id = " . $item_id));
-//        $this->db->trans_complete(); //DB Transaction Handle END
-//
-//        if ($this->db->trans_status() === TRUE)
-//        {
-//            $ajax['status'] = true;
-//            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
-//            $this->system_list();
-//        }
-//        else
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
-//            $this->json_return($ajax);
-//        }
-//    }
-//
-//    private function system_get_dealers($id = 0)
-//    {
-//        if ($id > 0)
-//        {
-//            $item_id = $id;
-//        }
-//        else
-//        {
-//            $item_id = $this->input->post('id');
-//        }
-//        $html_container_id = $this->input->post('html_container_id');
-//        $data = array();
-//        $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER');
-//        $data['name_index'] = 'dealer_participant';
-//        $data['items'] = Fd_budget_helper::get_dealers_ga($item_id);
-//        foreach ($data['items'] as &$item)
-//        {
-//            $item['value'] = $item['dealer_id'];
-//            $item['text'] = $item['dealer_name'];
-//            $item['phone_no'] = $item['mobile_no'];
-//        }
-//
-//        if ($data['items'])
-//        {
-//            $ajax['status'] = true;
-//            $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view($this->controller_url . "/input_fields_with_item", $data, true));
-//            $this->json_return($ajax);
-//        }
-//        else
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = $this->lang->line("SET_LEADING_FARMER_AND_DEALER");
-//            $this->json_return($ajax);
-//        }
-//    }
-//
-//    private function system_get_lead_farmers($id = 0)
-//    {
-//        if ($id > 0)
-//        {
-//            $item_id = $id;
-//        }
-//        else
-//        {
-//            $item_id = $this->input->post('id');
-//        }
-//        $html_container_id = $this->input->post('html_container_id');
-//        $data = array();
-//        $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER');
-//        $data['name_index'] = 'farmer_participant';
-//        $data['items'] = Fd_budget_helper::get_lead_farmers_ga($item_id);
-//        foreach ($data['items'] as &$item)
-//        {
-//            $item['value'] = $item['lead_farmers_id'];
-//            $item['text'] = $item['name'];
-//            $item['phone_no'] = $item['mobile_no'];
-//        }
-//
-//        if ($data['items'])
-//        {
-//            $ajax['status'] = true;
-//            $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view($this->controller_url . "/input_fields_with_item", $data, true));
-//            $this->json_return($ajax);
-//        }
-//        else
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = $this->lang->line("SET_LEADING_FARMER_AND_DEALER");
-//            $this->json_return($ajax);
-//        }
-//    }
-//
-//    public function system_get_fd_budget_varieties($id = 0)
-//    {
-//        if ($id > 0)
-//        {
-//            $crop_type_id = $id;
-//        }
-//        else
-//        {
-//            $crop_type_id = $this->input->post('id');
-//        }
-//        $variety_arm_upcoming = Fd_budget_helper::get_variety_arm_upcoming($crop_type_id);
-//        $variety_all = Fd_budget_helper::get_variety_all($crop_type_id);
-//
-//        $arm_upcoming['items'] = (sizeof($variety_arm_upcoming) > 0) ? $variety_arm_upcoming[$crop_type_id] : array();
-//        $all['items'] = (sizeof($variety_all) > 0) ? $variety_all[$crop_type_id] : array();
-//
-//        $ajax = array();
-//        $ajax['system_content'][] = array("id" => "#variety1_id", "html" => $this->load->view("dropdown_with_select", $arm_upcoming, true));
-//        $ajax['system_content'][] = array("id" => "#variety2_id", "html" => $this->load->view("dropdown_with_select", $all, true));
-//        if (!(sizeof($variety_arm_upcoming) > 0))
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = "No data found for " . $this->lang->line('LABEL_VARIETY1_NAME');
-//            $this->json_return($ajax);
-//        }
-//        elseif (!(sizeof($variety_all) > 0))
-//        {
-//            $ajax['status'] = false;
-//            $ajax['system_message'] = "No data found for " . $this->lang->line('LABEL_VARIETY2_NAME');
-//            $this->json_return($ajax);
-//        }
-//        else
-//        {
-//            $ajax['status'] = true;
-//            $this->json_return($ajax);
-//        }
-//    }
+    private function system_forward($id)
+    {
+        if (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1))
+        {
+            if ($id > 0)
+            {
+                $item_id = $id;
+            }
+            else
+            {
+                $item_id = $this->input->post('id');
+            }
+            $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_recommendation');
+
+            $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
+            $this->db->select('fd_budget_details.*');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
+            $this->db->select('CONCAT(variety1.name, " ( ", variety1.whose, " )") AS variety1_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'INNER');
+            $this->db->select('CONCAT(variety2.name, " ( ", variety2.whose, " )") AS variety2_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
+            $this->db->select('crop_type.id AS crop_type_id, crop_type.name AS crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
+            $this->db->select('crop.id AS crop_id, crop.name AS crop_name');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+            $this->db->select('cus_info.name AS outlet_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+            $this->db->select('district.id AS district_id, district.name AS district_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
+            $this->db->select('territory.id AS territory_id, territory.name AS territory_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
+            $this->db->select('zone.id AS zone_id, zone.name AS zone_name');
+
+            $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
+            $this->db->select('division.id AS division_id, division.name AS division_name');
+
+            $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+            $this->db->where('fd_budget.id', $item_id);
+            $this->db->where('fd_budget_details.revision', 1);
+            $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if (!$this->check_my_editable($result))
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Field Day Budget of other Location');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
+                $this->json_return($ajax);
+            }
+            if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Budget has been Forwarded Already';
+                $this->json_return($ajax);
+            }
+
+            $data = array();
+            $data['item'] = $result;
+
+            $data['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
+            $data['lead_farmers'] = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
+            $result_data = json_decode($result['participants_dealer_farmer'], TRUE);
+
+            foreach ($data['dealers'] as &$value)
+            {
+                if (isset($result_data['dealer_participant'][$value['dealer_id']]) && ($result_data['dealer_participant'][$value['dealer_id']] > 0))
+                {
+                    $value['participant'] = $result_data['dealer_participant'][$value['dealer_id']];
+                }
+                else
+                {
+                    unset($data['dealers'][$value['dealer_id']]);
+                }
+            }
+            foreach ($data['lead_farmers'] as &$value)
+            {
+                if (isset($result_data['farmer_participant'][$value['lead_farmers_id']]) && ($result_data['farmer_participant'][$value['lead_farmers_id']] > 0))
+                {
+                    $value['participant'] = $result_data['farmer_participant'][$value['lead_farmers_id']];
+                }
+                else
+                {
+                    unset($data['lead_farmers'][$value['lead_farmers_id']]);
+                }
+            }
+
+            $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
+            $result_data = json_decode($result['amount_expense_items'], TRUE);
+            foreach ($data['expense_items'] as &$value)
+            {
+                if (isset($result_data[$value['id']]))
+                {
+                    $value['amount'] = $result_data[$value['id']];
+                }
+                else
+                {
+                    $value['amount'] = 0;
+                }
+
+                if ($value['status'] == $this->config->item('system_status_inactive'))
+                {
+                    $value['name'] = $value['name'] . ' <b>(' . $value['status'] . ')</b>';
+                }
+            }
+
+            $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+            if ($results)
+            {
+                $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
+                foreach ($results as $result)
+                {
+                    $data['file_details'][$result['category_id']] = $result;
+                }
+            }
+            else
+            {
+                $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+                $data['file_details'] = array();
+            }
+
+            $data['title'] = "Forward Field Day Budget Recommendation ( ID:" . $result['budget_id'] . " )";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/forward", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/forward/' . $item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_save_forward()
+    {
+        $item_id = $this->input->post('id');
+        $item = $this->input->post('item');
+        $user = User_helper::get_user();
+        $time = time();
+        //Permission Checking
+        if (!(isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+        //validation
+        if ($item['status_recommendation'] != $this->config->item('system_status_forwarded'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = ($this->lang->line('LABEL_FORWARD')) . ' field is required.';
+            $this->json_return($ajax);
+        }
+        $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
+        $this->db->select('fd_budget.*');
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
+        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
+        $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('fd_budget.id', $item_id);
+        $result = $this->db->get()->row_array();
+        if (!$result)
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Forward Not Exists');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if (!$this->check_my_editable($result))
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Field Day Budget of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
+            $this->json_return($ajax);
+        }
+        if ($result['status_recommendation'] != $this->config->item('system_status_pending'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'This Budget has been Forwarded Already';
+            $this->json_return($ajax);
+        }
+
+        $this->db->trans_start(); //DB Transaction Handle START
+        $item['date_budget_forwarded'] = $time;
+        $item['user_budget_forwarded'] = $user->user_id;
+        Query_helper::update($this->config->item('table_ems_fd_budget'), $item, array("id = " . $item_id), FALSE);
+        $this->db->trans_complete(); //DB Transaction Handle END
+
+        if ($this->db->trans_status() === TRUE)
+        {
+            $ajax['status'] = true;
+            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
 
     private function check_my_editable($item)
     {
@@ -915,6 +1024,7 @@ class Fd_budget_recommendation extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item_info[date_expected]', $this->lang->line('LABEL_DATE_EXPECTED'), 'required');
+        $this->form_validation->set_rules('item_info[remarks_recommendation]', $this->lang->line('LABEL_REMARKS'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();

@@ -221,7 +221,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['zone_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="zone_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['division_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="zone_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -260,7 +260,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['territory_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="territory_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['zone_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="territory_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -299,7 +299,7 @@ $total_participant = 0;
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['district_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="district_id_container">
+<div style="<?php echo (!($item['id'] > 0) && !($CI->locations['territory_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="district_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>
             <span style="color:#FF0000">*</span></label>

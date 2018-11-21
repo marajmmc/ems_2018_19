@@ -610,7 +610,7 @@ class Fd_budget extends Root_Controller
 
     private function system_save()
     {
-        $id = $this->input->post('id');
+        $item_id = $this->input->post('id');
         $item_head = $this->input->post('item');
         $item_info = $this->input->post('item_info');
         $dealer_participant = $this->input->post('dealer_participant');
@@ -621,7 +621,7 @@ class Fd_budget extends Root_Controller
         $time = time();
         $total_budget = $participant_total = 0;
 
-        if ($id > 0) //EDIT
+        if ($item_id > 0) //EDIT
         {
             //Permission Checking
             if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
@@ -635,18 +635,18 @@ class Fd_budget extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
             $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
             $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
-            $this->db->where('fd_budget.id', $id);
+            $this->db->where('fd_budget.id', $item_id);
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Edit Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
             if (!$this->check_my_editable($result))
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'Trying to Edit Field Day Budget of other Location');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Edit Field Day Budget of other Location');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
                 $this->json_return($ajax);
@@ -730,9 +730,9 @@ class Fd_budget extends Root_Controller
         $item_head['user_created'] = $user->user_id;
 
         $this->db->trans_start(); //DB Transaction Handle START
-        if ($id > 0) //EDIT
+        if ($item_id > 0) //EDIT
         {
-            $budget_id = $id;
+            $budget_id = $item_id;
             //Master Table Update
             Query_helper::update($this->config->item('table_ems_fd_budget'), $item_head, array("id =" . $budget_id), FALSE);
             //Details Table Revision Update
@@ -1049,6 +1049,7 @@ class Fd_budget extends Root_Controller
                 $this->json_return($ajax);
             }
 
+
             $data = array();
             $data['item'] = $result;
 
@@ -1182,7 +1183,7 @@ class Fd_budget extends Root_Controller
         if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'This Budget has been Forwarded Already';
+            $ajax['system_message'] = 'Forwarded Already. Cannot Delete Now.';
             $this->json_return($ajax);
         }
 
@@ -1396,7 +1397,7 @@ class Fd_budget extends Root_Controller
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Forward Field Day Budget of other Location');
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Trying to Edit Forward Day Budget of other Location';
+            $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
             $this->json_return($ajax);
         }
         if ($result['status_budget_forward'] != $this->config->item('system_status_pending'))
