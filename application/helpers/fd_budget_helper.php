@@ -1,5 +1,12 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+/* ------FD Budget Status Constants----- */
+CONST FD_BUDGET_FORWARDED = 1;
+CONST FD_BUDGET_NOT_FORWARDED = 2;
+/* ------FD Recommendation Status Constants----- */
+CONST FD_RECOMMENDATION_FORWARDED = 3;
+CONST FD_RECOMMENDATION_NOT_FORWARDED = 4;
+
 
 class Fd_budget_helper
 {
@@ -150,7 +157,9 @@ class Fd_budget_helper
                 if (isset($result_data['dealer_participant'][$value['dealer_id']]))
                 {
                     $result['dealers'][$key]['participant'] = $result_data['dealer_participant'][$value['dealer_id']];
-                }else{
+                }
+                else
+                {
                     unset($result['dealers'][$value['dealer_id']]);
                 }
             }
@@ -159,7 +168,9 @@ class Fd_budget_helper
                 if (isset($result_data['farmer_participant'][$value['lead_farmers_id']]))
                 {
                     $result['lead_farmers'][$key]['participant'] = $result_data['farmer_participant'][$value['lead_farmers_id']];
-                }else{
+                }
+                else
+                {
                     unset($result['lead_farmers'][$value['lead_farmers_id']]);
                 }
             }
@@ -171,7 +182,9 @@ class Fd_budget_helper
                 if (isset($result_data[$value['id']]))
                 {
                     $result['expense_items'][$key]['amount'] = $result_data[$value['id']];
-                }else{
+                }
+                else
+                {
                     $result['expense_items'][$key]['amount'] = 0;
                 }
 
@@ -183,5 +196,49 @@ class Fd_budget_helper
         }
 
         return $results;
+    }
+
+    public static function fd_budget_status_check($item_array = array(), $check_status = array())
+    {
+        if (!empty($item_array) && !empty($check_status))
+        {
+            $CI =& get_instance();
+            foreach ($check_status AS $flag)
+            {   /*
+                ----------------FD Budget Status Constants----------------
+                */
+                if ((FD_BUDGET_FORWARDED == $flag) && ($item_array['status_budget_forward'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Budget FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Budget is not Forwarded yet.'
+                    );
+                }
+                elseif ((FD_BUDGET_NOT_FORWARDED == $flag) && ($item_array['status_budget_forward'] == $CI->config->item('system_status_forwarded'))) // Checks if FD Budget not FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Tour has been Forwarded Already.'
+                    );
+                }/*
+                ----------------FD Recommendation Status Constants----------------
+                */
+                if ((FD_RECOMMENDATION_FORWARDED == $flag) && ($item_array['status_recommendation'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Budget Recommendation FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Budget Recommendation is not Forwarded yet.'
+                    );
+                }
+                elseif ((FD_RECOMMENDATION_NOT_FORWARDED == $flag) && ($item_array['status_recommendation'] == $CI->config->item('system_status_forwarded'))) // Checks if FD Budget Recommendation not FORWARDED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Budget Recommendation has been Forwarded Already.'
+                    );
+                }
+            }
+        }
+        return array('status' => true);
     }
 }

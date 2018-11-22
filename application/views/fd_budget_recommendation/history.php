@@ -349,16 +349,26 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION'); ?> :</label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_REMARKS'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['remarks']); ?></label>
                                 </div>
                             </div>
 
+                            <?php if(trim($item['remarks_recommendation']) != ""){ ?>
+                                <div class="row show-grid">
+                                    <div class="col-xs-4">
+                                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION_REMARKS'); ?> :</label>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-8">
+                                        <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['remarks_recommendation']); ?></label>
+                                    </div>
+                                </div>
+                            <?php } ?>
+
                         </div>
                     </div>
-
                 <?php
                     $i++;
                 }

@@ -316,10 +316,10 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
     <div class="row show-grid">
         <div class="col-xs-4">
-            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION'); ?> :</label>
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_REMARKS'); ?> :</label>
         </div>
         <div class="col-sm-4 col-xs-8">
-            <label class="control-label"><?php echo nl2br($item['remarks']); ?></label>
+            <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['remarks']); ?></label>
         </div>
     </div>
 
@@ -455,7 +455,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?> <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DELETE_REMARKS'); ?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <textarea name="item[remarks_delete]" class="form-control"></textarea>

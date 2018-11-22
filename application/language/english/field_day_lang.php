@@ -23,6 +23,8 @@ $lang['LABEL_TOTAL_FIELD_DAY_BUDGET'] = 'Total Budget for Field Day (BDT)';
 $lang['LABEL_TOTAL_MARKET_SIZE'] = 'Total Market Size (kg)';
 $lang['LABEL_ARM_MARKET_SIZE'] = 'ARM Market Size (kg)';
 $lang['LABEL_NEXT_SALES_TARGET'] = 'Next Year Sales Target (kg)';
-$lang['LABEL_RECOMMENDATION'] = 'Recommendation';
+$lang['LABEL_BUDGET_REMARKS'] = 'Remarks';
+$lang['LABEL_RECOMMENDATION_REMARKS'] = 'Recommendation';
+$lang['LABEL_DELETE_REMARKS'] = 'Reason/ Remarks';
 
 $lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';

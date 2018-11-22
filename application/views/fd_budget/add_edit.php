@@ -620,7 +620,7 @@ $total_participant = 0;
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION'); ?>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_REMARKS'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">

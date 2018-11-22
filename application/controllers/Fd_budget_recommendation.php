@@ -175,7 +175,7 @@ class Fd_budget_recommendation extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -275,7 +275,7 @@ class Fd_budget_recommendation extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -331,7 +331,7 @@ class Fd_budget_recommendation extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_recommendation');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -348,7 +348,7 @@ class Fd_budget_recommendation extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
             $this->db->select('crop.id AS crop_id, crop.name AS crop_name');
 
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
             $this->db->select('cus_info.name AS outlet_name');
 
             $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -381,10 +381,9 @@ class Fd_budget_recommendation extends Root_Controller
                 $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
-            if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
+            if (!$ajax['status'])
             {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'This Budget has been Forwarded Already';
                 $this->json_return($ajax);
             }
 
@@ -445,7 +444,7 @@ class Fd_budget_recommendation extends Root_Controller
             $this->json_return($ajax);
         }
         $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-        $this->db->select('fd_budget.date_proposal, fd_budget.status_recommendation');
+        $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation');
 
         $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
         $this->db->select('fd_budget_details.*');
@@ -471,10 +470,9 @@ class Fd_budget_recommendation extends Root_Controller
             $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
             $this->json_return($ajax);
         }
-        if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
+        if (!$ajax['status'])
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'This Budget has been Forwarded Already';
             $this->json_return($ajax);
         }
 
@@ -532,6 +530,7 @@ class Fd_budget_recommendation extends Root_Controller
         $item_info['present_condition'] = $result['present_condition'];
         $item_info['farmers_evaluation'] = $result['farmers_evaluation'];
         $item_info['diff_between_varieties'] = $result['diff_between_varieties'];
+        $item_info['remarks'] = $result['remarks'];
 
         $participants = array(
             'dealer_participant' => $dealer_participant,
@@ -623,10 +622,9 @@ class Fd_budget_recommendation extends Root_Controller
                 $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
                 $this->json_return($ajax);
             }
-            if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
+            if (!$ajax['status'])
             {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'This Budget has been Forwarded Already';
                 $this->json_return($ajax);
             }
 
@@ -701,10 +699,9 @@ class Fd_budget_recommendation extends Root_Controller
             $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
             $this->json_return($ajax);
         }
-        if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
+        if (!$ajax['status'])
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'This Budget has been Forwarded Already';
             $this->json_return($ajax);
         }
 
@@ -792,7 +789,7 @@ class Fd_budget_recommendation extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_recommendation');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -809,7 +806,7 @@ class Fd_budget_recommendation extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
             $this->db->select('crop.id AS crop_id, crop.name AS crop_name');
 
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1 AND cus_info.type = ' . $this->config->item('system_customer_type_outlet_id'), 'INNER');
+            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
             $this->db->select('cus_info.name AS outlet_name');
 
             $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
@@ -842,10 +839,9 @@ class Fd_budget_recommendation extends Root_Controller
                 $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
-            if ($result['status_recommendation'] == $this->config->item('system_status_forwarded'))
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
+            if (!$ajax['status'])
             {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'This Budget has been Forwarded Already';
                 $this->json_return($ajax);
             }
 
@@ -972,10 +968,9 @@ class Fd_budget_recommendation extends Root_Controller
             $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
             $this->json_return($ajax);
         }
-        if ($result['status_recommendation'] != $this->config->item('system_status_pending'))
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
+        if (!$ajax['status'])
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'This Budget has been Forwarded Already';
             $this->json_return($ajax);
         }
 
