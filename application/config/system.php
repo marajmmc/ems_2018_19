@@ -41,6 +41,10 @@ $config['system_customer_type_outlet_id']=1;
 $config['system_customer_type_customer_id']=2;
 
 //System Configuration
+    //login
+$config['system_purpose_login_max_wrong_password']='login_max_wrong_password';
+$config['system_purpose_login_status_mobile_verification']='login_status_mobile_verification';//for all commons
+    //ems
 $config['system_purpose_ems_menu_odd_color']='ems_menu_odd_color';
 $config['system_purpose_ems_menu_even_color']='ems_menu_even_color';
 
