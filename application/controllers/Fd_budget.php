@@ -144,6 +144,7 @@ class Fd_budget extends Root_Controller
         {
             $data['status_budget_forward'] = 1;
             $data['status_recommendation'] = 1;
+            $data['status_approve'] = 1;
         }
         return $data;
     }

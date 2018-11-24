@@ -403,7 +403,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea class="form-control" id="remarks" name="item_info[remarks_recommendation]"><?php echo $item_info['remarks_recommendation']; ?></textarea>
+                <label class="control-label" style="font-weight:normal"><?php echo nl2br($item_info['remarks_recommendation']); ?></label>
             </div>
         </div>
 

@@ -339,13 +339,3 @@ class Tour_helper
         return ($Taka ? $Taka . 'Taka' : '') . $Paisa;
     }
 }
-
-if(!function_exists('pr')){
-    function pr($arr = array(), $die=1){
-        echo '<pre>';
-        print_r($arr);
-        echo '</pre>';
-        if($die) die();
-    }
-
-}

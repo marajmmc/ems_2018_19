@@ -3,9 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /* ------FD Budget Status Constants----- */
 CONST FD_BUDGET_FORWARDED = 1;
 CONST FD_BUDGET_NOT_FORWARDED = 2;
+
 /* ------FD Recommendation Status Constants----- */
 CONST FD_RECOMMENDATION_FORWARDED = 3;
 CONST FD_RECOMMENDATION_NOT_FORWARDED = 4;
+
+/* ------FD Approve Status Constants----- */
+CONST FD_BUDGET_APPROVED = 5;
+CONST FD_BUDGET_NOT_APPROVED = 6;
 
 
 class Fd_budget_helper
@@ -223,7 +228,7 @@ class Fd_budget_helper
                 }/*
                 ----------------FD Recommendation Status Constants----------------
                 */
-                if ((FD_RECOMMENDATION_FORWARDED == $flag) && ($item_array['status_recommendation'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Budget Recommendation FORWARDED
+                elseif ((FD_RECOMMENDATION_FORWARDED == $flag) && ($item_array['status_recommendation'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Budget Recommendation FORWARDED
                 {
                     return array(
                         'status' => false,
@@ -235,6 +240,22 @@ class Fd_budget_helper
                     return array(
                         'status' => false,
                         'system_message' => 'This Budget Recommendation has been Forwarded Already.'
+                    );
+                }/*
+                ----------------FD Approve Status Constants----------------
+                */
+                elseif ((FD_BUDGET_APPROVED == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_approved'))) // Checks if FD Budget APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Field Budget is not Approved yet.'
+                    );
+                }
+                elseif ((FD_BUDGET_NOT_APPROVED == $flag) && ($item_array['status_approve'] == $CI->config->item('system_status_approved'))) // Checks if FD Budget not APPROVED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Field Budget has been Approved Already.'
                     );
                 }
             }

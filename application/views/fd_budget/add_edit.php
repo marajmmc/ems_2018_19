@@ -548,11 +548,20 @@ $total_participant = 0;
             {
                 foreach ($expense_items as $expense)
                 {
-                    $value = 0;
+                    $amount=0;
                     if (isset($expense_budget[$expense['value']]))
                     {
-                        $total_budget += $expense_budget[$expense['value']];
-                        $value = (float)$expense_budget[$expense['value']];
+                        $amount = $expense_budget[$expense['value']];
+                        $total_budget += $amount;
+                    }
+
+                    if(($expense['status']==$this->config->item('system_status_inactive')) && !($amount > 0))
+                    {
+                        continue;
+                    }
+                    elseif(($expense['status']==$this->config->item('system_status_inactive')))
+                    {
+                        $expense['text'].= ' <b>('.$this->config->item('system_status_inactive').')</b>';
                     }
                     ?>
                     <tr>
@@ -560,7 +569,7 @@ $total_participant = 0;
                             <label class="control-label" style="font-weight:normal"><?php echo $expense['text']; ?> :</label>
                         </td>
                         <td>
-                            <input type="text" name="expense_budget[<?php echo $expense['value']; ?>]" class="expense_budget form-control float_type_positive" value="<?php echo $value; ?>"/>
+                            <input type="text" name="expense_budget[<?php echo $expense['value']; ?>]" class="expense_budget form-control float_type_positive" value="<?php echo $amount; ?>"/>
                         </td>
                     </tr>
                 <?php
