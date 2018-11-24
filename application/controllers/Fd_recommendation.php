@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Fd_budget_recommendation extends Root_Controller
+class Fd_recommendation extends Root_Controller
 {
     public $message;
     public $permissions;
