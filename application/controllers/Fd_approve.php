@@ -70,13 +70,13 @@ class Fd_approve extends Root_Controller
         {
             $this->system_details($id);
         }*/
+        elseif ($action == "set_preference_list")
+        {
+            $this->system_set_preference('list');
+        }
         elseif ($action == "set_preference_list_all")
         {
             $this->system_set_preference('list_all');
-        }
-        elseif ($action == "set_preference_list_waiting")
-        {
-            $this->system_set_preference('list_waiting');
         }
         elseif ($action == "save_preference")
         {
