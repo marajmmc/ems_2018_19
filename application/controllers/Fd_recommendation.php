@@ -618,9 +618,9 @@ class Fd_recommendation extends Root_Controller
             }
             if (!$this->check_my_editable($result))
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Field Day Budget Picture of other Location');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Picture of other Location');
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
+                $ajax['system_message'] = 'Trying to Upload Field Day Picture of other Location';
                 $this->json_return($ajax);
             }
             $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));
@@ -695,9 +695,9 @@ class Fd_recommendation extends Root_Controller
         }
         if (!$this->check_my_editable($result))
         {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Field Day Budget Picture of other Location');
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Upload Picture of other Location');
             $ajax['status'] = false;
-            $ajax['system_message'] = 'Trying to Upload Field Day Budget Picture of other Location';
+            $ajax['system_message'] = 'Trying to Upload Field Day Picture of other Location';
             $this->json_return($ajax);
         }
         $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_RECOMMENDATION_NOT_FORWARDED));

@@ -65,9 +65,9 @@ if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
     $action_buttons[] = array
     (
         'type' => 'button',
-        'label' => 'Forward',
+        'label' => 'Approve',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/forward')
+        'data-action-link' => site_url($CI->controller_url . '/index/approve')
     );
 }
 $action_buttons[] = array(

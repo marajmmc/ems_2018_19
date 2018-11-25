@@ -8,9 +8,11 @@ CONST FD_BUDGET_NOT_FORWARDED = 2;
 CONST FD_RECOMMENDATION_FORWARDED = 3;
 CONST FD_RECOMMENDATION_NOT_FORWARDED = 4;
 
-/* ------FD Approve Status Constants----- */
+/* ------FD Approve & Reject Status Constants----- */
 CONST FD_BUDGET_APPROVED = 5;
 CONST FD_BUDGET_NOT_APPROVED = 6;
+CONST FD_BUDGET_REJECTED = 7;
+CONST FD_BUDGET_NOT_REJECTED = 8;
 
 
 class Fd_budget_helper
@@ -242,7 +244,7 @@ class Fd_budget_helper
                         'system_message' => 'This Budget Recommendation has been Forwarded Already.'
                     );
                 }/*
-                ----------------FD Approve Status Constants----------------
+                ----------------FD Approve & Reject Status Constants----------------
                 */
                 elseif ((FD_BUDGET_APPROVED == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_approved'))) // Checks if FD Budget APPROVED
                 {
@@ -258,8 +260,31 @@ class Fd_budget_helper
                         'system_message' => 'This Field Budget has been Approved Already.'
                     );
                 }
+                elseif ((FD_BUDGET_REJECTED == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_rejected'))) // Checks if FD Budget REJECTED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Field Budget is not Rejected yet.'
+                    );
+                }
+                elseif ((FD_BUDGET_NOT_REJECTED == $flag) && ($item_array['status_approve'] == $CI->config->item('system_status_rejected'))) // Checks if FD Budget not REJECTED
+                {
+                    return array(
+                        'status' => false,
+                        'system_message' => 'This Field Budget has been Rejected Already.'
+                    );
+                }
             }
         }
         return array('status' => true);
+    }
+}
+
+if(!function_exists('pr')){ // Temporary Function for Debugging. Will be Deleted after the Task Completes.
+    function pr($arr = array(), $die=1){
+        echo '<pre>';
+        print_r($arr);
+        echo '</pre>';
+        if($die) die();
     }
 }

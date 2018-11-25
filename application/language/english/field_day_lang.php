@@ -29,3 +29,4 @@ $lang['LABEL_RECOMMENDATION_REMARKS'] = 'Recommendation';
 $lang['LABEL_DELETE_REMARKS'] = 'Reason/ Remarks';
 
 $lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
+$lang['LABEL_REJECT'] = "Reject";

@@ -107,6 +107,22 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         $base_path = $CI->config->item('system_base_url_picture');
                         foreach ($picture_categories as $picture_category)
                         {
+                            if (isset($file_details[$picture_category['value']]))
+                            {
+                                $file_location_variety1 = $file_details[$picture_category['value']]['file_location_variety1'];
+                                $file_location_variety2 = $file_details[$picture_category['value']]['file_location_variety2'];
+                                $remarks_variety1 = $file_details[$picture_category['value']]['remarks_variety1'];
+                                $remarks_variety2 = $file_details[$picture_category['value']]['remarks_variety2'];
+                                if (($picture_category['status'] == $CI->config->item('system_status_inactive')) && (trim($file_location_variety1) == "") && (trim($remarks_variety1) == "")
+                                    && (trim($file_location_variety2) == "") && (trim($remarks_variety2) == ""))
+                                {
+                                    continue; // If no Data found regarding In-Active picture category.
+                                }
+                            }
+                            else if (($picture_category['status'] == $CI->config->item('system_status_inactive')))
+                            {
+                                continue;
+                            }
                             ?>
                             <tr>
                                 <td rowspan="2">
