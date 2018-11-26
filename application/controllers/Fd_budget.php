@@ -1561,7 +1561,7 @@ class Fd_budget extends Root_Controller
         $this->form_validation->set_rules('item_info[quantity_market_size_total]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
         $this->form_validation->set_rules('item_info[quantity_market_size_arm]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
         $this->form_validation->set_rules('item_info[quantity_sales_target]', $this->lang->line('LABEL_NEXT_SALES_TARGET'), 'required|numeric');
-        $this->form_validation->set_rules('item_info[remarks]', $this->lang->line('LABEL_RECOMMENDATION'), 'required');
+        $this->form_validation->set_rules('item_info[remarks]', $this->lang->line('LABEL_BUDGET_REMARKS'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
