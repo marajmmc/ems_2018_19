@@ -1,7 +1,7 @@
 <?php
 // Field Day Task
-$lang['LABEL_DATE_PROPOSAL'] = 'Budget Proposal Date';
-$lang['LABEL_DATE_EXPECTED'] = 'Expected Date of Field Day';
+$lang['LABEL_DATE_PROPOSAL'] = 'Proposal Date (Budget)';
+$lang['LABEL_DATE_EXPECTED'] = 'Expected Date (Field Day)';
 $lang['LABEL_AMOUNT_BUDGET_TOTAL'] = 'Expected Total Budget';
 $lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
@@ -14,11 +14,10 @@ $lang['LABEL_STATUS_BUDGET_APPROVE'] = 'Approve Status';
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
 $lang['LABEL_DEALERS_EVALUATION'] = 'Dealers/ Farmers Evaluation';
 $lang['LABEL_SPECIFIC_DIFFERENCE'] = 'Specific Difference between Varieties';
-$lang['LABEL_PARTICIPANT_THROUGH_DEALER'] = 'Participant(s) Through Dealers';
-$lang['LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'] = 'Participant(s) Through Lead Farmers';
-$lang['LABEL_PARTICIPANT_THROUGH_CUSTOMER'] = 'Participant(s) Through Customers';
-$lang['LABEL_PARTICIPANT_THROUGH_OTHERS'] = 'Participant(s) Through Others';
-$lang['LABEL_EXPECTED_PARTICIPANT'] = 'Total no. of Participant(s)';
+$lang['LABEL_PARTICIPANT_THROUGH_DEALER'] = 'Participants Through Dealers';
+$lang['LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'] = 'Participants Through Lead Farmers';
+$lang['LABEL_PARTICIPANT_THROUGH_OTHERS'] = 'Participants Through Others';
+$lang['LABEL_TOTAL_PARTICIPANT'] = 'Total no. of Participants';
 $lang['LABEL_FIELD_DAY_BUDGET'] = 'Budget for Field Day (BDT)';
 $lang['LABEL_TOTAL_FIELD_DAY_BUDGET'] = 'Total Budget for Field Day (BDT)';
 $lang['LABEL_TOTAL_MARKET_SIZE'] = 'Total Market Size (kg)';

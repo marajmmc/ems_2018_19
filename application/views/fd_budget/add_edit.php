@@ -62,33 +62,36 @@ $total_participant = 0;
     </div>
 </div>
 
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <input type="text" name="item_info[date_expected]" id="date_expected" class="form-control datepicker" value="<?php echo System_helper::display_date($item_info['date_expected']); ?>" readonly/>
+    </div>
+</div>
+
 <div class="row show-grid" id="crop_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <?php if ($item['id'] > 0)
-        {
-            ?>
-            <label class="control-label"><?php echo $item_info['crop_name']; ?></label>
-        <?php
-        }
-        else
-        {
-            ?>
-            <select id="crop_id" class="form-control">
-                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                <?php
+        <select id="crop_id" class="form-control">
+            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+            <?php
+            if ($crops)
+            {
                 foreach ($crops as $crop)
                 {
                     ?>
                     <option value="<?php echo $crop['value'] ?>" <?php echo ($crop['value'] == $item_info['crop_id']) ? "selected" : ""; ?>><?php echo $crop['text']; ?></option>
                 <?php
                 }
-                ?>
-            </select>
-        <?php } ?>
+            }
+            ?>
+        </select>
     </div>
 </div>
 
@@ -98,27 +101,20 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <?php if ($item['id'] > 0)
-        {
-            ?>
-            <label class="control-label"><?php echo $item_info['crop_type_name']; ?></label>
-        <?php
-        }
-        else
-        {
-            ?>
-            <select id="crop_type_id" class="form-control">
-                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                <?php
+        <select id="crop_type_id" class="form-control">
+            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+            <?php
+            if ($crop_types)
+            {
                 foreach ($crop_types as $type)
                 {
                     ?>
                     <option value="<?php echo $type['value'] ?>" <?php echo ($type['value'] == $item_info['crop_type_id']) ? "selected" : ""; ?>><?php echo $type['text']; ?></option>
                 <?php
                 }
-                ?>
-            </select>
-        <?php } ?>
+            }
+            ?>
+        </select>
     </div>
 </div>
 
@@ -128,57 +124,72 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <?php if ($item['id'] > 0)
-        {
-            ?>
-            <label class="control-label"><?php echo $item_info['variety1_name']; ?></label>
-        <?php
-        }
-        else
-        {
-            ?>
-            <select id="variety1_id" name="item_info[variety1_id]" class="form-control">
-                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                <?php
+        <select id="variety1_id" name="item_info[variety1_id]" class="form-control">
+            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+            <?php
+            if ($crop_varieties1)
+            {
                 foreach ($crop_varieties1 as $variety1)
                 {
                     ?>
                     <option value="<?php echo $variety1['value'] ?>" <?php echo ($variety1['value'] == $item_info['variety1_id']) ? "selected" : ""; ?>><?php echo $variety1['text']; ?></option>
                 <?php
                 }
-                ?>
-            </select>
-        <?php } ?>
+            }
+            ?>
+        </select>
     </div>
 </div>
 
 <div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="variety2_id_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>
-            <span style="color:#FF0000">*</span></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?> &nbsp;</label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <?php if ($item['id'] > 0)
-        {
-            ?>
-            <label class="control-label"><?php echo $item_info['variety2_name']; ?></label>
-        <?php
-        }
-        else
-        {
-            ?>
-            <select id="variety2_id" name="item_info[variety2_id]" class="form-control">
-                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                <?php
+        <select id="variety2_id" name="item_info[variety2_id]" class="form-control">
+            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+            <?php
+            if ($crop_varieties2)
+            {
                 foreach ($crop_varieties2 as $variety2)
                 {
                     ?>
                     <option value="<?php echo $variety2['value'] ?>" <?php echo ($variety2['value'] == $item_info['variety2_id']) ? "selected" : ""; ?>><?php echo $variety2['text']; ?></option>
                 <?php
                 }
-                ?>
-            </select>
-        <?php } ?>
+            }
+            ?>
+        </select>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <textarea class="form-control" id="present_condition" name="item_info[present_condition]"><?php echo $item_info['present_condition']; ?></textarea>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <textarea class="form-control" id="farmers_evaluation" name="item_info[farmers_evaluation]"><?php echo $item_info['farmers_evaluation']; ?></textarea>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <textarea class="form-control" id="diff_between_varieties" name="item_info[diff_between_varieties]"><?php echo $item_info['diff_between_varieties']; ?></textarea>
     </div>
 </div>
 
@@ -381,46 +392,6 @@ $total_participant = 0;
     </div>
 </div>
 
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="present_condition" name="item_info[present_condition]"><?php echo $item_info['present_condition']; ?></textarea>
-    </div>
-</div>
-
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="farmers_evaluation" name="item_info[farmers_evaluation]"><?php echo $item_info['farmers_evaluation']; ?></textarea>
-    </div>
-</div>
-
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="diff_between_varieties" name="item_info[diff_between_varieties]"><?php echo $item_info['diff_between_varieties']; ?></textarea>
-    </div>
-</div>
-
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[date_expected]" id="date_expected" class="form-control datepicker" value="<?php echo System_helper::display_date($item_info['date_expected']); ?>" readonly/>
-    </div>
-</div>
-
 <div style="<?php echo (!(sizeof($dealers) > 0)) ? 'display:none;' : ''; ?>" class="row show-grid" id="dealer_container">
 
     <div id="dealer_id" class="row show-grid">
@@ -491,24 +462,6 @@ $total_participant = 0;
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_CUSTOMER'); ?>
-            <span style="color:#FF0000;">*</span></label>
-    </div>
-    <div class="col-xs-4">
-        <?php
-        $value = 0;
-        if (isset($item_info['participant_customers']))
-        {
-            $total_participant += $item_info['participant_customers'];
-            $value = (int)$item_info['participant_customers'];
-        }
-        ?>
-        <input type="text" name="item_info[participant_customers]" class="participant_budget form-control integer_type_positive" value="<?php echo $value; ?>"/>
-    </div>
-</div>
-
-<div class="row show-grid">
-    <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?>
             <span style="color:#FF0000;">*</span></label>
     </div>
@@ -527,7 +480,7 @@ $total_participant = 0;
 
 <div class="row show-grid" id="total_participant_container">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EXPECTED_PARTICIPANT'); ?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_PARTICIPANT'); ?> &nbsp;</label>
     </div>
     <div class="col-xs-4">
         <label id="no_of_participant"><?php echo $total_participant; ?></label>
@@ -548,20 +501,20 @@ $total_participant = 0;
             {
                 foreach ($expense_items as $expense)
                 {
-                    $amount=0;
+                    $amount = 0;
                     if (isset($expense_budget[$expense['value']]))
                     {
                         $amount = $expense_budget[$expense['value']];
                         $total_budget += $amount;
                     }
 
-                    if(($expense['status']==$this->config->item('system_status_inactive')) && !($amount > 0))
+                    if (($expense['status'] == $this->config->item('system_status_inactive')) && !($amount > 0))
                     {
                         continue;
                     }
-                    elseif(($expense['status']==$this->config->item('system_status_inactive')))
+                    elseif (($expense['status'] == $this->config->item('system_status_inactive')))
                     {
-                        $expense['text'].= ' <b>('.$this->config->item('system_status_inactive').')</b>';
+                        $expense['text'] .= ' <b>(' . $this->config->item('system_status_inactive') . ')</b>';
                     }
                     ?>
                     <tr>
@@ -590,7 +543,7 @@ $total_participant = 0;
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET'); ?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET'); ?> &nbsp;</label>
     </div>
     <div class="col-xs-4">
         <label id="total_budget" class="amount_iou_label"><?php echo System_helper::get_string_amount($total_budget); ?></label>
@@ -627,16 +580,6 @@ $total_participant = 0;
     </div>
 </div>
 
-<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_REMARKS'); ?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="remarks" name="item_info[remarks]"><?php echo $item_info['remarks']; ?></textarea>
-    </div>
-</div>
-
 <div class="clearfix"></div>
 </div>
 
@@ -656,11 +599,8 @@ jQuery(document).ready(function ($) {
     $(document).off("input", ".expense_budget");
     $(document).off("input", ".participant_budget");
 
-    <?php /*
-    var fd_crop_id = '<?php echo $item_info['crop_id']; ?>';
-    $("#crop_id").html(get_dropdown_with_select(system_crops, fd_crop_id));
-    */ ?>
-    $("#crop_id").html(get_dropdown_with_select(system_crops));
+    /*var dropdown_crop_id = 10;
+     $("#crop_id").html(get_dropdown_with_select(system_crops, dropdown_crop_id));*/
 
     /*--------------------- CROP RELATED DROPDOWN ---------------------*/
     $(document).on("change", "#crop_id", function () {
