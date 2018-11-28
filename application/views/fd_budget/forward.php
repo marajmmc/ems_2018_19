@@ -433,6 +433,15 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
 
     <div class="row show-grid">
         <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?> &nbsp;</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <textarea name="item[remarks_budget_forward]" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="row show-grid">
+        <div class="col-xs-4">
             &nbsp;
         </div>
         <div class="col-sm-4 col-xs-4">

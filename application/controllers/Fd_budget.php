@@ -488,8 +488,6 @@ class Fd_budget extends Root_Controller
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
             $data['expense_budget'] = array();
 
-            $data['items_history']['items'] = array();
-
             $data['title'] = "Create new Field Day Budget";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));
@@ -602,7 +600,7 @@ class Fd_budget extends Root_Controller
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
             $data['expense_budget'] = json_decode($result['amount_expense_items'], true);
 
-            $data['items_history']['items'] = Fd_budget_helper::get_fd_budget_history($item_id);
+            $data['items_history'] = Fd_budget_helper::get_fd_budget_history($item_id);
 
             $data['title'] = "Edit Field Day Budget ( ID:" . $result['budget_id'] . " )";
             $ajax['status'] = true;
@@ -840,6 +838,7 @@ class Fd_budget extends Root_Controller
             $data = array();
             $data['item'] = $result;
 
+            $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
             $picture_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
             if ($picture_data)
             {
@@ -847,8 +846,6 @@ class Fd_budget extends Root_Controller
                 {
                     $data['image_details'][$value['category_id']] = $value;
                 }
-
-                $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
                 foreach ($data['picture_categories'] as $value)
                 {
                     if (!isset($data['image_details'][$value['value']]))
@@ -864,7 +861,6 @@ class Fd_budget extends Root_Controller
             }
             else
             {
-                $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
                 foreach ($data['picture_categories'] as $value)
                 {
                     $data['image_details'][$value['value']] = array(
@@ -900,6 +896,7 @@ class Fd_budget extends Root_Controller
         $item_info = $this->input->post('item_info');
         $user = User_helper::get_user();
         $time = time();
+
         //Permission Checking
         if (!((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)) || (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))))
         {
@@ -936,43 +933,44 @@ class Fd_budget extends Root_Controller
         }
 
         $insert_data = array(); //Main array for INSERT
-
-        $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
-        if ($results) //EDIT
-        {
-            foreach ($results as $row)
-            {
-                $insert_data[$row['category_id']] = array(
-                    'image_name_variety1' => $row['image_name_variety1'],
-                    'image_location_variety1' => $row['image_location_variety1'],
-                    'remarks_variety1' => $row['remarks_variety1'],
-
-                    'image_name_variety2' => $row['image_name_variety2'],
-                    'image_location_variety2' => $row['image_location_variety2'],
-                    'remarks_variety2' => $row['remarks_variety2'],
-                );
-            }
-        }
-
         if (!($result['variety2_id']) > 0)
         {
             foreach ($item_info as $category_id => $info) //Submitted remarks if Variety-2 Not Exist
             {
-                $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
+                if (trim($info['remarks_variety1']))
+                {
+                    $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
+                }
             }
         }
         else
         {
             foreach ($item_info as $category_id => $info) //Submitted remarks
             {
-                $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
-                $insert_data[$category_id]['remarks_variety2'] = $info['remarks_variety2'];
+                if (trim($info['remarks_variety1']) || trim($info['remarks_variety2']))
+                {
+                    $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
+                    $insert_data[$category_id]['remarks_variety2'] = $info['remarks_variety2'];
+                }
             }
         }
 
+        //pr($insert_data,0);
+
         $path = 'images/fd_budget_variety/' . $item_id;
         $uploaded_files = System_helper::upload_file($path);
-        if ($uploaded_files && (sizeof($uploaded_files) > 0)) //File Upload
+        foreach ($uploaded_files as $file) // Validation for uploaded Files
+        {
+            if (!$file['status'])
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = $file['message'];
+                $this->json_return($ajax);
+                die();
+            }
+        }
+
+        if ($uploaded_files && (sizeof($uploaded_files) > 0)) // File/Image Upload
         {
             foreach ($uploaded_files as $key => $uploaded_file)
             {
@@ -984,6 +982,40 @@ class Fd_budget extends Root_Controller
                 }
             }
         }
+
+
+        //pr($insert_data,0);
+
+
+
+        if(empty($insert_data)) // Validation: If no NEW Image is Selected/ No Remarks is given( BOTH ADD & EDIT )
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'No Remarks added/ New Image Selected.';
+            $this->json_return($ajax);
+        }
+
+
+        $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+        if ($results) //EDIT
+        {
+            foreach ($results as $row)
+            {
+                if(!isset($insert_data[$row['category_id']])){ // Assign those OLD Image data, which are not in $insert_data
+                    $insert_data[$row['category_id']] = array(
+                        'image_name_variety1' => $row['image_name_variety1'],
+                        'image_location_variety1' => $row['image_location_variety1'],
+                        'remarks_variety1' => $row['remarks_variety1'],
+
+                        'image_name_variety2' => $row['image_name_variety2'],
+                        'image_location_variety2' => $row['image_location_variety2'],
+                        'remarks_variety2' => $row['remarks_variety2'],
+                    );
+                }
+            }
+        }
+
+        //pr($insert_data);
 
         $this->db->trans_start(); //DB Transaction Handle START
         //Update Revision
@@ -1085,7 +1117,6 @@ class Fd_budget extends Root_Controller
                 $this->json_return($ajax);
             }
 
-
             $data = array();
             $data['item'] = $result;
 
@@ -1118,37 +1149,37 @@ class Fd_budget extends Root_Controller
 
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
             $result_data = json_decode($result['amount_expense_items'], TRUE);
-            foreach ($data['expense_items'] as &$value)
+            foreach ($data['expense_items'] as &$expense_item)
             {
-                if (isset($result_data[$value['id']]))
+                if (isset($result_data[$expense_item['id']]))
                 {
-                    $value['amount'] = $result_data[$value['id']];
+                    $expense_item['amount'] = $result_data[$expense_item['id']];
                 }
                 else
                 {
-                    $value['amount'] = 0;
+                    $expense_item['amount'] = 0;
                 }
 
-                if ($value['status'] == $this->config->item('system_status_inactive'))
+                if ($expense_item['status'] == $this->config->item('system_status_inactive'))
                 {
-                    $value['name'] = $value['name'] . ' <b>(' . $value['status'] . ')</b>';
+                    $expense_item['name'] = $expense_item['name'] . ' <b>(' . $expense_item['status'] . ')</b>';
                 }
             }
 
             $picture_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
             if ($picture_data)
             {
-                foreach ($picture_data as &$value)
+                foreach ($picture_data as $picture)
                 {
-                    $data['image_details'][$value['category_id']] = $value;
+                    $data['image_details'][$picture['category_id']] = $picture;
                 }
 
                 $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-                foreach ($data['picture_categories'] as $value)
+                foreach ($data['picture_categories'] as $picture)
                 {
-                    if (!isset($data['image_details'][$value['value']]))
+                    if (!isset($data['image_details'][$picture['value']]))
                     {
-                        $data['image_details'][$value['value']] = array(
+                        $data['image_details'][$picture['value']] = array(
                             'image_location_variety1' => FD_NO_IMAGE_PATH,
                             'remarks_variety1' => '',
                             'image_location_variety2' => FD_NO_IMAGE_PATH,
@@ -1160,9 +1191,9 @@ class Fd_budget extends Root_Controller
             else
             {
                 $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
-                foreach ($data['picture_categories'] as $value)
+                foreach ($data['picture_categories'] as $picture)
                 {
-                    $data['image_details'][$value['value']] = array(
+                    $data['image_details'][$picture['value']] = array(
                         'image_location_variety1' => FD_NO_IMAGE_PATH,
                         'remarks_variety1' => '',
                         'image_location_variety2' => FD_NO_IMAGE_PATH,
@@ -1212,7 +1243,7 @@ class Fd_budget extends Root_Controller
         if (trim($item['remarks_delete']) == "")
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = ($this->lang->line('LABEL_REMARKS')) . ' field is required.';
+            $ajax['system_message'] = ($this->lang->line('LABEL_DELETE_REMARKS')) . ' field is required.';
             $this->json_return($ajax);
         }
 
@@ -1364,37 +1395,37 @@ class Fd_budget extends Root_Controller
 
             $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array(), 0, 0, array('ordering ASC'));
             $result_data = json_decode($result['amount_expense_items'], TRUE);
-            foreach ($data['expense_items'] as &$value)
+            foreach ($data['expense_items'] as &$expense_item)
             {
-                if (isset($result_data[$value['id']]))
+                if (isset($result_data[$expense_item['id']]))
                 {
-                    $value['amount'] = $result_data[$value['id']];
+                    $expense_item['amount'] = $result_data[$expense_item['id']];
                 }
                 else
                 {
-                    $value['amount'] = 0;
+                    $expense_item['amount'] = 0;
                 }
 
-                if ($value['status'] == $this->config->item('system_status_inactive'))
+                if ($expense_item['status'] == $this->config->item('system_status_inactive'))
                 {
-                    $value['name'] = $value['name'] . ' <b>(' . $value['status'] . ')</b>';
+                    $expense_item['name'] = $expense_item['name'] . ' <b>(' . $expense_item['status'] . ')</b>';
                 }
             }
 
             $picture_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
             if ($picture_data)
             {
-                foreach ($picture_data as &$value)
+                foreach ($picture_data as $picture)
                 {
-                    $data['image_details'][$value['category_id']] = $value;
+                    $data['image_details'][$picture['category_id']] = $picture;
                 }
 
                 $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array(), 0, 0, array('ordering ASC'));
-                foreach ($data['picture_categories'] as $value)
+                foreach ($data['picture_categories'] as $picture)
                 {
-                    if (!isset($data['image_details'][$value['value']]))
+                    if (!isset($data['image_details'][$picture['value']]))
                     {
-                        $data['image_details'][$value['value']] = array(
+                        $data['image_details'][$picture['value']] = array(
                             'image_location_variety1' => FD_NO_IMAGE_PATH,
                             'remarks_variety1' => '',
                             'image_location_variety2' => FD_NO_IMAGE_PATH,
@@ -1406,9 +1437,9 @@ class Fd_budget extends Root_Controller
             else
             {
                 $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
-                foreach ($data['picture_categories'] as $value)
+                foreach ($data['picture_categories'] as $picture)
                 {
-                    $data['image_details'][$value['value']] = array(
+                    $data['image_details'][$picture['value']] = array(
                         'image_location_variety1' => FD_NO_IMAGE_PATH,
                         'remarks_variety1' => '',
                         'image_location_variety2' => FD_NO_IMAGE_PATH,

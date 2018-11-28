@@ -95,7 +95,7 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo $item['variety2_name']; ?></label>
+                                    <label class="control-label"><?php echo ($item['variety2_name']) ? $item['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'; ?>
                                 </div>
                             </div>
 
@@ -257,16 +257,6 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_CUSTOMER'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo $item['participant_customers']; ?></label>
-                                    <?php $total_participant += $item['participant_customers']; ?>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
@@ -277,7 +267,7 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EXPECTED_PARTICIPANT'); ?> :</label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_BUDGET_TOTAL'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo $total_participant; ?></label>
@@ -344,15 +334,6 @@ if($count > 0){
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_sales_target']); ?></label>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_REMARKS'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['remarks']); ?></label>
                                 </div>
                             </div>
 
