@@ -1253,8 +1253,8 @@ class Fd_budget extends Root_Controller
         }
 
         $this->db->trans_start(); //DB Transaction Handle START
-        $item['date_deleted_budget'] = $time;
-        $item['user_deleted_budget'] = $user->user_id;
+        $item['date_deleted'] = $time;
+        $item['user_deleted'] = $user->user_id;
         Query_helper::update($this->config->item('table_ems_fd_budget'), $item, array("id = " . $item_id), FALSE);
         $this->db->trans_complete(); //DB Transaction Handle END
 
