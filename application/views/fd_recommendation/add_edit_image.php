@@ -24,6 +24,10 @@ $action_buttons[] = array(
     'data-form' => '#save_form'
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
+
+$show_variety2 = ($item['variety2_id'] > 0) ? TRUE : FALSE;
+$image_base_path = $CI->config->item('system_base_url_picture');
+$image_style = FD_IMAGE_DISPLAY_STYLE;
 ?>
 <style>
     .blob {
@@ -31,6 +35,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         padding: 3px;
         border: 3px solid #8c8c8c
     }
+
     .blob:hover {
         border: 3px solid #3693CF
     }
@@ -87,7 +92,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?> : </label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $item['variety2_name']; ?>
+                <label class="control-label"><?php echo ($item['variety2_name']) ? $item['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'; ?>
             </div>
         </div>
 
@@ -95,110 +100,82 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <div class="col-xs-12">
                 <div style="overflow-x:scroll">
                     <table class="table table-bordered">
-                    <tr>
-                        <th style="width:26%">Picture Category</th>
-                        <th style="width:37%" colspan="2"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
-                        <th style="width:37%" colspan="2"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
-                    </tr>
-                    <?php
-                    if (isset($picture_categories) && (sizeof($picture_categories) > 0))
-                    {
-                        $image_style = "max-height:220px";
-                        $base_path = $CI->config->item('system_base_url_picture');
-                        foreach ($picture_categories as $picture_category)
-                        {
-                            if (isset($file_details[$picture_category['value']]))
+                        <tr>
+                            <th style="width:25%">Picture Category</th>
+                            <th colspan="2"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
+                            <?php if ($show_variety2)
                             {
-                                $file_location_variety1 = $file_details[$picture_category['value']]['file_location_variety1'];
-                                $file_location_variety2 = $file_details[$picture_category['value']]['file_location_variety2'];
-                                $remarks_variety1 = $file_details[$picture_category['value']]['remarks_variety1'];
-                                $remarks_variety2 = $file_details[$picture_category['value']]['remarks_variety2'];
-                                if (($picture_category['status'] == $CI->config->item('system_status_inactive')) && (trim($file_location_variety1) == "") && (trim($remarks_variety1) == "")
-                                    && (trim($file_location_variety2) == "") && (trim($remarks_variety2) == ""))
-                                {
-                                    continue; // If no Data found regarding In-Active picture category.
-                                }
-                            }
-                            else if (($picture_category['status'] == $CI->config->item('system_status_inactive')))
-                            {
-                                continue;
-                            }
-                            ?>
-                            <tr>
-                                <td rowspan="2">
-                                    <?php
-                                    if ($picture_category['status'] == $CI->config->item('system_status_inactive'))
-                                    {
-                                        $picture_category['text'] .= ' <br/>( <b class="text-danger">' . $CI->config->item('system_status_inactive') . '</b> )';
-                                    }
-                                    echo $picture_category['text'];
-                                    ?>
-                                </td>
-
-                                <td id="image_variety1_<?php echo $picture_category['value']; ?>">
-                                    <?php
-                                    if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['file_location_variety1']) != ""))
-                                    {
-                                        $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety1'];
-                                        ?>
-                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob">
-                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
-                                        </a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        $img_src = $base_path . 'images/no_image.jpg';
-                                        ?>
-                                        <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="No Image Found" /><?php
-                                    }
-                                    ?>
-                                </td>
-
-                                <td style="width:1%">
-                                    <input type="file" class="browse_button" data-preview-container="#image_variety1_<?php echo $picture_category['value']; ?>" name="variety_1_category_<?php echo $picture_category['value']; ?>">
-                                </td>
-
-                                <td id="image_variety2_<?php echo $picture_category['value']; ?>">
-                                    <?php
-                                    if ((isset($file_details[$picture_category['value']])) && (strlen($file_details[$picture_category['value']]['file_location_variety2']) != ""))
-                                    {
-                                        $img_src = $base_path . $file_details[$picture_category['value']]['file_location_variety2'];
-                                        ?>
-                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob">
-                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
-                                        </a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        $img_src = $base_path . 'images/no_image.jpg';
-                                        ?>
-                                        <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="No Image Found" /><?php
-                                    }
-                                    ?>
-                                </td>
-
-                                <td style="width:1%">
-                                    <input type="file" class="browse_button" data-preview-container="#image_variety2_<?php echo $picture_category['value']; ?>" name="variety_2_category_<?php echo $picture_category['value']; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <label>Remarks :</label>
-                                    <?php $txt = (isset($file_details[$picture_category['value']])) ? $file_details[$picture_category['value']]['remarks_variety1'] : ""; ?>
-                                    <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety1]"><?php echo $txt; ?></textarea>
-                                </td>
-                                <td colspan="2">
-                                    <label>Remarks :</label>
-                                    <?php $txt = (isset($file_details[$picture_category['value']])) ? $file_details[$picture_category['value']]['remarks_variety2'] : ""; ?>
-                                    <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety2]"><?php echo $txt; ?></textarea>
-                                </td>
-                            </tr>
+                                ?>
+                                <th colspan="2"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
+                            <?php } ?>
+                        </tr>
                         <?php
-                        }
-                    } ?>
-                </table>
+                        if (isset($picture_categories) && (sizeof($picture_categories) > 0))
+                        {
+                            foreach ($picture_categories as $picture_category)
+                            {
+                                ?>
+                                <tr>
+                                    <td rowspan="2">
+                                        <?php
+                                        if ($picture_category['status'] == $CI->config->item('system_status_inactive'))
+                                        {
+                                            $picture_category['text'] .= ' <br/>( <b class="text-danger">' . $CI->config->item('system_status_inactive') . '</b> )';
+                                        }
+                                        echo $picture_category['text'];
+                                        ?>
+                                    </td>
+
+                                    <td id="image_variety1_<?php echo $picture_category['value']; ?>">
+                                        <?php
+                                        $img_src = $image_base_path . $image_details[$picture_category['value']]['image_location_variety1'];
+                                        ?>
+                                        <a href="<?php echo $img_src; ?>" target="_blank" class="external blob">
+                                            <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
+                                        </a>
+                                    </td>
+
+                                    <td style="width:1%">
+                                        <input type="file" class="browse_button" data-preview-container="#image_variety1_<?php echo $picture_category['value']; ?>" name="variety_1_category_<?php echo $picture_category['value']; ?>">
+                                    </td>
+
+                                    <?php if ($show_variety2)
+                                    {
+                                        ?>
+                                        <td id="image_variety2_<?php echo $picture_category['value']; ?>">
+                                            <?php
+                                            $img_src = $image_base_path . $image_details[$picture_category['value']]['image_location_variety2'];
+                                            ?>
+                                            <a href="<?php echo $img_src; ?>" target="_blank" class="external blob">
+                                                <img style="<?php echo $image_style; ?>" src="<?php echo $img_src; ?>" alt="Picture Missing"/>
+                                            </a>
+                                        </td>
+
+                                        <td style="width:1%">
+                                            <input type="file" class="browse_button" data-preview-container="#image_variety2_<?php echo $picture_category['value']; ?>" name="variety_2_category_<?php echo $picture_category['value']; ?>">
+                                        </td>
+                                    <?php } ?>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <label>Remarks :</label>
+                                        <?php $txt = (isset($image_details[$picture_category['value']])) ? $image_details[$picture_category['value']]['remarks_variety1'] : ""; ?>
+                                        <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety1]"><?php echo $txt; ?></textarea>
+                                    </td>
+                                    <?php if ($show_variety2)
+                                    {
+                                        ?>
+                                        <td colspan="2">
+                                            <label>Remarks :</label>
+                                            <?php $txt = (isset($image_details[$picture_category['value']])) ? $image_details[$picture_category['value']]['remarks_variety2'] : ""; ?>
+                                            <textarea class="form-control" name="item_info[<?php echo $picture_category['value']; ?>][remarks_variety2]"><?php echo $txt; ?></textarea>
+                                        </td>
+                                    <?php } ?>
+                                </tr>
+                            <?php
+                            }
+                        } ?>
+                    </table>
                 </div>
             </div>
         </div>
@@ -212,7 +189,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
         system_off_events(); // Triggers
-        system_preset({controller:'<?php echo $CI->router->class; ?>'});
+        system_preset({controller: '<?php echo $CI->router->class; ?>'});
         $(".browse_button").filestyle({input: false, icon: false, buttonText: "Upload", buttonName: "btn-primary"});
     });
 </script>

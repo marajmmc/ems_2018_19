@@ -65,6 +65,15 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?> :</label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::display_date($item['date_expected']); ?></label>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
@@ -95,7 +104,34 @@ if($count > 0){
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo $item['variety2_name']; ?></label>
+                                    <label class="control-label"><?php echo ($item['variety2_name']) ? $item['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'; ?>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?> :</label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['present_condition']); ?></label>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?> :</label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['farmers_evaluation']); ?></label>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?> :</label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['diff_between_varieties']); ?></label>
                                 </div>
                             </div>
 
@@ -150,42 +186,6 @@ if($count > 0){
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['address']); ?></label>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['present_condition']); ?></label>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['farmers_evaluation']); ?></label>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['diff_between_varieties']); ?></label>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo System_helper::display_date($item['date_expected']); ?></label>
                                 </div>
                             </div>
 
@@ -257,16 +257,6 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_CUSTOMER'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo $item['participant_customers']; ?></label>
-                                    <?php $total_participant += $item['participant_customers']; ?>
-                                </div>
-                            </div>
-
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
@@ -277,7 +267,7 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_EXPECTED_PARTICIPANT'); ?> :</label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_BUDGET_TOTAL'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo $total_participant; ?></label>
@@ -347,28 +337,9 @@ if($count > 0){
                                 </div>
                             </div>
 
-                            <div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BUDGET_REMARKS'); ?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['remarks']); ?></label>
-                                </div>
-                            </div>
-
-                            <?php if(trim($item['remarks_recommendation']) != ""){ ?>
-                                <div class="row show-grid">
-                                    <div class="col-xs-4">
-                                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECOMMENDATION_REMARKS'); ?> :</label>
-                                    </div>
-                                    <div class="col-sm-4 col-xs-8">
-                                        <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['remarks_recommendation']); ?></label>
-                                    </div>
-                                </div>
-                            <?php } ?>
-
                         </div>
                     </div>
+
                 <?php
                     $i++;
                 }

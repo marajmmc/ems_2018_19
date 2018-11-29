@@ -10,12 +10,14 @@ CONST FD_BUDGET_NOT_FORWARDED = 2;
 /* ------FD Recommendation Status Constants----- */
 CONST FD_RECOMMENDATION_FORWARDED = 3;
 CONST FD_RECOMMENDATION_NOT_FORWARDED = 4;
+CONST FD_BUDGET_REJECTED_ZI = 5;
+CONST FD_BUDGET_NOT_REJECTED_ZI = 6;
 
 /* ------FD Approve & Reject Status Constants----- */
-CONST FD_BUDGET_APPROVED = 5;
-CONST FD_BUDGET_NOT_APPROVED = 6;
-CONST FD_BUDGET_REJECTED = 7;
-CONST FD_BUDGET_NOT_REJECTED = 8;
+CONST FD_BUDGET_APPROVED = 7;
+CONST FD_BUDGET_NOT_APPROVED = 8;
+CONST FD_BUDGET_REJECTED_DI = 9;
+CONST FD_BUDGET_NOT_REJECTED_DI = 10;
 
 
 class Fd_budget_helper
@@ -213,9 +215,10 @@ class Fd_budget_helper
 
         $CI =& get_instance();
         foreach ($check_status AS $flag)
-        { /*
-                ----------------FD Budget Status Constants----------------
-                */
+        {
+            /*
+            ----------------FD Budget Status Constants----------------
+            */
             if ((FD_BUDGET_FORWARDED == $flag) && ($item_array['status_budget_forward'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Budget FORWARDED
             {
                 return array(
@@ -231,8 +234,8 @@ class Fd_budget_helper
                 );
             }
             /*
-                            ----------------FD Recommendation Status Constants----------------
-                            */
+            ----------------FD Recommendation Status Constants----------------
+            */
             elseif ((FD_RECOMMENDATION_FORWARDED == $flag) && ($item_array['status_recommendation'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Budget Recommendation FORWARDED
             {
                 return array(
@@ -247,9 +250,23 @@ class Fd_budget_helper
                     'system_message' => 'This Budget Recommendation has been Forwarded Already.'
                 );
             }
+            elseif ((FD_BUDGET_REJECTED_ZI == $flag) && ($item_array['status_recommendation'] != $CI->config->item('system_status_rejected'))) // Checks if FD Budget Recommendation REJECTED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field Budget Recommendation is not Rejected.'
+                );
+            }
+            elseif ((FD_BUDGET_NOT_REJECTED_ZI == $flag) && ($item_array['status_recommendation'] == $CI->config->item('system_status_rejected'))) // Checks if FD Budget Recommendation not REJECTED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field Budget Recommendation has been Rejected Already.'
+                );
+            }
             /*
-                            ----------------FD Approve & Reject Status Constants----------------
-                            */
+            ----------------FD Approve & Reject Status Constants----------------
+            */
             elseif ((FD_BUDGET_APPROVED == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_approved'))) // Checks if FD Budget APPROVED
             {
                 return array(
@@ -264,18 +281,18 @@ class Fd_budget_helper
                     'system_message' => 'This Field Budget has been Approved Already.'
                 );
             }
-            elseif ((FD_BUDGET_REJECTED == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_rejected'))) // Checks if FD Budget REJECTED
+            elseif ((FD_BUDGET_REJECTED_DI == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_rejected'))) // Checks if FD Budget Approval REJECTED
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget is not Rejected yet.'
+                    'system_message' => 'This Field Budget Approval is not Rejected.'
                 );
             }
-            elseif ((FD_BUDGET_NOT_REJECTED == $flag) && ($item_array['status_approve'] == $CI->config->item('system_status_rejected'))) // Checks if FD Budget not REJECTED
+            elseif ((FD_BUDGET_NOT_REJECTED_DI == $flag) && ($item_array['status_approve'] == $CI->config->item('system_status_rejected'))) // Checks if FD Budget Approval not REJECTED
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget has been Rejected Already.'
+                    'system_message' => 'This Field Budget Approval has been Rejected Already.'
                 );
             }
         }

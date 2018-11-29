@@ -602,9 +602,6 @@ jQuery(document).ready(function ($) {
     $(document).off("input", ".expense_budget");
     $(document).off("input", ".participant_budget");
 
-    /*var dropdown_crop_id = 10;
-     $("#crop_id").html(get_dropdown_with_select(system_crops, dropdown_crop_id));*/
-
     /*--------------------- CROP RELATED DROPDOWN ---------------------*/
     $(document).on("change", "#crop_id", function () {
         $("#crop_type_id").val('');

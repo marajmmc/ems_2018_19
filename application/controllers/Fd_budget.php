@@ -245,6 +245,8 @@ class Fd_budget extends Root_Controller
         }
         $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
         $this->db->where('fd_budget.status_budget_forward', $this->config->item('system_status_pending'));
+        $this->db->where('fd_budget.status_recommendation !=', $this->config->item('system_status_rejected'));
+        $this->db->where('fd_budget.status_approve !=', $this->config->item('system_status_rejected'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
@@ -281,7 +283,7 @@ class Fd_budget extends Root_Controller
         }
     }
 
-    public function system_get_items_all()
+    private function system_get_items_all()
     {
         $current_records = $this->input->post('total_records');
         if (!$current_records)
@@ -519,7 +521,7 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -557,7 +559,7 @@ class Fd_budget extends Root_Controller
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -569,7 +571,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -651,7 +653,7 @@ class Fd_budget extends Root_Controller
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -663,7 +665,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Trying to Edit Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -723,19 +725,14 @@ class Fd_budget extends Root_Controller
             }
         }
 
-        $participants = array(
-            'dealer_participant' => $dealer_participant,
-            'farmer_participant' => $farmer_participant
-        );
-        $item_info['participants_dealer_farmer'] = json_encode($participants);
-        $item_info['amount_expense_items'] = json_encode($expense_budget);
-
         $item_head['date_expected'] = $item_info['date_expected'] = System_helper::get_time($item_info['date_expected']);
+        $item_head['variety1_id'] = $item_info['variety1_id'];
+        $item_head['variety2_id'] = $item_info['variety2_id'];
         $item_head['participant_total'] = $participant_total;
         $item_head['amount_budget_total'] = $total_budget;
 
-        $item_head['variety1_id'] = $item_info['variety1_id'];
-        $item_head['variety2_id'] = $item_info['variety2_id'];
+        $item_info['participants_dealer_farmer'] = json_encode(array('dealer_participant' => $dealer_participant, 'farmer_participant' => $farmer_participant));
+        $item_info['amount_expense_items'] = json_encode($expense_budget);
 
         $this->db->trans_start(); //DB Transaction Handle START
         if ($item_id > 0) //EDIT
@@ -817,7 +814,7 @@ class Fd_budget extends Root_Controller
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -829,7 +826,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Trying to Upload Field Day Picture of other Location';
                 $this->json_return($ajax);
             }
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -914,7 +911,7 @@ class Fd_budget extends Root_Controller
         $result = $this->db->get()->row_array();
         if (!$result)
         {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
@@ -926,36 +923,25 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = 'Trying to Upload Field Day Picture of other Location';
             $this->json_return($ajax);
         }
-        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
         if (!$ajax['status'])
         {
             $this->json_return($ajax);
         }
 
         $insert_data = array(); //Main array for INSERT
-        if (!($result['variety2_id']) > 0)
-        {
-            foreach ($item_info as $category_id => $info) //Submitted remarks if Variety-2 Not Exist
-            {
-                if (trim($info['remarks_variety1']))
-                {
-                    $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
-                }
-            }
-        }
-        else
-        {
-            foreach ($item_info as $category_id => $info) //Submitted remarks
-            {
-                if (trim($info['remarks_variety1']) || trim($info['remarks_variety2']))
-                {
-                    $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
-                    $insert_data[$category_id]['remarks_variety2'] = $info['remarks_variety2'];
-                }
-            }
-        }
 
-        //pr($insert_data,0);
+        foreach ($item_info as $category_id => $info) //Submitted remarks
+        {
+            if (trim($info['remarks_variety1']))
+            {
+                $insert_data[$category_id]['remarks_variety1'] = $info['remarks_variety1'];
+            }
+            if (($result['variety2_id'] > 0) && trim($info['remarks_variety2']))
+            {
+                $insert_data[$category_id]['remarks_variety2'] = $info['remarks_variety2'];
+            }
+        }
 
         $path = 'images/fd_budget_variety/' . $item_id;
         $uploaded_files = System_helper::upload_file($path);
@@ -969,7 +955,6 @@ class Fd_budget extends Root_Controller
                 die();
             }
         }
-
         if ($uploaded_files && (sizeof($uploaded_files) > 0)) // File/Image Upload
         {
             foreach ($uploaded_files as $key => $uploaded_file)
@@ -983,39 +968,32 @@ class Fd_budget extends Root_Controller
             }
         }
 
-
-        //pr($insert_data,0);
-
-
-
-        if(empty($insert_data)) // Validation: If no NEW Image is Selected/ No Remarks is given( BOTH ADD & EDIT )
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'No Remarks added/ New Image Selected.';
-            $this->json_return($ajax);
-        }
-
-
         $results = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
         if ($results) //EDIT
         {
-            foreach ($results as $row)
+            foreach ($results as $row) // if No Image Selected in EDIT mode, but OLD Image Exist
             {
-                if(!isset($insert_data[$row['category_id']])){ // Assign those OLD Image data, which are not in $insert_data
-                    $insert_data[$row['category_id']] = array(
-                        'image_name_variety1' => $row['image_name_variety1'],
-                        'image_location_variety1' => $row['image_location_variety1'],
-                        'remarks_variety1' => $row['remarks_variety1'],
-
-                        'image_name_variety2' => $row['image_name_variety2'],
-                        'image_location_variety2' => $row['image_location_variety2'],
-                        'remarks_variety2' => $row['remarks_variety2'],
-                    );
+                if (!isset($insert_data[$row['category_id']]['image_location_variety1']))
+                {
+                    $insert_data[$row['category_id']]['image_name_variety1'] = $row['image_name_variety1'];
+                    $insert_data[$row['category_id']]['image_location_variety1'] = $row['image_location_variety1'];
+                }
+                if (!isset($insert_data[$row['category_id']]['image_location_variety2']))
+                {
+                    $insert_data[$row['category_id']]['image_name_variety2'] = $row['image_name_variety2'];
+                    $insert_data[$row['category_id']]['image_location_variety2'] = $row['image_location_variety2'];
                 }
             }
         }
-
-        //pr($insert_data);
+        else // First time ADD
+        {
+            if (empty($insert_data)) // Validation: If No Image is Selected/ No Remarks is given
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'No Remarks added/ New Image Selected.';
+                $this->json_return($ajax);
+            }
+        }
 
         $this->db->trans_start(); //DB Transaction Handle START
         //Update Revision
@@ -1061,7 +1039,7 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -1099,7 +1077,7 @@ class Fd_budget extends Root_Controller
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Delete Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -1111,7 +1089,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Trying to Delete Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -1256,7 +1234,7 @@ class Fd_budget extends Root_Controller
         $result = $this->db->get()->row_array();
         if (!$result)
         {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'Delete Not Exists');
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
@@ -1268,7 +1246,7 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = 'Trying to Delete Field Day Budget of other Location';
             $this->json_return($ajax);
         }
-        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
         if (!$ajax['status'])
         {
             $this->json_return($ajax);
@@ -1307,7 +1285,7 @@ class Fd_budget extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -1345,7 +1323,7 @@ class Fd_budget extends Root_Controller
             $result = $this->db->get()->row_array();
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Edit Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
@@ -1357,7 +1335,7 @@ class Fd_budget extends Root_Controller
                 $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
                 $this->json_return($ajax);
             }
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -1495,7 +1473,7 @@ class Fd_budget extends Root_Controller
         $result = $this->db->get()->row_array();
         if (!$result)
         {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'Forward Not Exists');
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
@@ -1507,7 +1485,7 @@ class Fd_budget extends Root_Controller
             $ajax['system_message'] = 'Trying to Forward Field Day Budget of other Location';
             $this->json_return($ajax);
         }
-        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED));
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_NOT_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_BUDGET_NOT_REJECTED_DI));
         if (!$ajax['status'])
         {
             $this->json_return($ajax);
@@ -1591,7 +1569,7 @@ class Fd_budget extends Root_Controller
         }
     }
 
-    public function system_get_fd_budget_varieties($id = 0)
+    private function system_get_fd_budget_varieties($id = 0)
     {
         if ($id > 0)
         {
