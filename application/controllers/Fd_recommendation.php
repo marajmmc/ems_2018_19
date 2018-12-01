@@ -46,6 +46,10 @@ class Fd_recommendation extends Root_Controller
         {
             $this->system_edit($id);
         }
+        elseif ($action == "get_fd_budget_varieties")
+        {
+            $this->system_get_fd_budget_varieties();
+        }
         elseif ($action == "save")
         {
             $this->system_save();
@@ -1131,5 +1135,42 @@ class Fd_recommendation extends Root_Controller
             return false;
         }
         return true;
+    }
+
+    private function system_get_fd_budget_varieties($id = 0)
+    {
+        if ($id > 0)
+        {
+            $crop_type_id = $id;
+        }
+        else
+        {
+            $crop_type_id = $this->input->post('id');
+        }
+        $variety_arm_upcoming = Fd_budget_helper::get_variety_arm_upcoming($crop_type_id);
+        $variety_all = Fd_budget_helper::get_variety_all($crop_type_id);
+
+        $arm_upcoming['items'] = (sizeof($variety_arm_upcoming) > 0) ? $variety_arm_upcoming[$crop_type_id] : array();
+        $all['items'] = (sizeof($variety_all) > 0) ? $variety_all[$crop_type_id] : array();
+
+        $ajax['system_content'][] = array("id" => "#variety1_id", "html" => $this->load->view("dropdown_with_select", $arm_upcoming, true));
+        $ajax['system_content'][] = array("id" => "#variety2_id", "html" => $this->load->view("dropdown_with_select", $all, true));
+        if (!(sizeof($variety_arm_upcoming) > 0))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = "No data found for " . $this->lang->line('LABEL_VARIETY1_NAME');
+            $this->json_return($ajax);
+        }
+        elseif (!(sizeof($variety_all) > 0))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = "No data found for " . $this->lang->line('LABEL_VARIETY2_NAME');
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = true;
+            $this->json_return($ajax);
+        }
     }
 }
