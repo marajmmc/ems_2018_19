@@ -457,7 +457,7 @@ class Fd_budget extends Root_Controller
                 'address' => '',
                 'present_condition' => '',
                 'farmers_evaluation' => '',
-                'diff_between_varieties' => '',
+                //'diff_between_varieties' => '',
                 'date_expected' => '',
                 'quantity_market_size_total' => 0,
                 'quantity_market_size_arm' => 0,
@@ -1639,7 +1639,7 @@ class Fd_budget extends Root_Controller
         $this->form_validation->set_rules('item_info[variety1_id]', $this->lang->line('LABEL_VARIETY1_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item_info[present_condition]', $this->lang->line('LABEL_PRESENT_CONDITION'), 'required');
         $this->form_validation->set_rules('item_info[farmers_evaluation]', $this->lang->line('LABEL_DEALERS_EVALUATION'), 'required');
-        $this->form_validation->set_rules('item_info[diff_between_varieties]', $this->lang->line('LABEL_SPECIFIC_DIFFERENCE'), 'required');
+        //$this->form_validation->set_rules('item_info[diff_between_varieties]', $this->lang->line('LABEL_SPECIFIC_DIFFERENCE'), 'required');
         if (!($id > 0))
         {
             $this->form_validation->set_rules('item_info[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required|numeric');

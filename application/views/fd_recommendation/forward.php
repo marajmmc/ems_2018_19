@@ -94,14 +94,14 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     </div>
 </div>
 
-<div class="row show-grid">
+<!--<div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); ?> :</label>
+        <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); */?> :</label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['diff_between_varieties']); ?></label>
+        <label class="control-label" style="font-weight:normal"><?php /*echo nl2br($item['diff_between_varieties']); */?></label>
     </div>
-</div>
+</div>-->
 
 <div class="row show-grid">
     <div class="col-xs-4">
