@@ -271,6 +271,12 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
 
 <div class="row show-grid">
     <div class="col-xs-4">
+        <label style="text-decoration:underline; font-size:1.3em" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?>:</label>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?> :</label>
     </div>
     <div class="col-sm-4 col-xs-8">
@@ -280,10 +286,28 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
 
 <div class="row show-grid">
     <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?> :</label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_total']); ?></label>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?> :</label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_arm']); ?></label>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?> :</label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_arm']); ?></label>
     </div>
 </div>
 

@@ -927,6 +927,17 @@ class Tour_reporting extends Root_Controller
         // Image Saving
         $path = 'images/tour_reporting/' . $item_id;
         $uploaded_files = System_helper::upload_file($path);
+        foreach($uploaded_files as $file) // Validation for uploaded Files
+        {
+            if(!$file['status'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$file['message'];
+                $this->json_return($ajax);
+                die();
+            }
+        }
+
         $image_info = array();
 
         //-----------Image save into DB -START-------------

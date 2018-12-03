@@ -420,6 +420,12 @@ $total_participant = 0;
 
 <div class="row show-grid">
     <div class="col-xs-4">
+        <label style="text-decoration:underline; font-size:1.3em" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?>:</label>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>

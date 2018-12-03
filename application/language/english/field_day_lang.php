@@ -21,12 +21,13 @@ $lang['LABEL_TOTAL_PARTICIPANT'] = 'Total no. of Participants';
 $lang['LABEL_FIELD_DAY_BUDGET'] = 'Budget for Field Day (BDT)';
 $lang['LABEL_TOTAL_FIELD_DAY_BUDGET'] = 'Total Budget for Field Day (BDT)';
 
+$lang['LABEL_MARKET_SIZE_TITLE'] = 'Market size Information of this Crop Type (kg)';
 $lang['LABEL_TOTAL_MARKET_SIZE'] = 'Total Market Size (Showroom)';
 $lang['LABEL_TOTAL_GA_MARKET_SIZE'] = 'Total Market Size (Growing Area)';
 $lang['LABEL_ARM_MARKET_SIZE'] = 'ARM Market Size (Showroom)';
 $lang['LABEL_ARM_GA_MARKET_SIZE'] = 'ARM Market Size (Growing Area)';
 
-$lang['LABEL_NEXT_SALES_TARGET'] = 'Next Year Sales Target (kg)';
+$lang['LABEL_NEXT_SALES_TARGET'] = 'Next Year Sales Target';
 $lang['LABEL_BUDGET_REMARKS'] = 'Remarks';
 $lang['LABEL_RECOMMENDATION_REMARKS'] = 'Recommendation';
 $lang['LABEL_DELETE_REMARKS'] = 'Reason/ Remarks';
