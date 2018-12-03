@@ -126,15 +126,6 @@ if($count > 0){
                                 </div>
                             </div>
 
-                            <!--<div class="row show-grid">
-                                <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); */?> :</label>
-                                </div>
-                                <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label" style="font-weight:normal"><?php /*echo nl2br($item['diff_between_varieties']); */?></label>
-                                </div>
-                            </div>-->
-
                             <div class="row show-grid">
                                 <div class="col-xs-4">
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?> :</label>
@@ -192,21 +183,36 @@ if($count > 0){
                             <div class="row show-grid">
                                 <div class="row show-grid">
                                     <div class="col-xs-4">
-                                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?> :</label>
+                                        <label style="font-size:1.2em" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?> :</label>
                                     </div>
                                 </div>
                                 <div class="row show-grid">
-                                    <div class="col-xs-6">
+                                    <div class="col-xs-7">
                                         <table style="width:100%">
                                             <?php
                                             $sub_total_participant = $total_participant = 0;
+                                            $init_ga_id = -1;
+                                            $index=0;
                                             foreach ($item['dealers'] as $dealer)
                                             {
                                                 $participant = ($dealer['participant'] >0)? '<b>'.$dealer['participant'].'</b>' : 0;
+                                                if($init_ga_id != $dealer['ga_id']){
+                                                    ?>
+                                                    <tr>
+                                                        <td style="text-align:right">
+                                                            <label style="font-style:italic; text-decoration:underline;  padding:5px; font-size:1.1em" class="control-label pull-right"><?php echo $dealer['ga_name']; ?>:</label>
+                                                        </td>
+                                                        <td style="text-align:right; width:35%;">&nbsp;</td>
+                                                        <td style="text-align:right; width:5%; padding:5px">&nbsp;</td>
+                                                    </tr>
+                                                    <?php
+                                                    $init_ga_id=$dealer['ga_id'];
+                                                    $index++;
+                                                }
                                                 ?>
                                                 <tr>
-                                                    <td style="text-align:right"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
-                                                    <td style="text-align:right; width:10%; padding:5px"><?php echo $participant; ?></td>
+                                                    <td style="text-align:right" colspan="2"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
+                                                    <td style="text-align:right; padding:5px"><?php echo $participant; ?></td>
                                                 </tr>
                                                 <?php
                                                 $total_participant += $dealer['participant'];
@@ -214,8 +220,8 @@ if($count > 0){
                                             }
                                             ?>
                                             <tr>
-                                                <td style="text-align:right; font-weight:bold">Sub Total :</td>
-                                                <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $sub_total_participant; ?></td>
+                                                <td style="text-align:right; font-weight:bold" colspan="2">Sub Total :</td>
+                                                <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $sub_total_participant; ?></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -229,17 +235,32 @@ if($count > 0){
                                     </div>
                                 </div>
                                 <div class="row show-grid">
-                                    <div class="col-xs-6">
+                                    <div class="col-xs-7">
                                         <table style="width:100%">
                                             <?php
                                             $sub_total_participant = 0;
+                                            $init_ga_id = -1;
+                                            $index=0;
                                             foreach ($item['lead_farmers'] as $farmer)
                                             {
                                                 $participant = ($farmer['participant'] >0)? '<b>'.$farmer['participant'].'</b>' : 0;
+                                                if($init_ga_id != $farmer['ga_id']){
+                                                    ?>
+                                                    <tr>
+                                                        <td style="text-align:right">
+                                                            <label style="font-style:italic; text-decoration:underline;  padding:5px; font-size:1.1em" class="control-label pull-right"><?php echo $farmer['ga_name']; ?>:</label>
+                                                        </td>
+                                                        <td style="text-align:right; width:35%;">&nbsp;</td>
+                                                        <td style="text-align:right; width:5%; padding:5px">&nbsp;</td>
+                                                    </tr>
+                                                <?php
+                                                    $init_ga_id=$farmer['ga_id'];
+                                                    $index++;
+                                                }
                                                 ?>
                                                 <tr>
-                                                    <td style="text-align:right"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
-                                                    <td style="text-align:right; width:10%; padding:5px"><?php echo $participant; ?></td>
+                                                    <td style="text-align:right" colspan="2"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
+                                                    <td style="text-align:right; padding:5px"><?php echo $participant; ?></td>
                                                 </tr>
                                                 <?php
                                                 $total_participant += $farmer['participant'];
@@ -247,8 +268,8 @@ if($count > 0){
                                             }
                                             ?>
                                             <tr>
-                                                <td style="text-align:right; font-weight:bold">Sub Total :</td>
-                                                <td style="text-align:right; width:10%; padding:5px; font-weight:bold"><?php echo $sub_total_participant; ?></td>
+                                                <td style="text-align:right; font-weight:bold" colspan="2">Sub Total :</td>
+                                                <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $sub_total_participant; ?></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -321,10 +342,28 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?> :</label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_total']); ?></label>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
                                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_arm']); ?></label>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?> :</label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_arm']); ?></label>
                                 </div>
                             </div>
 

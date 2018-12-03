@@ -183,16 +183,6 @@ $total_participant = 0;
             </div>
         </div>
 
-        <!--<div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); */?>
-                    <span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <textarea class="form-control" id="diff_between_varieties" name="item_info[diff_between_varieties]"><?php /*echo $item_info['diff_between_varieties']; */?></textarea>
-            </div>
-        </div>-->
-
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>
@@ -382,6 +372,63 @@ $total_participant = 0;
             </div>
         </div>
 
+
+        <div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="growing_area_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Growing Area</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="growing_area_id" class="form-control">
+                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                    <?php
+                    if($growing_area){
+                        foreach ($growing_area as $area)
+                        {
+                            ?>
+                            <option value="<?php echo $area['value'] ?>"><?php echo $area['text']; ?></option>
+                        <?php
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+
+
+
+        <div style="<?php echo (!($item['id'] > 0) && !($CI->locations['district_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="outlet_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>
+                    <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if ($item['id'] > 0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo $item_info['outlet_name']; ?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="outlet_id" name="item_info[outlet_id]" class="form-control">
+                        <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                        <?php
+                        foreach ($outlets as $outlet)
+                        {
+                            ?>
+                            <option value="<?php echo $outlet['value'] ?>"><?php echo $outlet['text']; ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?>
@@ -397,11 +444,13 @@ $total_participant = 0;
             <div id="dealer_id" class="row show-grid">
                 <div class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?> : </label>
+                        <label style="font-size:1.3em" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?> : </label>
                     </div>
                 </div>
 
                 <?php
+                $init_ga_id = -1;
+                $index=0;
                 foreach ($dealers as $dealer)
                 {
                     $value = 0;
@@ -409,6 +458,19 @@ $total_participant = 0;
                     {
                         $total_participant += $participants[$dealer['value']];
                         $value = (int)$participants[$dealer['value']];
+                    }
+
+                    if($init_ga_id != $dealer['ga_id']){
+                        echo ($index > 0)? '<hr/>':'';
+                        ?>
+                        <div class="row show-grid">
+                            <div class="col-xs-4">
+                                <label style="font-style:italic;text-decoration:underline; font-size:1.1em" class="control-label pull-right"><?php echo $dealer['ga_name']; ?>:</label>
+                            </div>
+                        </div>
+                        <?php
+                        $init_ga_id=$dealer['ga_id'];
+                        $index++;
                     }
                     ?>
                     <div class="row show-grid">
@@ -431,11 +493,13 @@ $total_participant = 0;
             <div id="leading_farmer_id" class="row show-grid">
                 <div class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?> : </label>
+                        <label style="font-size:1.3em" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?> : </label>
                     </div>
                 </div>
 
                 <?php
+                $init_ga_id = -1;
+                $index=0;
                 foreach ($leading_farmers as $lead_farmer)
                 {
                     $value = 0;
@@ -443,6 +507,19 @@ $total_participant = 0;
                     {
                         $total_participant += $participants[$lead_farmer['value']];
                         $value = (int)$participants[$lead_farmer['value']];
+                    }
+
+                    if($init_ga_id != $lead_farmer['ga_id']){
+                        echo ($index > 0)? '<hr/>':'';
+                        ?>
+                        <div class="row show-grid">
+                            <div class="col-xs-4">
+                                <label style="font-style:italic;text-decoration:underline; font-size:1.1em" class="control-label pull-right"><?php echo $lead_farmer['ga_name']; ?>:</label>
+                            </div>
+                        </div>
+                        <?php
+                        $init_ga_id=$lead_farmer['ga_id'];
+                        $index++;
                     }
                     ?>
                     <div class="row show-grid">
@@ -562,11 +639,31 @@ $total_participant = 0;
 
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?>
+                    <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item_info[quantity_market_size_ga_total]" id="quantity_market_size_ga_total" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_ga_total']) ? $item_info['quantity_market_size_ga_total'] : 0; ?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="item_info[quantity_market_size_arm]" id="quantity_market_size_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_arm']) ? $item_info['quantity_market_size_arm'] : 0; ?>"/>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?>
+                    <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="item_info[quantity_market_size_ga_arm]" id="quantity_market_size_ga_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_ga_arm']) ? $item_info['quantity_market_size_ga_arm'] : 0; ?>"/>
             </div>
         </div>
 
@@ -654,12 +751,14 @@ jQuery(document).ready(function ($) {
         $("#territory_id").val('');
         $("#district_id").val('');
         $("#outlet_id").val('');
+        $('#growing_area_id').val('');
 
         var division_id = $('#division_id').val();
         $('#zone_id_container').hide();
         $('#territory_id_container').hide();
         $('#district_id_container').hide();
         $('#outlet_id_container').hide();
+        $('#growing_area_id_container').hide();
         $('#dealer_container').hide();
         $('#leading_farmer_container').hide();
         if (division_id > 0) {
@@ -679,6 +778,7 @@ jQuery(document).ready(function ($) {
         $('#territory_id_container').hide();
         $('#district_id_container').hide();
         $('#outlet_id_container').hide();
+        $('#growing_area_id_container').hide();
         $('#dealer_container').hide();
         $('#leading_farmer_container').hide();
         if (zone_id > 0) {
@@ -696,6 +796,7 @@ jQuery(document).ready(function ($) {
         var territory_id = $('#territory_id').val();
         $('#district_id_container').hide();
         $('#outlet_id_container').hide();
+        $('#growing_area_id_container').hide();
         $('#dealer_container').hide();
         $('#leading_farmer_container').hide();
         if (territory_id > 0) {
@@ -711,6 +812,7 @@ jQuery(document).ready(function ($) {
 
         var district_id = $('#district_id').val();
         $('#outlet_id_container').hide();
+        $('#growing_area_id_container').hide();
         $('#dealer_container').hide();
         $('#leading_farmer_container').hide();
         if (district_id > 0) {
@@ -724,6 +826,24 @@ jQuery(document).ready(function ($) {
     $(document).on("change", "#outlet_id", function () {
         var outlet_id = parseInt($(this).val());
         if (outlet_id > 0) {
+            $.ajax({
+                url: "<?php echo site_url($CI->controller_url.'/index/get_growing_area/') ?>",
+                type: 'POST',
+                datatype: "JSON",
+                data: {
+                    html_container_id: '#growing_area_id',
+                    id: outlet_id
+                },
+                success: function (data, status) {
+                    if (data.status) {
+                        $('#growing_area_id_container').show();
+                    }
+                },
+                error: function (xhr, desc, err) {
+                    console.log("error");
+                }
+            });
+
             $.ajax({
                 url: "<?php echo site_url($CI->controller_url.'/index/get_dealers/') ?>",
                 type: 'POST',

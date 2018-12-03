@@ -2,13 +2,27 @@
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label class="control-label pull-right"> <?php echo (isset($label)) ? $label : "FIELD LABEL"; ?> : </label>
+        <label style="font-size:1.3em" class="control-label pull-right"><?php echo (isset($label)) ? $label : "FIELD LABEL"; ?>: </label>
     </div>
 </div>
 
 <?php
+$init_ga_id = -1;
+$index=0;
 foreach ($items as $item)
 {
+    if($init_ga_id != $item['ga_id']){
+        echo ($index > 0)? '<hr/>':'';
+        ?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label style="font-style:italic;text-decoration:underline; font-size:1.1em" class="control-label pull-right"><?php echo $item['ga_name']; ?>:</label>
+            </div>
+        </div>
+        <?php
+        $init_ga_id=$item['ga_id'];
+        $index++;
+    }
     ?>
     <div class="row show-grid">
         <div class="col-xs-6">

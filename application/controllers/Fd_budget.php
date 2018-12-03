@@ -90,6 +90,10 @@ class Fd_budget extends Root_Controller
         {
             $this->system_details($id);
         }*/
+        elseif ($action == "get_growing_area")
+        {
+            $this->system_get_growing_area($id);
+        }
         elseif ($action == "get_dealers")
         {
             $this->system_get_dealers($id);
@@ -457,10 +461,11 @@ class Fd_budget extends Root_Controller
                 'address' => '',
                 'present_condition' => '',
                 'farmers_evaluation' => '',
-                //'diff_between_varieties' => '',
                 'date_expected' => '',
                 'quantity_market_size_total' => 0,
+                'quantity_market_size_ga_total' => 0,
                 'quantity_market_size_arm' => 0,
+                'quantity_market_size_ga_arm' => 0,
                 'quantity_sales_target' => 0,
                 'remarks' => ''
             );
@@ -592,6 +597,8 @@ class Fd_budget extends Root_Controller
             $data['crop_varieties1'] = (sizeof($variety_arm_upcoming) > 0) ? $variety_arm_upcoming[$result['crop_type_id']] : array();
             $data['crop_varieties2'] = (sizeof($variety_all) > 0) ? $variety_all[$result['crop_type_id']] : array();
 
+
+            $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id AS value, CONCAT_WS(" - ",name, address) text', array('status !="' . $this->config->item('system_status_delete') . '"', 'outlet_id =' . $result['outlet_id']), 0, 0, 'areas.id ASC');
             $data['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
             $data['leading_farmers'] = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
 
@@ -1511,6 +1518,40 @@ class Fd_budget extends Root_Controller
         }
     }
 
+    private function system_get_growing_area($id = 0)
+    {
+        if ($id > 0)
+        {
+            $item_id = $id;
+        }
+        else
+        {
+            $item_id = $this->input->post('id');
+        }
+        $html_container_id = $this->input->post('html_container_id');
+        $data = array();
+        $condition = array('status !="' . $this->config->item('system_status_delete') . '"');
+        if ($item_id > 0)
+        {
+            $condition[] = 'outlet_id =' . $item_id;
+        }
+        $data['items'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id AS value, CONCAT_WS(" - ",name, address) text', $condition, 0, 0, 'areas.id ASC');
+        //pr($data['items']);
+        if ($data['items'])
+        {
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view("dropdown_with_select", $data, true));
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("SET_LEADING_FARMER_AND_DEALER");
+            $this->json_return($ajax);
+        }
+
+    }
+
     private function system_get_dealers($id = 0)
     {
         if ($id > 0)
@@ -1526,6 +1567,7 @@ class Fd_budget extends Root_Controller
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER');
         $data['name_index'] = 'dealer_participant';
         $data['items'] = Fd_budget_helper::get_dealers_growing_area($item_id);
+        //pr($data['items']);
         if ($data['items'])
         {
             $ajax['status'] = true;
@@ -1555,6 +1597,7 @@ class Fd_budget extends Root_Controller
         $data['label'] = $this->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER');
         $data['name_index'] = 'farmer_participant';
         $data['items'] = Fd_budget_helper::get_lead_farmers_growing_area($item_id);
+        //pr($data['items']);
         if ($data['items'])
         {
             $ajax['status'] = true;
@@ -1639,7 +1682,6 @@ class Fd_budget extends Root_Controller
         $this->form_validation->set_rules('item_info[variety1_id]', $this->lang->line('LABEL_VARIETY1_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item_info[present_condition]', $this->lang->line('LABEL_PRESENT_CONDITION'), 'required');
         $this->form_validation->set_rules('item_info[farmers_evaluation]', $this->lang->line('LABEL_DEALERS_EVALUATION'), 'required');
-        //$this->form_validation->set_rules('item_info[diff_between_varieties]', $this->lang->line('LABEL_SPECIFIC_DIFFERENCE'), 'required');
         if (!($id > 0))
         {
             $this->form_validation->set_rules('item_info[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required|numeric');

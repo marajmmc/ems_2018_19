@@ -170,16 +170,6 @@ $total_participant = 0;
     </div>
 </div>
 
-<!--<div class="row show-grid">
-    <div class="col-xs-4">
-        <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_SPECIFIC_DIFFERENCE'); */?>
-            <span style="color:#FF0000">*</span></label>
-    </div>
-    <div class="col-sm-4 col-xs-8">
-        <textarea class="form-control" id="diff_between_varieties" name="item_info[diff_between_varieties]"><?php /*echo $item_info['diff_between_varieties']; */?></textarea>
-    </div>
-</div>-->
-
 <div class="row show-grid">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>
@@ -250,6 +240,8 @@ $total_participant = 0;
         </div>
 
         <?php
+        $init_ga_id = -1;
+        $index=0;
         foreach ($dealers as $dealer)
         {
             $value = 0;
@@ -257,6 +249,19 @@ $total_participant = 0;
             {
                 $total_participant += $participants[$dealer['value']];
                 $value = (int)$participants[$dealer['value']];
+            }
+
+            if($init_ga_id != $dealer['ga_id']){
+                echo ($index > 0)? '<hr/>':'';
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label style="font-style:italic;text-decoration:underline; font-size:1.1em" class="control-label pull-right"><?php echo $dealer['ga_name']; ?>:</label>
+                    </div>
+                </div>
+                <?php
+                $init_ga_id=$dealer['ga_id'];
+                $index++;
             }
             ?>
             <div class="row show-grid">
@@ -284,6 +289,8 @@ $total_participant = 0;
         </div>
 
         <?php
+        $init_ga_id = -1;
+        $index=0;
         foreach ($leading_farmers as $lead_farmer)
         {
             $value = 0;
@@ -291,6 +298,19 @@ $total_participant = 0;
             {
                 $total_participant += $participants[$lead_farmer['value']];
                 $value = (int)$participants[$lead_farmer['value']];
+            }
+
+            if($init_ga_id != $lead_farmer['ga_id']){
+                echo ($index > 0)? '<hr/>':'';
+                ?>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label style="font-style:italic;text-decoration:underline; font-size:1.1em" class="control-label pull-right"><?php echo $lead_farmer['ga_name']; ?>:</label>
+                    </div>
+                </div>
+                <?php
+                $init_ga_id=$lead_farmer['ga_id'];
+                $index++;
             }
             ?>
             <div class="row show-grid">
@@ -410,11 +430,31 @@ $total_participant = 0;
 
 <div class="row show-grid">
     <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <input type="text" name="item_info[quantity_market_size_ga_total]" id="quantity_market_size_ga_total" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_ga_total']) ? $item_info['quantity_market_size_ga_total'] : 0; ?>"/>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?>
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
         <input type="text" name="item_info[quantity_market_size_arm]" id="quantity_market_size_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_arm']) ? $item_info['quantity_market_size_arm'] : 0; ?>"/>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?>
+            <span style="color:#FF0000">*</span></label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <input type="text" name="item_info[quantity_market_size_ga_arm]" id="quantity_market_size_ga_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_ga_arm']) ? $item_info['quantity_market_size_ga_arm'] : 0; ?>"/>
     </div>
 </div>
 

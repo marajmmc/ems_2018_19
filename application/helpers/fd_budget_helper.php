@@ -83,9 +83,11 @@ class Fd_budget_helper
         $CI->db->select('dealer.name AS dealer_name, dealer.name AS text, dealer.mobile_no AS phone_no');
 
         $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = area_dealers.area_id', 'INNER');
+        $CI->db->select('areas.id AS ga_id, areas.name AS ga_name');
 
         $CI->db->where('areas.outlet_id', $outlet_id);
         $CI->db->group_by('area_dealers.dealer_id');
+        $CI->db->order_by('areas.id', 'ASC');
         $CI->db->order_by('area_dealers.ordering', 'ASC');
         $result = $CI->db->get()->result_array();
         return $result;
@@ -97,14 +99,15 @@ class Fd_budget_helper
         $CI =& get_instance();
 
         $CI->db->from($CI->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers');
-        $CI->db->select('lead_farmers.id AS lead_farmers_id, lead_farmers.id AS value');
+        $CI->db->select('lead_farmers.id AS lead_farmers_id, lead_farmers.id AS value, lead_farmers.name AS lead_farmers_name, lead_farmers.name AS text, lead_farmers.mobile_no  AS phone_no');
 
         $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = lead_farmers.area_id', 'INNER');
-        $CI->db->select('lead_farmers.name AS lead_farmers_name, lead_farmers.name AS text, lead_farmers.mobile_no  AS phone_no');
+        $CI->db->select('areas.id AS ga_id, areas.name AS ga_name');
 
         $CI->db->where('areas.status', $CI->config->item('system_status_active'));
         $CI->db->where('lead_farmers.status', $CI->config->item('system_status_active'));
         $CI->db->where('areas.outlet_id', $outlet_id);
+        $CI->db->order_by('areas.id', 'ASC');
         $CI->db->order_by('lead_farmers.ordering', 'ASC');
         $result = $CI->db->get()->result_array();
         return $result;
@@ -121,10 +124,10 @@ class Fd_budget_helper
         $CI->db->join($CI->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
         $CI->db->select('fd_budget_details.*');
 
-        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
+        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget_details.variety1_id', 'INNER');
         $CI->db->select('CONCAT(variety1.name, " ( ", variety1.whose, " )") AS variety1_name');
 
-        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
+        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget_details.variety2_id', 'LEFT');
         $CI->db->select('CONCAT(variety2.name, " ( ", variety2.whose, " )") AS variety2_name');
 
         $CI->db->join($CI->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
