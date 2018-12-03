@@ -12,7 +12,7 @@ $lang['LABEL_STATUS_RECOMMENDATION'] = 'Recommendation Status';
 $lang['LABEL_STATUS_BUDGET_APPROVE'] = 'Approve Status';
 
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
-$lang['LABEL_DEALERS_EVALUATION'] = 'Dealers/ Farmers Comment';//'Dealers/ Farmers Evaluation';
+$lang['LABEL_DEALERS_EVALUATION'] = 'Dealer\'s/ Farmer\'s Comment';//'Dealers/ Farmers Evaluation';
 $lang['LABEL_SPECIFIC_DIFFERENCE'] = 'Specific Difference between Varieties';
 $lang['LABEL_PARTICIPANT_THROUGH_DEALER'] = 'Participants Through Dealers';
 $lang['LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'] = 'Participants Through Lead Farmers';
