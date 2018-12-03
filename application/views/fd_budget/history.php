@@ -288,7 +288,7 @@ if($count > 0){
 
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_AMOUNT_BUDGET_TOTAL'); ?> :</label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_PARTICIPANT'); ?> :</label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo $total_participant; ?></label>
@@ -328,6 +328,12 @@ if($count > 0){
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo System_helper::get_string_amount($total_budget); ?></label>
+                                </div>
+                            </div>
+
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label style="text-decoration:underline;" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?>:</label>
                                 </div>
                             </div>
 
