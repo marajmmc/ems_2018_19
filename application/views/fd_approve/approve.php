@@ -271,7 +271,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
 
 <div class="row show-grid">
     <div class="col-xs-4">
-        <label style="text-decoration:underline; font-size:1.3em" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?>:</label>
+        <label style="text-decoration:underline;" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?>:</label>
     </div>
 </div>
 
