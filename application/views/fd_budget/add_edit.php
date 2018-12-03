@@ -394,7 +394,7 @@ $total_participant = 0;
             </div>
         </div>
 
-
+<?php /*
 
         <div style="<?php echo (!($item['id'] > 0) && !($CI->locations['district_id'] > 0)) ? 'display:none' : '' ?>" class="row show-grid" id="outlet_id_container">
             <div class="col-xs-4">
@@ -427,7 +427,7 @@ $total_participant = 0;
                 }
                 ?>
             </div>
-        </div>
+        </div> */ ?>
 
         <div class="row show-grid">
             <div class="col-xs-4">
