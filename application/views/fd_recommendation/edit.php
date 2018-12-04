@@ -220,6 +220,28 @@ $total_participant = 0;
     </div>
 </div>
 
+<div class="row show-grid" id="growing_area_id_container">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?> &nbsp;</label>
+    </div>
+    <div class="col-sm-4 col-xs-8">
+        <select id="growing_area_id" name="item_info[growing_area_id]" class="form-control">
+            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+            <?php
+            if ($growing_area)
+            {
+                foreach ($growing_area as $area)
+                {
+                    ?>
+                    <option value="<?php echo $area['value'] ?>" <?php echo ($area['value'] == $item_info['growing_area_id']) ? "selected" : ""; ?>><?php echo $area['text']; ?></option>
+                <?php
+                }
+            }
+            ?>
+        </select>
+    </div>
+</div>
+
 <div class="row show-grid">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?>
@@ -252,7 +274,7 @@ $total_participant = 0;
             }
 
             if($init_ga_id != $dealer['ga_id']){
-                echo ($index > 0)? '<hr/>':'';
+                echo ($index > 0)? '<hr style="margin:0"/>':'';
                 ?>
                 <div class="row show-grid">
                     <div class="col-xs-4">
@@ -301,7 +323,7 @@ $total_participant = 0;
             }
 
             if($init_ga_id != $lead_farmer['ga_id']){
-                echo ($index > 0)? '<hr/>':'';
+                echo ($index > 0)? '<hr style="margin:0"/>':'';
                 ?>
                 <div class="row show-grid">
                     <div class="col-xs-4">
@@ -430,7 +452,7 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[quantity_market_size_total]" id="quantity_market_size_total" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_total']) ? $item_info['quantity_market_size_total'] : 0; ?>"/>
+        <input type="text" name="item_info[quantity_market_size_showroom_total]" id="quantity_market_size_showroom_total" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_showroom_total']) ? $item_info['quantity_market_size_showroom_total'] : 0; ?>"/>
     </div>
 </div>
 
@@ -450,7 +472,7 @@ $total_participant = 0;
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <input type="text" name="item_info[quantity_market_size_arm]" id="quantity_market_size_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_arm']) ? $item_info['quantity_market_size_arm'] : 0; ?>"/>
+        <input type="text" name="item_info[quantity_market_size_showroom_arm]" id="quantity_market_size_showroom_arm" class="form-control float_type_positive" value="<?php echo ($item_info['quantity_market_size_showroom_arm']) ? $item_info['quantity_market_size_showroom_arm'] : 0; ?>"/>
     </div>
 </div>
 

@@ -141,6 +141,15 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
 
 <div class="row show-grid">
     <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?> :</label>
+    </div>
+    <div class="col-xs-8">
+        <label class="control-label"><?php echo ($item['growing_area_name']) ? $item['growing_area_name'] : '<i style="font-weight:normal">- No Growing Area Selected -</i>'; ?>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?> :</label>
     </div>
     <div class="col-sm-4 col-xs-8">
@@ -310,7 +319,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?> :</label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_total']); ?></label>
+        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_showroom_total']); ?></label>
     </div>
 </div>
 
@@ -328,7 +337,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?> :</label>
     </div>
     <div class="col-sm-4 col-xs-8">
-        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_arm']); ?></label>
+        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_showroom_arm']); ?></label>
     </div>
 </div>
 

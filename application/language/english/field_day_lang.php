@@ -21,7 +21,7 @@ $lang['LABEL_TOTAL_PARTICIPANT'] = 'Total no. of Participants';
 $lang['LABEL_FIELD_DAY_BUDGET'] = 'Budget for Field Day (BDT)';
 $lang['LABEL_TOTAL_FIELD_DAY_BUDGET'] = 'Total Budget for Field Day (BDT)';
 
-$lang['LABEL_MARKET_SIZE_TITLE'] = 'Market size Information of this Crop Type (kg)';
+$lang['LABEL_MARKET_SIZE_TITLE'] = 'Market size information of this Crop type (kg)';
 $lang['LABEL_TOTAL_MARKET_SIZE'] = 'Total Market Size (Showroom)';
 $lang['LABEL_TOTAL_GA_MARKET_SIZE'] = 'Total Market Size (Growing Area)';
 $lang['LABEL_ARM_MARKET_SIZE'] = 'ARM Market Size (Showroom)';
@@ -34,3 +34,4 @@ $lang['LABEL_DELETE_REMARKS'] = 'Reason/ Remarks';
 
 $lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
 $lang['LABEL_REJECT'] = "Reject";
+$lang['LABEL_GROWING_AREA'] = "Growing Area";

@@ -335,6 +335,9 @@ class Fd_approve extends Root_Controller
             $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
             $this->db->select('cus_info.name AS outlet_name');
 
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = fd_budget_details.growing_area_id', 'LEFT');
+            $this->db->select('CONCAT_WS(" - ", areas.name, areas.address) AS growing_area_name');
+
             $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
             $this->db->select('district.id AS district_id, district.name AS district_name');
 

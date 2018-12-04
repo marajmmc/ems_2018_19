@@ -851,6 +851,9 @@ class Fd_recommendation extends Root_Controller
             $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
             $this->db->select('cus_info.name AS outlet_name');
 
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = fd_budget_details.growing_area_id', 'LEFT');
+            $this->db->select('CONCAT_WS(" - ", areas.name, areas.address) AS growing_area_name');
+
             $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
             $this->db->select('district.id AS district_id, district.name AS district_name');
 
@@ -1108,8 +1111,10 @@ class Fd_recommendation extends Root_Controller
 
         $this->form_validation->set_rules('item_info[address]', $this->lang->line('LABEL_ADDRESS'), 'required');
         $this->form_validation->set_rules('item_info[participant_others]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'), 'required|numeric');
-        $this->form_validation->set_rules('item_info[quantity_market_size_total]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
-        $this->form_validation->set_rules('item_info[quantity_market_size_arm]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_showroom_total]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_ga_total]', $this->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_showroom_arm]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_ga_arm]', $this->lang->line('LABEL_ARM_GA_MARKET_SIZE'), 'required|numeric');
         $this->form_validation->set_rules('item_info[quantity_sales_target]', $this->lang->line('LABEL_NEXT_SALES_TARGET'), 'required|numeric');
         if ($this->form_validation->run() == FALSE)
         {

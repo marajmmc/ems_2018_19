@@ -139,6 +139,9 @@ class Fd_budget_helper
         $CI->db->join($CI->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
         $CI->db->select('cus_info.name AS outlet_name');
 
+        $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = fd_budget_details.growing_area_id', 'LEFT');
+        $CI->db->select('CONCAT_WS(" - ", areas.name, areas.address) AS growing_area_name');
+
         $CI->db->join($CI->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
         $CI->db->select('district.name AS district_name');
 
@@ -161,6 +164,14 @@ class Fd_budget_helper
         foreach ($results as &$result)
         {
             $user_ids = array($result['user_created'] => $result['user_created']); // Getting Name of Created By
+            if ($result['user_rollback_zi'] > 0) // Getting Name of ZI Rollback By
+            {
+                $user_ids[$result['user_rollback_zi']] = $result['user_rollback_zi'];
+            }
+            if ($result['user_rollback_di'] > 0) // Getting Name of DI Rollback By
+            {
+                $user_ids[$result['user_rollback_di']] = $result['user_rollback_di'];
+            }
             $result['user_info'] = System_helper::get_users_info($user_ids);
 
             $result['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);

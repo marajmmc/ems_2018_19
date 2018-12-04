@@ -26,7 +26,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PROPOSAL'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo System_helper::display_date($item['date_proposal']); ?></label>
     </div>
 </div>
@@ -35,7 +35,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo System_helper::display_date($item['date_expected']); ?></label>
     </div>
 </div>
@@ -44,7 +44,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['crop_name']; ?></label>
     </div>
 </div>
@@ -53,7 +53,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['crop_type_name']; ?></label>
     </div>
 </div>
@@ -62,7 +62,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['variety1_name']; ?></label>
     </div>
 </div>
@@ -71,7 +71,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo ($item['variety2_name']) ? $item['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'; ?>
     </div>
 </div>
@@ -80,7 +80,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['present_condition']); ?></label>
     </div>
 </div>
@@ -89,7 +89,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['farmers_evaluation']); ?></label>
     </div>
 </div>
@@ -107,7 +107,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['zone_name']; ?></label>
     </div>
 </div>
@@ -116,7 +116,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['territory_name']; ?></label>
     </div>
 </div>
@@ -125,7 +125,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['district_name']; ?></label>
     </div>
 </div>
@@ -134,8 +134,17 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo $item['outlet_name']; ?></label>
+    </div>
+</div>
+
+<div class="row show-grid">
+    <div class="col-xs-4">
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?> :</label>
+    </div>
+    <div class="col-xs-8">
+        <label class="control-label"><?php echo ($item['growing_area_name']) ? $item['growing_area_name'] : '<i style="font-weight:normal">- No Growing Area Selected -</i>'; ?>
     </div>
 </div>
 
@@ -143,7 +152,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['address']); ?></label>
     </div>
 </div>
@@ -309,8 +318,8 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
-        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_total']); ?></label>
+    <div class="col-xs-8">
+        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_showroom_total']); ?></label>
     </div>
 </div>
 
@@ -318,7 +327,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_total']); ?></label>
     </div>
 </div>
@@ -327,8 +336,8 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
-        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_arm']); ?></label>
+    <div class="col-xs-8">
+        <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_showroom_arm']); ?></label>
     </div>
 </div>
 
@@ -336,7 +345,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_arm']); ?></label>
     </div>
 </div>
@@ -345,7 +354,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NEXT_SALES_TARGET'); ?> :</label>
     </div>
-    <div class="col-sm-4 col-xs-8">
+    <div class="col-xs-8">
         <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_sales_target']); ?></label>
     </div>
 </div>
@@ -467,7 +476,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVE'); ?> <span style="color:#FF0000">*</span></label>
         </div>
-        <div class="col-sm-4 col-xs-8">
+        <div class="col-xs-4">
             <select name="item[status_approve]" class="form-control status-combo">
                 <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                 <option value="<?php echo $CI->config->item('system_status_approved'); ?>"><?php echo $CI->lang->line('LABEL_APPROVE'); ?></option>
@@ -481,7 +490,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
         <div class="col-xs-4">
             <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?> <span style="color:#FF0000">*</span></label>
         </div>
-        <div class="col-sm-4 col-xs-8">
+        <div class="col-xs-4">
             <textarea name="item[remarks_approve]" class="form-control"></textarea>
         </div>
     </div>
@@ -490,12 +499,12 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
         <div class="col-xs-4">
             &nbsp;
         </div>
-        <div class="col-sm-4 col-xs-4">
+        <div class="col-xs-4">
             <div class="action_button pull-right">
                 <button id="button_action_save" type="button" class="btn" data-form="#save_form">Save</button>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-4">
+        <div class="col-xs-4">
             &nbsp;
         </div>
     </div>

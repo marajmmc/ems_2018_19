@@ -12,7 +12,7 @@ $index=0;
 foreach ($items as $item)
 {
     if($init_ga_id != $item['ga_id']){
-        echo ($index > 0)? '<hr/>':'';
+        echo ($index > 0)? '<hr style="margin:0"/>':'';
         ?>
         <div class="row show-grid">
             <div class="col-xs-4">
