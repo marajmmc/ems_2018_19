@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Fd_approve extends Root_Controller
+class Fd_payment extends Root_Controller
 {
     public $message;
     public $permissions;
@@ -62,6 +62,10 @@ class Fd_approve extends Root_Controller
         {
             $this->system_set_preference('list_all');
         }
+        elseif ($action == "set_preference_list_waiting")
+        {
+            $this->system_set_preference('list_waiting');
+        }
         elseif ($action == "save_preference")
         {
             System_helper::save_preference();
@@ -90,7 +94,7 @@ class Fd_approve extends Root_Controller
         $data['district_name'] = 1;
         if ($method == 'list_all')
         {
-            $data['status_approve'] = 1;
+            $data['status_payment_approve'] = 1;
         }
         return $data;
     }
@@ -124,7 +128,7 @@ class Fd_approve extends Root_Controller
             $method = 'list';
             $data = array();
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title'] = "Field Day Approval Pending List";
+            $data['title'] = "Field Day Budget Pending List";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list", $data, true));
             if ($this->message)
@@ -190,8 +194,8 @@ class Fd_approve extends Root_Controller
             }
         }
         $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('fd_budget.status_recommendation', $this->config->item('system_status_forwarded'));
-        $this->db->where('fd_budget.status_approve', $this->config->item('system_status_pending'));
+        $this->db->where('fd_budget.status_approve', $this->config->item('system_status_approved'));
+        $this->db->where('fd_budget.status_payment_approve !=', $this->config->item('system_status_approved'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $items = $this->db->get()->result_array();
         foreach ($items as &$item)
@@ -210,7 +214,7 @@ class Fd_approve extends Root_Controller
             $method = 'list_all';
             $data = array();
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title'] = "Field Day Approval All List";
+            $data['title'] = "Field Day Budget All List";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
             if ($this->message)
@@ -290,7 +294,7 @@ class Fd_approve extends Root_Controller
             }
         }
         $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('fd_budget.status_recommendation', $this->config->item('system_status_forwarded'));
+        $this->db->where('fd_budget.status_approve', $this->config->item('system_status_approved'));
         $this->db->order_by('fd_budget.id', 'DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
@@ -315,7 +319,7 @@ class Fd_approve extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-            $this->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve');
+            $this->db->select('fd_budget.date_proposal, fd_budget.status_approve, fd_budget.status_payment_approve');
 
             $this->db->join($this->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id', 'INNER');
             $this->db->select('fd_budget_details.*');
@@ -361,14 +365,7 @@ class Fd_approve extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if (!$this->check_my_editable($result))
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Approve Field Day of other Location');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Trying to Approve Field Day of other Location';
-                $this->json_return($ajax);
-            }
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_RECOMMENDATION_FORWARDED, FD_BUDGET_NOT_REJECTED_DI, FD_BUDGET_NOT_APPROVED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_NOT_APPROVED));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -423,7 +420,7 @@ class Fd_approve extends Root_Controller
                 }
             }
 
-            $picture_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+            /*$picture_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
             if ($picture_data)
             {
                 foreach ($picture_data as $picture)
@@ -457,9 +454,9 @@ class Fd_approve extends Root_Controller
                         'remarks_variety2' => ''
                     );
                 }
-            }
+            }*/
 
-            $data['title'] = "Approve Field Day Budget ( ID:" . $result['budget_id'] . " )";
+            $data['title'] = "Approve Field Day Payment ( ID:" . $result['budget_id'] . " )";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/approve", $data, true));
             if ($this->message)
@@ -477,111 +474,56 @@ class Fd_approve extends Root_Controller
         }
     }
 
-    private function system_save_approve()
+    /******************************************************************************************************/
+
+    /*
+
+    private function check_validation()
     {
-        $item_id = $this->input->post('id');
-        $item = $this->input->post('item');
-        $user = User_helper::get_user();
-        $time = time();
-        //Permission Checking
-        if (!(isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
+        $id = $this->input->post('id');
+        $this->load->library('form_validation');
+        if (!($id > 0))
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
+            $this->form_validation->set_rules('item[date_proposal]', $this->lang->line('LABEL_DATE'), 'required');
         }
-        //validation
-        if ($item['status_approve'] == '')
+        $this->form_validation->set_rules('item_info[date_expected]', $this->lang->line('LABEL_DATE_EXPECTED'), 'required');
+        $this->form_validation->set_rules('item_info[variety1_id]', $this->lang->line('LABEL_VARIETY1_NAME'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[present_condition]', $this->lang->line('LABEL_PRESENT_CONDITION'), 'required');
+        $this->form_validation->set_rules('item_info[farmers_evaluation]', $this->lang->line('LABEL_DEALERS_EVALUATION'), 'required');
+        if (!($id > 0))
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = ($this->lang->line('LABEL_APPROVE')) . ' field is required.';
-            $this->json_return($ajax);
+            $this->form_validation->set_rules('item_info[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required|numeric');
         }
-        if (trim($item['remarks_approve']) == '')
+        $this->form_validation->set_rules('item_info[address]', $this->lang->line('LABEL_ADDRESS'), 'required');
+        $this->form_validation->set_rules('item_info[participant_others]', $this->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_showroom_total]', $this->lang->line('LABEL_TOTAL_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_ga_total]', $this->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_showroom_arm]', $this->lang->line('LABEL_ARM_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_market_size_ga_arm]', $this->lang->line('LABEL_ARM_GA_MARKET_SIZE'), 'required|numeric');
+        $this->form_validation->set_rules('item_info[quantity_sales_target]', $this->lang->line('LABEL_NEXT_SALES_TARGET'), 'required|numeric');
+        if ($this->form_validation->run() == FALSE)
         {
-            $ajax['status'] = false;
-            $ajax['system_message'] = ($this->lang->line('LABEL_REMARKS')) . ' field is required.';
-            $this->json_return($ajax);
-        }
-        $this->db->from($this->config->item('table_ems_fd_budget') . ' fd_budget');
-        $this->db->select('fd_budget.*');
-        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = fd_budget.user_created AND user_area.revision = 1', 'INNER');
-        $this->db->select('user_area.division_id, user_area.zone_id, user_area.territory_id, user_area.district_id');
-        $this->db->where('fd_budget.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('fd_budget.id', $item_id);
-        $result = $this->db->get()->row_array();
-        if (!$result)
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
-        if (!$this->check_my_editable($result))
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'Trying to Approve Field Day of other Location');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Trying to Approve Field Day of other Location';
-            $this->json_return($ajax);
-        }
-        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_FORWARDED, FD_BUDGET_NOT_REJECTED_ZI, FD_RECOMMENDATION_FORWARDED, FD_BUDGET_NOT_REJECTED_DI, FD_BUDGET_NOT_APPROVED));
-        if (!$ajax['status'])
-        {
-            $this->json_return($ajax);
-        }
-
-        $this->db->trans_start(); //DB Transaction Handle START
-
-        // Update details table if Rollback
-        if ($item['status_approve'] == $this->config->item('system_status_pending'))
-        {
-            $item_info = array(
-                'remarks_rollback_di' => $item['remarks_approve'],
-                'date_rollback_di' => $time,
-                'user_rollback_di' => $user->user_id
-            );
-            Query_helper::update($this->config->item('table_ems_fd_budget_details'), $item_info, array("budget_id =" . $item_id, "revision=1"), FALSE);
-            $item['status_recommendation'] = $this->config->item('system_status_pending');
-        }
-        // Update Master table
-        $item['date_approved'] = $time;
-        $item['user_approved'] = $user->user_id;
-        Query_helper::update($this->config->item('table_ems_fd_budget'), $item, array("id = " . $item_id), FALSE);
-
-        $this->db->trans_complete(); //DB Transaction Handle END
-
-        if ($this->db->trans_status() === TRUE)
-        {
-            $ajax['status'] = true;
-            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
-            $this->system_list();
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
-            $this->json_return($ajax);
-        }
-    }
-
-    private function check_my_editable($item)
-    {
-        if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
-        {
+            $this->message = validation_errors();
             return false;
         }
-        if (($this->locations['zone_id'] > 0) && ($this->locations['zone_id'] != $item['zone_id']))
+
+        $expense_budget = $this->input->post('expense_budget');
+        $total_budget = 0;
+        if ($expense_budget)
         {
-            return false;
+            foreach ($expense_budget as $value)
+            {
+                if (is_numeric($value) && ($value > 0))
+                {
+                    $total_budget += $value;
+                }
+            }
         }
-        if (($this->locations['territory_id'] > 0) && ($this->locations['territory_id'] != $item['territory_id']))
+        if (!($total_budget >= 0))
         {
-            return false;
-        }
-        if (($this->locations['district_id'] > 0) && ($this->locations['district_id'] != $item['district_id']))
-        {
+            $this->message = $this->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET') . ' cannot be Negative';
             return false;
         }
         return true;
-    }
+    }  */
 }

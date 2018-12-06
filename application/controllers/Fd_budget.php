@@ -132,6 +132,7 @@ class Fd_budget extends Root_Controller
     {
         $data = array();
         $data['id'] = 1;
+        $data['outlet_name'] = 1;
         $data['date_proposal'] = 1;
         $data['date_expected'] = 1;
         $data['amount_budget_total'] = 1;
@@ -143,7 +144,6 @@ class Fd_budget extends Root_Controller
         $data['zone_name'] = 1;
         $data['territory_name'] = 1;
         $data['district_name'] = 1;
-        $data['outlet_name'] = 1;
         if ($method == 'list_all')
         {
             $data['status_budget_forward'] = 1;

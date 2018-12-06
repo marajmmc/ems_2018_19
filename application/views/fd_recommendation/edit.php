@@ -398,13 +398,13 @@ $total_participant = 0;
                         $total_budget += $amount;
                     }
 
-                    if (($expense['status'] == $this->config->item('system_status_inactive')) && !($amount > 0))
+                    if (($expense['status'] == $CI->config->item('system_status_inactive')) && !($amount > 0))
                     {
                         continue;
                     }
-                    elseif (($expense['status'] == $this->config->item('system_status_inactive')))
+                    elseif (($expense['status'] == $CI->config->item('system_status_inactive')))
                     {
-                        $expense['text'] .= ' <b>(' . $this->config->item('system_status_inactive') . ')</b>';
+                        $expense['text'] .= ' <b>(' . $CI->config->item('system_status_inactive') . ')</b>';
                     }
                     ?>
                     <tr>

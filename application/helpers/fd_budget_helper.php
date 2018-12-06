@@ -19,6 +19,12 @@ CONST FD_BUDGET_NOT_APPROVED = 8;
 CONST FD_BUDGET_REJECTED_DI = 9;
 CONST FD_BUDGET_NOT_REJECTED_DI = 10;
 
+/* ------FD Payment Status Constants----- */
+CONST FD_PAYMENT_APPROVED = 11;
+CONST FD_PAYMENT_NOT_APPROVED = 12;
+CONST FD_PAYMENT_PAID = 13;
+CONST FD_PAYMENT_NOT_PAID = 14;
+
 
 class Fd_budget_helper
 {
@@ -268,14 +274,14 @@ class Fd_budget_helper
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget Recommendation is not Rejected.'
+                    'system_message' => 'This Field day Budget Recommendation is not Rejected.'
                 );
             }
             elseif ((FD_BUDGET_NOT_REJECTED_ZI == $flag) && ($item_array['status_recommendation'] == $CI->config->item('system_status_rejected'))) // Checks if FD Budget Recommendation not REJECTED
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget Recommendation has been Rejected Already.'
+                    'system_message' => 'This Field day Budget Recommendation has been Rejected Already.'
                 );
             }
             /*
@@ -285,28 +291,59 @@ class Fd_budget_helper
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget is not Approved yet.'
+                    'system_message' => 'This Field day Budget is not Approved yet.'
                 );
             }
             elseif ((FD_BUDGET_NOT_APPROVED == $flag) && ($item_array['status_approve'] == $CI->config->item('system_status_approved'))) // Checks if FD Budget not APPROVED
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget has been Approved Already.'
+                    'system_message' => 'This Field day Budget has been Approved Already.'
                 );
             }
             elseif ((FD_BUDGET_REJECTED_DI == $flag) && ($item_array['status_approve'] != $CI->config->item('system_status_rejected'))) // Checks if FD Budget Approval REJECTED
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget Approval is not Rejected.'
+                    'system_message' => 'This Field day Budget Approval is not Rejected.'
                 );
             }
             elseif ((FD_BUDGET_NOT_REJECTED_DI == $flag) && ($item_array['status_approve'] == $CI->config->item('system_status_rejected'))) // Checks if FD Budget Approval not REJECTED
             {
                 return array(
                     'status' => false,
-                    'system_message' => 'This Field Budget Approval has been Rejected Already.'
+                    'system_message' => 'This Field day Budget Approval has been Rejected Already.'
+                );
+            }
+            /*
+            ----------------FD Payment Status Constants----------------
+            */
+            elseif ((FD_PAYMENT_APPROVED == $flag) && ($item_array['status_payment_approve'] != $CI->config->item('system_status_approved'))) // Checks if FD Budget Payment APPROVED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Payment is not Approved yet.'
+                );
+            }
+            elseif ((FD_PAYMENT_NOT_APPROVED == $flag) && ($item_array['status_payment_approve'] == $CI->config->item('system_status_approved'))) // Checks if FD Budget Payment not APPROVED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Payment has been Approved Already.'
+                );
+            }
+            elseif ((FD_PAYMENT_PAID == $flag) && ($item_array['status_payment_pay'] != $CI->config->item('system_status_paid'))) // Checks if FD Budget Payment PAID
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Payment is not Paid yet.'
+                );
+            }
+            elseif ((FD_PAYMENT_NOT_PAID == $flag) && ($item_array['status_payment_pay'] == $CI->config->item('system_status_paid'))) // Checks if FD Budget Payment not PAID
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Payment has been Paid Already.'
                 );
             }
         }

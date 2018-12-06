@@ -1,7 +1,7 @@
 <?php
 // Field Day Task
 $lang['LABEL_DATE_PROPOSAL'] = 'Proposal Date (Budget)';
-$lang['LABEL_DATE_EXPECTED'] = 'Expected Date (Field Day)';
+$lang['LABEL_DATE_EXPECTED'] = 'Expected Date (FD)';
 $lang['LABEL_AMOUNT_BUDGET_TOTAL'] = 'Expected Total Budget';
 $lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
