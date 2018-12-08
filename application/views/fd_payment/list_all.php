@@ -142,7 +142,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['zone_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['territory_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_BUDGET_APPROVE'); ?>', dataField: 'status_payment_approve', width: '100', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_payment_approve']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_PAYMENT_APPROVE'); ?>', dataField: 'status_payment_approve', width: '100', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_payment_approve']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_PAYMENT_PAY'); ?>', dataField: 'status_payment_pay', width: '100', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_payment_pay']?0:1;?>}
                 ]
             });
     });

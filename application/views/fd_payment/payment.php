@@ -393,18 +393,18 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         </div>
 
         <div class="col-xs-12">
-            <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_approve'); ?>" method="post">
+            <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_payment'); ?>" method="post">
                 <input type="hidden" id="id" name="id" value="<?php echo $item['budget_id']; ?>"/>
 
                 <div class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVE'); ?>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PAYMENT'); ?>
                             <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-4">
-                        <select name="item[status_payment_approve]" class="form-control status-combo">
+                        <select name="item[status_payment_pay]" class="form-control status-combo">
                             <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                            <option value="<?php echo $CI->config->item('system_status_approved'); ?>"><?php echo $CI->lang->line('LABEL_APPROVE'); ?></option>
+                            <option value="<?php echo $CI->config->item('system_status_paid'); ?>"><?php echo $CI->lang->line('LABEL_PAID'); ?></option>
                         </select>
                     </div>
                 </div>
@@ -437,8 +437,8 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == '<?php echo $CI->config->item('system_status_approved'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_APPROVE'); ?>');
+            if (options == '<?php echo $CI->config->item('system_status_paid'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_PAYMENT'); ?>');
             }
             else {
                 $("#button_action_save").removeAttr('data-message-confirm');

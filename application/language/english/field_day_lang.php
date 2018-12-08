@@ -33,5 +33,9 @@ $lang['LABEL_RECOMMENDATION_REMARKS'] = 'Recommendation';
 $lang['LABEL_DELETE_REMARKS'] = 'Reason/ Remarks';
 
 $lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
+$lang['LABEL_PAID'] = "Paid";
+$lang['LABEL_PAYMENT'] = "Payment";
 $lang['LABEL_REJECT'] = "Reject";
 $lang['LABEL_GROWING_AREA'] = "Growing Area";
+$lang['LABEL_STATUS_PAYMENT_APPROVE'] = "Approve Status";
+$lang['LABEL_STATUS_PAYMENT_PAY'] = "Payment Status";
