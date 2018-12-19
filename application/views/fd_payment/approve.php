@@ -10,7 +10,6 @@ $action_buttons[] = array
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 ?>
-<style>.panel-heading{margin-bottom:20px !important;}</style>
 <div class="row widget">
 
     <div class="widget-header">
@@ -23,153 +22,21 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     <div class="row show-grid">
 
         <div class="col-xs-12">
+
+            <?php echo $CI->load->view("info_basic", '', true); ?>
+
             <div class="panel panel-default">
 
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <label>
-                            <a class="external text-danger" data-toggle="collapse" data-target="#collapse1" href="#"> + Basic Information</a>
+                            <a class="external text-danger" data-toggle="collapse" data-target="#collapse1" href="#"> + Participants Information</a>
                         </label>
                     </h4>
                 </div>
 
                 <div id="collapse1" class="panel-collapse collapse">
                     <div class="row" style="padding:20px 0; border:none">
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PROPOSAL'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::display_date($item['date_proposal']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::display_date($item['date_expected']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['crop_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['crop_type_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['variety1_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo ($item['variety2_name']) ? $item['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'; ?>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRESENT_CONDITION'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['present_condition']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['farmers_evaluation']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['division_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['zone_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['territory_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['district_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo $item['outlet_name']; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo ($item['growing_area_name']) ? $item['growing_area_name'] : '<i style="font-weight:normal">- No Growing Area Selected -</i>'; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label" style="font-weight:normal"><?php echo nl2br($item['address']); ?></label>
-                            </div>
-                        </div>
 
                         <div class="row show-grid">
                             <div class="col-xs-4">
@@ -263,82 +130,24 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                         <td style="text-align:right; font-weight:bold" colspan="2">Sub Total :</td>
                                         <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $sub_total_participant; ?></td>
                                     </tr>
+                                    <tr>
+                                        <td style="text-align:right; font-weight:bold" colspan="2"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?> :</td>
+                                        <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $item['participant_others']; $total_participant += $item['participant_others']; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:right; font-weight:bold" colspan="2"><?php echo $CI->lang->line('LABEL_TOTAL_PARTICIPANT'); ?> :</td>
+                                        <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $total_participant; ?></td>
+                                    </tr>
                                 </table>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?> :</label>
-                            </div>
-                            <div class="col-xs-4">
-                                <label class="control-label"><?php echo $item['participant_others']; ?></label>
-                                <?php $total_participant += $item['participant_others']; ?>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid" id="total_participant_container">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_PARTICIPANT'); ?> :</label>
-                            </div>
-                            <div class="col-xs-4">
-                                <label class="control-label"><?php echo $total_participant; ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label style="text-decoration:underline;" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?>:</label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_showroom_total']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_total']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_showroom_arm']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_market_size_ga_arm']); ?></label>
-                            </div>
-                        </div>
-
-                        <div class="row show-grid">
-                            <div class="col-xs-4">
-                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NEXT_SALES_TARGET'); ?> :</label>
-                            </div>
-                            <div class="col-xs-8">
-                                <label class="control-label"><?php echo System_helper::get_string_kg($item['quantity_sales_target']); ?></label>
                             </div>
                         </div>
 
                     </div>
                 </div>
+
+            </div>
+
+            <div class="panel panel-default">
 
                 <div class="panel-heading">
                     <h4 class="panel-title">
@@ -406,6 +215,15 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                             <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                             <option value="<?php echo $CI->config->item('system_status_approved'); ?>"><?php echo $CI->lang->line('LABEL_APPROVE'); ?></option>
                         </select>
+                    </div>
+                </div>
+
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?> &nbsp;</label>
+                    </div>
+                    <div class="col-xs-4">
+                        <textarea name="item[remarks_payment_approve]" class="form-control"></textarea>
                     </div>
                 </div>
 

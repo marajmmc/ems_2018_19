@@ -1618,7 +1618,7 @@ class Fd_budget extends Root_Controller
             $data['item'] = $result;
             $data['info_basic'] = array();
 
-            // Getting User Names
+            //---------Getting User Names------------
             $user_ids = array(
                 $result['budget_user_created'] => $result['budget_user_created'],
                 $result['user_deleted'] => $result['user_deleted'],
@@ -1661,26 +1661,6 @@ class Fd_budget extends Root_Controller
                 'label_2' => $this->lang->line('LABEL_DEALERS_EVALUATION'),
                 'value_2' => nl2br($result['farmers_evaluation'])
             );
-            //----------------Market Size Info. Array Generate----------------
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_MARKET_SIZE_TITLE')
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_TOTAL_MARKET_SIZE'),
-                'value_1' => System_helper::get_string_kg($result['quantity_market_size_showroom_total']),
-                'label_2' => $this->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'),
-                'value_2' => System_helper::get_string_kg($result['quantity_market_size_ga_total'])
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_ARM_MARKET_SIZE'),
-                'value_1' => System_helper::get_string_kg($result['quantity_market_size_showroom_arm']),
-                'label_2' => $this->lang->line('LABEL_ARM_GA_MARKET_SIZE'),
-                'value_2' => System_helper::get_string_kg($result['quantity_market_size_ga_arm'])
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_NEXT_SALES_TARGET'),
-                'value_1' => System_helper::get_string_kg($result['quantity_sales_target'])
-            );
             //----------------Location Array Generate----------------
             $data['info_basic'][] = array(
                 'label_1' => 'Location'
@@ -1707,6 +1687,26 @@ class Fd_budget extends Root_Controller
                 'label_2' => $this->lang->line('LABEL_DIVISION_NAME'),
                 'value_2' => $result['division_name']
             );
+            //----------------Market Size Info. Array Generate----------------
+            $data['info_basic'][] = array(
+                'label_1' => $this->lang->line('LABEL_MARKET_SIZE_TITLE')
+            );
+            $data['info_basic'][] = array(
+                'label_1' => $this->lang->line('LABEL_TOTAL_MARKET_SIZE'),
+                'value_1' => System_helper::get_string_kg($result['quantity_market_size_showroom_total']),
+                'label_2' => $this->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'),
+                'value_2' => System_helper::get_string_kg($result['quantity_market_size_ga_total'])
+            );
+            $data['info_basic'][] = array(
+                'label_1' => $this->lang->line('LABEL_ARM_MARKET_SIZE'),
+                'value_1' => System_helper::get_string_kg($result['quantity_market_size_showroom_arm']),
+                'label_2' => $this->lang->line('LABEL_ARM_GA_MARKET_SIZE'),
+                'value_2' => System_helper::get_string_kg($result['quantity_market_size_ga_arm'])
+            );
+            $data['info_basic'][] = array(
+                'label_1' => $this->lang->line('LABEL_NEXT_SALES_TARGET'),
+                'value_1' => System_helper::get_string_kg($result['quantity_sales_target'])
+            );
             //----------------Status Info Array Generate----------------
             $data['info_basic'][] = array(
                 'label_1' => 'Budget Status'
@@ -1715,7 +1715,7 @@ class Fd_budget extends Root_Controller
                 'label_1' => $this->lang->line('LABEL_STATUS_BUDGET_FORWARD'),
                 'value_1' => $result['status_budget_forward'],
                 'label_2' => 'Budget ' . $this->lang->line('LABEL_REMARKS'),
-                'value_2' => nl2br($result['remarks_budget_forward'])
+                'value_2' => ($result['remarks_budget_forward']) ? nl2br($result['remarks_budget_forward']) : '-'
             );
             if ($result['user_budget_forwarded'] > 0)
             {
@@ -1730,7 +1730,7 @@ class Fd_budget extends Root_Controller
                     'label_1' => $this->lang->line('LABEL_STATUS_RECOMMENDATION'),
                     'value_1' => $result['status_recommendation'],
                     'label_2' => 'Recommendation ' . $this->lang->line('LABEL_REMARKS'),
-                    'value_2' => nl2br($result['remarks_recommendation'])
+                    'value_2' => ($result['remarks_recommendation']) ? nl2br($result['remarks_recommendation']) : '-'
                 );
                 if ($result['user_recommendation'] > 0)
                 {
@@ -1745,7 +1745,7 @@ class Fd_budget extends Root_Controller
                         'label_1' => $this->lang->line('LABEL_STATUS_BUDGET_APPROVE'),
                         'value_1' => $result['status_approve'],
                         'label_2' => 'Approval ' . $this->lang->line('LABEL_REMARKS'),
-                        'value_2' => nl2br($result['remarks_approve'])
+                        'value_2' => ($result['remarks_approve']) ? nl2br($result['remarks_approve']) : '-'
                     );
                     if ($result['user_approved'] > 0)
                     {
@@ -1764,7 +1764,7 @@ class Fd_budget extends Root_Controller
                             'label_1' => $this->lang->line('LABEL_STATUS_PAYMENT_APPROVE'),
                             'value_1' => $result['status_payment_approve'],
                             'label_2' => 'Payment Approval ' . $this->lang->line('LABEL_REMARKS'),
-                            'value_2' => nl2br($result['remarks_payment_approve'])
+                            'value_2' => ($result['remarks_payment_approve']) ? nl2br($result['remarks_payment_approve']) : '-'
                         );
                         if ($result['user_payment_approved'] > 0)
                         {
@@ -1779,7 +1779,7 @@ class Fd_budget extends Root_Controller
                                 'label_1' => $this->lang->line('LABEL_STATUS_PAYMENT_PAY'),
                                 'value_1' => $result['status_payment_pay'],
                                 'label_2' => 'Payment Paid ' . $this->lang->line('LABEL_REMARKS'),
-                                'value_2' => nl2br($result['remarks_payment_pay'])
+                                'value_2' => ($result['remarks_payment_pay']) ? nl2br($result['remarks_payment_pay']) : '-'
                             );
                             if ($result['user_payment_paid'] > 0)
                             {
@@ -1794,8 +1794,35 @@ class Fd_budget extends Root_Controller
                     }
                 }
             }
+            //------------------Participants Array Generate-------------------
+            $data['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
+            $data['lead_farmers'] = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
+            $result_data = json_decode($result['participants_dealer_farmer'], TRUE);
 
-            $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array('status !="' . $this->config->item('system_status_inactive').'"'), 0, 0, array('ordering ASC'));
+            foreach ($data['dealers'] as &$value)
+            {
+                if (isset($result_data['dealer_participant'][$value['dealer_id']]) && ($result_data['dealer_participant'][$value['dealer_id']] > 0))
+                {
+                    $value['participant'] = $result_data['dealer_participant'][$value['dealer_id']];
+                }
+                else
+                {
+                    unset($data['dealers'][$value['dealer_id']]);
+                }
+            }
+            foreach ($data['lead_farmers'] as &$value)
+            {
+                if (isset($result_data['farmer_participant'][$value['lead_farmers_id']]) && ($result_data['farmer_participant'][$value['lead_farmers_id']] > 0))
+                {
+                    $value['participant'] = $result_data['farmer_participant'][$value['lead_farmers_id']];
+                }
+                else
+                {
+                    unset($data['lead_farmers'][$value['lead_farmers_id']]);
+                }
+            }
+            //------------------Expense Array Generate-------------------
+            $data['expense_items'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_expense_items'), array('id', 'name', 'status'), array('status !="' . $this->config->item('system_status_inactive') . '"'), 0, 0, array('ordering ASC'));
             $result_data = json_decode($result['amount_expense_items'], TRUE);
             foreach ($data['expense_items'] as &$expense_item)
             {
@@ -1808,9 +1835,26 @@ class Fd_budget extends Root_Controller
                     $expense_item['amount'] = 0;
                 }
             }
-
-            //pr($data['item']);
-            //$results_image = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+            //------------------Uploaded Image Array Generate-------------------
+            $picture_data = Query_helper::get_info($this->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $this->config->item('system_status_delete') . '"'));
+            $data['image_details']=array();
+            foreach ($picture_data as $picture)
+            {
+                $data['image_details'][$picture['category_id']] = $picture;
+            }
+            $data['picture_categories'] = Query_helper::get_info($this->config->item('table_ems_setup_fd_picture_category'), array('id value', 'name text', 'status'), array('status="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($data['picture_categories'] as $picture)
+            {
+                if (!isset($data['image_details'][$picture['value']]))
+                {
+                    $data['image_details'][$picture['value']] = array(
+                        'image_location_variety1' => FD_NO_IMAGE_PATH,
+                        'remarks_variety1' => '',
+                        'image_location_variety2' => FD_NO_IMAGE_PATH,
+                        'remarks_variety2' => ''
+                    );
+                }
+            }
 
             $data['title'] = 'Field Day Budget Details ( ID: ' . $item_id . ' )';
             $ajax['status'] = true;
