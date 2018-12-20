@@ -190,7 +190,7 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                     <td class="widget-header header_caption">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_PAYMENT_APPROVE'); ?></label>
                     </td>
-                    <td>
+                    <td  style="width:120px">
                         <label class="control-label"><?php echo $item['status_payment_approve']; ?></label>
                     </td>
                     <td class="widget-header header_caption" style="width:100px">
