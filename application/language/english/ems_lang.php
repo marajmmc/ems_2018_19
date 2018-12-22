@@ -280,6 +280,7 @@ $lang['LABEL_STATUS_ATTENDANCE'] = "Attendance";
 $lang['LABEL_DEALER'] = 'Dealer';
 $lang['LABEL_DEALER_VISIT_ACTIVITIES'] = 'Dealer Visit Activities';
 $lang['LABEL_FARMER_NAME'] = 'Farmer';
+$lang['LABEL_LEAD_FARMER_NAME'] = 'Lead Farmer';
 $lang['LABEL_FARMER_VISIT_ACTIVITIES'] = 'Farmer Visit Activities';
 $lang['LABEL_FARMER_VISIT_ACTIVITIES'] = 'Farmer Visit Activities';
 $lang['LABEL_LEAD_FARMER_VISIT_ACTIVITIES_ONE'] = 'Lead Farmer Visit Activities (1)';
