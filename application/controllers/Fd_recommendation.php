@@ -409,7 +409,7 @@ class Fd_recommendation extends Root_Controller
             $data['crop_varieties1'] = (sizeof($variety_arm_upcoming) > 0) ? $variety_arm_upcoming[$result['crop_type_id']] : array();
             $data['crop_varieties2'] = (sizeof($variety_all) > 0) ? $variety_all[$result['crop_type_id']] : array();
 
-            $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id AS value, CONCAT_WS(" - ",name, address) text', array('status !="' . $this->config->item('system_status_delete') . '"', 'outlet_id =' . $result['outlet_id']), 0, 0, 'areas.id ASC');
+            $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id AS value, CONCAT_WS(" - ",name, address) text', array('status !="' . $this->config->item('system_status_delete') . '"', 'outlet_id =' . $result['outlet_id']), 0, 0, array('name'));
             $data['dealers'] = Fd_budget_helper::get_dealers_growing_area($result['outlet_id']);
             $data['leading_farmers'] = Fd_budget_helper::get_lead_farmers_growing_area($result['outlet_id']);
 

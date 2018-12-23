@@ -1575,7 +1575,7 @@ class Fd_budget extends Root_Controller
         {
             $condition[] = 'outlet_id =' . $item_id;
         }
-        $data['items'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id AS value, CONCAT_WS(" - ",name, address) text', $condition, 0, 0, 'areas.id ASC');
+        $data['items'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id AS value, CONCAT_WS(" - ",name, address) text', $condition, 0, 0, array('name'));
         if ($data['items'])
         {
             $ajax['status'] = true;

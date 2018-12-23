@@ -346,7 +346,13 @@ $lang['LABEL_LOAD_VARIETY'] = 'Load Variety';
 
 // Area
 $lang['LABEL_AREA_NAME'] = 'Growing Area Name';
-$lang['LABEL_AREA_ADDRESS'] = 'Growing Area Address';
 
 // Printing Page
 $lang['LABEL_PURPOSE'] = 'Purpose';
+$lang['LABEL_DATE_EVALUATION'] = 'Purpose';
+
+// Demonstration Status
+$lang['LABEL_DATE_EXPECTED_EVALUATION'] = 'Expected Date of Evaluation';
+$lang['LABEL_DATE_ACTUAL_EVALUATION'] = 'Actual Date of Evaluation';
+$lang['LABEL_OTHER_FARMER_NAME'] = 'Other Farmer';
+
