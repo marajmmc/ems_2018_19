@@ -105,24 +105,38 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <span style="color:#FF0000">*</span></label>
     </div>
     <div class="col-xs-4">
-        <select id="outlet_id" name="item[outlet_id]" class="form-control">
-            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-            <?php
-            if ($outlets)
+        <?php
+        if ($outlets)
+        {
+            if (sizeof($outlets) > 1)
             {
-                foreach ($outlets as $outlet)
-                {
+                ?>
+                <select id="outlet_id" name="item[outlet_id]" class="form-control">
+                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                    <?php foreach ($outlets as $outlet)
+                    {
+                        ?>
+                        <option value="<?php echo $outlet['value'] ?>" <?php echo ($outlet['value'] == $item['outlet_id']) ? 'selected' : ''; ?>><?php echo $outlet['text']; ?></option>
+                    <?php
+                    }
                     ?>
-                    <option value="<?php echo $outlet['value'] ?>" <?php echo ($outlet['value'] == $item['outlet_id']) ? 'selected' : ''; ?>><?php echo $outlet['text']; ?></option>
-                <?php
-                }
+                </select>
+            <?php
             }
-            ?>
-        </select>
+            else
+            {
+                ?>
+                <label class="control-label"><?php echo $outlets[0]['text']; ?></label>
+                <input type="hidden" name="item[outlet_id]" value="<?php echo $outlets[0]['value'] ?>"/>
+            <?php
+            }
+
+        }
+        ?>
     </div>
 </div>
 
-<div style="<?php echo (!($item['id'] > 0)) ? 'display:none' : ''; ?>" class="row show-grid" id="growing_area_id_container">
+<div style="<?php echo (!($item['id'] > 0) && (sizeof($outlets) > 1)) ? 'display:none' : ''; ?>" class="row show-grid" id="growing_area_id_container">
     <div class="col-xs-4">
         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?>
             <span style="color:#FF0000">*</span></label>
@@ -169,35 +183,46 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         </div>
     </div>
 
-    <div class="row show-grid">
-        <div class="col-xs-4">
-            <label class="control-label pull-right">OR, &nbsp;</label>
+    <div id="other_farmer_container" style="<?php echo (($item['id'] > 0) && ($item['lead_farmer_id'] > 0)) ? 'display:none' : ''; ?>">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">OR, &nbsp;</label>
+            </div>
+            <div class="col-xs-4"><label class="control-label">
+                    <span style="text-decoration:underline">New Farmer Information:</span> </label></div>
         </div>
-        <div class="col-xs-4"><label class="control-label">
-                <span style="text-decoration:underline">New Farmer Information:</span> </label></div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4"> &nbsp; </div>
+            <div class="col-xs-4">
+                <table class="new_farmer">
+                    <tr>
+                        <td><label class="control-label pull-right">Name <span style="color:#FF0000">*</span></label>
+                        </td>
+                        <td>
+                            <input type="text" name="item[name_other_farmer]" class="form-control other_farmer" value="<?php echo $item['name_other_farmer']; ?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label pull-right">Phone No.
+                                <span style="color:#FF0000">*</span></label>
+                        </td>
+                        <td>
+                            <input type="text" name="item[phone_other_farmer]" class="form-control other_farmer" value="<?php echo $item['phone_other_farmer']; ?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="control-label pull-right">Address <span style="color:#FF0000">*</span></label>
+                        </td>
+                        <td>
+                            <textarea name="item[address_other_farmer]" class="form-control other_farmer"><?php echo nl2br($item['address_other_farmer']); ?></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <div class="row show-grid">
-        <div class="col-xs-4"> &nbsp; </div>
-        <div class="col-xs-4">
-            <table class="new_farmer">
-                <tr>
-                    <td><label class="control-label pull-right">Name <span style="color:#FF0000">*</span></label></td>
-                    <td><input type="text" name="item[name_other_farmer]" class="form-control other_farmer"/></td>
-                </tr>
-                <tr>
-                    <td><label class="control-label pull-right">Phone No. <span style="color:#FF0000">*</span></label></td>
-                    <td><input type="text" name="item[phone_other_farmer]" class="form-control other_farmer"/></td>
-                </tr>
-                <tr>
-                    <td><label class="control-label pull-right">Address <span style="color:#FF0000">*</span></label></td>
-                    <td>
-                        <textarea name="item[address_other_farmer]" class="form-control other_farmer"></textarea>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
 </div>
 
 <div class="row show-grid" id="crop_id_container">
@@ -208,17 +233,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     <div class="col-xs-4">
         <select name="item[crop_id]" id="crop_id" class="form-control">
             <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-            <?php
-            if ($crops)
-            {
-                foreach ($crops as $crop)
-                {
-                    ?>
-                    <option value="<?php echo $crop['value'] ?>" <?php echo ($crop['value'] == $item['crop_id']) ? 'selected' : ''; ?>><?php echo $crop['text']; ?></option>
-                <?php
-                }
-            }
-            ?>
         </select>
     </div>
 </div>
@@ -231,17 +245,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
     <div class="col-xs-4">
         <select name="item[crop_type_id]" id="crop_type_id" class="form-control">
             <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-            <?php
-            if ($crop_types)
-            {
-                foreach ($crop_types as $type)
-                {
-                    ?>
-                    <option value="<?php echo $type['value'] ?>" <?php echo ($type['value'] == $item['crop_type_id']) ? 'selected' : ''; ?>><?php echo $type['text']; ?></option>
-                <?php
-                }
-            }
-            ?>
         </select>
     </div>
 </div>
@@ -329,16 +332,52 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 </form>
 
 <script type="text/javascript">
+    // Load Growing Area
+    function load_growing_area(outlet_id) {
+        $('#growing_area_id').val('');
+        $('#lead_farmer_id').val('');
+        $('.other_farmer').val('');
+
+        $('#growing_area_id_container').hide();
+        $('#lead_farmer_id_container').hide();
+        if (outlet_id > 0) {
+            $.ajax({
+                url: "<?php echo site_url($CI->controller_url.'/index/get_growing_area/') ?>",
+                type: 'POST',
+                datatype: "JSON",
+                data: {
+                    html_container_id: '#growing_area_id',
+                    id: outlet_id
+                },
+                success: function (data, status) {
+                    if (data.status) {
+                        $('#growing_area_id_container').show();
+                    }
+                },
+                error: function (xhr, desc, err) {
+                    console.log("error");
+                }
+            });
+        }
+    }
+
     jQuery(document).ready(function ($) {
         system_off_events(); // Triggers
 
         $(".datepicker").datepicker({dateFormat: display_date_format});
 
+        var selected_crop_id = parseInt(<?php echo $item['crop_id']; ?>);
+        var selected_crop_type_id = parseInt(<?php echo $item['crop_type_id']; ?>);
+
+        $("#crop_id").html(get_dropdown_with_select(system_crops, selected_crop_id));
+        if (selected_crop_id > 0) {
+            $("#crop_type_id").html(get_dropdown_with_select(system_types[selected_crop_id], selected_crop_type_id));
+        }
+
         $(document).on("change", "#outlet_id", function () {
             $('#growing_area_id').val('');
             $('#lead_farmer_id').val('');
             $('.other_farmer').val('');
-            $('.other_farmer').removeAttr('disabled');
 
             var outlet_id = parseInt($(this).val());
             $('#growing_area_id_container').hide();
@@ -367,7 +406,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         $(document).on("change", "#growing_area_id", function () {
             $('#lead_farmer_id').val('');
             $('.other_farmer').val('');
-            $('.other_farmer').removeAttr('disabled');
 
             var ga_id = parseInt($(this).val());
             $('#lead_farmer_id_container').hide();
@@ -383,6 +421,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     success: function (data, status) {
                         if (data.status) {
                             $('#lead_farmer_id_container').show();
+                            $('#other_farmer_container').show();
                         }
                     },
                     error: function (xhr, desc, err) {
@@ -396,9 +435,9 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             var options = $(this).val();
             if (options.trim() != '') {
                 $(".other_farmer").val('');
-                $(".other_farmer").attr('disabled', 'true');
+                $('#other_farmer_container').hide();
             } else {
-                $(".other_farmer").removeAttr('disabled');
+                $('#other_farmer_container').show();
             }
         });
 
