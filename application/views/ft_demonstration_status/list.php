@@ -31,13 +31,13 @@ if ((isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1)) |
         'type' => 'button',
         'label' => 'Picture',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit_image')
+        'data-action-link' => site_url($CI->controller_url . '/index/list_image')
     );
     $action_buttons[] = array(
         'type' => 'button',
         'label' => 'Video',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit_video')
+        'data-action-link' => site_url($CI->controller_url . '/index/list_video')
     );
     $action_buttons[] = array(
         'type' => 'button',
@@ -176,13 +176,15 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', pinned: true, width: '50', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?>', dataField: 'growing_area', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['growing_area']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['year']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['season']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['season']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '180', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?>', dataField: 'growing_area', width: '150', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['growing_area']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_NAME'); ?>', dataField: 'lead_farmer_name', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['lead_farmer_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>', dataField: 'variety1_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety1_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>}
                 ]
             });
     });
