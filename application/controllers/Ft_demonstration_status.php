@@ -7,6 +7,7 @@ class Ft_demonstration_status extends Root_Controller
     public $controller_url;
     public $locations;
     public $common_view_location;
+    public $file_type;
 
     public function __construct()
     {
@@ -53,7 +54,13 @@ class Ft_demonstration_status extends Root_Controller
         }
         elseif ($action == "list_image")
         {
-            $this->system_list_image($id);
+            $this->file_type = $this->config->item('system_file_type_image');
+            $this->system_list_file($id);
+        }
+        elseif ($action == "list_video")
+        {
+            $this->file_type = $this->config->item('system_file_type_video');
+            $this->system_list_file($id);
         }
         elseif ($action == "add")
         {
@@ -69,11 +76,25 @@ class Ft_demonstration_status extends Root_Controller
         }
         elseif ($action == "add_image")
         {
-            $this->system_add_image($id);
+            $this->file_type = $this->config->item('system_file_type_image');
+            $this->system_add_file($id);
+        }
+        elseif ($action == "add_video")
+        {
+            $this->file_type = $this->config->item('system_file_type_video');
+            $this->system_add_file($id);
+        }
+        elseif ($action == "edit_image")
+        {
+            $this->system_edit_image($id);
         }
         elseif ($action == "save_image")
         {
             $this->system_save_image();
+        }
+        elseif ($action == "delete_file")
+        {
+            $this->system_delete_file($id);
         }
         elseif ($action == "get_growing_area")
         {
@@ -348,9 +369,9 @@ class Ft_demonstration_status extends Root_Controller
         $this->json_return($items);
     }
 
-    private function system_list_image($id)
+    private function system_list_file($id)
     {
-        if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
+        if ((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)) || (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
         {
             if ($id > 0)
             {
@@ -391,6 +412,13 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
             $this->db->where('demonstration.id', $item_id);
             $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
 
             $data = array();
             $data['info_basic'] = array();
@@ -425,22 +453,26 @@ class Ft_demonstration_status extends Root_Controller
                 'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
             );
 
-            $data['uploaded_images'] = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'revision=1', 'status ="' . $this->config->item('system_status_active') . '"'));
-
-//            echo '<pre>';
-//            print_r($data['images']);
-//            echo '</pre>'; die();
-
+            $data['uploaded_files'] = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'file_type ="' . $this->file_type . '"', 'revision=1', 'status ="' . $this->config->item('system_status_active') . '"'));
 
             $data['id'] = $item_id;
-            $data['title'] = "Demonstration Status Image List";
+            $data['file_type'] = $this->file_type;
+            $data['title'] = "Demonstration Status {$this->file_type} List ( ID: " . $item_id . " )";
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_image", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_file", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/list_image/' . $item_id);
+
+            if ($this->file_type == $this->config->item('system_file_type_image'))
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/list_image/' . $item_id);
+            }
+            else
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/list_video/' . $item_id);
+            }
             $this->json_return($ajax);
         }
         else
@@ -605,7 +637,6 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-
         //Validation Checking
         if (!$this->check_validation())
         {
@@ -636,7 +667,7 @@ class Ft_demonstration_status extends Root_Controller
         else //ADD
         {
             //Main Table Insert
-            $item_head['status'] = $this->config->item('system_status_active');; //From Input
+            $item_head['status'] = $this->config->item('system_status_active'); //From Input
             $item_head['date_created'] = $time;
             $item_head['user_created'] = $user->user_id;
 
@@ -664,9 +695,9 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
-    private function system_add_image($id)
+    private function system_add_file($id)
     {
-        if ((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)) || (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
+        if ((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)))
         {
             if ($id > 0)
             {
@@ -678,8 +709,8 @@ class Ft_demonstration_status extends Root_Controller
             }
 
             $data = array();
-            $data['item'] = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-            if (!$data['item'])
+            $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
+            if (!$result)
             {
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
@@ -687,15 +718,71 @@ class Ft_demonstration_status extends Root_Controller
                 $this->json_return($ajax);
             }
             $data['id'] = $item_id;
+            $data['file_id'] = 0;
+            $data['file_type'] = $this->file_type;
+            $data['item'] = array(
+                'file_location' => ($this->file_type == $this->config->item('system_file_type_image')) ? 'images/no_image.jpg' : '',
+                'remarks' => '',
+            );
 
-            $data['title'] = "Upload Demonstration Status Picture ( ID:" . $data['item']['id'] . " )";
+            $data['title'] = "Upload Demonstration Status Picture ( ID:" . $data['id'] . " )";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_file", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+
+            if ($this->file_type == $this->config->item('system_file_type_image'))
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/add_image/' . $item_id);
+            }
+            else
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/add_video/' . $item_id);
+            }
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_edit_image($id)
+    {
+        if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
+        {
+            $data = array();
+
+            $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
+            $this->db->select('image_video.*');
+            $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
+            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
+            $this->db->where('image_video.status', $this->config->item('system_status_active'));
+            $this->db->where('image_video.id', $id);
+            $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $id, 'ID Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            $data['id'] = $result['demonstration_id'];
+            $data['image_id'] = $result['id'];
+            $data['item'] = $result;
+
+            $data['title'] = "Upload Demonstration Status Picture ( ID:" . $data['id'] . " )";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_image", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/add_image/' . $item_id);
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_image/' . $id);
             $this->json_return($ajax);
         }
         else
@@ -709,6 +796,7 @@ class Ft_demonstration_status extends Root_Controller
     private function system_save_image()
     {
         $item_id = $this->input->post('id');
+        $image_id = $this->input->post('image_id');
         $item = $this->input->post('item');
         $user = User_helper::get_user();
         $time = time();
@@ -720,7 +808,21 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-        $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
+
+        if ($image_id > 0) // EDIT
+        {
+            $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
+            $this->db->select('image_video.*');
+            $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
+            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
+            $this->db->where('image_video.status', $this->config->item('system_status_active'));
+            $this->db->where('image_video.id', $image_id);
+            $result = $this->db->get()->row_array();
+        }
+        else // ADD
+        {
+            $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
+        }
         if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
@@ -731,7 +833,6 @@ class Ft_demonstration_status extends Root_Controller
 
         $path = 'images/ft_demonstration_status/' . $item_id;
         $uploaded_file = System_helper::upload_file($path);
-
         foreach ($uploaded_file as $file) // Validation for uploaded Files
         {
             if (!$file['status'])
@@ -739,7 +840,6 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['status'] = false;
                 $ajax['system_message'] = $file['message'];
                 $this->json_return($ajax);
-                die();
             }
         }
 
@@ -748,30 +848,43 @@ class Ft_demonstration_status extends Root_Controller
             $file = $uploaded_file['image_demonstration'];
             if ($file['status'])
             {
-                $item['demonstration_id'] = $item_id;
                 $item['file_name'] = $file['info']['file_name'];
                 $item['file_location'] = $path . '/' . $file['info']['file_name'];
-                $item['file_type'] = $this->config->item('system_file_type_image');
-                $item['status'] = $this->config->item('system_status_active');
-                $item['revision'] = 1;
-                $item['date_created'] = $time;
-                $item['user_created'] = $user->user_id;
             }
             else
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = $file['message'];
                 $this->json_return($ajax);
-                die();
             }
+        }
+        else if (!($image_id > 0)) // Image Required for First time (ADD)
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = "No Image has been Selected or, Uploaded";
+            $this->json_return($ajax);
+        }
+        else if ($image_id > 0) // Get OLD Image, If no Image Selected in EDIT
+        {
+            $item['file_name'] = $result['file_name'];
+            $item['file_location'] = $result['file_location'];
         }
 
         $this->db->trans_start(); //DB Transaction Handle START
-//Update Revision
-/*  $this->db->where('budget_id', $item_id);
-$this->db->set('revision', 'revision+1', FALSE);
-$this->db->update($this->config->item('table_ems_demonstration_status_image_video'));  */
+        // Update Revision
+        if ($image_id > 0)
+        {
+            $this->db->where('id', $image_id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_ems_demonstration_status_image_video'));
+        }
         //Insert New Image
+        $item['file_type'] = $this->config->item('system_file_type_image');
+        $item['demonstration_id'] = $item_id;
+        $item['status'] = $this->config->item('system_status_active');
+        $item['revision'] = 1;
+        $item['date_created'] = $time;
+        $item['user_created'] = $user->user_id;
         Query_helper::add($this->config->item('table_ems_demonstration_status_image_video'), $item, FALSE);
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -779,7 +892,7 @@ $this->db->update($this->config->item('table_ems_demonstration_status_image_vide
         {
             $ajax['status'] = true;
             $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
-            $this->system_list();
+            $this->system_list_file($item_id);
         }
         else
         {
@@ -789,6 +902,58 @@ $this->db->update($this->config->item('table_ems_demonstration_status_image_vide
         }
     }
 
+    private function system_delete_file($id)
+    {
+        if ($id > 0)
+        {
+            $item_id = $id;
+        }
+        else
+        {
+            $item_id = $this->input->post('id');
+        }
+        $user = User_helper::get_user();
+        $time = time();
+
+        $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
+        $this->db->select('image_video.*');
+        $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
+        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
+        {
+            $this->db->where('demonstration.user_created', $user->user_id);
+        }
+        $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
+        $this->db->where('image_video.status', $this->config->item('system_status_active'));
+        $this->db->where('image_video.id', $item_id);
+        $result = $this->db->get()->result_array();
+        if (!$result)
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+
+        $this->db->trans_start(); //DB Transaction Handle START
+        $item['status'] = $this->config->item('system_status_delete');
+        $item['user_deleted'] = $user->user_id;
+        $item['date_deleted'] = $time;
+        Query_helper::update($this->config->item('table_ems_demonstration_status_image_video'), $item, array("id = " . $item_id));
+        $this->db->trans_complete(); //DB Transaction Handle END
+
+        if ($this->db->trans_status() === TRUE)
+        {
+            $ajax['status'] = true;
+            $this->message = $this->lang->line("MSG_DELETED_SUCCESS");
+            $this->system_list_file($item_id);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("MSG_DELETED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
 
     private function system_get_growing_area($id = 0)
     {
