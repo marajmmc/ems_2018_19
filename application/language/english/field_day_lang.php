@@ -32,7 +32,6 @@ $lang['LABEL_BUDGET_REMARKS'] = 'Remarks';
 $lang['LABEL_RECOMMENDATION_REMARKS'] = 'Recommendation';
 $lang['LABEL_DELETE_REMARKS'] = 'Reason/ Remarks';
 
-$lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
 $lang['LABEL_PAID'] = "Paid";
 $lang['LABEL_PAYMENT'] = "Payment";
 $lang['LABEL_REJECT'] = "Reject";
