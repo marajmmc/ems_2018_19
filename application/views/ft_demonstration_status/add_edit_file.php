@@ -29,24 +29,8 @@ $action_buttons[] = array
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
 ?>
-<style>
-    .blob {
-        display: inline-block;
-        padding: 3px;
-        border: 3px solid #8c8c8c
-    }
 
-    .blob:hover {
-        border: 3px solid #3693CF
-    }
-
-    .bootstrap-filestyle {
-        float: right
-    }
-    #file_demonstration img{max-width:100%}
-</style>
-
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_image'); ?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_file'); ?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $id ?>"/>
     <input type="hidden" id="file_id" name="file_id" value="<?php echo $file_id ?>"/>
     <input type="hidden" id="file_type" name="file_type" value="<?php echo $file_type ?>"/>
@@ -65,13 +49,14 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
 
-            <?php if ($file_type == $CI->config->item('system_file_type_image'))
+            <?php
+            if ($file_type == $CI->config->item('system_file_type_image'))
             {
                 ?>
                 <div class="col-xs-3">
                     <div id="file_demonstration">
                         <a href="<?php echo $CI->config->item('system_base_url_picture') . $item['file_location']; ?>" target="_blank" class="external blob">
-                            <img src="<?php echo $CI->config->item('system_base_url_picture') . $item['file_location']; ?>" alt="Picture Missing"/>
+                            <img src="<?php echo $CI->config->item('system_base_url_picture') . $item['file_location']; ?>" style="width:100%" alt="Picture Missing"/>
                         </a>
                     </div>
                 </div>
@@ -83,10 +68,17 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             else
             {
                 ?>
-
+                <div class="col-xs-3">
+                    <video controls id="video_preview_id" style="width:100%">
+                        <source src="<?php echo $CI->config->item('system_base_url_picture') . $item['file_location']; ?>" id="arm_variety_video"/>
+                    </video>
+                </div>
+                <div class="col-xs-1">
+                    <input type="file" class="browse_button file_type_video" name="file_demonstration" accept="video/*">
+                </div>
             <?php
-            }?>
-
+            }
+            ?>
 
         </div>
 
@@ -109,22 +101,15 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         system_preset({controller: '<?php echo $CI->router->class; ?>'});
         $(".browse_button").filestyle({input: false, icon: false, buttonText: "Upload", buttonName: "btn-primary"});
 
-
-        /*system_preset({controller:'<?php echo $CI->router->class; ?>'});
-        $(".browse_button_image").filestyle({input: false,icon: false,buttonText: "Upload Picture",buttonName: "btn-primary"});
-        $(".browse_button_video").filestyle({input: false,icon: false,buttonText: "Upload Video",buttonName: "btn-primary"});
-
-        $(document).on("change", ".file_type_video", function(evt)
-        {
+        $(document).on("change", ".file_type_video", function (evt) {
             var $source = $('#arm_variety_video');
             $source[0].src = URL.createObjectURL(this.files[0]);
             $source.parent()[0].load();
-            var video=document.createElement('video');
-            video.src=URL.createObjectURL(this.files[0]);
-            video.onloadedmetadata=function()
-            {
+            var video = document.createElement('video');
+            video.src = URL.createObjectURL(this.files[0]);
+            video.onloadedmetadata = function () {
                 window.URL.revokeObjectURL(this.src);
             }
-        });*/
+        });
     });
 </script>

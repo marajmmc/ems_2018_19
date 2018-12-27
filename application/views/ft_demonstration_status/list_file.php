@@ -10,7 +10,7 @@ $action_buttons[] = array(
 if ($file_type == $CI->config->item('system_file_type_image'))
 {
     $action_buttons[] = array(
-        'label' => 'Upload Picture',
+        'label' => 'Upload ' . $file_type,
         'href' => site_url($CI->controller_url . '/index/add_image/' . $id)
     );
     $action_buttons[] = array(
@@ -21,7 +21,7 @@ if ($file_type == $CI->config->item('system_file_type_image'))
 else
 {
     $action_buttons[] = array(
-        'label' => 'Upload Video',
+        'label' => 'Upload ' . $file_type,
         'href' => site_url($CI->controller_url . '/index/add_video/' . $id)
     );
     $action_buttons[] = array(
@@ -32,17 +32,7 @@ else
 
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
-<style>
-    .blob {
-        display: inline-block;
-        padding: 3px;
-        border: 3px solid #8c8c8c
-    }
 
-    .blob:hover {
-        border: 3px solid #3693CF
-    }
-</style>
 <div class="row widget">
     <div class="widget-header">
         <div class="title">
@@ -72,9 +62,24 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <tr>
                                 <td><?php echo $file['id']; ?></td>
                                 <td>
-                                    <a href="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>" target="_blank" class="external blob">
-                                        <img src="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>" style="max-height:150px" alt="Picture Missing"/>
-                                    </a>
+                                    <?php
+                                    if ($file_type == $CI->config->item('system_file_type_image'))
+                                    {
+                                        ?>
+                                        <a href="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>" target="_blank" class="external blob">
+                                            <img src="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>" style="max-width:300px; max-height:250px" alt="Picture Missing"/>
+                                        </a>
+                                    <?php
+                                    }
+                                    else
+                                    {
+                                        ?>
+                                        <video controls id="video_preview_id" style="max-width:300px; max-height:250px">
+                                            <source src="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>">
+                                        </video>
+                                    <?php
+                                    }
+                                    ?>
                                 </td>
                                 <td><?php echo nl2br($file['remarks']); ?></td>
                                 <td>

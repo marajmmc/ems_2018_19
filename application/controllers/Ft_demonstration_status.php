@@ -86,11 +86,17 @@ class Ft_demonstration_status extends Root_Controller
         }
         elseif ($action == "edit_image")
         {
-            $this->system_edit_image($id);
+            $this->file_type = $this->config->item('system_file_type_image');
+            $this->system_edit_file($id);
         }
-        elseif ($action == "save_image")
+        elseif ($action == "edit_video")
         {
-            $this->system_save_image();
+            $this->file_type = $this->config->item('system_file_type_video');
+            $this->system_edit_file($id);
+        }
+        elseif ($action == "save_file")
+        {
+            $this->system_save_file();
         }
         elseif ($action == "delete_file")
         {
@@ -208,7 +214,7 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->select('areas.name growing_area');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (New)") ) AS lead_farmer_name');
+        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS lead_farmer_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -255,8 +261,8 @@ class Ft_demonstration_status extends Root_Controller
         $items = $this->db->get()->result_array();
         /*foreach ($items as &$item)
         {
-            $item['date_variety1_sowing'] = System_helper::display_date($item['date_variety1_sowing']);
-            $item['date_variety2_sowing'] = System_helper::display_date($item['date_variety2_sowing']);
+            $item['date_sowing_variety1'] = System_helper::display_date($item['date_sowing_variety1']);
+            $item['date_sowing_variety2'] = System_helper::display_date($item['date_sowing_variety2']);
         }*/
         $this->json_return($items);
     }
@@ -316,7 +322,7 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->select('areas.name growing_area');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (New)") ) AS lead_farmer_name');
+        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS lead_farmer_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -363,8 +369,8 @@ class Ft_demonstration_status extends Root_Controller
         $items = $this->db->get()->result_array();
         /*foreach ($items as &$item)
         {
-            $item['date_variety1_sowing'] = System_helper::display_date($item['date_variety1_sowing']);
-            $item['date_variety2_sowing'] = System_helper::display_date($item['date_variety2_sowing']);
+            $item['date_sowing_variety1'] = System_helper::display_date($item['date_sowing_variety1']);
+            $item['date_sowing_variety2'] = System_helper::display_date($item['date_sowing_variety2']);
         }*/
         $this->json_return($items);
     }
@@ -383,7 +389,7 @@ class Ft_demonstration_status extends Root_Controller
             }
 
             $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.year');
+            $this->db->select('demonstration.year, demonstration.lead_farmer_id');
 
             $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
             $this->db->select('season.name season');
@@ -395,7 +401,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->select('areas.name growing_area');
 
             $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " - ", lead_farmers.mobile_no ), CONCAT(demonstration.name_other_farmer, " (New) - ", demonstration.phone_other_farmer) ) AS lead_farmer_name');
+            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
 
             $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
             $this->db->select('crop.name crop_name');
@@ -436,8 +442,10 @@ class Ft_demonstration_status extends Root_Controller
                 'value_2' => $result['growing_area']
             );
             $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_LEAD_FARMER_NAME'),
+                'label_1' => $this->lang->line('LABEL_FARMER_NAME'),
                 'value_1' => $result['lead_farmer_name'],
+                'label_2' => 'Farmer Type',
+                'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : 'Other'
             );
 
             $data['info_basic'][] = array(
@@ -500,8 +508,8 @@ class Ft_demonstration_status extends Root_Controller
                 'address_other_farmer' => '',
                 'crop_id' => 0,
                 'crop_type_id' => 0,
-                'date_variety1_sowing' => '',
-                'date_variety2_sowing' => '',
+                'date_sowing_variety1' => '',
+                'date_sowing_variety2' => '',
                 'date_expected_evaluation' => ''
             );
 
@@ -648,8 +656,8 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->trans_start(); //DB Transaction Handle START
 
         //Date Transformation
-        $item_head['date_variety1_sowing'] = System_helper::get_time($item_head['date_variety1_sowing']);
-        $item_head['date_variety2_sowing'] = System_helper::get_time($item_head['date_variety2_sowing']);
+        $item_head['date_sowing_variety1'] = System_helper::get_time($item_head['date_sowing_variety1']);
+        $item_head['date_sowing_variety2'] = System_helper::get_time($item_head['date_sowing_variety2']);
         $item_head['date_expected_evaluation'] = System_helper::get_time($item_head['date_expected_evaluation']);
 
         $item_info = $item_head; // Data for Info. table Insert
@@ -725,7 +733,7 @@ class Ft_demonstration_status extends Root_Controller
                 'remarks' => '',
             );
 
-            $data['title'] = "Upload Demonstration Status Picture ( ID:" . $data['id'] . " )";
+            $data['title'] = "Upload New Demonstration Status {$this->file_type} ( ID:" . $data['id'] . " )";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_file", $data, true));
             if ($this->message)
@@ -751,7 +759,7 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
-    private function system_edit_image($id)
+    private function system_edit_file($id)
     {
         if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
         {
@@ -772,17 +780,26 @@ class Ft_demonstration_status extends Root_Controller
                 $this->json_return($ajax);
             }
             $data['id'] = $result['demonstration_id'];
-            $data['image_id'] = $result['id'];
+            $data['file_id'] = $result['id'];
+            $data['file_type'] = $this->file_type;
             $data['item'] = $result;
 
-            $data['title'] = "Upload Demonstration Status Picture ( ID:" . $data['id'] . " )";
+            $data['title'] = "Edit Demonstration Status {$this->file_type} ( ID:" . $data['id'] . " )";
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_image", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_file", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_image/' . $id);
+
+            if ($this->file_type == $this->config->item('system_file_type_image'))
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_image/' . $id);
+            }
+            else
+            {
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_video/' . $id);
+            }
             $this->json_return($ajax);
         }
         else
@@ -793,10 +810,11 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
-    private function system_save_image()
+    private function system_save_file()
     {
         $item_id = $this->input->post('id');
-        $image_id = $this->input->post('image_id');
+        $file_id = $this->input->post('file_id');
+        $file_type = $this->input->post('file_type');
         $item = $this->input->post('item');
         $user = User_helper::get_user();
         $time = time();
@@ -809,14 +827,14 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
 
-        if ($image_id > 0) // EDIT
+        if ($file_id > 0) // EDIT
         {
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
             $this->db->select('image_video.*');
             $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
             $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
-            $this->db->where('image_video.id', $image_id);
+            $this->db->where('image_video.id', $file_id);
             $result = $this->db->get()->row_array();
         }
         else // ADD
@@ -832,20 +850,20 @@ class Ft_demonstration_status extends Root_Controller
         }
 
         $path = 'images/ft_demonstration_status/' . $item_id;
-        $uploaded_file = System_helper::upload_file($path);
-        foreach ($uploaded_file as $file) // Validation for uploaded Files
+        $uploaded_file = array();
+
+        if ($file_type == $this->config->item('system_file_type_video')) // For Video Upload
         {
-            if (!$file['status'])
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $file['message'];
-                $this->json_return($ajax);
-            }
+            $uploaded_file = System_helper::upload_file($path, $this->config->item('system_file_type_video_ext'), $this->config->item('system_file_type_video_max_size'));
+        }
+        else if ($file_type == $this->config->item('system_file_type_image')) // For Image Upload
+        {
+            $uploaded_file = System_helper::upload_file($path);
         }
 
         if ($uploaded_file)
         {
-            $file = $uploaded_file['image_demonstration'];
+            $file = $uploaded_file['file_demonstration'];
             if ($file['status'])
             {
                 $item['file_name'] = $file['info']['file_name'];
@@ -858,13 +876,13 @@ class Ft_demonstration_status extends Root_Controller
                 $this->json_return($ajax);
             }
         }
-        else if (!($image_id > 0)) // Image Required for First time (ADD)
+        else if (!($file_id > 0)) // File selection Required for First time (ADD)
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = "No Image has been Selected or, Uploaded";
+            $ajax['system_message'] = "No {$file_type} has been Selected or, Uploaded";
             $this->json_return($ajax);
         }
-        else if ($image_id > 0) // Get OLD Image, If no Image Selected in EDIT
+        else if ($file_id > 0) // Get OLD File location & name, If no File in Selected (EDIT)
         {
             $item['file_name'] = $result['file_name'];
             $item['file_location'] = $result['file_location'];
@@ -872,14 +890,14 @@ class Ft_demonstration_status extends Root_Controller
 
         $this->db->trans_start(); //DB Transaction Handle START
         // Update Revision
-        if ($image_id > 0)
+        if ($file_id > 0)
         {
-            $this->db->where('id', $image_id);
+            $this->db->where('id', $file_id);
             $this->db->set('revision', 'revision+1', FALSE);
             $this->db->update($this->config->item('table_ems_demonstration_status_image_video'));
         }
-        //Insert New Image
-        $item['file_type'] = $this->config->item('system_file_type_image');
+        //Insert New File
+        $item['file_type'] = $file_type;
         $item['demonstration_id'] = $item_id;
         $item['status'] = $this->config->item('system_status_active');
         $item['revision'] = 1;
@@ -890,7 +908,7 @@ class Ft_demonstration_status extends Root_Controller
 
         if ($this->db->trans_status() === TRUE)
         {
-            $ajax['status'] = true;
+            $this->file_type = $file_type;
             $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
             $this->system_list_file($item_id);
         }
@@ -925,7 +943,7 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
         $this->db->where('image_video.status', $this->config->item('system_status_active'));
         $this->db->where('image_video.id', $item_id);
-        $result = $this->db->get()->result_array();
+        $result = $this->db->get()->row_array();
         if (!$result)
         {
             System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
@@ -943,9 +961,9 @@ class Ft_demonstration_status extends Root_Controller
 
         if ($this->db->trans_status() === TRUE)
         {
-            $ajax['status'] = true;
+            $this->file_type = trim($result['file_type']);
             $this->message = $this->lang->line("MSG_DELETED_SUCCESS");
-            $this->system_list_file($item_id);
+            $this->system_list_file($result['demonstration_id']);
         }
         else
         {
@@ -1079,7 +1097,7 @@ class Ft_demonstration_status extends Root_Controller
         $this->form_validation->set_rules('item[crop_id]', $this->lang->line('LABEL_CROP_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item[crop_type_id]', $this->lang->line('LABEL_CROP_TYPE'), 'required|numeric');
         $this->form_validation->set_rules('item[variety1_id]', $this->lang->line('LABEL_VARIETY1_NAME'), 'required|numeric');
-        $this->form_validation->set_rules('item[date_variety1_sowing]', $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY1_NAME'), 'required');
+        $this->form_validation->set_rules('item[date_sowing_variety1]', $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY1_NAME'), 'required');
         $this->form_validation->set_rules('item[date_expected_evaluation]', $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
