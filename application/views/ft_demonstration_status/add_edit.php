@@ -172,7 +172,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         <label class="control-label pull-right">OR, &nbsp;</label>
                     </div>
                     <div class="col-xs-4"><label class="control-label">
-                            <span style="text-decoration:underline">New Farmer Information:</span> </label></div>
+                            <span style="text-decoration:underline"><?php echo $CI->lang->line('LABEL_OTHER_FARMER_NAME'); ?> Information:</span> </label></div>
                 </div>
 
                 <div class="row show-grid">

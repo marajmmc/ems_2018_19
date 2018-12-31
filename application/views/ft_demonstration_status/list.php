@@ -25,7 +25,7 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
         'data-action-link' => site_url($CI->controller_url . '/index/edit')
     );
 }
-if ((isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1)) || (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1)))
+if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
@@ -41,13 +41,13 @@ if ((isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1)) |
     );
     $action_buttons[] = array(
         'type' => 'button',
-        'label' => 'Transplanting Date',
+        'label' => $CI->lang->line('LABEL_DATE_TRANSPLANTING'),
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit_transplant_date')
+        'data-action-link' => site_url($CI->controller_url . '/index/edit_transplanting_date')
     );
     $action_buttons[] = array(
         'type' => 'button',
-        'label' => 'Actual Evaluation',
+        'label' => $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/edit_actual_evaluation_date')
     );
@@ -59,6 +59,15 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'label' => $CI->lang->line("ACTION_DETAILS"),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/details')
+    );
+}
+if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+{
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'Change Status',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/change_status')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
