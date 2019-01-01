@@ -189,11 +189,17 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['season']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '180', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?>', dataField: 'growing_area', width: '150', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['growing_area']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_NAME'); ?>', dataField: 'lead_farmer_name', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['lead_farmer_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_NAME'); ?>', dataField: 'lead_farmer_name', width: '200', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['lead_farmer_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>', dataField: 'variety1_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety1_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?>', dataField: 'variety2_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety2_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING_VARIETY1'); ?>', dataField: 'date_sowing_variety1', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_sowing_variety1']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING_VARIETY2'); ?>', dataField: 'date_sowing_variety2', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_sowing_variety2']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'); ?>', dataField: 'date_transplanting_variety1', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_transplanting_variety1']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'); ?>', dataField: 'date_transplanting_variety2', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_transplanting_variety2']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED_EVALUATION'); ?>', dataField: 'date_expected_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_expected_evaluation']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?>', dataField: 'date_actual_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_actual_evaluation']?0:1;?>}
                 ]
             });
     });

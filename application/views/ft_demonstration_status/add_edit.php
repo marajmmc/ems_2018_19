@@ -461,5 +461,12 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             }
         });
         /*--------------------- CROP RELATED DROPDOWN ( END )-------------*/
+
+        $(document).on("change", "#variety2_id", function(){
+            var variety2_id = $(this).val();
+            if(variety2_id == ""){
+                $("#date_sowing_variety2").val('');
+            }
+        });
     });
 </script>

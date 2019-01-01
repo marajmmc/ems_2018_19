@@ -8,7 +8,6 @@ class Ft_demonstration_status extends Root_Controller
     public $locations;
     public $common_view_location;
     public $file_type;
-    public $date_field_name;
 
     public function __construct()
     {
@@ -33,6 +32,10 @@ class Ft_demonstration_status extends Root_Controller
         $this->lang->language['LABEL_CROP_TYPE'] = 'Crop Type';
         $this->lang->language['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
         $this->lang->language['LABEL_VARIETY2_NAME'] = 'Variety (Compare with)';
+        $this->lang->language['LABEL_DATE_SOWING_VARIETY1'] = 'Sowing Date (Selected)';
+        $this->lang->language['LABEL_DATE_SOWING_VARIETY2'] = 'Sowing Date (Compare with)';
+        $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY1'] = 'Transplanting Date (Selected)';
+        $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY2'] = 'Transplanting Date (Compare with)';
     }
 
     public function index($action = "list", $id = 0)
@@ -79,6 +82,10 @@ class Ft_demonstration_status extends Root_Controller
         {
             $this->system_change_status($id);
         }
+        elseif ($action == "save_status")
+        {
+            $this->system_save_status();
+        }
         elseif ($action == "add_image")
         {
             $this->file_type = $this->config->item('system_file_type_image');
@@ -109,13 +116,11 @@ class Ft_demonstration_status extends Root_Controller
         }
         elseif ($action == "edit_transplanting_date")
         {
-            $this->date_field_name = 'date_transplanting';
-            $this->system_edit_date($id);
+            $this->system_edit_transplanting_date($id);
         }
         elseif ($action == "edit_actual_evaluation_date")
         {
-            $this->date_field_name = 'date_actual_evaluation';
-            $this->system_edit_date($id);
+            $this->system_edit_actual_evaluation_date($id);
         }
         elseif ($action == "save_date")
         {
@@ -164,8 +169,15 @@ class Ft_demonstration_status extends Root_Controller
         $data['crop_type_name'] = 1;
         $data['variety1_name'] = 1;
         $data['variety2_name'] = 1;
+        $data['date_sowing_variety1'] = 1;
+        $data['date_sowing_variety2'] = 1;
+        $data['date_transplanting_variety1'] = 1;
+        $data['date_transplanting_variety2'] = 1;
+        $data['date_expected_evaluation'] = 1;
+        $data['date_actual_evaluation'] = 1;
         if ($method == 'list_all')
         {
+            $data['status'] = 1;
             $data['status_forward'] = 1;
         }
         return $data;
@@ -221,7 +233,7 @@ class Ft_demonstration_status extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-        $this->db->select('demonstration.id, demonstration.year');
+        $this->db->select('demonstration.*');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
@@ -278,11 +290,15 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->where('demonstration.status_forward !=', $this->config->item('system_status_forwarded'));
         $this->db->order_by('demonstration.id', 'DESC');
         $items = $this->db->get()->result_array();
-        /*foreach ($items as &$item)
+        foreach ($items as &$item)
         {
             $item['date_sowing_variety1'] = System_helper::display_date($item['date_sowing_variety1']);
             $item['date_sowing_variety2'] = System_helper::display_date($item['date_sowing_variety2']);
-        }*/
+            $item['date_transplanting_variety1'] = System_helper::display_date($item['date_transplanting_variety1']);
+            $item['date_transplanting_variety2'] = System_helper::display_date($item['date_transplanting_variety2']);
+            $item['date_expected_evaluation'] = System_helper::display_date($item['date_expected_evaluation']);
+            $item['date_actual_evaluation'] = System_helper::display_date($item['date_actual_evaluation']);
+        }
         $this->json_return($items);
     }
 
@@ -329,7 +345,7 @@ class Ft_demonstration_status extends Root_Controller
             $pagesize = $pagesize * 2;
         }
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-        $this->db->select('demonstration.id, demonstration.year, demonstration.status_forward');
+        $this->db->select('demonstration.*');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
@@ -386,11 +402,15 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->order_by('demonstration.id', 'DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
-        /*foreach ($items as &$item)
+        foreach ($items as &$item)
         {
             $item['date_sowing_variety1'] = System_helper::display_date($item['date_sowing_variety1']);
             $item['date_sowing_variety2'] = System_helper::display_date($item['date_sowing_variety2']);
-        }*/
+            $item['date_transplanting_variety1'] = System_helper::display_date($item['date_transplanting_variety1']);
+            $item['date_transplanting_variety2'] = System_helper::display_date($item['date_transplanting_variety2']);
+            $item['date_expected_evaluation'] = System_helper::display_date($item['date_expected_evaluation']);
+            $item['date_actual_evaluation'] = System_helper::display_date($item['date_actual_evaluation']);
+        }
         $this->json_return($items);
     }
 
@@ -446,39 +466,7 @@ class Ft_demonstration_status extends Root_Controller
             }
 
             $data = array();
-            $data['info_basic'] = array();
-            //----------------Basic Info. Array Generate----------------
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_YEAR'),
-                'value_1' => $result['year'],
-                'label_2' => $this->lang->line('LABEL_SEASON'),
-                'value_2' => $result['season']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_OUTLET_NAME'),
-                'value_1' => $result['outlet_name'],
-                'label_2' => $this->lang->line('LABEL_GROWING_AREA'),
-                'value_2' => $result['growing_area']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_FARMER_NAME'),
-                'value_1' => $result['lead_farmer_name'],
-                'label_2' => 'Farmer Type',
-                'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : $this->lang->line('LABEL_OTHER_FARMER_NAME')
-            );
-
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_CROP_NAME'),
-                'value_1' => $result['crop_name'],
-                'label_2' => $this->lang->line('LABEL_CROP_TYPE'),
-                'value_2' => $result['crop_type_name']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_VARIETY1_NAME'),
-                'value_1' => $result['variety1_name'],
-                'label_2' => $this->lang->line('LABEL_VARIETY2_NAME'),
-                'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
-            );
+            $data['info_basic'] = $this->get_basic_info($result);
 
             $data['uploaded_files'] = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'file_type ="' . $this->file_type . '"', 'revision=1', 'status ="' . $this->config->item('system_status_active') . '"'));
 
@@ -672,12 +660,22 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
 
+
         $this->db->trans_start(); //DB Transaction Handle START
 
         //Date Transformation
         $item_head['date_sowing_variety1'] = System_helper::get_time($item_head['date_sowing_variety1']);
-        $item_head['date_sowing_variety2'] = System_helper::get_time($item_head['date_sowing_variety2']);
+        if (($item_head['date_sowing_variety2'] != ""))
+        {
+            $item_head['date_sowing_variety2'] = System_helper::get_time($item_head['date_sowing_variety2']);
+        }
+        else
+        {
+            $item_head['date_sowing_variety2'] = NULL;
+            $item_head['date_transplanting_variety2'] = NULL; //If 'Variety(Compare with)' is Removed later, then date_transplanting_variety2 Will be Null
+        }
         $item_head['date_expected_evaluation'] = System_helper::get_time($item_head['date_expected_evaluation']);
+
 
         $item_info = $item_head; // Data for Info. table Insert
 
@@ -775,38 +773,7 @@ class Ft_demonstration_status extends Root_Controller
 
             $data = array();
             $data['item'] = $result;
-            $data['info_basic'] = array();
-            //----------------Basic Info. Array Generate----------------
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_YEAR'),
-                'value_1' => $result['year'],
-                'label_2' => $this->lang->line('LABEL_SEASON'),
-                'value_2' => $result['season']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_OUTLET_NAME'),
-                'value_1' => $result['outlet_name'],
-                'label_2' => $this->lang->line('LABEL_GROWING_AREA'),
-                'value_2' => $result['growing_area']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_FARMER_NAME'),
-                'value_1' => $result['lead_farmer_name'],
-                'label_2' => 'Farmer Type',
-                'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : $this->lang->line('LABEL_OTHER_FARMER_NAME')
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_CROP_NAME'),
-                'value_1' => $result['crop_name'],
-                'label_2' => $this->lang->line('LABEL_CROP_TYPE'),
-                'value_2' => $result['crop_type_name']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_VARIETY1_NAME'),
-                'value_1' => $result['variety1_name'],
-                'label_2' => $this->lang->line('LABEL_VARIETY2_NAME'),
-                'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
-            );
+            $data['info_basic'] = $this->get_basic_info($result);
 
             $data['title'] = "Change Demonstration Status ( ID:" . $item_id . " )";
             $ajax['status'] = true;
@@ -823,6 +790,84 @@ class Ft_demonstration_status extends Root_Controller
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_save_status()
+    {
+        $item_id = $this->input->post('id');
+        $item = $this->input->post('item');
+        $user = User_helper::get_user();
+        $time = time();
+
+        //Permission Checking
+        if (!(isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
+        if (!$result)
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+
+
+        if (($item['status'] != $this->config->item('system_status_inactive')) && ($item['status'] != $this->config->item('system_status_delete')))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('LABEL_STATUS') . ' field is required.';
+            $this->json_return($ajax);
+        }
+        if (trim($item['remarks']) == '')
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('LABEL_REMARKS') . ' field is required.';
+            $this->json_return($ajax);
+        }
+
+        // Preparing Array for UPDATE
+        $data = array('status' => $item['status']);
+        if ($item['status'] == $this->config->item('system_status_inactive'))
+        {
+            $data['remarks_inactive'] = $item['remarks'];
+            $data['date_inactive'] = $time;
+            $data['user_inactive'] = $user->user_id;
+
+            $success_msg = $this->lang->line("MSG_INACTIVE_SUCCESS");
+            $fail_msg = $this->lang->line("MSG_INACTIVE_FAIL");
+        }
+        else if ($item['status'] == $this->config->item('system_status_delete'))
+        {
+            $data['remarks_delete'] = $item['remarks'];
+            $data['date_deleted'] = $time;
+            $data['user_deleted'] = $user->user_id;
+
+            $success_msg = $this->lang->line("MSG_DELETED_SUCCESS");
+            $fail_msg = $this->lang->line("MSG_DELETED_FAIL");
+        }
+
+        $this->db->trans_start(); //DB Transaction Handle START
+
+        Query_helper::update($this->config->item('table_ems_demonstration_status'), $data, array("id =" . $item_id), FALSE);
+
+        $this->db->trans_complete(); //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $ajax['status'] = true;
+            $this->message = $success_msg;
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $fail_msg;
             $this->json_return($ajax);
         }
     }
@@ -1097,7 +1142,7 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
-    private function system_edit_date($id)
+    private function system_edit_transplanting_date($id)
     {
         if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
@@ -1150,57 +1195,89 @@ class Ft_demonstration_status extends Root_Controller
 
             $data = array();
             $data['item'] = $result;
-            $data['date_field_name'] = $this->date_field_name;
-            $data['info_basic'] = array();
-            //----------------Basic Info. Array Generate----------------
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_YEAR'),
-                'value_1' => $result['year'],
-                'label_2' => $this->lang->line('LABEL_SEASON'),
-                'value_2' => $result['season']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_OUTLET_NAME'),
-                'value_1' => $result['outlet_name'],
-                'label_2' => $this->lang->line('LABEL_GROWING_AREA'),
-                'value_2' => $result['growing_area']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_FARMER_NAME'),
-                'value_1' => $result['lead_farmer_name'],
-                'label_2' => 'Farmer Type',
-                'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : $this->lang->line('LABEL_OTHER_FARMER_NAME')
-            );
+            $data['info_basic'] = $this->get_basic_info($result);
 
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_CROP_NAME'),
-                'value_1' => $result['crop_name'],
-                'label_2' => $this->lang->line('LABEL_CROP_TYPE'),
-                'value_2' => $result['crop_type_name']
-            );
-            $data['info_basic'][] = array(
-                'label_1' => $this->lang->line('LABEL_VARIETY1_NAME'),
-                'value_1' => $result['variety1_name'],
-                'label_2' => $this->lang->line('LABEL_VARIETY2_NAME'),
-                'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
-            );
-
-            $data['title'] = "Edit " . $this->lang->line(strtoupper('label_' . $this->date_field_name)) . " ( ID:" . $item_id . " )";
+            $data['title'] = "Edit " . $this->lang->line('LABEL_DATE_TRANSPLANTING') . " ( ID:" . $item_id . " )";
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit_date", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/edit_transplanting_date", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
             }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_transplanting_date/' . $item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
 
-            if ($this->date_field_name == 'date_transplanting')
+    private function system_edit_actual_evaluation_date($id)
+    {
+        if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
+        {
+            if ($id > 0)
             {
-                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_transplanting_date/' . $item_id);
+                $item_id = $id;
             }
             else
             {
-                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_actual_evaluation_date/' . $item_id);
+                $item_id = $this->input->post('id');
             }
+
+            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
+            $this->db->select('demonstration.*');
+
+            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
+            $this->db->select('season.name season');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
+            $this->db->select('cus_info.name outlet_name');
+
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
+            $this->db->select('areas.name growing_area');
+
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
+            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
+            $this->db->select('crop.name crop_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
+            $this->db->select('crop_type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
+            $this->db->select('variety1.name variety1_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
+            $this->db->select('variety2.name variety2_name');
+
+            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
+            $this->db->where('demonstration.id', $item_id);
+            $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+
+            $data = array();
+            $data['item'] = $result;
+            $data['info_basic'] = $this->get_basic_info($result);
+
+            $data['title'] = "Edit " . $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . " ( ID:" . $item_id . " )";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/edit_actual_evaluation_date", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_actual_evaluation_date/' . $item_id);
             $this->json_return($ajax);
         }
         else
@@ -1235,49 +1312,62 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-        if (!(isset($item[$date_field_name]) && (trim($item[$date_field_name]) != ''))) // Validation
+
+        if ((isset($item['date_transplanting_variety1']) && ($item['date_transplanting_variety1'] == '')) || (isset($item['date_transplanting_variety2']) && ($item['date_transplanting_variety2'] == ''))) // Validation
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line(strtoupper('label_' . $date_field_name)) . ' field is required.';
+            $ajax['system_message'] = $this->lang->line('LABEL_DATE_TRANSPLANTING') . ' fields are required.';
             $this->json_return($ajax);
         }
-        $post_date = $item[$date_field_name] = System_helper::get_time($item[$date_field_name]);
+        elseif (isset($item['date_actual_evaluation']) && ($item['date_actual_evaluation'] == ''))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . ' field is required.';
+            $this->json_return($ajax);
+        }
+
+        //Insert New -> Info. table
+        $item_info = array();
+        $item_info['demonstration_id'] = $item_id;
+        $item_info['year'] = $result['year'];
+        $item_info['season_id'] = $result['season_id'];
+        $item_info['outlet_id'] = $result['outlet_id'];
+        $item_info['growing_area_id'] = $result['growing_area_id'];
+        $item_info['lead_farmer_id'] = $result['lead_farmer_id'];
+        $item_info['name_other_farmer'] = $result['name_other_farmer'];
+        $item_info['phone_other_farmer'] = $result['phone_other_farmer'];
+        $item_info['address_other_farmer'] = $result['address_other_farmer'];
+        $item_info['crop_id'] = $result['crop_id'];
+        $item_info['crop_type_id'] = $result['crop_type_id'];
+        $item_info['variety1_id'] = $result['variety1_id'];
+        $item_info['variety2_id'] = $result['variety2_id'];
+        $item_info['date_sowing_variety1'] = $result['date_sowing_variety1'];
+        $item_info['date_sowing_variety2'] = $result['date_sowing_variety2'];
+        $item_info['date_transplanting_variety1'] = $result['date_transplanting_variety1'];
+        $item_info['date_transplanting_variety2'] = $result['date_transplanting_variety2'];
+        $item_info['date_expected_evaluation'] = $result['date_expected_evaluation'];
+        $item_info['date_actual_evaluation'] = $result['date_actual_evaluation'];
+        $item_info['revision'] = 1;
+        $item_info['date_created'] = $time;
+        $item_info['user_created'] = $user->user_id;
+
+        foreach ($item as $key => $value) // Overwrite ( date_transplanting_variety1, date_transplanting_variety2 ) Or, ( date_actual_evaluation ) came from Submit.
+        {
+            $item[$key] = System_helper::get_time($value);
+            $item_info[$key] = System_helper::get_time($value);
+        }
 
         $this->db->trans_start(); //DB Transaction Handle START
 
-        //Main Table Update
+        // Main Table UPDATE
         Query_helper::update($this->config->item('table_ems_demonstration_status'), $item, array("id =" . $item_id), FALSE);
-        //Info. Table Revision Update
+
+        // Info. Table Revision UPDATE
         $this->db->set('revision', 'revision+1', FALSE);
         Query_helper::update($this->config->item('table_ems_demonstration_status_info'), array(), array("demonstration_id =" . $item_id), FALSE);
 
-
-        //Insert New -> Info. table
-        $item['demonstration_id'] = $item_id;
-        $item['year'] = $result['year'];
-        $item['season_id'] = $result['season_id'];
-        $item['outlet_id'] = $result['outlet_id'];
-        $item['growing_area_id'] = $result['growing_area_id'];
-        $item['lead_farmer_id'] = $result['lead_farmer_id'];
-        $item['name_other_farmer'] = $result['name_other_farmer'];
-        $item['phone_other_farmer'] = $result['phone_other_farmer'];
-        $item['address_other_farmer'] = $result['address_other_farmer'];
-        $item['crop_id'] = $result['crop_id'];
-        $item['crop_type_id'] = $result['crop_type_id'];
-        $item['variety1_id'] = $result['variety1_id'];
-        $item['variety2_id'] = $result['variety2_id'];
-        $item['date_sowing_variety1'] = $result['date_sowing_variety1'];
-        $item['date_sowing_variety2'] = $result['date_sowing_variety2'];
-        $item['date_transplanting'] = $result['date_transplanting'];
-        $item['date_expected_evaluation'] = $result['date_expected_evaluation'];
-        $item['date_actual_evaluation'] = $result['date_actual_evaluation'];
-
-        $item[$date_field_name] = $post_date;
-        $item['status'] = $this->config->item('system_status_active');
-        $item['revision'] = 1;
-        $item['date_created'] = $time;
-        $item['user_created'] = $user->user_id;
-        Query_helper::add($this->config->item('table_ems_demonstration_status_info'), $item, FALSE);
+        // Info. Table New INSERT
+        Query_helper::add($this->config->item('table_ems_demonstration_status_info'), $item_info, FALSE);
 
         $this->db->trans_complete(); //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
@@ -1401,6 +1491,44 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['status'] = true;
             $this->json_return($ajax);
         }
+    }
+
+    private function get_basic_info($result)
+    {
+        //----------------Basic Info. Array Generate----------------
+        $data = array();
+        $data[] = array(
+            'label_1' => $this->lang->line('LABEL_YEAR'),
+            'value_1' => $result['year'],
+            'label_2' => $this->lang->line('LABEL_SEASON'),
+            'value_2' => $result['season']
+        );
+        $data[] = array(
+            'label_1' => $this->lang->line('LABEL_OUTLET_NAME'),
+            'value_1' => $result['outlet_name'],
+            'label_2' => $this->lang->line('LABEL_GROWING_AREA'),
+            'value_2' => $result['growing_area']
+        );
+        $data[] = array(
+            'label_1' => $this->lang->line('LABEL_FARMER_NAME'),
+            'value_1' => $result['lead_farmer_name'],
+            'label_2' => 'Farmer Type',
+            'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : $this->lang->line('LABEL_OTHER_FARMER_NAME')
+        );
+
+        $data[] = array(
+            'label_1' => $this->lang->line('LABEL_CROP_NAME'),
+            'value_1' => $result['crop_name'],
+            'label_2' => $this->lang->line('LABEL_CROP_TYPE'),
+            'value_2' => $result['crop_type_name']
+        );
+        $data[] = array(
+            'label_1' => $this->lang->line('LABEL_VARIETY1_NAME'),
+            'value_1' => $result['variety1_name'],
+            'label_2' => $this->lang->line('LABEL_VARIETY2_NAME'),
+            'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
+        );
+        return $data;
     }
 
     private function check_validation()

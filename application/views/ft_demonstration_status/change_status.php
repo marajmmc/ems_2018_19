@@ -30,11 +30,21 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             <div class="col-xs-4">
                 <label class="control-label pull-right">Change Status <span style="color:#FF0000">*</span></label></div>
             <div class="col-xs-4">
-                <select id="status" name="item[status]" class="form-control">
+                <select id="status" name="item[status]" class="form-control status-combo">
                     <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                     <option value="<?php echo $CI->config->item('system_status_inactive'); ?>"><?php echo $CI->lang->line('INACTIVE'); ?></option>
-                    <option value="<?php echo $CI->config->item('system_status_deleted'); ?>"><?php echo $CI->lang->line('DELETE'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_delete'); ?>"><?php echo $CI->lang->line('DELETE'); ?></option>
                 </select>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?>
+                    <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-xs-4">
+                <textarea id="remarks" name="item[remarks]" class="form-control"></textarea>
             </div>
         </div>
 
@@ -56,5 +66,16 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     $(document).ready(function () {
         system_off_events(); // Triggers
         $(".datepicker").datepicker({dateFormat: display_date_format});
+
+        $(".status-combo").on('change', function (event) {
+            var options = $(this).val();
+            if (options == '<?php echo $CI->config->item('system_status_inactive'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_INACTIVE'); ?>');
+            } else if (options == '<?php echo $CI->config->item('system_status_delete'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_DELETE'); ?>');
+            } else {
+                $("#button_action_save").removeAttr('data-message-confirm');
+            }
+        });
     });
 </script>
