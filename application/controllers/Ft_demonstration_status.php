@@ -36,6 +36,7 @@ class Ft_demonstration_status extends Root_Controller
         $this->lang->language['LABEL_DATE_SOWING_VARIETY2'] = 'Sowing Date (Compare with)';
         $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY1'] = 'Transplanting Date (Selected)';
         $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY2'] = 'Transplanting Date (Compare with)';
+        $this->lang->language['LABEL_FARMERS_COMMENT'] = 'Farmers Comment';
     }
 
     public function index($action = "list", $id = 0)
@@ -125,6 +126,14 @@ class Ft_demonstration_status extends Root_Controller
         elseif ($action == "save_date")
         {
             $this->system_save_date();
+        }
+        elseif ($action == "forward")
+        {
+            $this->system_forward($id);
+        }
+        elseif ($action == "save_forward")
+        {
+            $this->system_save_forward();
         }
         elseif ($action == "get_growing_area")
         {
@@ -416,7 +425,7 @@ class Ft_demonstration_status extends Root_Controller
 
     private function system_list_file($id)
     {
-        if ((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)) || (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
+        if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
             if ($id > 0)
             {
@@ -651,6 +660,17 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
+        }
+        if ($item_id > 0) // Only checking for EDIT
+        {
+            $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
         }
         //Validation Checking
         if (!$this->check_validation())
@@ -930,7 +950,7 @@ class Ft_demonstration_status extends Root_Controller
 
     private function system_edit_file($id)
     {
-        if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
+        if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
             $data = array();
 
@@ -989,7 +1009,7 @@ class Ft_demonstration_status extends Root_Controller
         $time = time();
 
         //Permission Checking
-        if (!((isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)) || (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))))
+        if (!(isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
@@ -1089,7 +1109,7 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
-    private function system_delete_file($id)
+    /* private function system_delete_file($id)
     {
         if ($id > 0)
         {
@@ -1140,7 +1160,7 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = $this->lang->line("MSG_DELETED_FAIL");
             $this->json_return($ajax);
         }
-    }
+    } */
 
     private function system_edit_transplanting_date($id)
     {
@@ -1384,6 +1404,185 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
+    private function system_forward($id)
+    {
+        if (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1))
+        {
+            if ($id > 0)
+            {
+                $item_id = $id;
+            }
+            else
+            {
+                $item_id = $this->input->post('id');
+            }
+
+            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
+            $this->db->select('demonstration.*');
+
+            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
+            $this->db->select('season.name season');
+
+            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
+            $this->db->select('cus_info.name outlet_name');
+
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
+            $this->db->select('areas.name growing_area');
+
+            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
+            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
+            $this->db->select('crop.name crop_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
+            $this->db->select('crop_type.name crop_type_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
+            $this->db->select('variety1.name variety1_name');
+
+            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
+            $this->db->select('variety2.name variety2_name');
+
+            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
+            $this->db->where('demonstration.id', $item_id);
+            $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
+
+            $data = array();
+            $data['item'] = $result;
+
+            $basic_info = $this->get_basic_info($result);
+            if (!($result['variety2_id'] > 0))
+            {
+                $basic_info[] = array(
+                    'label_1' => $this->lang->line('LABEL_DATE_SOWING_VARIETY1'),
+                    'value_1' => System_helper::display_date($result['date_sowing_variety1'])
+                );
+                $basic_info[] = array(
+                    'label_1' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'),
+                    'value_1' => ($result['date_transplanting_variety1']) ? System_helper::display_date($result['date_transplanting_variety1']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
+                );
+            }
+            else
+            {
+                $basic_info[] = array(
+                    'label_1' => $this->lang->line('LABEL_DATE_SOWING_VARIETY1'),
+                    'value_1' => System_helper::display_date($result['date_sowing_variety1']),
+                    'label_2' => $this->lang->line('LABEL_DATE_SOWING_VARIETY2'),
+                    'value_2' => ($result['date_sowing_variety2']) ? System_helper::display_date($result['date_sowing_variety2']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
+                );
+                $basic_info[] = array(
+                    'label_1' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'),
+                    'value_1' => ($result['date_transplanting_variety1']) ? System_helper::display_date($result['date_transplanting_variety1']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>',
+                    'label_2' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'),
+                    'value_2' => ($result['date_transplanting_variety2']) ? System_helper::display_date($result['date_transplanting_variety2']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
+                );
+            }
+            $basic_info[] = array(
+                'label_1' => $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'),
+                'value_1' => System_helper::display_date($result['date_expected_evaluation']),
+                'label_2' => $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
+                'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
+            );
+
+            $data['full_info'] = array(); // Initialize for multiple Info Accordion.
+            $data['full_info'][] = array( // For Basic Info.
+                'accordion' => array(
+                    'collapse' => 'in',
+                    'data' => $basic_info
+                )
+            );
+
+            $data['title'] = "Forward Demonstration Status ( ID:" . $item_id . " )";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/forward", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/forward/' . $item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_save_forward()
+    {
+        $item_id = $this->input->post('id');
+        $item = $this->input->post('item');
+        $user = User_helper::get_user();
+        $time = time();
+
+        //Permission Checking
+        if (!(isset($this->permissions['action7']) && ($this->permissions['action7'] == 1)))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
+        if (!$result)
+        {
+            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+            $this->json_return($ajax);
+        }
+        //Forward Validation Checking
+        if (!$this->check_validation_forward($result))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->message;
+            $this->json_return($ajax);
+        }
+
+        $this->db->trans_start(); //DB Transaction Handle START
+
+        $item['date_forwarded'] = $time;
+        $item['user_forwarded'] = $user->user_id;
+        // Main Table UPDATE
+        Query_helper::update($this->config->item('table_ems_demonstration_status'), $item, array("id =" . $item_id), FALSE);
+
+        $this->db->trans_complete(); //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $ajax['status'] = true;
+            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+
     private function system_get_growing_area($id = 0)
     {
         if ($id > 0)
@@ -1584,6 +1783,53 @@ class Ft_demonstration_status extends Root_Controller
             }
         }
 
+        return true;
+    }
+
+    private function check_validation_forward($result)
+    {
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('item[status_forward]', $this->lang->line('LABEL_FORWARD'), 'required');
+        $this->form_validation->set_rules('item[remarks_farmer]', $this->lang->line('LABEL_FARMERS_COMMENT'), 'required');
+        $this->form_validation->set_rules('item[remarks_forward]', $this->lang->line('LABEL_REMARKS'), 'required');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message .= validation_errors();
+            return false;
+        }
+
+        $this->message = '';
+        $invalid = false;
+
+        if (!$result['date_transplanting_variety1']) // Checking If 'Transplanting Date (Selected)' is Set
+        {
+            $this->message .= $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1') . ' is not Set.<br/>';
+            $invalid = true;
+        }
+        if ($result['variety2_id'] > 0)
+        {
+            if (!$result['date_sowing_variety2']) // Checking If 'Sowing Date (Compare with)' is Set
+            {
+                $this->message .= $this->lang->line('LABEL_DATE_SOWING_VARIETY2') . ' is not Set.<br/>';
+                $invalid = true;
+            }
+            if (!$result['date_transplanting_variety2']) // Checking If 'Transplanting Date (Compare with)' is Set
+            {
+                $this->message .= $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2') . ' is not Set.<br/>';
+                $invalid = true;
+            }
+        }
+        if (!$result['date_actual_evaluation']) // Checking If 'Actual Date of Evaluation' is Set
+        {
+            $this->message .= $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . ' is not Set.<br/>';
+            $invalid = true;
+        }
+
+        if ($invalid)
+        {
+            return false;
+        }
         return true;
     }
 }
