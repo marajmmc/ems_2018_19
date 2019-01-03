@@ -62,10 +62,20 @@ class Ft_demonstration_status extends Root_Controller
             $this->file_type = $this->config->item('system_file_type_image');
             $this->system_list_file($id);
         }
+        elseif ($action == "get_items_image")
+        {
+            $this->file_type = $this->config->item('system_file_type_image');
+            $this->system_get_items_file($id);
+        }
         elseif ($action == "list_video")
         {
             $this->file_type = $this->config->item('system_file_type_video');
             $this->system_list_file($id);
+        }
+        elseif ($action == "get_items_video")
+        {
+            $this->file_type = $this->config->item('system_file_type_video');
+            $this->system_get_items_file($id);
         }
         elseif ($action == "add")
         {
@@ -111,10 +121,10 @@ class Ft_demonstration_status extends Root_Controller
         {
             $this->system_save_file();
         }
-        elseif ($action == "delete_file")
+        /* elseif ($action == "delete_file")
         {
             $this->system_delete_file($id);
-        }
+        } */
         elseif ($action == "edit_transplanting_date")
         {
             $this->system_edit_transplanting_date($id);
@@ -188,6 +198,19 @@ class Ft_demonstration_status extends Root_Controller
         {
             $data['status'] = 1;
             $data['status_forward'] = 1;
+        }
+        if ($method == 'list_image' || $method == 'list_video')
+        {
+            $data = array(); // Re-initialize
+            $data['id'] = 1;
+            $data['variety1_name'] = 1;
+            $data['file_html_variety1'] = 1;
+            $data['remarks_variety1'] = 1;
+            $data['date_uploaded_variety1'] = 1;
+            $data['variety2_name'] = 1;
+            $data['file_html_variety2'] = 1;
+            $data['remarks_variety2'] = 1;
+            $data['date_uploaded_variety2'] = 1;
         }
         return $data;
     }
@@ -425,7 +448,7 @@ class Ft_demonstration_status extends Root_Controller
 
     private function system_list_file($id)
     {
-        if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
+        if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
             if ($id > 0)
             {
@@ -435,9 +458,10 @@ class Ft_demonstration_status extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
+            $user = User_helper::get_user();
 
             $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.year, demonstration.lead_farmer_id');
+            $this->db->select('demonstration.*');
 
             $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
             $this->db->select('season.name season');
@@ -476,11 +500,11 @@ class Ft_demonstration_status extends Root_Controller
 
             $data = array();
             $data['info_basic'] = $this->get_basic_info($result);
-
-            $data['uploaded_files'] = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'file_type ="' . $this->file_type . '"', 'revision=1', 'status ="' . $this->config->item('system_status_active') . '"'));
-
             $data['id'] = $item_id;
             $data['file_type'] = $this->file_type;
+
+            $method = strtolower('list_' . $this->file_type);
+            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
             $data['title'] = "Demonstration Status {$this->file_type} List ( ID: " . $item_id . " )";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_file", $data, true));
@@ -488,15 +512,7 @@ class Ft_demonstration_status extends Root_Controller
             {
                 $ajax['system_message'] = $this->message;
             }
-
-            if ($this->file_type == $this->config->item('system_file_type_image'))
-            {
-                $ajax['system_page_url'] = site_url($this->controller_url . '/index/list_image/' . $item_id);
-            }
-            else
-            {
-                $ajax['system_page_url'] = site_url($this->controller_url . '/index/list_video/' . $item_id);
-            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/' . $method . '/' . $item_id);
             $this->json_return($ajax);
         }
         else
@@ -505,6 +521,34 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+
+    private function system_get_items_file($item_id)
+    {
+        $items = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'file_type ="' . $this->file_type . '"', 'status ="' . $this->config->item('system_status_active') . '"'));
+        if ($this->file_type == $this->config->item('system_file_type_image'))
+        {
+            foreach ($items as &$item)
+            {
+                $date_uploaded_variety1 = ($item['date_uploaded_variety1']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety1']) . '</p>' : '';
+                $date_uploaded_variety2 = ($item['date_uploaded_variety2']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety2']) . '</p>' : '';
+
+                $item['file_html_variety1'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety1'] . '" style="height:200px" alt="Picture Missing"/>' . $date_uploaded_variety1;
+                $item['file_html_variety2'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety2'] . '" style="height:200px" alt="Picture Missing"/>' . $date_uploaded_variety2;
+            }
+        }
+        else
+        {
+            foreach ($items as &$item)
+            {
+                $date_uploaded_variety1 = ($item['date_uploaded_variety1']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety1']) . '</p>' : '';
+                $date_uploaded_variety2 = ($item['date_uploaded_variety2']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety2']) . '</p>' : '';
+
+                $item['file_html_variety1'] = '<video controls style="max-width:100%;height:200px"><source src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety1'] . '" /></video>' . $date_uploaded_variety1;
+                $item['file_html_variety2'] = '<video controls style="max-width:100%;height:200px"><source src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety2'] . '" /></video>' . $date_uploaded_variety2;
+            }
+        }
+        $this->json_return($items);
     }
 
     private function system_add()
@@ -918,8 +962,10 @@ class Ft_demonstration_status extends Root_Controller
             $data['file_id'] = 0;
             $data['file_type'] = $this->file_type;
             $data['item'] = array(
-                'file_location' => ($this->file_type == $this->config->item('system_file_type_image')) ? 'images/no_image.jpg' : '',
-                'remarks' => '',
+                'file_location_variety1' => ($this->file_type == $this->config->item('system_file_type_image')) ? 'images/no_image.jpg' : '',
+                'remarks_variety1' => '',
+                'file_location_variety2' => ($this->file_type == $this->config->item('system_file_type_image')) ? 'images/no_image.jpg' : '',
+                'remarks_variety2' => ''
             );
 
             $data['title'] = "Upload New Demonstration Status {$this->file_type} ( ID:" . $data['id'] . " )";
@@ -952,6 +998,15 @@ class Ft_demonstration_status extends Root_Controller
     {
         if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
+            if ($id > 0)
+            {
+                $item_id = $id;
+            }
+            else
+            {
+                $item_id = $this->input->post('id');
+            }
+
             $data = array();
 
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
@@ -959,7 +1014,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
             $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
-            $this->db->where('image_video.id', $id);
+            $this->db->where('image_video.id', $item_id);
             $result = $this->db->get()->row_array();
             if (!$result)
             {
@@ -983,11 +1038,11 @@ class Ft_demonstration_status extends Root_Controller
 
             if ($this->file_type == $this->config->item('system_file_type_image'))
             {
-                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_image/' . $id);
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_image/' . $item_id);
             }
             else
             {
-                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_video/' . $id);
+                $ajax['system_page_url'] = site_url($this->controller_url . '/index/edit_video/' . $item_id);
             }
             $this->json_return($ajax);
         }
@@ -1052,17 +1107,35 @@ class Ft_demonstration_status extends Root_Controller
 
         if ($uploaded_file)
         {
-            $file = $uploaded_file['file_demonstration'];
-            if ($file['status'])
+            if (isset($uploaded_file['file_variety1']))
             {
-                $item['file_name'] = $file['info']['file_name'];
-                $item['file_location'] = $path . '/' . $file['info']['file_name'];
+                if ($uploaded_file['file_variety1']['status'])
+                {
+                    $item['file_name_variety1'] = $uploaded_file['file_variety1']['info']['file_name'];
+                    $item['file_location_variety1'] = $path . '/' . $uploaded_file['file_variety1']['info']['file_name'];
+                    $item['date_uploaded_variety1'] = $time;
+                }
+                else
+                {
+                    $ajax['status'] = false;
+                    $ajax['system_message'] = $uploaded_file['file_variety1']['message'];
+                    $this->json_return($ajax);
+                }
             }
-            else
+            if (isset($uploaded_file['file_variety2']))
             {
-                $ajax['status'] = false;
-                $ajax['system_message'] = $file['message'];
-                $this->json_return($ajax);
+                if ($uploaded_file['file_variety2']['status'])
+                {
+                    $item['file_name_variety2'] = $uploaded_file['file_variety2']['info']['file_name'];
+                    $item['file_location_variety2'] = $path . '/' . $uploaded_file['file_variety2']['info']['file_name'];
+                    $item['date_uploaded_variety2'] = $time;
+                }
+                else
+                {
+                    $ajax['status'] = false;
+                    $ajax['system_message'] = $uploaded_file['file_variety2']['message'];
+                    $this->json_return($ajax);
+                }
             }
         }
         else if (!($file_id > 0)) // File selection Required for First time (ADD)
@@ -1071,30 +1144,26 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = "No {$file_type} has been Selected or, Uploaded";
             $this->json_return($ajax);
         }
-        else if ($file_id > 0) // Get OLD File location & name, If no File in Selected (EDIT)
-        {
-            $item['file_name'] = $result['file_name'];
-            $item['file_location'] = $result['file_location'];
-        }
 
         $this->db->trans_start(); //DB Transaction Handle START
-        // Update Revision
-        if ($file_id > 0)
+        if ($file_id > 0) // EDIT File
         {
-            $this->db->where('id', $file_id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_ems_demonstration_status_image_video'));
+            $item['date_updated'] = $time;
+            $item['user_updated'] = $user->user_id;
+            $this->db->set('revision_count', 'revision_count+1', FALSE);
+            Query_helper::update($this->config->item('table_ems_demonstration_status_image_video'), $item, array("id = " . $file_id));
         }
-        //Insert New File
-        $item['file_type'] = $file_type;
-        $item['demonstration_id'] = $item_id;
-        $item['status'] = $this->config->item('system_status_active');
-        $item['revision'] = 1;
-        $item['date_created'] = $time;
-        $item['user_created'] = $user->user_id;
-        Query_helper::add($this->config->item('table_ems_demonstration_status_image_video'), $item, FALSE);
+        else // ADD New File
+        {
+            $item['file_type'] = $file_type;
+            $item['demonstration_id'] = $item_id;
+            $item['status'] = $this->config->item('system_status_active');
+            $item['revision_count'] = 1;
+            $item['date_created'] = $time;
+            $item['user_created'] = $user->user_id;
+            Query_helper::add($this->config->item('table_ems_demonstration_status_image_video'), $item, FALSE);
+        }
         $this->db->trans_complete(); //DB Transaction Handle END
-
         if ($this->db->trans_status() === TRUE)
         {
             $this->file_type = $file_type;

@@ -14,6 +14,12 @@ if ($file_type == $CI->config->item('system_file_type_image'))
         'href' => site_url($CI->controller_url . '/index/add_image/' . $id)
     );
     $action_buttons[] = array(
+        'type' => 'button',
+        'label' => $CI->lang->line('ACTION_EDIT'),
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/edit_image')
+    );
+    $action_buttons[] = array(
         'label' => $CI->lang->line("ACTION_REFRESH"),
         'href' => site_url($CI->controller_url . '/index/list_image/' . $id)
     );
@@ -23,6 +29,12 @@ else
     $action_buttons[] = array(
         'label' => 'Upload ' . $file_type,
         'href' => site_url($CI->controller_url . '/index/add_video/' . $id)
+    );
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => $CI->lang->line('ACTION_EDIT'),
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/edit_video')
     );
     $action_buttons[] = array(
         'label' => $CI->lang->line("ACTION_REFRESH"),
@@ -43,79 +55,16 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
     <?php echo $CI->load->view("info_basic", '', true); ?>
 
-    <div class="row show-grid">
-        <div class="col-xs-12">
-            <div style="overflow-x:scroll">
-                <table class="table table-bordered">
-                    <tr>
-                        <th style="width:5%">ID</th>
-                        <th style="width:30%"><?php echo $file_type ?></th>
-                        <th><?php echo $CI->lang->line('LABEL_REMARKS'); ?></th>
-                        <th style="width:15%">Action</th>
-                    </tr>
-                    <?php
-                    if ($uploaded_files)
-                    {
-                        foreach ($uploaded_files as $file)
-                        {
-                            ?>
-                            <tr>
-                                <td><?php echo $file['id']; ?></td>
-                                <td>
-                                    <?php
-                                    if ($file_type == $CI->config->item('system_file_type_image'))
-                                    {
-                                        ?>
-                                        <a href="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>" target="_blank" class="external blob">
-                                            <img src="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>" style="max-width:300px; max-height:250px" alt="Picture Missing"/>
-                                        </a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <video controls id="video_preview_id" style="max-width:300px; max-height:250px">
-                                            <source src="<?php echo $CI->config->item('system_base_url_picture') . $file['file_location']; ?>">
-                                        </video>
-                                    <?php
-                                    }
-                                    ?>
-                                </td>
-                                <td><?php echo nl2br($file['remarks']); ?></td>
-                                <td>
-                                    <?php if ($file_type == $CI->config->item('system_file_type_image'))
-                                    {
-                                        ?>
-                                        <a href="<?php echo site_url($CI->controller_url . '/index/edit_image/' . $file['id']); ?>" class="btn btn-md btn-primary">Edit</a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <a href="<?php echo site_url($CI->controller_url . '/index/edit_video/' . $file['id']); ?>" class="btn btn-md btn-primary">Edit</a>
-                                    <?php
-                                    }
-                                    ?>
-                                    <a href="<?php echo site_url($CI->controller_url . '/index/delete_file/' . $file['id']); ?>" class="btn btn-md btn-danger" data-message-confirm="Are You Sure?">Delete</a>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                    }
-                    else
-                    {
-                        ?>
-                        <tr>
-                            <th colspan="4" style="text-align:center; font-style:italic; font-size:1.3em">- No <?php echo $file_type ?> Found -</th>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </table>
-            </div>
-        </div>
-    </div>
+    <?php
+    /*if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
+    {
+        $CI->load->view('preference', array('system_preference_items' => $system_preference_items));
+    }*/
+    ?>
 
+    <div class="col-xs-12" id="system_jqx_container">
+
+    </div>
 </div>
 <div class="clearfix"></div>
 
@@ -123,5 +72,74 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     $(document).ready(function () {
         system_off_events(); // Triggers
 
+        var url = "<?php echo site_url($CI->controller_url.'/index/'. strtolower('get_items_'.$file_type)).'/'.$id; ?>";
+        // prepare the data
+        var source =
+        {
+            dataType: "json",
+            dataFields: [
+                <?php
+                foreach($system_preference_items as $key => $value)
+                {
+                    if($key=='id')
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'number' },
+                <?php
+                    }
+                    else
+                    {
+                    ?> { name: '<?php echo $key; ?>', type: 'string' },
+                <?php
+                    }
+                }
+                ?>
+            ],
+            id: 'id',
+            type: 'POST',
+            url: url
+        };
+        var tooltiprenderer = function (element) {
+            $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
+        };
+        var cellsrenderer = function (row, column, value, defaultHtml, columnSettings, record) {
+            var element = $(defaultHtml);
+            element.css({'margin': '0px', 'width': '100%', 'height': '100%', padding: '5px'});
+            return element[0].outerHTML;
+        };
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        // create jqxgrid.
+        $("#system_jqx_container").jqxGrid(
+            {
+                width: '100%',
+                height: '500px',
+                rowsheight: 250,
+                source: dataAdapter,
+                pageable: true,
+                filterable: true,
+                sortable: false,
+                showfilterrow: true,
+                columnsresize: true,
+                columnsreorder: true,
+                pagesize: 50,
+                pagesizeoptions: ['50', '100', '200', '300', '500', '1000', '5000'],
+                selectionmode: 'singlerow',
+                altrows: true,
+                enablebrowserselection: true,
+                columngroups: [
+                    { text: '<b><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></b>', align: 'center', name: 'variety1' },
+                    { text: '<b><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></b>', align: 'center', name: 'variety2' }
+                ],
+                columns: [
+                    { text: '<b><?php echo $CI->lang->line('LABEL_ID'); ?></b>', dataField: 'id', pinned: true, width: '50', cellsrenderer: cellsrenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
+
+                    /* For Variety Variety1 ( ARM )*/
+                    { columngroup: 'variety1', text: '<?php echo $file_type; ?>', dataField: 'file_html_variety1', width: '250', filtertype: 'none', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['file_html_variety1']?0:1;?>},
+                    { columngroup: 'variety1', text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks_variety1', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks_variety1']?0:1;?>},
+
+                    /* For Variety Variety1 ( Competitor )*/
+                    { columngroup: 'variety2', text: '<?php echo $file_type; ?>', dataField: 'file_html_variety2', width: '250', filtertype: 'none', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['file_html_variety2']?0:1;?>},
+                    { columngroup: 'variety2', text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks_variety2', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks_variety2']?0:1;?>}
+                ]
+            });
     });
 </script>
