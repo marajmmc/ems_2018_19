@@ -165,6 +165,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
         };
+        var tooltiprenderer2 = function (element) {
+            $(element).jqxTooltip({position: 'mouse', content: "No. of " + $(element).text() });
+        };
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
         $("#system_jqx_container").jqxGrid(
@@ -185,6 +188,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', pinned: true, width: '50', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NO_OF_IMAGES'); ?>', dataField: 'no_of_images', pinned: true, width: '60', rendered: tooltiprenderer2, filtertype: 'none', cellsalign: 'right', hidden: <?php echo $system_preference_items['no_of_images']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_NO_OF_VIDEOS'); ?>', dataField: 'no_of_videos', pinned: true, width: '60', rendered: tooltiprenderer2, filtertype: 'none', cellsalign: 'right', hidden: <?php echo $system_preference_items['no_of_videos']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['year']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['season']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '180', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},

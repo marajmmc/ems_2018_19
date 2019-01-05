@@ -28,6 +28,8 @@ class Ft_demonstration_status extends Root_Controller
 
     private function language_config()
     {
+        $this->lang->language['LABEL_NO_OF_IMAGES'] = "Images";
+        $this->lang->language['LABEL_NO_OF_VIDEOS'] = "Videos";
         $this->lang->language['LABEL_GROWING_AREA'] = "Growing Area";
         $this->lang->language['LABEL_CROP_TYPE'] = 'Crop Type';
         $this->lang->language['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
@@ -121,10 +123,6 @@ class Ft_demonstration_status extends Root_Controller
         {
             $this->system_save_file();
         }
-        /* elseif ($action == "delete_file")
-        {
-            $this->system_delete_file($id);
-        } */
         elseif ($action == "edit_transplanting_date")
         {
             $this->system_edit_transplanting_date($id);
@@ -177,32 +175,10 @@ class Ft_demonstration_status extends Root_Controller
 
     private function get_preference_headers($method)
     {
-        $data = array();
+        $data = array(); // initialize
         $data['id'] = 1;
-        $data['year'] = 1;
-        $data['season'] = 1;
-        $data['outlet_name'] = 1;
-        $data['growing_area'] = 1;
-        $data['lead_farmer_name'] = 1;
-        $data['crop_name'] = 1;
-        $data['crop_type_name'] = 1;
-        $data['variety1_name'] = 1;
-        $data['variety2_name'] = 1;
-        $data['date_sowing_variety1'] = 1;
-        $data['date_sowing_variety2'] = 1;
-        $data['date_transplanting_variety1'] = 1;
-        $data['date_transplanting_variety2'] = 1;
-        $data['date_expected_evaluation'] = 1;
-        $data['date_actual_evaluation'] = 1;
-        if ($method == 'list_all')
-        {
-            $data['status'] = 1;
-            $data['status_forward'] = 1;
-        }
         if ($method == 'list_image' || $method == 'list_video')
         {
-            $data = array(); // Re-initialize
-            $data['id'] = 1;
             $data['variety1_name'] = 1;
             $data['file_html_variety1'] = 1;
             $data['remarks_variety1'] = 1;
@@ -211,6 +187,31 @@ class Ft_demonstration_status extends Root_Controller
             $data['file_html_variety2'] = 1;
             $data['remarks_variety2'] = 1;
             $data['date_uploaded_variety2'] = 1;
+        }
+        else
+        {
+            $data['no_of_images'] = 1;
+            $data['no_of_videos'] = 1;
+            $data['year'] = 1;
+            $data['season'] = 1;
+            $data['outlet_name'] = 1;
+            $data['growing_area'] = 1;
+            $data['lead_farmer_name'] = 1;
+            $data['crop_name'] = 1;
+            $data['crop_type_name'] = 1;
+            $data['variety1_name'] = 1;
+            $data['variety2_name'] = 1;
+            $data['date_sowing_variety1'] = 1;
+            $data['date_sowing_variety2'] = 1;
+            $data['date_transplanting_variety1'] = 1;
+            $data['date_transplanting_variety2'] = 1;
+            $data['date_expected_evaluation'] = 1;
+            $data['date_actual_evaluation'] = 1;
+            if ($method == 'list_all')
+            {
+                $data['status'] = 1;
+                $data['status_forward'] = 1;
+            }
         }
         return $data;
     }
@@ -322,8 +323,20 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->where('demonstration.status_forward !=', $this->config->item('system_status_forwarded'));
         $this->db->order_by('demonstration.id', 'DESC');
         $items = $this->db->get()->result_array();
+
+        // Image & Video count
+        $file_data = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('status ="' . $this->config->item('system_status_active') . '"'));
+        $file_count = array();
+        foreach ($file_data as $file)
+        {
+            $uploaded_file_count = (($file['date_uploaded_variety1'] > 0) && ($file['date_uploaded_variety2'] > 0)) ? 2 : 1;
+            $file_count[$file['demonstration_id']][$file['file_type']] = (isset($file_count[$file['demonstration_id']][$file['file_type']])) ? $file_count[$file['demonstration_id']][$file['file_type']] + $uploaded_file_count : $uploaded_file_count;
+        }
+
         foreach ($items as &$item)
         {
+            $item['no_of_images'] = isset($file_count[$item['id']][$this->config->item('system_file_type_image')]) ? $file_count[$item['id']][$this->config->item('system_file_type_image')] : 0;
+            $item['no_of_videos'] = isset($file_count[$item['id']][$this->config->item('system_file_type_video')]) ? $file_count[$item['id']][$this->config->item('system_file_type_video')] : 0;
             $item['date_sowing_variety1'] = System_helper::display_date($item['date_sowing_variety1']);
             $item['date_sowing_variety2'] = System_helper::display_date($item['date_sowing_variety2']);
             $item['date_transplanting_variety1'] = System_helper::display_date($item['date_transplanting_variety1']);
@@ -434,8 +447,20 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->order_by('demonstration.id', 'DESC');
         $this->db->limit($pagesize, $current_records);
         $items = $this->db->get()->result_array();
+
+        // Image & Video count
+        $file_data = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('status ="' . $this->config->item('system_status_active') . '"'));
+        $file_count = array();
+        foreach ($file_data as $file)
+        {
+            $uploaded_file_count = (($file['date_uploaded_variety1'] > 0) && ($file['date_uploaded_variety2'] > 0)) ? 2 : 1;
+            $file_count[$file['demonstration_id']][$file['file_type']] = (isset($file_count[$file['demonstration_id']][$file['file_type']])) ? $file_count[$file['demonstration_id']][$file['file_type']] + $uploaded_file_count : $uploaded_file_count;
+        }
+
         foreach ($items as &$item)
         {
+            $item['no_of_images'] = isset($file_count[$item['id']][$this->config->item('system_file_type_image')]) ? $file_count[$item['id']][$this->config->item('system_file_type_image')] : 0;
+            $item['no_of_videos'] = isset($file_count[$item['id']][$this->config->item('system_file_type_video')]) ? $file_count[$item['id']][$this->config->item('system_file_type_video')] : 0;
             $item['date_sowing_variety1'] = System_helper::display_date($item['date_sowing_variety1']);
             $item['date_sowing_variety2'] = System_helper::display_date($item['date_sowing_variety2']);
             $item['date_transplanting_variety1'] = System_helper::display_date($item['date_transplanting_variety1']);
@@ -501,6 +526,7 @@ class Ft_demonstration_status extends Root_Controller
             $data = array();
             $data['info_basic'] = $this->get_basic_info($result);
             $data['id'] = $item_id;
+            $data['item'] = array('variety2_id' => $result['variety2_id']);
             $data['file_type'] = $this->file_type;
 
             $method = strtolower('list_' . $this->file_type);
@@ -533,8 +559,8 @@ class Ft_demonstration_status extends Root_Controller
                 $date_uploaded_variety1 = ($item['date_uploaded_variety1']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety1']) . '</p>' : '';
                 $date_uploaded_variety2 = ($item['date_uploaded_variety2']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety2']) . '</p>' : '';
 
-                $item['file_html_variety1'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety1'] . '" style="height:200px" alt="Picture Missing"/>' . $date_uploaded_variety1;
-                $item['file_html_variety2'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety2'] . '" style="height:200px" alt="Picture Missing"/>' . $date_uploaded_variety2;
+                $item['file_html_variety1'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety1'] . '" style="max-width:100%;height:200px" alt="Picture Missing"/>' . $date_uploaded_variety1;
+                $item['file_html_variety2'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety2'] . '" style="max-width:100%;height:200px" alt="Picture Missing"/>' . $date_uploaded_variety2;
             }
         }
         else
@@ -962,6 +988,7 @@ class Ft_demonstration_status extends Root_Controller
             $data['file_id'] = 0;
             $data['file_type'] = $this->file_type;
             $data['item'] = array(
+                'variety2_id' => $result['variety2_id'],
                 'file_location_variety1' => ($this->file_type == $this->config->item('system_file_type_image')) ? 'images/no_image.jpg' : '',
                 'remarks_variety1' => '',
                 'file_location_variety2' => ($this->file_type == $this->config->item('system_file_type_image')) ? 'images/no_image.jpg' : '',
@@ -1012,6 +1039,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
             $this->db->select('image_video.*');
             $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
+            $this->db->select('demonstration.variety2_id');
             $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.id', $item_id);
@@ -1177,59 +1205,6 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
     }
-
-    /* private function system_delete_file($id)
-    {
-        if ($id > 0)
-        {
-            $item_id = $id;
-        }
-        else
-        {
-            $item_id = $this->input->post('id');
-        }
-        $user = User_helper::get_user();
-        $time = time();
-
-        $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
-        $this->db->select('image_video.*');
-        $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
-        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
-        {
-            $this->db->where('demonstration.user_created', $user->user_id);
-        }
-        $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
-        $this->db->where('image_video.status', $this->config->item('system_status_active'));
-        $this->db->where('image_video.id', $item_id);
-        $result = $this->db->get()->row_array();
-        if (!$result)
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
-
-        $this->db->trans_start(); //DB Transaction Handle START
-        $item['status'] = $this->config->item('system_status_delete');
-        $item['user_deleted'] = $user->user_id;
-        $item['date_deleted'] = $time;
-        Query_helper::update($this->config->item('table_ems_demonstration_status_image_video'), $item, array("id = " . $item_id));
-        $this->db->trans_complete(); //DB Transaction Handle END
-
-        if ($this->db->trans_status() === TRUE)
-        {
-            $this->file_type = trim($result['file_type']);
-            $this->message = $this->lang->line("MSG_DELETED_SUCCESS");
-            $this->system_list_file($result['demonstration_id']);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("MSG_DELETED_FAIL");
-            $this->json_return($ajax);
-        }
-    } */
 
     private function system_edit_transplanting_date($id)
     {
@@ -1532,7 +1507,7 @@ class Ft_demonstration_status extends Root_Controller
 
             $data = array();
             $data['item'] = $result;
-
+            $data['accordion'] = array('collapse' => 'in');
             $basic_info = $this->get_basic_info($result);
             if (!($result['variety2_id'] > 0))
             {
@@ -1566,14 +1541,21 @@ class Ft_demonstration_status extends Root_Controller
                 'label_2' => $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
                 'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
             );
+            $data['info_basic'] = $basic_info;
 
-            $data['full_info'] = array(); // Initialize for multiple Info Accordion.
-            $data['full_info'][] = array( // For Basic Info.
-                'accordion' => array(
-                    'collapse' => 'in',
-                    'data' => $basic_info
-                )
-            );
+            // Image & Video data
+            $result_file = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('file_type'));
+            $data['info_image'] = array();
+            foreach ($result_file as $key => $file)
+            {
+                $data['info_image'][$file['file_type']][$key]['file_location_variety1'] = $file['file_location_variety1'];
+                $data['info_image'][$file['file_type']][$key]['remarks_variety1'] = $file['remarks_variety1'];
+                $data['info_image'][$file['file_type']][$key]['date_uploaded_variety1'] = $file['date_uploaded_variety1'];
+
+                $data['info_image'][$file['file_type']][$key]['file_location_variety2'] = $file['file_location_variety2'];
+                $data['info_image'][$file['file_type']][$key]['remarks_variety2'] = $file['remarks_variety2'];
+                $data['info_image'][$file['file_type']][$key]['date_uploaded_variety2'] = $file['date_uploaded_variety2'];
+            }
 
             $data['title'] = "Forward Demonstration Status ( ID:" . $item_id . " )";
             $ajax['status'] = true;

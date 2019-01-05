@@ -132,13 +132,17 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columns: [
                     { text: '<b><?php echo $CI->lang->line('LABEL_ID'); ?></b>', dataField: 'id', pinned: true, width: '50', cellsrenderer: cellsrenderer, cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
 
-                    /* For Variety Variety1 ( ARM )*/
+                    /* For Variety1 ( ARM ) */
                     { columngroup: 'variety1', text: '<?php echo $file_type; ?>', dataField: 'file_html_variety1', width: '250', filtertype: 'none', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['file_html_variety1']?0:1;?>},
-                    { columngroup: 'variety1', text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks_variety1', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks_variety1']?0:1;?>},
+                    { columngroup: 'variety1', text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks_variety1', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks_variety1']?0:1;?>}
 
-                    /* For Variety Variety1 ( Competitor )*/
-                    { columngroup: 'variety2', text: '<?php echo $file_type; ?>', dataField: 'file_html_variety2', width: '250', filtertype: 'none', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['file_html_variety2']?0:1;?>},
-                    { columngroup: 'variety2', text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks_variety2', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks_variety2']?0:1;?>}
+                    <?php if($item['variety2_id'] > 0){ ?>
+
+                    /* For Variety1 ( Competitor ) */
+                    ,{ columngroup: 'variety2', text: '<?php echo $file_type; ?>', dataField: 'file_html_variety2', width: '250', filtertype: 'none', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['file_html_variety2']?0:1;?>}
+                    ,{ columngroup: 'variety2', text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks_variety2', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['remarks_variety2']?0:1;?>}
+
+                    <?php } ?>
                 ]
             });
     });
