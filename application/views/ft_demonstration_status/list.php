@@ -67,7 +67,7 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'type' => 'button',
         'label' => 'Change Status',
         'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/change_status')
+        'data-action-link' => site_url($CI->controller_url . '/index/status_change')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))

@@ -117,7 +117,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 pageable: true,
                 filterable: true,
                 sortable: false,
-                showfilterrow: true,
+                showfilterrow: false,
                 columnsresize: true,
                 columnsreorder: true,
                 pagesize: 50,
