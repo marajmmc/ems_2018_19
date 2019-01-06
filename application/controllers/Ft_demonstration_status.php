@@ -68,7 +68,7 @@ class Ft_demonstration_status extends Root_Controller
         elseif ($action == "get_items_image")
         {
             $this->file_type = $this->config->item('system_file_type_image');
-            $this->system_get_items_file($id);
+            $this->system_get_file_items($id);
         }
         elseif ($action == "list_video")
         {
@@ -78,7 +78,7 @@ class Ft_demonstration_status extends Root_Controller
         elseif ($action == "get_items_video")
         {
             $this->file_type = $this->config->item('system_file_type_video');
-            $this->system_get_items_file($id);
+            $this->system_get_file_items($id);
         }
         elseif ($action == "add")
         {
@@ -517,7 +517,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
             $this->db->select('variety2.name variety2_name');
 
-            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
+            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
             $this->db->where('demonstration.id', $item_id);
             $result = $this->db->get()->row_array();
             if (!$result)
@@ -525,6 +525,12 @@ class Ft_demonstration_status extends Root_Controller
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
                 $this->json_return($ajax);
             }
 
@@ -554,7 +560,7 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
-    private function system_get_items_file($item_id)
+    private function system_get_file_items($item_id)
     {
         $items = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'file_type ="' . $this->file_type . '"', 'status ="' . $this->config->item('system_status_active') . '"'));
         if ($this->file_type == $this->config->item('system_file_type_image'))
@@ -662,8 +668,12 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-
-            // Check my Editable?
+            if ($data['item']['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
 
             $data['seasons'] = Query_helper::get_info($this->config->item('table_ems_setup_seasons'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
             $outlet_conditions = array('revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id'));
@@ -725,7 +735,6 @@ class Ft_demonstration_status extends Root_Controller
     {
         $item_id = $this->input->post('id');
         $item_head = $this->input->post('item');
-
         $user = User_helper::get_user();
         $time = time();
 
@@ -744,6 +753,12 @@ class Ft_demonstration_status extends Root_Controller
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
                 $this->json_return($ajax);
             }
         }
@@ -865,6 +880,12 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
 
             $data = array();
             $data['item'] = $result;
@@ -912,8 +933,13 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = 'Invalid Try.';
             $this->json_return($ajax);
         }
-
-
+        if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+            $this->json_return($ajax);
+        }
+        // Form Validation
         if (($item['status'] != $this->config->item('system_status_inactive')) && ($item['status'] != $this->config->item('system_status_delete')))
         {
             $ajax['status'] = false;
@@ -949,10 +975,9 @@ class Ft_demonstration_status extends Root_Controller
         }
 
         $this->db->trans_start(); //DB Transaction Handle START
-
         Query_helper::update($this->config->item('table_ems_demonstration_status'), $data, array("id =" . $item_id), FALSE);
-
         $this->db->trans_complete(); //DB Transaction Handle END
+
         if ($this->db->trans_status() === TRUE)
         {
             $ajax['status'] = true;
@@ -989,6 +1014,13 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
+
             $data['id'] = $item_id;
             $data['file_id'] = 0;
             $data['file_type'] = $this->file_type;
@@ -1038,14 +1070,13 @@ class Ft_demonstration_status extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-
             $data = array();
 
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
             $this->db->select('image_video.*');
             $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
-            $this->db->select('demonstration.variety2_id');
-            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
+            $this->db->select('demonstration.variety2_id, demonstration.status_forward');
+            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.id', $item_id);
             $result = $this->db->get()->row_array();
@@ -1056,6 +1087,13 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
+
             $data['id'] = $result['demonstration_id'];
             $data['file_id'] = $result['id'];
             $data['file_type'] = $this->file_type;
@@ -1109,7 +1147,8 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
             $this->db->select('image_video.*');
             $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
-            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
+            $this->db->select('demonstration.status_forward');
+            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.id', $file_id);
             $result = $this->db->get()->row_array();
@@ -1123,6 +1162,12 @@ class Ft_demonstration_status extends Root_Controller
             System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
             $this->json_return($ajax);
         }
 
@@ -1261,6 +1306,12 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
 
             $data = array();
             $data['item'] = $result;
@@ -1334,6 +1385,12 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $this->json_return($ajax);
+            }
 
             $data = array();
             $data['item'] = $result;
@@ -1360,7 +1417,6 @@ class Ft_demonstration_status extends Root_Controller
     private function system_save_date()
     {
         $item_id = $this->input->post('id');
-        $date_field_name = $this->input->post('date_field_name');
         $item = $this->input->post('item');
         $user = User_helper::get_user();
         $time = time();
@@ -1379,6 +1435,12 @@ class Ft_demonstration_status extends Root_Controller
             System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
             $ajax['status'] = false;
             $ajax['system_message'] = 'Invalid Try.';
+            $this->json_return($ajax);
+        }
+        if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
             $this->json_return($ajax);
         }
 
@@ -1687,12 +1749,6 @@ class Ft_demonstration_status extends Root_Controller
                 System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
-            {
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
                 $this->json_return($ajax);
             }
 
