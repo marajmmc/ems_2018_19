@@ -60,6 +60,7 @@ $lang['ACTION_SAVE'] = 'Save';
 $lang['ACTION_SAVE_NEW'] = 'Save and New';
 $lang['ACTION_DELETE'] = 'Delete';
 $lang['ACTION_FORWARD'] = 'Forward';
+$lang['ACTION_APPROVE'] = 'Approve';
 $lang['ACTION_DETAILS'] = 'Details';
 $lang['ACTION_PRINT'] = 'Print';
 $lang['ACTION_DETAILS_PRINT'] = 'Print View';
