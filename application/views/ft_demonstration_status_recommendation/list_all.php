@@ -5,51 +5,8 @@ $action_buttons = array();
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
 {
     $action_buttons[] = array(
-        'label' => 'All List',
-        'href' => site_url($CI->controller_url . '/index/list_all')
-    );
-}
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => $CI->lang->line("ACTION_NEW"),
-        'href' => site_url($CI->controller_url . '/index/add')
-    );
-}
-if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Admin ' . $CI->lang->line("ACTION_EDIT"),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit')
-    );
-}
-if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Image',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/list_image')
-    );
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Video',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/list_video')
-    );
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line('LABEL_DATE_TRANSPLANTING'),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit_transplanting_date')
-    );
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/edit_actual_evaluation_date')
+        'label' => 'Pending List',
+        'href' => site_url($CI->controller_url)
     );
 }
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
@@ -59,15 +16,6 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'label' => $CI->lang->line("ACTION_DETAILS"),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/details')
-    );
-}
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Change Status',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/status_change')
     );
 }
 if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
@@ -97,19 +45,14 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
         'href' => site_url($CI->controller_url . '/index/set_preference_list')
     );
 }
-if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'type' => 'button',
-        'label' => $CI->lang->line("ACTION_FORWARD"),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/forward')
-    );
-}
 $action_buttons[] = array(
     'label' => $CI->lang->line("ACTION_REFRESH"),
-    'href' => site_url($CI->controller_url . '/index/list')
+    'href' => site_url($CI->controller_url . '/index/list_all')
+);
+$action_buttons[] = array(
+    'type' => 'button',
+    'label' => $CI->lang->line("ACTION_LOAD_MORE"),
+    'id' => 'button_jqx_load_more'
 );
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
@@ -136,7 +79,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
     $(document).ready(function () {
         system_off_events(); // Triggers
 
-        var url = "<?php echo site_url($CI->controller_url.'/index/get_items'); ?>";
+        var url = "<?php echo site_url($CI->controller_url.'/index/get_items_all'); ?>";
         // prepare the data
         var source =
         {
@@ -188,8 +131,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', pinned: true, width: '50', cellsalign: 'right', hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NO_OF_IMAGES'); ?>', dataField: 'no_of_images', pinned: true, width: '60', rendered: tooltiprenderer2, filtertype: 'none', cellsalign: 'right', hidden: <?php echo $system_preference_items['no_of_images']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_NO_OF_VIDEOS'); ?>', dataField: 'no_of_videos', pinned: true, width: '60', rendered: tooltiprenderer2, filtertype: 'none', cellsalign: 'right', hidden: <?php echo $system_preference_items['no_of_videos']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['year']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['season']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?>', dataField: 'outlet_name', width: '180', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['outlet_name']?0:1;?>},
@@ -204,7 +145,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'); ?>', dataField: 'date_transplanting_variety1', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_transplanting_variety1']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'); ?>', dataField: 'date_transplanting_variety2', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_transplanting_variety2']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED_EVALUATION'); ?>', dataField: 'date_expected_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_expected_evaluation']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?>', dataField: 'date_actual_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_actual_evaluation']?0:1;?>}
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?>', dataField: 'date_actual_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_actual_evaluation']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_RECOMMENDATION'); ?>', dataField: 'status_recommendation', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['status_recommendation']?0:1;?>}
                 ]
             });
     });

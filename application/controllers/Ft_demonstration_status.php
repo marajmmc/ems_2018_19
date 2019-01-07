@@ -28,6 +28,7 @@ class Ft_demonstration_status extends Root_Controller
 
     private function language_config()
     {
+        // Language
         $this->lang->language['LABEL_NO_OF_IMAGES'] = "Images";
         $this->lang->language['LABEL_NO_OF_VIDEOS'] = "Videos";
         $this->lang->language['LABEL_GROWING_AREA'] = "Growing Area";
@@ -39,7 +40,9 @@ class Ft_demonstration_status extends Root_Controller
         $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY1'] = 'Transplanting Date (Selected)';
         $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY2'] = 'Transplanting Date (Compare with)';
         $this->lang->language['LABEL_FARMERS_COMMENT'] = 'Farmer\'s Comment';
-        $this->lang->language['LABEL_TMPOS_COMMENT'] = 'TMPO\' Comment';
+        $this->lang->language['LABEL_TMPOS_COMMENT'] = 'TMPO\'s Comment';
+        // Messages
+        $this->lang->language['MSG_FORWARD_DEMONSTRATION'] = 'This Demonstration has been Forwarded Already.';
     }
 
     public function index($action = "list", $id = 0)
@@ -530,7 +533,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -671,7 +674,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($data['item']['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -758,7 +761,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
         }
@@ -832,7 +835,7 @@ class Ft_demonstration_status extends Root_Controller
 
     private function system_status_change($id)
     {
-        if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
+        if (isset($this->permissions['action3']) && ($this->permissions['action3'] == 1))
         {
             if ($id > 0)
             {
@@ -883,7 +886,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -918,7 +921,7 @@ class Ft_demonstration_status extends Root_Controller
         $time = time();
 
         //Permission Checking
-        if (!(isset($this->permissions['action1']) && ($this->permissions['action1'] == 1)))
+        if (!(isset($this->permissions['action3']) && ($this->permissions['action3'] == 1)))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
@@ -936,7 +939,7 @@ class Ft_demonstration_status extends Root_Controller
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+            $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
             $this->json_return($ajax);
         }
         // Form Validation
@@ -1017,7 +1020,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -1090,7 +1093,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -1167,7 +1170,7 @@ class Ft_demonstration_status extends Root_Controller
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+            $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
             $this->json_return($ajax);
         }
 
@@ -1309,7 +1312,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -1388,7 +1391,7 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
@@ -1440,7 +1443,7 @@ class Ft_demonstration_status extends Root_Controller
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+            $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
             $this->json_return($ajax);
         }
 
@@ -1568,9 +1571,18 @@ class Ft_demonstration_status extends Root_Controller
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+                $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
+
+            //---------Getting User Names------------
+            $user_ids = array(
+                $result['user_created'] => $result['user_created'],
+                $result['user_inactive'] => $result['user_inactive'],
+                $result['user_deleted'] => $result['user_deleted'],
+                $result['user_forwarded'] => $result['user_forwarded']
+            );
+            $user_info = System_helper::get_users_info($user_ids);
 
             $data = array();
             $data['item'] = $result;
@@ -1607,6 +1619,12 @@ class Ft_demonstration_status extends Root_Controller
                 'value_1' => System_helper::display_date($result['date_expected_evaluation']),
                 'label_2' => $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
                 'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
+            );
+            $basic_info[] = array(
+                'label_1' => 'Created By',
+                'value_1' => $user_info[$result['user_created']]['name'],
+                'label_2' => 'Created Time',
+                'value_2' => System_helper::display_date_time($result['date_created'])
             );
             $data['info_basic'] = $basic_info;
 
@@ -1668,7 +1686,7 @@ class Ft_demonstration_status extends Root_Controller
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = 'This Demonstration has been Forwarded Already.';
+            $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
             $this->json_return($ajax);
         }
         //Forward Validation Checking
@@ -1741,7 +1759,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
             $this->db->select('variety2.name variety2_name');
 
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
+            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
             $this->db->where('demonstration.id', $item_id);
             $result = $this->db->get()->row_array();
             if (!$result)
@@ -1751,6 +1769,15 @@ class Ft_demonstration_status extends Root_Controller
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
+
+            //---------Getting User Names------------
+            $user_ids = array(
+                $result['user_created'] => $result['user_created'],
+                $result['user_inactive'] => $result['user_inactive'],
+                $result['user_deleted'] => $result['user_deleted'],
+                $result['user_forwarded'] => $result['user_forwarded']
+            );
+            $user_info = System_helper::get_users_info($user_ids);
 
             $data = array();
             $data['item'] = $result;
@@ -1788,6 +1815,47 @@ class Ft_demonstration_status extends Root_Controller
                 'label_2' => $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
                 'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal">- No Date Selected -</i>'
             );
+            $basic_info[] = array(
+                'label_1' => 'Created By',
+                'value_1' => $user_info[$result['user_created']]['name'],
+                'label_2' => 'Created Time',
+                'value_2' => System_helper::display_date_time($result['date_created'])
+            );
+            if ($result['status'] == $this->config->item('system_status_inactive'))
+            {
+                $basic_info[] = array(
+                    'label_1' => '<span class="text-danger">' . $this->config->item('system_status_inactive') . ' By</span>',
+                    'value_1' => '<span class="text-danger">' . $user_info[$result['user_inactive']]['name'] . '</span>',
+                    'label_2' => '<span class="text-danger">' . $this->config->item('system_status_inactive') . ' Time</span>',
+                    'value_2' => '<span class="text-danger">' . System_helper::display_date_time($result['date_inactive']) . '</span>'
+                );
+                $basic_info[] = array(
+                    'label_1' => '<span class="text-danger">' . $this->config->item('system_status_inactive') . ' Reason</span>',
+                    'value_1' => '<span class="text-danger">' . nl2br($result['remarks_inactive']) . '</span>'
+                );
+            }
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            {
+                $basic_info[] = array(
+                    'label_1' => 'Demonstration Forwarded Status'
+                );
+                $basic_info[] = array(
+                    'label_1' => 'Forwarded Status',
+                    'value_1' => $this->config->item('system_status_forwarded'),
+                    'label_2' => $this->lang->line('LABEL_TMPOS_COMMENT'),
+                    'value_2' => nl2br($result['remarks_forward'])
+                );
+                $basic_info[] = array(
+                    'label_1' => $this->lang->line('LABEL_FARMERS_COMMENT'),
+                    'value_1' => nl2br($result['remarks_farmer'])
+                );
+                $basic_info[] = array(
+                    'label_1' => 'Forwarded By',
+                    'value_1' => $this->config->item('system_status_forwarded'),
+                    'label_2' => 'Forwarded Time',
+                    'value_2' => nl2br($result['remarks_forward'])
+                );
+            }
             $data['info_basic'] = $basic_info;
 
             // Image & Video data
@@ -1953,7 +2021,6 @@ class Ft_demonstration_status extends Root_Controller
             'label_2' => 'Farmer Type',
             'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : $this->lang->line('LABEL_OTHER_FARMER_NAME')
         );
-
         $data[] = array(
             'label_1' => $this->lang->line('LABEL_CROP_NAME'),
             'value_1' => $result['crop_name'],

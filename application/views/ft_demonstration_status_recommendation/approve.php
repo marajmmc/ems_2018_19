@@ -11,7 +11,7 @@ $action_buttons[] = array
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_forward'); ?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_approve'); ?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
 
     <div class="row widget">
@@ -39,14 +39,18 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                         <tr>
                             <th rowspan="2" style="vertical-align:bottom"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                             <th colspan="2" style="text-align:center"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
-                            <?php if ($item['variety2_id'] > 0){ ?>
+                            <?php if ($item['variety2_id'] > 0)
+                            {
+                                ?>
                                 <th colspan="2" style="text-align:center"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
                             <?php } ?>
                         </tr>
                         <tr>
                             <th><?php echo $file_type; ?></th>
                             <th>Remarks</th>
-                            <?php if ($item['variety2_id'] > 0){ ?>
+                            <?php if ($item['variety2_id'] > 0)
+                            {
+                                ?>
                                 <th><?php echo $file_type; ?></th>
                                 <th>Remarks</th>
                             <?php } ?>
@@ -77,7 +81,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                 </td>
                                 <td style="width:25%"><?php echo nl2br($info['remarks_variety1']); ?></td>
 
-                                <?php if ($item['variety2_id'] > 0){ ?>
+                                <?php if ($item['variety2_id'] > 0)
+                                {
+                                    ?>
 
                                     <td style="width:24%">
                                         <?php if ($file_type == $CI->config->item('system_file_type_image'))
@@ -110,34 +116,54 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FORWARD'); ?>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZSCS_COMMENT'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <select name="item[status_forward]" class="form-control status-combo">
+                <textarea id="remarks" name="item[remarks_recommendation]" class="form-control"></textarea>
+            </div>
+        </div>
+
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Evaluation <span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-xs-4">
+                <select name="item[evaluation]" class="form-control status-combo">
                     <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $CI->config->item('system_status_forwarded'); ?>"><?php echo $CI->lang->line('LABEL_FORWARD'); ?></option>
+                    <?php
+                    foreach ($CI->evaluation_items as $eval)
+                    {
+                        ?>
+                        <option value="<?php echo $eval; ?>"><?php echo $eval; ?></option>
+                    <?php
+                    }
+                    ?>
                 </select>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FARMERS_COMMENT'); ?>
+                <label class="control-label pull-right">Demonstration <?php echo $CI->lang->line('LABEL_STATUS'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <textarea id="remarks" name="item[remarks_farmer]" class="form-control"></textarea>
+                <select name="item[status_forward]" class="form-control status-combo">
+                    <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_complete'); ?>"><?php echo $CI->config->item('system_status_complete'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_incomplete'); ?>"><?php echo $CI->config->item('system_status_incomplete'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_damaged'); ?>"><?php echo $CI->config->item('system_status_damaged'); ?></option>
+                </select>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TMPOS_COMMENT'); ?>
-                    <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Recommendation <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <textarea id="remarks" name="item[remarks_forward]" class="form-control"></textarea>
+                <textarea id="remarks" name="item[remarks_farmer]" class="form-control"></textarea>
             </div>
         </div>
 
