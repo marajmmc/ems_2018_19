@@ -32,6 +32,7 @@ $config['system_status_present']='Present';
 $config['system_status_absent']='Absent';
 $config['system_status_cl']='Casual Leave';
 $config['system_status_extended']='Extended';
+$config['system_status_damaged']='Damaged';
 
 
 $config['system_base_url_profile_picture']='http://45.251.59.5/login_2018_19/';
