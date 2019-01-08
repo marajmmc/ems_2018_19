@@ -25,6 +25,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $this->json_return($ajax);
         }
         $this->language_config();
+        $this->load->helper('Ft_demonstration');
     }
 
     private function language_config()
@@ -43,7 +44,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $this->lang->language['LABEL_STATUS_RECOMMENDATION'] = 'Status Recommendation';
         // Messages
         $this->lang->language['MSG_NOT_FORWARDED_DEMONSTRATION'] = 'This Demonstration has not been Forwarded yet.';
-        $this->lang->language['MSG_APPROVED_DEMONSTRATION'] = 'This Demonstration has been Approved Already.';
+        $this->lang->language['MSG_RECOMMENDED_DEMONSTRATION'] = 'This Demonstration has been Recommended Already.';
     }
 
     public function index($action = "list", $id = 0)
@@ -225,7 +226,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         }
         $this->db->where('demonstration.status', $this->config->item('system_status_active'));
         $this->db->where('demonstration.status_forward', $this->config->item('system_status_forwarded'));
-        $this->db->where('demonstration.status_recommendation !=', $this->config->item('system_status_forwarded'));
+        $this->db->where('demonstration.status_recommendation', $this->config->item('system_status_pending'));
         $this->db->order_by('demonstration.id', 'DESC');
         $items = $this->db->get()->result_array();
 
@@ -411,65 +412,17 @@ class Ft_demonstration_status_recommendation extends Root_Controller
                 $ajax['system_message'] = $this->lang->line('MSG_NOT_FORWARDED_DEMONSTRATION');
                 $this->json_return($ajax);
             }
-            if ($result['status_recommendation'] == $this->config->item('system_status_approved'))
+            if ($result['status_recommendation'] != $this->config->item('system_status_pending'))
             {
                 $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line('MSG_APPROVED_DEMONSTRATION');
+                $ajax['system_message'] = $this->lang->line('MSG_RECOMMENDED_DEMONSTRATION');
                 $this->json_return($ajax);
             }
-
-            //---------Getting User Names------------
-            $user_ids = array(
-                $result['user_created'] => $result['user_created'],
-                $result['user_inactive'] => $result['user_inactive'],
-                $result['user_deleted'] => $result['user_deleted'],
-                $result['user_forwarded'] => $result['user_forwarded']
-            );
-            $user_info = System_helper::get_users_info($user_ids);
 
             $data = array();
             $data['item'] = $result;
             $data['accordion'] = array('collapse' => 'in');
-            $basic_info = $this->get_basic_info($result);
-            if (!($result['variety2_id'] > 0))
-            {
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_SOWING_VARIETY1'),
-                    'value_1' => System_helper::display_date($result['date_sowing_variety1'])
-                );
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'),
-                    'value_1' => ($result['date_transplanting_variety1']) ? System_helper::display_date($result['date_transplanting_variety1']) : '<i style="font-weight:normal">- No Date Selected -</i>'
-                );
-            }
-            else
-            {
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_SOWING_VARIETY1'),
-                    'value_1' => System_helper::display_date($result['date_sowing_variety1']),
-                    'label_2' => $this->lang->line('LABEL_DATE_SOWING_VARIETY2'),
-                    'value_2' => ($result['date_sowing_variety2']) ? System_helper::display_date($result['date_sowing_variety2']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
-                );
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'),
-                    'value_1' => ($result['date_transplanting_variety1']) ? System_helper::display_date($result['date_transplanting_variety1']) : '<i style="font-weight:normal">- No Date Selected -</i>',
-                    'label_2' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'),
-                    'value_2' => ($result['date_transplanting_variety2']) ? System_helper::display_date($result['date_transplanting_variety2']) : '<i style="font-weight:normal">- No Date Selected -</i>'
-                );
-            }
-            $basic_info[] = array(
-                'label_1' => $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'),
-                'value_1' => System_helper::display_date($result['date_expected_evaluation']),
-                'label_2' => $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
-                'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
-            );
-            $basic_info[] = array(
-                'label_1' => 'Created By',
-                'value_1' => $user_info[$result['user_created']]['name'],
-                'label_2' => 'Created Time',
-                'value_2' => System_helper::display_date_time($result['date_created'])
-            );
-            $data['info_basic'] = $basic_info;
+            $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
 
             // Image & Video data
             $result_file = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('file_type'));
@@ -532,14 +485,14 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $ajax['system_message'] = $this->lang->line('MSG_NOT_FORWARDED_DEMONSTRATION');
             $this->json_return($ajax);
         }
-        if ($result['status_recommendation'] == $this->config->item('system_status_approved'))
+        if ($result['status_recommendation'] != $this->config->item('system_status_pending'))
         {
             $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line('MSG_APPROVED_DEMONSTRATION');
+            $ajax['system_message'] = $this->lang->line('MSG_RECOMMENDED_DEMONSTRATION');
             $this->json_return($ajax);
         }
-        //Forward Validation Checking
-        if (!$this->check_validation_forward($result))
+        //Recommendation Validation Checking
+        if (!$this->check_validation_recommendation())
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->message;
@@ -548,8 +501,8 @@ class Ft_demonstration_status_recommendation extends Root_Controller
 
         $this->db->trans_start(); //DB Transaction Handle START
 
-        $item['date_forwarded'] = $time;
-        $item['user_forwarded'] = $user->user_id;
+        $item['date_recommendation'] = $time;
+        $item['user_recommendation'] = $user->user_id;
         // Main Table UPDATE
         Query_helper::update($this->config->item('table_ems_demonstration_status'), $item, array("id =" . $item_id), FALSE);
 
@@ -619,93 +572,10 @@ class Ft_demonstration_status_recommendation extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            //---------Getting User Names------------
-            $user_ids = array(
-                $result['user_created'] => $result['user_created'],
-                $result['user_inactive'] => $result['user_inactive'],
-                $result['user_deleted'] => $result['user_deleted'],
-                $result['user_forwarded'] => $result['user_forwarded']
-            );
-            $user_info = System_helper::get_users_info($user_ids);
-
             $data = array();
             $data['item'] = $result;
             $data['accordion'] = array('collapse' => 'in');
-            $basic_info = $this->get_basic_info($result);
-            if (!($result['variety2_id'] > 0))
-            {
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_SOWING_VARIETY1'),
-                    'value_1' => System_helper::display_date($result['date_sowing_variety1'])
-                );
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'),
-                    'value_1' => ($result['date_transplanting_variety1']) ? System_helper::display_date($result['date_transplanting_variety1']) : '<i style="font-weight:normal">- No Date Selected -</i>'
-                );
-            }
-            else
-            {
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_SOWING_VARIETY1'),
-                    'value_1' => System_helper::display_date($result['date_sowing_variety1']),
-                    'label_2' => $this->lang->line('LABEL_DATE_SOWING_VARIETY2'),
-                    'value_2' => ($result['date_sowing_variety2']) ? System_helper::display_date($result['date_sowing_variety2']) : '<i style="font-weight:normal">- No Date Selected -</i>'
-                );
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'),
-                    'value_1' => ($result['date_transplanting_variety1']) ? System_helper::display_date($result['date_transplanting_variety1']) : '<i style="font-weight:normal">- No Date Selected -</i>',
-                    'label_2' => $this->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'),
-                    'value_2' => ($result['date_transplanting_variety2']) ? System_helper::display_date($result['date_transplanting_variety2']) : '<i style="font-weight:normal">- No Date Selected -</i>'
-                );
-            }
-            $basic_info[] = array(
-                'label_1' => $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'),
-                'value_1' => System_helper::display_date($result['date_expected_evaluation']),
-                'label_2' => $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
-                'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal">- No Date Selected -</i>'
-            );
-            $basic_info[] = array(
-                'label_1' => 'Created By',
-                'value_1' => $user_info[$result['user_created']]['name'],
-                'label_2' => 'Created Time',
-                'value_2' => System_helper::display_date_time($result['date_created'])
-            );
-            if ($result['status'] == $this->config->item('system_status_inactive'))
-            {
-                $basic_info[] = array(
-                    'label_1' => '<span class="text-danger">' . $this->config->item('system_status_inactive') . ' By</span>',
-                    'value_1' => '<span class="text-danger">' . $user_info[$result['user_inactive']]['name'] . '</span>',
-                    'label_2' => '<span class="text-danger">' . $this->config->item('system_status_inactive') . ' Time</span>',
-                    'value_2' => '<span class="text-danger">' . System_helper::display_date_time($result['date_inactive']) . '</span>'
-                );
-                $basic_info[] = array(
-                    'label_1' => '<span class="text-danger">' . $this->config->item('system_status_inactive') . ' Reason</span>',
-                    'value_1' => '<span class="text-danger">' . nl2br($result['remarks_inactive']) . '</span>'
-                );
-            }
-            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
-            {
-                $basic_info[] = array(
-                    'label_1' => 'Demonstration Forwarded Status'
-                );
-                $basic_info[] = array(
-                    'label_1' => 'Forwarded Status',
-                    'value_1' => $this->config->item('system_status_forwarded'),
-                    'label_2' => $this->lang->line('LABEL_TMPOS_COMMENT'),
-                    'value_2' => nl2br($result['remarks_forward'])
-                );
-                $basic_info[] = array(
-                    'label_1' => $this->lang->line('LABEL_FARMERS_COMMENT'),
-                    'value_1' => nl2br($result['remarks_farmer'])
-                );
-                $basic_info[] = array(
-                    'label_1' => 'Forwarded By',
-                    'value_1' => $this->config->item('system_status_forwarded'),
-                    'label_2' => 'Forwarded Time',
-                    'value_2' => nl2br($result['remarks_forward'])
-                );
-            }
-            $data['info_basic'] = $basic_info;
+            $data['info_basic'] = Ft_demonstration_helper::get_details_info($result);
 
             // Image & Video data
             $result_file = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('file_type'));
@@ -739,40 +609,22 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         }
     }
 
-    private function get_basic_info($result)
+    private function check_validation_recommendation()
     {
-        //----------------Basic Info. Array Generate----------------
-        $data = array();
-        $data[] = array(
-            'label_1' => $this->lang->line('LABEL_YEAR'),
-            'value_1' => $result['year'],
-            'label_2' => $this->lang->line('LABEL_SEASON'),
-            'value_2' => $result['season']
-        );
-        $data[] = array(
-            'label_1' => $this->lang->line('LABEL_OUTLET_NAME'),
-            'value_1' => $result['outlet_name'],
-            'label_2' => $this->lang->line('LABEL_GROWING_AREA'),
-            'value_2' => $result['growing_area']
-        );
-        $data[] = array(
-            'label_1' => $this->lang->line('LABEL_FARMER_NAME'),
-            'value_1' => $result['lead_farmer_name'],
-            'label_2' => 'Farmer Type',
-            'value_2' => ($result['lead_farmer_id'] > 0) ? $this->lang->line('LABEL_LEAD_FARMER_NAME') : $this->lang->line('LABEL_OTHER_FARMER_NAME')
-        );
-        $data[] = array(
-            'label_1' => $this->lang->line('LABEL_CROP_NAME'),
-            'value_1' => $result['crop_name'],
-            'label_2' => $this->lang->line('LABEL_CROP_TYPE'),
-            'value_2' => $result['crop_type_name']
-        );
-        $data[] = array(
-            'label_1' => $this->lang->line('LABEL_VARIETY1_NAME'),
-            'value_1' => $result['variety1_name'],
-            'label_2' => $this->lang->line('LABEL_VARIETY2_NAME'),
-            'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
-        );
-        return $data;
+        $item = $this->input->post('item');
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[remarks_zsc]', $this->lang->line('LABEL_ZSCS_COMMENT'), 'required|trim');
+        $this->form_validation->set_rules('item[evaluation]', 'Evaluation', 'required|trim');
+        $this->form_validation->set_rules('item[status_recommendation]', $this->lang->line('LABEL_STATUS'), 'required|trim');
+        if (($item['status_recommendation'] == $this->config->item('system_status_incomplete')) || ($item['status_recommendation'] == $this->config->item('system_status_damaged')))
+        {
+            $this->form_validation->set_rules('item[remarks_recommendation]', 'Recommendation', 'required|trim');
+        }
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
+            return false;
+        }
+        return true;
     }
 }

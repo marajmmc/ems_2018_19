@@ -120,7 +120,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <textarea id="remarks" name="item[remarks_recommendation]" class="form-control"></textarea>
+                <textarea id="remarks_zsc" name="item[remarks_zsc]" class="form-control"></textarea>
             </div>
         </div>
 
@@ -145,11 +145,11 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Demonstration <?php echo $CI->lang->line('LABEL_STATUS'); ?>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <select name="item[status_forward]" class="form-control status-combo">
+                <select name="item[status_recommendation]" class="form-control status-combo">
                     <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                     <option value="<?php echo $CI->config->item('system_status_complete'); ?>"><?php echo $CI->config->item('system_status_complete'); ?></option>
                     <option value="<?php echo $CI->config->item('system_status_incomplete'); ?>"><?php echo $CI->config->item('system_status_incomplete'); ?></option>
@@ -160,11 +160,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Recommendation <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Recommendation &nbsp;</label>
             </div>
             <div class="col-xs-4">
-                <textarea id="remarks" name="item[remarks_farmer]" class="form-control"></textarea>
+                <textarea id="remarks_recommendation" name="item[remarks_recommendation]" class="form-control"></textarea>
             </div>
+            <div class="col-xs-4 combo-required" style="color:#FF0000"></div>
         </div>
 
         <div class="row show-grid">
@@ -189,10 +190,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == '<?php echo $CI->config->item('system_status_forwarded'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_FORWARD'); ?>');
-            } else {
-                $("#button_action_save").removeAttr('data-message-confirm');
+            if (options == '<?php echo $CI->config->item('system_status_incomplete'); ?>') {
+                $('.combo-required').text('This field is required for ' + options + ' Status');
+            }
+            else if (options == '<?php echo $CI->config->item('system_status_damaged'); ?>') {
+                $('.combo-required').text('This field is required for ' + options + ' Status');
+            }
+            else {
+                $('.combo-required').text('');
             }
         });
     });
