@@ -492,45 +492,8 @@ class Ft_demonstration_status extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $user = User_helper::get_user();
 
-            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.*');
-
-            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
-            $this->db->select('season.name season');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
-            $this->db->select('cus_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-            $this->db->select('areas.name growing_area');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
-            $this->db->select('crop.name crop_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
-            $this->db->select('crop_type.name crop_type_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
-            $this->db->select('variety1.name variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
-            $this->db->select('variety2.name variety2_name');
-
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
-            $this->db->where('demonstration.id', $item_id);
-            $result = $this->db->get()->row_array();
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -538,6 +501,7 @@ class Ft_demonstration_status extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $user = User_helper::get_user();
             $data = array();
             $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
             $data['id'] = $item_id;
@@ -615,6 +579,7 @@ class Ft_demonstration_status extends Root_Controller
             );
 
             $data['seasons'] = Query_helper::get_info($this->config->item('table_ems_setup_seasons'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
+
             $outlet_conditions = array('revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id'));
             if ($this->locations['district_id'] > 0)
             {
@@ -663,22 +628,16 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $data = array();
-            $data['item'] = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-            if (!$data['item'])
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
-            if ($data['item']['status_forward'] == $this->config->item('system_status_forwarded'))
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
+            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
+            $data = array();
+            $data['item'] = $result;
             $data['seasons'] = Query_helper::get_info($this->config->item('table_ems_setup_seasons'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
             $outlet_conditions = array('revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id'));
             if ($this->locations['district_id'] > 0)
@@ -692,7 +651,7 @@ class Ft_demonstration_status extends Root_Controller
                 $outlet_conditions[] = 'district_id IN (' . $district_ids . ')';
             }
             $data['outlets'] = Query_helper::get_info($this->config->item('table_login_csetup_cus_info'), array('*, customer_id value', 'name text'), $outlet_conditions, 0, 0, array('name ASC'));
-            $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id value, CONCAT_WS(" - ", name, address) text', array('outlet_id =' . $data['item']['outlet_id'], 'status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('name'));
+            $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id value, CONCAT_WS(" - ", name, address) text', array('outlet_id =' . $result['outlet_id'], 'status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('name'));
 
             // Lead Farmer List by GA id
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers');
@@ -702,7 +661,7 @@ class Ft_demonstration_status extends Root_Controller
 
             $this->db->where('areas.status', $this->config->item('system_status_active'));
             $this->db->where('lead_farmers.status', $this->config->item('system_status_active'));
-            $this->db->where('areas.id', $data['item']['growing_area_id']);
+            $this->db->where('areas.id', $result['growing_area_id']);
             $this->db->order_by('areas.name', 'ASC');
             $this->db->order_by('lead_farmers.ordering', 'ASC');
             $data['lead_farmer'] = $this->db->get()->result_array();
@@ -711,13 +670,13 @@ class Ft_demonstration_status extends Root_Controller
             // Crop Type List with selected, is Loaded by JS
 
             $this->load->helper('Fd_budget');
-            $data['crop_varieties1'] = Fd_budget_helper::get_variety_arm_upcoming($data['item']['crop_type_id']);
-            $data['crop_varieties2'] = Fd_budget_helper::get_variety_all($data['item']['crop_type_id']);
+            $data['crop_varieties1'] = Fd_budget_helper::get_variety_arm_upcoming($result['crop_type_id']);
+            $data['crop_varieties2'] = Fd_budget_helper::get_variety_all($result['crop_type_id']);
 
-            $data['crop_varieties1'] = $data['crop_varieties1'][$data['item']['crop_type_id']];
-            $data['crop_varieties2'] = $data['crop_varieties2'][$data['item']['crop_type_id']];
+            $data['crop_varieties1'] = $data['crop_varieties1'][$result['crop_type_id']];
+            $data['crop_varieties2'] = $data['crop_varieties2'][$result['crop_type_id']];
 
-            $data['title'] = "Edit Demonstration Status ( ID:" . $data['item']['id'] . " )";
+            $data['title'] = "Edit Demonstration Status ( ID:" . $result['id'] . " )";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));
             if ($this->message)
@@ -751,14 +710,7 @@ class Ft_demonstration_status extends Root_Controller
         }
         if ($item_id > 0) // Only checking for EDIT
         {
-            $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -774,12 +726,11 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
 
-
         $this->db->trans_start(); //DB Transaction Handle START
 
         //Date Transformation
         $item_head['date_sowing_variety1'] = System_helper::get_time($item_head['date_sowing_variety1']);
-        if (($item_head['date_sowing_variety2'] != ""))
+        if (($item_head['variety2_id'] > 0) && ($item_head['date_sowing_variety2'] != ""))
         {
             $item_head['date_sowing_variety2'] = System_helper::get_time($item_head['date_sowing_variety2']);
         }
@@ -847,43 +798,7 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.*');
-
-            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
-            $this->db->select('season.name season');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
-            $this->db->select('cus_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-            $this->db->select('areas.name growing_area');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
-            $this->db->select('crop.name crop_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
-            $this->db->select('crop_type.name crop_type_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
-            $this->db->select('variety1.name variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
-            $this->db->select('variety2.name variety2_name');
-
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
-            $this->db->where('demonstration.id', $item_id);
-            $result = $this->db->get()->row_array();
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -929,14 +844,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-        if (!$result)
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
+        $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
@@ -1009,15 +917,7 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $data = array();
-            $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -1025,6 +925,7 @@ class Ft_demonstration_status extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $data = array();
             $data['id'] = $item_id;
             $data['file_id'] = 0;
             $data['file_type'] = $this->file_type;
@@ -1074,30 +975,33 @@ class Ft_demonstration_status extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $data = array();
 
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
             $this->db->select('image_video.*');
+
             $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
-            $this->db->select('demonstration.variety2_id, demonstration.status_forward');
+            $this->db->select('demonstration.variety2_id');
+
             $this->db->where('demonstration.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.id', $item_id);
-            $result = $this->db->get()->row_array();
+            $result = $this->db->get()->row_array(); // Fetch File Data Only
             if (!$result)
             {
-                System_helper::invalid_try(__FUNCTION__, $id, 'ID Not Exists');
+                System_helper::invalid_try(__FUNCTION__, $item_id, $this->file_type . ' ID Not Exists');
                 $ajax['status'] = false;
                 $ajax['system_message'] = 'Invalid Try.';
                 $this->json_return($ajax);
             }
-            if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+            $item_result = Ft_demonstration_helper::get_demonstration_by_id($result['demonstration_id'], __FUNCTION__); // Just to check, if the Demonstration ID Exist or, Not
+            if ($item_result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
 
+            $data = array();
             $data['id'] = $result['demonstration_id'];
             $data['file_id'] = $result['id'];
             $data['file_type'] = $this->file_type;
@@ -1150,25 +1054,20 @@ class Ft_demonstration_status extends Root_Controller
         {
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');
             $this->db->select('image_video.*');
-            $this->db->join($this->config->item('table_ems_demonstration_status') . ' demonstration', 'demonstration.id = image_video.demonstration_id', 'INNER');
-            $this->db->select('demonstration.status_forward');
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.status', $this->config->item('system_status_active'));
             $this->db->where('image_video.id', $file_id);
+            $this->db->where('image_video.demonstration_id', $item_id);
             $result = $this->db->get()->row_array();
+            if (!$result)
+            {
+                System_helper::invalid_try(__FUNCTION__, $item_id, $file_type . ' ID Not Exists');
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'Invalid Try.';
+                $this->json_return($ajax);
+            }
         }
-        else // ADD
-        {
-            $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-        }
-        if (!$result)
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
-        if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
+        $item_result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__); // Just to check, if the Demonstration ID Exist or, Not
+        if ($item_result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
@@ -1273,43 +1172,7 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.*');
-
-            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
-            $this->db->select('season.name season');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
-            $this->db->select('cus_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-            $this->db->select('areas.name growing_area');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
-            $this->db->select('crop.name crop_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
-            $this->db->select('crop_type.name crop_type_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
-            $this->db->select('variety1.name variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
-            $this->db->select('variety2.name variety2_name');
-
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
-            $this->db->where('demonstration.id', $item_id);
-            $result = $this->db->get()->row_array();
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -1352,43 +1215,7 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.*');
-
-            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
-            $this->db->select('season.name season');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
-            $this->db->select('cus_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-            $this->db->select('areas.name growing_area');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
-            $this->db->select('crop.name crop_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
-            $this->db->select('crop_type.name crop_type_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
-            $this->db->select('variety1.name variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
-            $this->db->select('variety2.name variety2_name');
-
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
-            $this->db->where('demonstration.id', $item_id);
-            $result = $this->db->get()->row_array();
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -1433,14 +1260,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-        if (!$result)
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
+        $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
@@ -1532,58 +1352,13 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.*');
-
-            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
-            $this->db->select('season.name season');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
-            $this->db->select('cus_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-            $this->db->select('areas.name growing_area');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
-            $this->db->select('crop.name crop_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
-            $this->db->select('crop_type.name crop_type_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
-            $this->db->select('variety1.name variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
-            $this->db->select('variety2.name variety2_name');
-
-            $this->db->where('demonstration.status', $this->config->item('system_status_active'));
-            $this->db->where('demonstration.id', $item_id);
-            $result = $this->db->get()->row_array();
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line('MSG_FORWARD_DEMONSTRATION');
                 $this->json_return($ajax);
             }
-
-            //---------Getting User Names------------
-            $user_ids = array(
-                $result['user_created'] => $result['user_created'],
-                $result['user_inactive'] => $result['user_inactive'],
-                $result['user_deleted'] => $result['user_deleted'],
-                $result['user_forwarded'] => $result['user_forwarded']
-            );
-            $user_info = System_helper::get_users_info($user_ids);
 
             $data = array();
             $data['item'] = $result;
@@ -1637,14 +1412,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
 
-        $result = Query_helper::get_info($this->config->item('table_ems_demonstration_status'), array('*'), array('id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 1);
-        if (!$result)
-        {
-            System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-            $ajax['status'] = false;
-            $ajax['system_message'] = 'Invalid Try.';
-            $this->json_return($ajax);
-        }
+        $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
         if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
         {
             $ajax['status'] = false;
@@ -1694,43 +1462,7 @@ class Ft_demonstration_status extends Root_Controller
                 $item_id = $this->input->post('id');
             }
 
-            $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-            $this->db->select('demonstration.*');
-
-            $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
-            $this->db->select('season.name season');
-
-            $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
-            $this->db->select('cus_info.name outlet_name');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-            $this->db->select('areas.name growing_area');
-
-            $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-            $this->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
-            $this->db->select('crop.name crop_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = demonstration.crop_type_id', 'INNER');
-            $this->db->select('crop_type.name crop_type_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = demonstration.variety1_id', 'INNER');
-            $this->db->select('variety1.name variety1_name');
-
-            $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
-            $this->db->select('variety2.name variety2_name');
-
-            $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
-            $this->db->where('demonstration.id', $item_id);
-            $result = $this->db->get()->row_array();
-            if (!$result)
-            {
-                System_helper::invalid_try(__FUNCTION__, $item_id, 'ID Not Exists');
-                $ajax['status'] = false;
-                $ajax['system_message'] = 'Invalid Try.';
-                $this->json_return($ajax);
-            }
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
 
             $data = array();
             $data['item'] = $result;
@@ -1907,24 +1639,30 @@ class Ft_demonstration_status extends Root_Controller
             return false;
         }
 
+        if (($item['variety2_id'] > 0) && (trim($item['date_sowing_variety2']) == ""))
+        {
+            $this->message = $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY2_NAME') . ' cannot be Empty';
+            return false;
+        }
+
         if (!($item['lead_farmer_id'] > 0))
         {
-            if (($item['name_other_farmer'] == "") && ($item['phone_other_farmer'] == "") && ($item['address_other_farmer'] == ""))
+            if ((trim($item['name_other_farmer']) == "") && (trim($item['phone_other_farmer']) == "") && (trim($item['address_other_farmer']) == ""))
             {
                 $this->message = $this->lang->line('LABEL_LEAD_FARMER_NAME') . ' field is required. OR, Enter ' . $this->lang->line('LABEL_OTHER_FARMER_NAME');
                 return false;
             }
-            if ($item['name_other_farmer'] == "")
+            if (trim($item['name_other_farmer']) == "")
             {
                 $this->message = $this->lang->line('LABEL_OTHER_FARMER_NAME') . ' Name cannot be Empty';
                 return false;
             }
-            else if ($item['phone_other_farmer'] == "")
+            else if (trim($item['phone_other_farmer']) == "")
             {
                 $this->message = $this->lang->line('LABEL_OTHER_FARMER_NAME') . ' Phone No. cannot be Empty';
                 return false;
             }
-            else if ($item['address_other_farmer'] == "")
+            else if (trim($item['address_other_farmer']) == "")
             {
                 $this->message = $this->lang->line('LABEL_OTHER_FARMER_NAME') . ' Address cannot be Empty';
                 return false;
@@ -1936,27 +1674,21 @@ class Ft_demonstration_status extends Root_Controller
 
     private function check_validation_forward($result)
     {
-        $this->load->library('form_validation');
+        $this->message = '';
+        $invalid = false;
+        if (!$result['date_actual_evaluation']) // Checking If 'Actual Date of Evaluation' is Set
+        {
+            $this->message .= '<p>' . $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . ' is not Set.</p>';
+            $invalid = true;
+        }
 
+        $this->load->library('form_validation');
         $this->form_validation->set_rules('item[status_forward]', $this->lang->line('LABEL_FORWARD'), 'required');
         $this->form_validation->set_rules('item[remarks_farmer]', $this->lang->line('LABEL_FARMERS_COMMENT'), 'required');
         $this->form_validation->set_rules('item[remarks_forward]', $this->lang->line('LABEL_TMPOS_COMMENT'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message .= validation_errors();
-            return false;
-        }
-
-        $this->message = '';
-        $invalid = false;
-        if (($result['variety2_id'] > 0) && (!$result['date_sowing_variety2'])) // Checking If 'Sowing Date (Compare with)' is Set
-        {
-            $this->message .= $this->lang->line('LABEL_DATE_SOWING_VARIETY2') . ' is not Set.<br/>';
-            $invalid = true;
-        }
-        if (!$result['date_actual_evaluation']) // Checking If 'Actual Date of Evaluation' is Set
-        {
-            $this->message .= $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . ' is not Set.<br/>';
             $invalid = true;
         }
 

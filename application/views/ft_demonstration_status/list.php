@@ -61,7 +61,7 @@ if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
         'data-action-link' => site_url($CI->controller_url . '/index/details')
     );
 }
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
+if (isset($CI->permissions['action3']) && ($CI->permissions['action3'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
