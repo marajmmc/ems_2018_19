@@ -78,13 +78,27 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                 <span style="color:#FF0000">*</span></label>
                         </td>
                         <td>
-                            <input type="text" name="item[date_transplanting_variety1]" id="date_transplanting_variety1" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transplanting_variety1']); ?>" readonly/>
+                            <div class="form-group">
+                                <div class='input-group date'>
+                                    <input type="text" name="item[date_transplanting_variety1]" id="date_transplanting_variety1" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transplanting_variety1']); ?>" readonly/>
+                                    <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </td>
                         <?php if ($item['variety2_id'] > 0)
                         {
                             ?>
                             <td>
-                                <input type="text" name="item[date_transplanting_variety2]" id="date_transplanting_variety2" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transplanting_variety2']); ?>" readonly/>
+                                <div class="form-group">
+                                    <div class='input-group date'>
+                                        <input type="text" name="item[date_transplanting_variety2]" id="date_transplanting_variety2" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_transplanting_variety2']); ?>" readonly/>
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </td>
                         <?php
                         }
@@ -102,6 +116,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     $(document).ready(function () {
         system_off_events(); // Triggers
+
         $(".datepicker").datepicker({dateFormat: display_date_format});
+        $('.input-group-addon').click(function(){
+            $(this).siblings('input.datepicker').focus();
+        });
     });
 </script>

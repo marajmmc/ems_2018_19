@@ -48,10 +48,11 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             <div class="col-xs-4">
                 <select id="year" name="item[year]" class="form-control">
                     <?php
+                    $selected_year = ($item['year'])? $item['year']:date('Y');
                     for ($year = (date('Y') + 1); $year >= (date('Y') - 1); $year--)
                     {
                         ?>
-                        <option value="<?php echo $year; ?>" <?php echo ($year == $item['year']) ? 'selected' : ''; ?>><?php echo $year; ?></option>
+                        <option value="<?php echo $year; ?>" <?php echo ($year == $selected_year) ? 'selected' : ''; ?>><?php echo $year; ?></option>
                     <?php
                     }
                     ?>
@@ -284,10 +285,25 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?></label>
                             </td>
                             <td>
-                                <input type="text" name="item[date_sowing_variety1]" id="date_sowing_variety1" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_sowing_variety1']); ?>" readonly/>
+                                <div class="form-group">
+                                    <div class='input-group date'>
+                                        <input type="text" name="item[date_sowing_variety1]" id="date_sowing_variety1" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_sowing_variety1']); ?>" readonly/>
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
                             </td>
                             <td>
-                                <input type="text" name="item[date_sowing_variety2]" id="date_sowing_variety2" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_sowing_variety2']); ?>" readonly/>
+                                <div class="form-group">
+                                    <div class='input-group date'>
+                                        <input type="text" name="item[date_sowing_variety2]" id="date_sowing_variety2" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_sowing_variety2']); ?>" readonly/>
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="req-txt" style="color:#FF0000;margin:0;text-align:center"></p>
                             </td>
                         </tr>
                     </table>
@@ -302,7 +318,14 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <input type="text" name="item[date_expected_evaluation]" id="date_expected_evaluation" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_expected_evaluation']); ?>" readonly/>
+                <div class="form-group">
+                    <div class='input-group date'>
+                        <input type="text" name="item[date_expected_evaluation]" id="date_expected_evaluation" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_expected_evaluation']); ?>" readonly/>
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -344,6 +367,9 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         system_off_events(); // Triggers
 
         $(".datepicker").datepicker({dateFormat: display_date_format});
+        $('.input-group-addon').click(function(){
+                $(this).siblings('input.datepicker').focus();
+        });
 
         var selected_crop_id = parseInt(<?php echo $item['crop_id']; ?>);
         var selected_crop_type_id = parseInt(<?php echo $item['crop_type_id']; ?>);
@@ -466,6 +492,9 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
             var variety2_id = $(this).val();
             if(variety2_id == ""){
                 $("#date_sowing_variety2").val('');
+                $('.req-txt').text('');
+            }else{
+                $('.req-txt').text('This Date is Required Now.');
             }
         });
     });

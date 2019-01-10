@@ -15,8 +15,8 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
-        $this->common_view_location = 'Ft_demonstration_status';
         $this->locations = User_helper::get_locations();
+        $this->common_view_location = 'Ft_demonstration_status';
         $this->evaluation_items = array('Excellent', 'Very Good', 'Good', 'Average', 'Poor');
         if (!($this->locations))
         {
@@ -24,27 +24,8 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->language_config();
         $this->load->helper('Ft_demonstration');
-    }
-
-    private function language_config()
-    {
-        $this->lang->language['LABEL_GROWING_AREA'] = "Growing Area";
-        $this->lang->language['LABEL_CROP_TYPE'] = 'Crop Type';
-        $this->lang->language['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
-        $this->lang->language['LABEL_VARIETY2_NAME'] = 'Variety (Compare with)';
-        $this->lang->language['LABEL_DATE_SOWING_VARIETY1'] = 'Sowing Date (Selected)';
-        $this->lang->language['LABEL_DATE_SOWING_VARIETY2'] = 'Sowing Date (Compare with)';
-        $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY1'] = 'Transplanting Date (Selected)';
-        $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY2'] = 'Transplanting Date (Compare with)';
-        $this->lang->language['LABEL_FARMERS_COMMENT'] = 'Farmer\'s Comment';
-        $this->lang->language['LABEL_TMPOS_COMMENT'] = 'TMPO\'s Comment';
-        $this->lang->language['LABEL_ZSCS_COMMENT'] = 'ZSC\'s Comment';
-        $this->lang->language['LABEL_STATUS_RECOMMENDATION'] = 'Status Recommendation';
-        // Messages
-        $this->lang->language['MSG_NOT_FORWARDED_DEMONSTRATION'] = 'This Demonstration has not been Forwarded yet.';
-        $this->lang->language['MSG_RECOMMENDED_DEMONSTRATION'] = 'This Demonstration has been Recommended Already.';
+        $this->lang->load('Ft_demonstration');
     }
 
     public function index($action = "list", $id = 0)

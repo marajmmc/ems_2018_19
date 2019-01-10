@@ -37,7 +37,14 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <input type="text" name="item[date_actual_evaluation]" id="date_actual_evaluation" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_actual_evaluation']); ?>" readonly/>
+                <div class="form-group">
+                    <div class='input-group date'>
+                        <input type="text" name="item[date_actual_evaluation]" id="date_actual_evaluation" class="form-control datepicker" value="<?php echo System_helper::display_date($item['date_actual_evaluation']); ?>" readonly/>
+                        <span class="input-group-addon">
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -49,6 +56,10 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     $(document).ready(function () {
         system_off_events(); // Triggers
+
         $(".datepicker").datepicker({dateFormat: display_date_format});
+        $('.input-group-addon').click(function(){
+            $(this).siblings('input.datepicker').focus();
+        });
     });
 </script>

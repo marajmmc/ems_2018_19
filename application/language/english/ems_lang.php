@@ -354,11 +354,3 @@ $lang['LABEL_AREA_NAME'] = 'Growing Area Name';
 // Printing Page
 $lang['LABEL_PURPOSE'] = 'Purpose';
 $lang['LABEL_DATE_EVALUATION'] = 'Purpose';
-
-// Demonstration Status
-$lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
-$lang['LABEL_DATE_TRANSPLANTING'] = 'Transplanting Date';
-$lang['LABEL_DATE_EXPECTED_EVALUATION'] = 'Expected Date of Evaluation';
-$lang['LABEL_DATE_ACTUAL_EVALUATION'] = 'Actual Date of Evaluation';
-$lang['LABEL_OTHER_FARMER_NAME'] = 'Other Farmer';
-

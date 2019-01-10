@@ -15,35 +15,16 @@ class Ft_demonstration_status extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
-        $this->common_view_location = 'Ft_demonstration_status';
         $this->locations = User_helper::get_locations();
+        $this->common_view_location = 'Ft_demonstration_status';
         if (!($this->locations))
         {
             $ajax['status'] = false;
             $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->language_config();
         $this->load->helper('Ft_demonstration');
-    }
-
-    private function language_config()
-    {
-        // Language
-        $this->lang->language['LABEL_NO_OF_IMAGES'] = "Images";
-        $this->lang->language['LABEL_NO_OF_VIDEOS'] = "Videos";
-        $this->lang->language['LABEL_GROWING_AREA'] = "Growing Area";
-        $this->lang->language['LABEL_CROP_TYPE'] = 'Crop Type';
-        $this->lang->language['LABEL_VARIETY1_NAME'] = 'Variety (Selected)';
-        $this->lang->language['LABEL_VARIETY2_NAME'] = 'Variety (Compare with)';
-        $this->lang->language['LABEL_DATE_SOWING_VARIETY1'] = 'Sowing Date (Selected)';
-        $this->lang->language['LABEL_DATE_SOWING_VARIETY2'] = 'Sowing Date (Compare with)';
-        $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY1'] = 'Transplanting Date (Selected)';
-        $this->lang->language['LABEL_DATE_TRANSPLANTING_VARIETY2'] = 'Transplanting Date (Compare with)';
-        $this->lang->language['LABEL_FARMERS_COMMENT'] = 'Farmer\'s Comment';
-        $this->lang->language['LABEL_TMPOS_COMMENT'] = 'TMPO\'s Comment';
-        // Messages
-        $this->lang->language['MSG_FORWARD_DEMONSTRATION'] = 'This Demonstration has been Forwarded Already.';
+        $this->lang->load('Ft_demonstration');
     }
 
     public function index($action = "list", $id = 0)
@@ -1626,6 +1607,10 @@ class Ft_demonstration_status extends Root_Controller
         $this->form_validation->set_rules('item[crop_type_id]', $this->lang->line('LABEL_CROP_TYPE'), 'required|numeric');
         $this->form_validation->set_rules('item[variety1_id]', $this->lang->line('LABEL_VARIETY1_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item[date_sowing_variety1]', $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY1_NAME'), 'required');
+        if (($item['variety2_id'] > 0) && (trim($item['date_sowing_variety2']) == ""))
+        {
+            $this->form_validation->set_rules('item[date_sowing_variety2]', $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY2_NAME'), 'required');
+        }
         $this->form_validation->set_rules('item[date_expected_evaluation]', $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
@@ -1636,12 +1621,6 @@ class Ft_demonstration_status extends Root_Controller
         if ($item['variety1_id'] == $item['variety2_id'])
         {
             $this->message = $this->lang->line('LABEL_VARIETY1_NAME') . ' and ' . $this->lang->line('LABEL_VARIETY2_NAME') . ' cannot be same';
-            return false;
-        }
-
-        if (($item['variety2_id'] > 0) && (trim($item['date_sowing_variety2']) == ""))
-        {
-            $this->message = $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY2_NAME') . ' cannot be Empty';
             return false;
         }
 
