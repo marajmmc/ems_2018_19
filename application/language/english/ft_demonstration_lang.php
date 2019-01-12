@@ -19,6 +19,8 @@ $lang['LABEL_FARMERS_COMMENT'] = 'Farmer\'s Comment';
 $lang['LABEL_TMPOS_COMMENT'] = 'TMPO\'s Comment';
 $lang['LABEL_ZSCS_COMMENT'] = 'ZSC\'s Comment';
 $lang['LABEL_STATUS_RECOMMENDATION'] = 'Status Recommendation';
+$lang['LABEL_ZSC_EVALUATION'] = 'ZSC Evaluation';
+$lang['LABEL_ZSC_STATUS'] = 'ZSC Status';
 // Messages
 $lang['MSG_NOT_FORWARDED_DEMONSTRATION'] = 'This Demonstration has not been Forwarded yet.';
 $lang['MSG_RECOMMENDED_DEMONSTRATION'] = 'This Demonstration has been Recommended Already.';
