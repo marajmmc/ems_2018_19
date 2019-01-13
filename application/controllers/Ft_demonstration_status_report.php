@@ -86,14 +86,13 @@ class Ft_demonstration_status_report extends Root_Controller
         $data['date_transplanting_variety2'] = 1;
         $data['date_expected_evaluation'] = 1;
         $data['date_actual_evaluation'] = 1;
-
         $data['zsc_evaluation'] = 1;
         $data['zsc_status'] = 1;
         $data['details_button'] = 1;
         return $data;
     }
 
-    private function system_set_preference($method = 'list')
+    private function system_set_preference($method = 'search')
     {
         $user = User_helper::get_user();
         if (isset($this->permissions['action6']) && ($this->permissions['action6'] == 1))
@@ -171,10 +170,6 @@ class Ft_demonstration_status_report extends Root_Controller
 
     private function system_get_items()
     {
-//        echo '<pre>';
-//        print_r($this->input->post());
-//        echo '</pre>';
-
         $item = $this->input->post('item');
 
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
@@ -208,9 +203,7 @@ class Ft_demonstration_status_report extends Root_Controller
         $this->db->select('division.name division_name');
 
         $this->db->where('demonstration.status !=', $this->config->item('system_status_delete'));
-
-        //$this->db->where('demonstration.status_recommendation !=', $this->config->item('system_status_pending'));
-
+        $this->db->where('demonstration.status_recommendation !=', $this->config->item('system_status_pending'));
         // Search Conditions
         if ($item['year'])
         {
