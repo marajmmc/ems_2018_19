@@ -129,7 +129,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 <label class="control-label pull-right">Evaluation <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <select name="item[evaluation]" class="form-control status-combo">
+                <select name="item[evaluation]" class="form-control">
                     <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                     <?php
                     foreach ($CI->evaluation_items as $eval)

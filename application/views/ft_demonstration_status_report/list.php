@@ -52,8 +52,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 <script type="text/javascript">
     $(document).ready(function ($) {
-
-        $(document).on("click", "button.pop_up", function (event) {
+        $(document).off("click", ".pop_up");
+        $(document).on("click", ".pop_up", function (event) {
             event.preventDefault();
             var left = ((($(window).width() - 330) / 2) + $(window).scrollLeft());
             var top = ((($(window).height() - 330) / 2) + $(window).scrollTop());

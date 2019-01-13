@@ -114,20 +114,3 @@ if(isset($no_details_menu)){
     <?php } ?>
     <!-----Image & video Accordion (ENDS)----->
 </div>
-
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        system_off_events(); // Triggers
-        $(".datepicker").datepicker({dateFormat: display_date_format});
-
-        $(".status-combo").on('change', function (event) {
-            var options = $(this).val();
-            if (options == '<?php echo $CI->config->item('system_status_forwarded'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_FORWARD'); ?>');
-            } else {
-                $("#button_action_save").removeAttr('data-message-confirm');
-            }
-        });
-    });
-</script>

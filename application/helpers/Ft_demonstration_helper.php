@@ -46,7 +46,7 @@ class Ft_demonstration_helper
         $CI->db->join($CI->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
         $CI->db->select('division.id division_id, division.name division_name');
 
-        $CI->db->where('demonstration.status', $CI->config->item('system_status_active'));
+        $CI->db->where('demonstration.status !=', $CI->config->item('system_status_delete'));
         $CI->db->where('demonstration.id', $item_id);
         $result = $CI->db->get()->row_array();
         if (!$result)

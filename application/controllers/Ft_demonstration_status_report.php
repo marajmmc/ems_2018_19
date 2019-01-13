@@ -295,7 +295,6 @@ class Ft_demonstration_status_report extends Root_Controller
             $html_container_id = $this->input->post('html_container_id');
             $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
 
-            $method = 'search';
             $data = array();
             $data['item'] = $result;
             $data['accordion'] = array('collapse' => 'in');
@@ -324,7 +323,6 @@ class Ft_demonstration_status_report extends Root_Controller
             {
                 $ajax['system_message'] = $this->message;
             }
-            $ajax['system_page_url'] = site_url($this->controller_url . "/index/" . $method);
             $this->json_return($ajax);
         }
         else
