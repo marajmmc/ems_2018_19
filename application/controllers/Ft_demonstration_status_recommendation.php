@@ -368,10 +368,10 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $data['item'] = $result;
             $data['accordion'] = array('collapse' => 'in');
             $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
+            $data['info_image'] = array();
 
             // Image & Video data
             $result_file = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('file_type'));
-            $data['info_image'] = array();
             foreach ($result_file as $key => $file)
             {
                 $data['info_image'][$file['file_type']][$key]['file_location_variety1'] = $file['file_location_variety1'];

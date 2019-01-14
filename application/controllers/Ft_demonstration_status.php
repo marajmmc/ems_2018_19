@@ -283,16 +283,9 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
-        $this->db->select('district.name district_name');
-
         $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
-        $this->db->select('territory.name territory_name');
-
         $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
-        $this->db->select('zone.name zone_name');
-
         $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
-        $this->db->select('division.name division_name');
         if ($this->locations['division_id'] > 0)
         {
             $this->db->where('division.id', $this->locations['division_id']);
@@ -407,16 +400,9 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->select('variety2.name variety2_name');
 
         $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
-        $this->db->select('district.name district_name');
-
         $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
-        $this->db->select('territory.name territory_name');
-
         $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
-        $this->db->select('zone.name zone_name');
-
         $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
-        $this->db->select('division.name division_name');
         if ($this->locations['division_id'] > 0)
         {
             $this->db->where('division.id', $this->locations['division_id']);
@@ -1030,7 +1016,6 @@ class Ft_demonstration_status extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-
         if ($file_id > 0) // EDIT
         {
             $this->db->from($this->config->item('table_ems_demonstration_status_image_video') . ' image_video');

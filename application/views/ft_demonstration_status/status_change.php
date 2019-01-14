@@ -65,7 +65,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 <script type="text/javascript">
     $(document).ready(function () {
         system_off_events(); // Triggers
-        $(".datepicker").datepicker({dateFormat: display_date_format});
 
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
