@@ -244,7 +244,28 @@ class Report_da_tmpo_setup_lead_farmer_dealer_list extends Root_Controller
 
             $number_of_lead_farmer=isset($lead_farmers[$area['id']])?sizeof($lead_farmers[$area['id']]):0;
             $number_of_dealer=isset($dealers[$area['id']])?sizeof($dealers[$area['id']]):0;
-            $rows=array();
+            $max_rows=max($number_of_lead_farmer,$number_of_dealer);
+            $info=$this->initialize_row();
+            $info['growing_area_name']=$area['name'];
+            if($max_rows==0)
+            {
+                $info['dealer_name']='Not Found';
+                $info['lead_farmer_name']='Not Found';
+                $items[]=$info;
+            }
+            else
+            {
+                for($i=0; $i<$max_rows; $i++)
+                {
+                    $info['dealer_name']=isset($dealers[$area['id']][$i]['dealer_name'])?$dealers[$area['id']][$i]['dealer_name']:'';
+                    $info['dealer_mobile_no']=isset($dealers[$area['id']][$i]['dealer_mobile_no'])?$dealers[$area['id']][$i]['dealer_mobile_no']:'';
+                    $info['lead_farmer_name']=isset($lead_farmers[$area['id']][$i]['lead_farmer_name'])?$lead_farmers[$area['id']][$i]['lead_farmer_name']:'';
+                    $info['lead_farmer_mobile_no']=isset($lead_farmers[$area['id']][$i]['lead_farmer_mobile_no'])?$lead_farmers[$area['id']][$i]['lead_farmer_mobile_no']:'';
+                    $info['lead_farmer_created_date']=isset($lead_farmers[$area['id']][$i]['lead_farmer_created_date'])?$lead_farmers[$area['id']][$i]['lead_farmer_created_date']:'';
+                    $items[]=$info;
+                }
+            }
+            /*$rows=array();
             if(!$number_of_lead_farmer && !$number_of_dealer)
             {
 
@@ -258,16 +279,8 @@ class Report_da_tmpo_setup_lead_farmer_dealer_list extends Root_Controller
                 $rows=$dealers[$area['id']];
             }
             $info=$this->initialize_row();
-            $info['growing_area_name']=$area['name'];
-            for($i=0; $i<sizeof($rows); $i++)
-            {
-                $info['dealer_name']=isset($dealers[$area['id']][$i]['dealer_name'])?$dealers[$area['id']][$i]['dealer_name']:'';
-                $info['dealer_mobile_no']=isset($dealers[$area['id']][$i]['dealer_mobile_no'])?$dealers[$area['id']][$i]['dealer_mobile_no']:'';
-                $info['lead_farmer_name']=isset($lead_farmers[$area['id']][$i]['lead_farmer_name'])?$lead_farmers[$area['id']][$i]['lead_farmer_name']:'';
-                $info['lead_farmer_mobile_no']=isset($lead_farmers[$area['id']][$i]['lead_farmer_mobile_no'])?$lead_farmers[$area['id']][$i]['lead_farmer_mobile_no']:'';
-                $info['lead_farmer_created_date']=isset($lead_farmers[$area['id']][$i]['lead_farmer_created_date'])?$lead_farmers[$area['id']][$i]['lead_farmer_created_date']:'';
-                $items[]=$info;
-            }
+            $info['growing_area_name']=$area['name'];*/
+
         }
         $this->json_return($items);
     }
@@ -276,7 +289,7 @@ class Report_da_tmpo_setup_lead_farmer_dealer_list extends Root_Controller
         $row=$this->get_preference_headers('search');
         foreach($row  as $key=>$r)
         {
-            $row[$key]=0;
+            $row[$key]='';
         }
         return $row;
     }
