@@ -39,14 +39,18 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                         <tr>
                             <th rowspan="2" style="vertical-align:bottom"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></th>
                             <th colspan="2" style="text-align:center"><?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?></th>
-                            <?php if ($item['variety2_id'] > 0){ ?>
+                            <?php if ($item['variety2_id'] > 0)
+                            {
+                                ?>
                                 <th colspan="2" style="text-align:center"><?php echo $CI->lang->line('LABEL_VARIETY2_NAME'); ?></th>
                             <?php } ?>
                         </tr>
                         <tr>
                             <th><?php echo $file_type; ?></th>
                             <th>Remarks</th>
-                            <?php if ($item['variety2_id'] > 0){ ?>
+                            <?php if ($item['variety2_id'] > 0)
+                            {
+                                ?>
                                 <th><?php echo $file_type; ?></th>
                                 <th>Remarks</th>
                             <?php } ?>
@@ -77,7 +81,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                                 </td>
                                 <td style="width:25%"><?php echo nl2br($info['remarks_variety1']); ?></td>
 
-                                <?php if ($item['variety2_id'] > 0){ ?>
+                                <?php if ($item['variety2_id'] > 0)
+                                {
+                                    ?>
 
                                     <td style="width:24%">
                                         <?php if ($file_type == $CI->config->item('system_file_type_image'))
@@ -107,6 +113,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </div>
         <?php } ?>
         <!-----Image & video Accordion (ENDS)----->
+        <?php if (!$item['date_actual_evaluation']){ ?>
+            <div class="row show-grid">
+                <div class="col-xs-12 bg-danger text-danger" style="text-align:center; padding:10px 0 5px; font-size:1.2em; font-weight:normal">
+                    '<label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?></label>' is not Set.
+                </div>
+            </div>
+        <?php } ?>
 
         <div class="row show-grid">
             <div class="col-xs-4">

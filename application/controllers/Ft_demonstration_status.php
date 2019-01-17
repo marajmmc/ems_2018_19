@@ -786,7 +786,6 @@ class Ft_demonstration_status extends Root_Controller
             }
             $ajax['system_page_url'] = site_url($this->controller_url . '/index/status_change/' . $item_id);
             $this->json_return($ajax);
-            $this->json_return($ajax);
         }
         else
         {
@@ -1330,6 +1329,24 @@ class Ft_demonstration_status extends Root_Controller
             $data['item'] = $result;
             $data['accordion'] = array('collapse' => 'in');
             $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
+            if (($result['status_forward'] != $this->config->item('system_status_forwarded')) && ($result['user_rollback'] > 0))
+            {
+                $user_ids = array($result['user_rollback'] => $result['user_rollback']);
+                $user_info = System_helper::get_users_info($user_ids);
+                $data['info_basic'][] = array(
+                    'label_1' => '<span class="text-danger">Demonstration Rollback Information</span>'
+                );
+                $data['info_basic'][] = array(
+                    'label_1' => '<span class="text-danger">' . $this->lang->line('LABEL_REASON_REMARKS') . '</span>',
+                    'value_1' => '<span class="text-danger">' . nl2br($result['remarks_rollback']) . '</span>'
+                );
+                $data['info_basic'][] = array(
+                    'label_1' => '<span class="text-danger">Rollback By</span>',
+                    'value_1' => '<span class="text-danger">' . $user_info[$result['user_rollback']]['name'] . ' ( ' . $user_info[$result['user_rollback']]['employee_id'] . ' )</span>',
+                    'label_2' => '<span class="text-danger">Rollback Time</span>',
+                    'value_2' => '<span class="text-danger">' . System_helper::display_date_time($result['date_rollback']) . '</span>'
+                );
+            }
 
             // Image & Video data
             $result_file = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('file_type'));

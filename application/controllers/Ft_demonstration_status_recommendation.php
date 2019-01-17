@@ -46,6 +46,14 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         {
             $this->system_get_items_all();
         }
+        elseif ($action == "rollback")
+        {
+            $this->system_rollback($id);
+        }
+        elseif ($action == "save_rollback")
+        {
+            $this->system_save_rollback();
+        }
         elseif ($action == "approve")
         {
             $this->system_approve($id);
@@ -337,6 +345,113 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $this->json_return($items);
     }
 
+    private function system_rollback($id)
+    {
+        if (isset($this->permissions['action2']) && ($this->permissions['action2'] == 1))
+        {
+            if ($id > 0)
+            {
+                $item_id = $id;
+            }
+            else
+            {
+                $item_id = $this->input->post('id');
+            }
+
+            $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
+            if ($result['status_forward'] != $this->config->item('system_status_forwarded'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = $this->lang->line('MSG_NOT_FORWARDED_DEMONSTRATION');
+                $this->json_return($ajax);
+            }
+            if ($result['status_recommendation'] != $this->config->item('system_status_pending'))
+            {
+                $ajax['status'] = false;
+                $ajax['system_message'] = $this->lang->line('MSG_RECOMMENDED_DEMONSTRATION');
+                $this->json_return($ajax);
+            }
+
+            $data = array();
+            $data['item'] = $result;
+            $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
+
+            $data['title'] = "Rollback Demonstration Status ( ID:" . $item_id . " )";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/rollback", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/rollback/' . $item_id);
+            $this->json_return($ajax);
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+    }
+
+    private function system_save_rollback()
+    {
+        $item_id = $this->input->post('id');
+        $item = $this->input->post('item');
+        $user = User_helper::get_user();
+        $time = time();
+
+        //Permission Checking
+        if (!(isset($this->permissions['action2']) && ($this->permissions['action2'] == 1)))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
+        }
+
+        $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
+        if ($result['status_forward'] != $this->config->item('system_status_forwarded'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('MSG_NOT_FORWARDED_DEMONSTRATION');
+            $this->json_return($ajax);
+        }
+        if ($result['status_recommendation'] != $this->config->item('system_status_pending'))
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('MSG_RECOMMENDED_DEMONSTRATION');
+            $this->json_return($ajax);
+        }
+        //Rollback Validation Checking
+        if (!$this->check_validation_rollback())
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->message;
+            $this->json_return($ajax);
+        }
+
+        $this->db->trans_start(); //DB Transaction Handle START
+
+        $item['date_rollback'] = $time;
+        $item['user_rollback'] = $user->user_id;
+        // Main Table UPDATE
+        Query_helper::update($this->config->item('table_ems_demonstration_status'), $item, array("id =" . $item_id), FALSE);
+
+        $this->db->trans_complete(); //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $ajax['status'] = true;
+            $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("MSG_SAVED_FAIL");
+            $this->json_return($ajax);
+        }
+    }
+
     private function system_approve($id)
     {
         if (isset($this->permissions['action7']) && ($this->permissions['action7'] == 1))
@@ -509,6 +624,19 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+
+    private function check_validation_rollback()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[status_forward]', $this->lang->line('LABEL_ROLLBACK'), 'required|trim');
+        $this->form_validation->set_rules('item[remarks_rollback]', $this->lang->line('LABEL_REASON_REMARKS'), 'required|trim');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
+            return false;
+        }
+        return true;
     }
 
     private function check_validation_recommendation()

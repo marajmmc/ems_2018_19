@@ -182,6 +182,7 @@ class Ft_demonstration_helper
             $result['user_inactive'] => $result['user_inactive'],
             $result['user_deleted'] => $result['user_deleted'],
             $result['user_forwarded'] => $result['user_forwarded'],
+            $result['user_rollback'] => $result['user_rollback'],
             $result['user_recommendation'] => $result['user_recommendation'],
         );
         $user_info = System_helper::get_users_info($user_ids);
@@ -221,6 +222,22 @@ class Ft_demonstration_helper
                 'value_1' => $user_info[$result['user_forwarded']]['name'] . ' ( ' . $user_info[$result['user_forwarded']]['employee_id'] . ' )',
                 'label_2' => 'Forwarded Time',
                 'value_2' => System_helper::display_date_time($result['date_forwarded'])
+            );
+        }
+        if (($result['status_forward'] != $CI->config->item('system_status_forwarded')) && ($result['user_rollback'] > 0))
+        {
+            $data[] = array(
+                'label_1' => '<span class="text-danger">Demonstration Rollback Information</span>'
+            );
+            $data[] = array(
+                'label_1' => '<span class="text-danger">' . $CI->lang->line('LABEL_REASON_REMARKS') . '</span>',
+                'value_1' => '<span class="text-danger">' . nl2br($result['remarks_rollback']) . '</span>'
+            );
+            $data[] = array(
+                'label_1' => '<span class="text-danger">Rollback By</span>',
+                'value_1' => '<span class="text-danger">' . $user_info[$result['user_rollback']]['name'] . ' ( ' . $user_info[$result['user_rollback']]['employee_id'] . ' )</span>',
+                'label_2' => '<span class="text-danger">Rollback Time</span>',
+                'value_2' => '<span class="text-danger">' . System_helper::display_date_time($result['date_rollback']) . '</span>'
             );
         }
         if ($result['status_recommendation'] != $CI->config->item('system_status_pending'))

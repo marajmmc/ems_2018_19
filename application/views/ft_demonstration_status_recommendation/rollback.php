@@ -7,10 +7,11 @@ $action_buttons[] = array
     'label' => $CI->lang->line("ACTION_BACK"),
     'href' => site_url($CI->controller_url)
 );
+
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 ?>
 
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_status'); ?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_rollback'); ?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
 
     <div class="row widget">
@@ -25,23 +26,23 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Change Status <span style="color:#FF0000">*</span></label></div>
+                <label class="control-label pull-right"><?php echo $CI->lang->line("LABEL_ROLLBACK"); ?>
+                    <span style="color:#FF0000">*</span></label></div>
             <div class="col-xs-4">
-                <select id="status" name="item[status]" class="form-control status-combo">
+                <select id="status" name="item[status_forward]" class="form-control status-combo">
                     <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                    <option value="<?php echo $CI->config->item('system_status_inactive'); ?>"><?php echo $CI->lang->line('INACTIVE'); ?></option>
-                    <option value="<?php echo $CI->config->item('system_status_delete'); ?>"><?php echo $CI->lang->line('DELETE'); ?></option>
+                    <option value="<?php echo $CI->config->item('system_status_pending'); ?>"><?php echo $CI->lang->line('LABEL_ROLLBACK'); ?></option>
                 </select>
             </div>
         </div>
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REASON_REMARKS'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
-                <textarea id="remarks" name="item[remarks]" class="form-control"></textarea>
+                <textarea id="remarks" name="item[remarks_rollback]" class="form-control"></textarea>
             </div>
         </div>
 
@@ -65,10 +66,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         $(".status-combo").on('change', function (event) {
             var options = $(this).val();
-            if (options == '<?php echo $CI->config->item('system_status_inactive'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_INACTIVE'); ?>');
-            } else if (options == '<?php echo $CI->config->item('system_status_delete'); ?>') {
-                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_DELETE'); ?>');
+            if (options == '<?php echo $CI->config->item('system_status_pending'); ?>') {
+                $("#button_action_save").attr('data-message-confirm', '<?php echo $CI->lang->line('MSG_CONFIRM_ROLLBACK'); ?>');
             } else {
                 $("#button_action_save").removeAttr('data-message-confirm');
             }
