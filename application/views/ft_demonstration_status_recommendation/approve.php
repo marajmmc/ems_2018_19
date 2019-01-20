@@ -63,43 +63,29 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <tr>
                                 <td style="width:2%;text-align:right"><?php echo ++$i; ?></td>
                                 <td style="width:24%">
-                                    <?php if ($file_type == $CI->config->item('system_file_type_image'))
-                                    {
-                                        ?>
-                                        <a href="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety1']; ?>" target="_blank" class="external blob">
-                                            <img src="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety1']; ?>" style="max-width:100%;height:150px" alt="Picture Missing"/>
-                                        </a>
-                                    <?php
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <video controls style="max-width:100%;height:200px">
+                                    <?php if (($file_type == $CI->config->item('system_file_type_video')) && ($info['file_location_variety1'] != NO_VIDEO_PATH)){ ?>
+                                        <video controls style="<?php echo IMAGE_VIDEO_DISPLAY_STYLE; ?>">
                                             <source src="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety1']; ?>"/>
                                         </video>
+                                    <?php } else { ?>
+                                        <a href="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety1']; ?>" target="_blank" class="external blob">
+                                            <img src="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety1']; ?>" style="<?php echo IMAGE_VIDEO_DISPLAY_STYLE; ?>" alt="Picture Missing"/>
+                                        </a>
                                     <?php } ?>
                                 </td>
                                 <td style="width:25%"><?php echo nl2br($info['remarks_variety1']); ?></td>
 
-                                <?php if ($item['variety2_id'] > 0)
-                                {
-                                    ?>
+                                <?php if ($item['variety2_id'] > 0){ ?>
 
                                     <td style="width:24%">
-                                        <?php if ($file_type == $CI->config->item('system_file_type_image'))
-                                        {
-                                            ?>
-                                            <a href="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety2']; ?>" target="_blank" class="external blob">
-                                                <img src="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety2']; ?>" style="max-width:100%;height:150px" alt="Picture Missing"/>
-                                            </a>
-                                        <?php
-                                        }
-                                        else
-                                        {
-                                            ?>
-                                            <video controls style="max-width:100%;height:200px">
+                                        <?php if (($file_type == $CI->config->item('system_file_type_video')) && ($info['file_location_variety2'] != NO_VIDEO_PATH)){ ?>
+                                            <video controls style="<?php echo IMAGE_VIDEO_DISPLAY_STYLE; ?>">
                                                 <source src="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety2']; ?>"/>
                                             </video>
+                                        <?php } else { ?>
+                                            <a href="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety2']; ?>" target="_blank" class="external blob">
+                                                <img src="<?php echo $CI->config->item('system_base_url_picture') . $info['file_location_variety2']; ?>" style="<?php echo IMAGE_VIDEO_DISPLAY_STYLE; ?>" alt="Picture Missing"/>
+                                            </a>
                                         <?php } ?>
                                     </td>
                                     <td style="width:25%"><?php echo nl2br($info['remarks_variety2']); ?></td>

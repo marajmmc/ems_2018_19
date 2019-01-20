@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+CONST IMAGE_VIDEO_DISPLAY_STYLE = "max-width:100%;height:200px;";
+CONST NO_IMAGE_PATH = 'images/no_image.jpg';
+CONST NO_VIDEO_PATH = 'images/no_video.jpg';
+
 class Ft_demonstration_helper
 {
     public static function get_demonstration_by_id($item_id, $method_name = '')

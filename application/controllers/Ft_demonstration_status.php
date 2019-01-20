@@ -502,22 +502,48 @@ class Ft_demonstration_status extends Root_Controller
         {
             foreach ($items as &$item)
             {
+                $path1 = $this->config->item('system_base_url_picture') . $item['file_location_variety1'];
+                $path2 = $this->config->item('system_base_url_picture') . $item['file_location_variety2'];
                 $date_uploaded_variety1 = ($item['date_uploaded_variety1']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety1']) . '</p>' : '';
                 $date_uploaded_variety2 = ($item['date_uploaded_variety2']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety2']) . '</p>' : '';
 
-                $item['file_html_variety1'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety1'] . '" style="max-width:100%;height:200px" alt="Picture Missing"/>' . $date_uploaded_variety1;
-                $item['file_html_variety2'] = '<img src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety2'] . '" style="max-width:100%;height:200px" alt="Picture Missing"/>' . $date_uploaded_variety2;
+                $item['file_html_variety1'] = '<img src="' . $path1 . '" style="' . IMAGE_VIDEO_DISPLAY_STYLE . '" alt="Picture Missing"/>' . $date_uploaded_variety1;
+                $item['file_html_variety2'] = '<img src="' . $path2 . '" style="' . IMAGE_VIDEO_DISPLAY_STYLE . '" alt="Picture Missing"/>' . $date_uploaded_variety2;
+                $item['remarks_variety1'] = nl2br($item['remarks_variety1']);
+                $item['remarks_variety2'] = nl2br($item['remarks_variety2']);
             }
         }
         else
         {
             foreach ($items as &$item)
             {
+                $item['remarks_variety1'] = nl2br($item['remarks_variety1']);
+                $item['remarks_variety2'] = nl2br($item['remarks_variety2']);
                 $date_uploaded_variety1 = ($item['date_uploaded_variety1']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety1']) . '</p>' : '';
                 $date_uploaded_variety2 = ($item['date_uploaded_variety2']) ? '<p style="margin:10px 0"><b>Uploaded On: </b>' . System_helper::display_date($item['date_uploaded_variety2']) . '</p>' : '';
 
-                $item['file_html_variety1'] = '<video controls style="max-width:100%;height:200px"><source src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety1'] . '" /></video>' . $date_uploaded_variety1;
-                $item['file_html_variety2'] = '<video controls style="max-width:100%;height:200px"><source src="' . $this->config->item('system_base_url_picture') . $item['file_location_variety2'] . '" /></video>' . $date_uploaded_variety2;
+                // For ARM Variety
+                if ($item['file_location_variety1'] == NO_IMAGE_PATH)
+                {
+                    $path1 = $this->config->item('system_base_url_picture') . NO_VIDEO_PATH;
+                    $item['file_html_variety1'] = '<img src="' . $path1 . '" style="' . IMAGE_VIDEO_DISPLAY_STYLE . '" alt="Picture Missing"/>' . $date_uploaded_variety1;
+                }
+                else
+                {
+                    $path1 = $this->config->item('system_base_url_picture') . $item['file_location_variety1'];
+                    $item['file_html_variety1'] = '<video controls style="' . IMAGE_VIDEO_DISPLAY_STYLE . '"><source src="' . $path1 . '" /></video>' . $date_uploaded_variety1;
+                }
+                // For Competitor Variety
+                if ($item['file_location_variety2'] == NO_IMAGE_PATH)
+                {
+                    $path2 = $this->config->item('system_base_url_picture') . NO_VIDEO_PATH;
+                    $item['file_html_variety2'] = '<img src="' . $path2 . '" style="' . IMAGE_VIDEO_DISPLAY_STYLE . '" alt="Picture Missing"/>' . $date_uploaded_variety2;
+                }
+                else
+                {
+                    $path2 = $this->config->item('system_base_url_picture') . $item['file_location_variety2'];
+                    $item['file_html_variety2'] = '<video controls style="' . IMAGE_VIDEO_DISPLAY_STYLE . '"><source src="' . $path2 . '" /></video>' . $date_uploaded_variety2;
+                }
             }
         }
         $this->json_return($items);
@@ -1353,6 +1379,17 @@ class Ft_demonstration_status extends Root_Controller
             $data['info_image'] = array();
             foreach ($result_file as $key => $file)
             {
+                if ($file['file_type'] == $this->config->item('system_file_type_video'))
+                {
+                    if ($file['file_location_variety1'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety1'] = NO_VIDEO_PATH;
+                    }
+                    if ($file['file_location_variety2'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety2'] = NO_VIDEO_PATH;
+                    }
+                }
                 $data['info_image'][$file['file_type']][$key]['file_location_variety1'] = $file['file_location_variety1'];
                 $data['info_image'][$file['file_type']][$key]['remarks_variety1'] = $file['remarks_variety1'];
                 $data['info_image'][$file['file_type']][$key]['date_uploaded_variety1'] = $file['date_uploaded_variety1'];
@@ -1457,6 +1494,17 @@ class Ft_demonstration_status extends Root_Controller
             $data['info_image'] = array();
             foreach ($result_file as $key => $file)
             {
+                if ($file['file_type'] == $this->config->item('system_file_type_video'))
+                {
+                    if ($file['file_location_variety1'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety1'] = NO_VIDEO_PATH;
+                    }
+                    if ($file['file_location_variety2'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety2'] = NO_VIDEO_PATH;
+                    }
+                }
                 $data['info_image'][$file['file_type']][$key]['file_location_variety1'] = $file['file_location_variety1'];
                 $data['info_image'][$file['file_type']][$key]['remarks_variety1'] = $file['remarks_variety1'];
                 $data['info_image'][$file['file_type']][$key]['date_uploaded_variety1'] = $file['date_uploaded_variety1'];
@@ -1659,7 +1707,7 @@ class Ft_demonstration_status extends Root_Controller
         $invalid = false;
         if (!$result['date_actual_evaluation']) // Checking If 'Actual Date of Evaluation' is Set
         {
-            $this->message .= '<p>' . $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . ' is not Set.</p>';
+            $this->message .= '<p>' . $this->lang->line('LABEL_DATE_ACTUAL_EVALUATION') . ' must be Set.</p>';
             $invalid = true;
         }
 

@@ -372,9 +372,31 @@ class Ft_demonstration_status_recommendation extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $user_ids = array($result['user_forwarded'] => $result['user_forwarded']);
+            $user_info = System_helper::get_users_info($user_ids);
+
             $data = array();
             $data['item'] = $result;
             $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
+            $data['info_basic'][] = array(
+                'label_1' => 'Demonstration Forward Status'
+            );
+            $data['info_basic'][] = array(
+                'label_1' => 'Forwarded Status',
+                'value_1' => $this->config->item('system_status_forwarded'),
+                'label_2' => $this->lang->line('LABEL_TMPOS_COMMENT'),
+                'value_2' => nl2br($result['remarks_forward'])
+            );
+            $data['info_basic'][] = array(
+                'label_1' => $this->lang->line('LABEL_FARMERS_COMMENT'),
+                'value_1' => nl2br($result['remarks_farmer'])
+            );
+            $data['info_basic'][] = array(
+                'label_1' => 'Forwarded By',
+                'value_1' => $user_info[$result['user_forwarded']]['name'] . ' ( ' . $user_info[$result['user_forwarded']]['employee_id'] . ' )',
+                'label_2' => 'Forwarded Time',
+                'value_2' => System_helper::display_date_time($result['date_forwarded'])
+            );
 
             $data['title'] = "Rollback Demonstration Status ( ID:" . $item_id . " )";
             $ajax['status'] = true;
@@ -479,16 +501,49 @@ class Ft_demonstration_status_recommendation extends Root_Controller
                 $this->json_return($ajax);
             }
 
+            $user_ids = array($result['user_forwarded'] => $result['user_forwarded']);
+            $user_info = System_helper::get_users_info($user_ids);
+
             $data = array();
             $data['item'] = $result;
             $data['accordion'] = array('collapse' => 'in');
             $data['info_basic'] = Ft_demonstration_helper::get_basic_info($result);
-            $data['info_image'] = array();
+            $data['info_basic'][] = array(
+                'label_1' => 'Demonstration Forward Status'
+            );
+            $data['info_basic'][] = array(
+                'label_1' => 'Forwarded Status',
+                'value_1' => $this->config->item('system_status_forwarded'),
+                'label_2' => $this->lang->line('LABEL_TMPOS_COMMENT'),
+                'value_2' => nl2br($result['remarks_forward'])
+            );
+            $data['info_basic'][] = array(
+                'label_1' => $this->lang->line('LABEL_FARMERS_COMMENT'),
+                'value_1' => nl2br($result['remarks_farmer'])
+            );
+            $data['info_basic'][] = array(
+                'label_1' => 'Forwarded By',
+                'value_1' => $user_info[$result['user_forwarded']]['name'] . ' ( ' . $user_info[$result['user_forwarded']]['employee_id'] . ' )',
+                'label_2' => 'Forwarded Time',
+                'value_2' => System_helper::display_date_time($result['date_forwarded'])
+            );
 
+            $data['info_image'] = array();
             // Image & Video data
             $result_file = Query_helper::get_info($this->config->item('table_ems_demonstration_status_image_video'), array('*'), array('demonstration_id =' . $item_id, 'status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('file_type'));
             foreach ($result_file as $key => $file)
             {
+                if ($file['file_type'] == $this->config->item('system_file_type_video'))
+                {
+                    if ($file['file_location_variety1'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety1'] = NO_VIDEO_PATH;
+                    }
+                    if ($file['file_location_variety2'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety2'] = NO_VIDEO_PATH;
+                    }
+                }
                 $data['info_image'][$file['file_type']][$key]['file_location_variety1'] = $file['file_location_variety1'];
                 $data['info_image'][$file['file_type']][$key]['remarks_variety1'] = $file['remarks_variety1'];
                 $data['info_image'][$file['file_type']][$key]['date_uploaded_variety1'] = $file['date_uploaded_variety1'];
@@ -599,6 +654,17 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $data['info_image'] = array();
             foreach ($result_file as $key => $file)
             {
+                if ($file['file_type'] == $this->config->item('system_file_type_video'))
+                {
+                    if ($file['file_location_variety1'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety1'] = NO_VIDEO_PATH;
+                    }
+                    if ($file['file_location_variety2'] == NO_IMAGE_PATH)
+                    {
+                        $file['file_location_variety2'] = NO_VIDEO_PATH;
+                    }
+                }
                 $data['info_image'][$file['file_type']][$key]['file_location_variety1'] = $file['file_location_variety1'];
                 $data['info_image'][$file['file_type']][$key]['remarks_variety1'] = $file['remarks_variety1'];
                 $data['info_image'][$file['file_type']][$key]['date_uploaded_variety1'] = $file['date_uploaded_variety1'];
