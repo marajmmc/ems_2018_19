@@ -13,3 +13,4 @@ $lang['LABEL_NUM_DISEASE_PICTURE_FEEDBACK'] = 'Number Of Disease Picture Feedbac
 /* Growing Area Visit */
 $lang['LABEL_STATUS_VISIT_AREA'] = 'Area Visited Status';
 $lang['LABEL_DATE_VISIT'] = 'Visit Date';
+$lang['LABEL_AREA_ADDRESS'] = 'Growing Area Address';

@@ -376,7 +376,6 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->json_return($ajax);
         }
 
-
         /*get area information*/
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_areas').' areas');
         $this->db->select('areas.id area_id,areas.name area_name,areas.address area_address');
@@ -453,6 +452,14 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         /*get previous visit details information*/
         $this->db->from($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details').' details');
         $this->db->select('details.*');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers','dealers.id = details.dealer_id','LEFT');
+        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','LEFT');
+        $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
+
+        $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' lead_farmers','lead_farmers.id = details.farmer_id','LEFT');
+        $this->db->select('lead_farmers.name lead_farmers_name');
+
         $this->db->where_in('details.visit_id',$result_area_ids);
         $this->db->where('details.status',$this->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
@@ -468,6 +475,34 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             {
                 $data['previous_farmers'][$result['visit_id']][$result['farmer_id']]=$result;
             }
+        }
+
+        $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers');
+        $this->db->select('dealers.*, dealers.id dealer_id');
+        $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','INNER');
+        $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
+        $this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('farmer.farmer_type_id>', 1);
+        $this->db->where('dealers.area_id',$area_id);
+        $this->db->where('dealers.status',$this->config->item('system_status_active'));
+        $results=$this->db->get()->result_array();
+        $data['dealers']=array();
+        foreach($results as &$result)
+        {
+            $result['description']='';
+            $result['image_location']='';
+            $result['image_name']='';
+            $data['dealers'][]=$result;
+        }
+
+        $results=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' farmers',array('farmers.*, farmers.id farmer_id, farmers.name lead_farmers_name'),array('area_id='.$area_id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+        $data['farmers']=array();
+        foreach($results as &$result)
+        {
+            $result['description']='';
+            $result['image_location']='';
+            $result['image_name']='';
+            $data['farmers'][]=$result;
         }
 
         /*get visit information*/
@@ -510,17 +545,17 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $results=$this->db->get()->result_array();
             //echo $this->db->last_query();
 
-            $data['dealers']=array();
-            $data['farmers']=array();
+            $data['edit_dealers']=array();
+            $data['edit_farmers']=array();
             foreach($results as $result)
             {
                 if($result['dealer_id'])
                 {
-                    $data['dealers'][]=$result;
+                    $data['edit_dealers'][$result['dealer_id']]=$result;
                 }
                 if($result['farmer_id'])
                 {
-                    $data['farmers'][]=$result;
+                    $data['edit_farmers'][$result['farmer_id']]=$result;
                 }
             }
         }
@@ -533,35 +568,6 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
                 'other_info'=>'',
                 'remarks'=>''
             );
-
-            $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers');
-            $this->db->select('dealers.*, dealers.id dealer_id');
-            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','INNER');
-            $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
-            $this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
-            $this->db->where('farmer.farmer_type_id>', 1);
-            $this->db->where('dealers.area_id',$area_id);
-            $this->db->where('dealers.status',$this->config->item('system_status_active'));
-            $results=$this->db->get()->result_array();
-            $data['dealers']=array();
-            foreach($results as &$result)
-            {
-                $result['description']='';
-                $result['image_location']='';
-                $result['image_name']='';
-                $data['dealers'][]=$result;
-            }
-
-            $results=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers').' farmers',array('farmers.*, farmers.id farmer_id, farmers.name lead_farmers_name'),array('area_id='.$area_id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
-            $data['farmers']=array();
-            foreach($results as &$result)
-            {
-                $result['description']='';
-                $result['image_location']='';
-                $result['image_name']='';
-                $data['farmers'][]=$result;
-            }
-
         }
 
         $data['title']="Growing Area Visit :: Outlet: ".$data['item_head']['outlet_name'].", Growing Area: ".$data['item_head']['area_name'].", Address: ".$data['item_head']['area_address'].", <span class='text-danger'>Date: ".System_helper::display_date($date_visit)."</span> ";
@@ -715,7 +721,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
             $this->db->where('details.status',$this->config->item('system_status_active'));
 
             $results=$this->db->get()->result_array();
-            foreach($results as $result)
+            /*foreach($results as $result)
             {
                 if($result['dealer_id'])
                 {
@@ -727,8 +733,8 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
                             $data['image_name']=$uploaded_files['dealer_file_'.$result['id']]['info']['file_name'];
                             $data['image_location']=$path.'/'.$data['image_name'];
                         }
-                        /*$data['visit_id']=$visit_id;
-                        $data['dealer_id']=$result['id'];*/
+                        //$data['visit_id']=$visit_id;
+                        //$data['dealer_id']=$result['id'];
                         $data['farmer_id']=0;
                         $data['description']=$dealer_items[$result['id']]['description'];
                         $this->db->set('revision_count_dealer', 'revision_count_dealer+1', FALSE);
@@ -745,12 +751,113 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
                             $data['image_name']=$uploaded_files['farmer_file_'.$result['id']]['info']['file_name'];
                             $data['image_location']=$path.'/'.$data['image_name'];
                         }
-                        /*$data['visit_id']=$visit_id;
-                        $data['farmer_id']=$result['id'];*/
+                        //$data['visit_id']=$visit_id;
+                        //$data['farmer_id']=$result['id'];
                         $data['dealer_id']=0;
                         $data['description']=$farmer_items[$result['id']]['description'];
                         $this->db->set('revision_count_farmer', 'revision_count_farmer+1', FALSE);
                         Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data,array('id='.$result['id']));
+                    }
+                }
+
+            }*/
+            $edit_dealers=array();
+            $edit_farmers=array();
+            foreach($results as $result)
+            {
+                if($result['farmer_id'])
+                {
+                    $edit_farmers[$result['farmer_id']]=$result;
+                }
+                if($result['dealer_id'])
+                {
+                    $edit_dealers[$result['dealer_id']]=$result;
+                }
+            }
+
+            // farmer
+            $farmers=Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers'),array('*'),array('area_id='.$area_id, 'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            foreach($farmers as $farmer)
+            {
+                if(isset($edit_farmers[$farmer['id']]))
+                {
+                    $data=array();
+                    if(isset($uploaded_files['farmer_file_'.$farmer['id']]) && $uploaded_files['farmer_file_'.$farmer['id']]['status'])
+                    {
+                        $data['image_name']=$uploaded_files['farmer_file_'.$farmer['id']]['info']['file_name'];
+                        $data['image_location']=$path.'/'.$data['image_name'];
+                    }
+                    //$data['visit_id']=$visit_id;
+                    //$data['farmer_id']=$result['id'];
+                    $data['dealer_id']=0;
+                    $data['description']=$farmer_items[$farmer['id']]['description'];
+                    $this->db->set('revision_count_farmer', 'revision_count_farmer+1', FALSE);
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data,array('id='.$edit_farmers[$farmer['id']]['id']));
+                }
+                else
+                {
+                    if(isset($farmer_items[$farmer['id']]))
+                    {
+                        $data=array();
+                        if(isset($uploaded_files['farmer_file_'.$farmer['id']]) && $uploaded_files['farmer_file_'.$farmer['id']]['status'])
+                        {
+                            $data['image_name']=$uploaded_files['farmer_file_'.$farmer['id']]['info']['file_name'];
+                            $data['image_location']=$path.'/'.$data['image_name'];
+                        }
+                        $data['visit_id']=$result['visit_id'];
+                        $data['farmer_id']=$farmer['id'];
+                        $data['dealer_id']=0;
+                        $data['description']=$farmer_items[$farmer['id']]['description'];
+                        $this->db->set('revision_count_farmer', 'revision_count_farmer+1', FALSE);
+                        Query_helper::add($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data);
+                    }
+                }
+            }
+
+            // dealer
+            $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_dealers').' dealers');
+            $this->db->select('dealers.*');
+            $this->db->join($this->config->item('table_pos_setup_farmer_farmer').' farmer','farmer.id = dealers.dealer_id','INNER');
+            $this->db->select('farmer.name dealer_name, farmer.mobile_no, farmer.address');
+            $this->db->where('farmer.status !=',$this->config->item('system_status_delete'));
+            $this->db->where('farmer.farmer_type_id>', 1);
+            $this->db->where('dealers.area_id',$area_id);
+            $this->db->where('dealers.status',$this->config->item('system_status_active'));
+            $dealers=$this->db->get()->result_array();
+            foreach($dealers as $dealer)
+            {
+                if(isset($edit_dealers[$dealer['id']]))
+                {
+                    $data=array();
+                    if(isset($uploaded_files['dealer_file_'.$dealer['id']]) && $uploaded_files['dealer_file_'.$dealer['id']]['status'])
+                    {
+                        $data['image_name']=$uploaded_files['dealer_file_'.$dealer['id']]['info']['file_name'];
+                        $data['image_location']=$path.'/'.$data['image_name'];
+                    }
+                    //$data['visit_id']=$visit_id;
+                    //$data['dealer_id']=$result['id'];
+                    $data['farmer_id']=0;
+                    $data['description']=$dealer_items[$dealer['id']]['description'];
+                    $this->db->set('revision_count_dealer', 'revision_count_dealer+1', FALSE);
+                    Query_helper::update($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data,array('id='.$edit_dealers[$dealer['id']]['id']));
+                }
+                else
+                {
+                    if(isset($dealer_items[$dealer['id']]))
+                    {
+                        $data=array();
+                        if(isset($uploaded_files['dealer_file_'.$dealer['id']]) && $uploaded_files['dealer_file_'.$dealer['id']]['status'])
+                        {
+                            $data['image_name']=$uploaded_files['dealer_file_'.$dealer['id']]['info']['file_name'];
+                            $data['image_location']=$path.'/'.$data['image_name'];
+                        }
+                        $data['visit_id']=$result['visit_id'];;
+                        $data['dealer_id']=$dealer['id'];
+                        $data['farmer_id']=0;
+                        $data['description']=$dealer_items[$dealer['id']]['description'];
+                        $this->db->set('revision_count_dealer', 'revision_count_dealer+1', FALSE);
+                        Query_helper::add($this->config->item('table_ems_da_tmpo_setup_growing_area_visit_details'),$data);
+
                     }
                 }
             }
@@ -814,6 +921,7 @@ class Da_tmpo_setup_growing_area_visit extends Root_Controller
         }
 
         $this->db->trans_complete();   //DB Transaction Handle END
+
         if ($this->db->trans_status() === TRUE)
         {
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");

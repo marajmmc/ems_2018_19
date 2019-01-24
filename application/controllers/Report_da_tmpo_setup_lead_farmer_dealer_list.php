@@ -265,22 +265,6 @@ class Report_da_tmpo_setup_lead_farmer_dealer_list extends Root_Controller
                     $items[]=$info;
                 }
             }
-            /*$rows=array();
-            if(!$number_of_lead_farmer && !$number_of_dealer)
-            {
-
-            }
-            else if($number_of_lead_farmer>=$number_of_dealer)
-            {
-                $rows=$lead_farmers[$area['id']];
-            }
-            else if($number_of_lead_farmer<=$number_of_dealer)
-            {
-                $rows=$dealers[$area['id']];
-            }
-            $info=$this->initialize_row();
-            $info['growing_area_name']=$area['name'];*/
-
         }
         $this->json_return($items);
     }

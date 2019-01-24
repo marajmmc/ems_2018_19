@@ -14,7 +14,7 @@ $action_buttons[]=array(
 );
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 /*echo "<pre>";
-print_r($previous_dealers);
+print_r($previous_farmers);
 echo "</pre>";*/
 
 ?>
@@ -165,7 +165,7 @@ echo "</pre>";*/
                             </thead>
                             <tbody>
                             <?php
-                            if(!$farmers)
+                            if(!(isset($previous_farmers[$previous_visit['id']]) && sizeof($previous_farmers[$previous_visit['id']])>0))
                             {
                                 ?>
                                 <tr>
@@ -175,11 +175,11 @@ echo "</pre>";*/
                             }
                             else
                             {
-                                foreach($farmers as $farmer)
+                                foreach($previous_farmers[$previous_visit['id']] as $previous_farmer)
                                 {
-                                    if(isset($previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['image_location']) && $previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['image_location'])
+                                    if($previous_farmer['image_location'])
                                     {
-                                        $farmer_img=$CI->config->item('system_base_url_picture').$previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['image_location'];
+                                        $farmer_img=$CI->config->item('system_base_url_picture').$previous_farmer['image_location'];
                                     }
                                     else
                                     {
@@ -187,15 +187,15 @@ echo "</pre>";*/
                                     }
                                     ?>
                                     <tr>
-                                        <td style="width: 200px;"><?php echo $farmer['lead_farmers_name']?></td>
+                                        <td style="width: 200px;"><?php echo $previous_farmer['lead_farmers_name']?></td>
                                         <td style="width: 800px;">
                                             <?php
-                                            echo isset($previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['description'])?nl2br($previous_farmers[$previous_visit['id']][$farmer['farmer_id']]['description']):'--';
+                                            echo nl2br($previous_farmer['description']);
                                             ?>
                                         </td>
                                         <td>
                                             <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
-                                                <img style="max-width: 250px;" src="<?php echo $farmer_img; ?>" alt="Lead Farmer Visit Picture">
+                                                <img style="max-width: 150px;" src="<?php echo $farmer_img; ?>" alt="Lead Farmer Visit Picture">
                                             </a>
                                         </td>
                                     </tr>
@@ -221,7 +221,7 @@ echo "</pre>";*/
                             </thead>
                             <tbody>
                             <?php
-                            if(!$dealers)
+                            if(!(isset($previous_dealers[$previous_visit['id']]) && sizeof($previous_dealers[$previous_visit['id']])>0))
                             {
                                 ?>
                                 <tr>
@@ -231,27 +231,27 @@ echo "</pre>";*/
                             }
                             else
                             {
-                                foreach($dealers as $dealer)
+                                foreach($previous_dealers[$previous_visit['id']] as $previous_dealer)
                                 {
-                                    if(isset($previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['image_location']) && $previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['image_location'])
+                                    if($previous_dealer['image_location'])
                                     {
-                                        $dealer_img=$CI->config->item('system_base_url_picture').$previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['image_location'];
+                                        $farmer_img=$CI->config->item('system_base_url_picture').$previous_dealer['image_location'];
                                     }
                                     else
                                     {
-                                        $dealer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                        $farmer_img=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
                                     }
                                     ?>
                                     <tr>
-                                        <td><?php echo $dealer['dealer_name']?></td>
-                                        <td>
+                                        <td style="width: 200px;"><?php echo $previous_dealer['dealer_name']?></td>
+                                        <td style="width: 800px;">
                                             <?php
-                                            echo isset($previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['description'])?nl2br($previous_dealers[$previous_visit['id']][$dealer['dealer_id']]['description']):'--';
+                                            echo nl2br($previous_dealer['description']);
                                             ?>
                                         </td>
                                         <td>
-                                            <a href="<?php echo $dealer_img; ?>" class="external" target="_blank">
-                                                <img style="max-width: 250px;" src="<?php echo $dealer_img; ?>" alt="Dealer Visit Picture">
+                                            <a href="<?php echo $farmer_img; ?>" class="external" target="_blank">
+                                                <img style="max-width: 150px;" src="<?php echo $farmer_img; ?>" alt="Lead Farmer Visit Picture">
                                             </a>
                                         </td>
                                     </tr>
@@ -342,19 +342,33 @@ echo "</pre>";*/
                             {
                                 foreach($farmers as $farmer)
                                 {
+                                    $lead_farmer_name=$farmer['lead_farmers_name'];
+                                    $lead_farmer_description='';
+                                    $farmer_img_path=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    $farmer_img_name=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    if(isset($edit_farmers[$farmer['id']]))
+                                    {
+                                        $lead_farmer_name=$edit_farmers[$farmer['id']]['lead_farmers_name'];
+                                        $lead_farmer_description=$edit_farmers[$farmer['id']]['description'];
+                                        if($edit_farmers[$farmer['id']]['image_location'])
+                                        {
+                                            $farmer_img_path=$CI->config->item('system_base_url_picture').$edit_farmers[$farmer['id']]['image_location'];
+                                            $farmer_img_name=$edit_farmers[$farmer['id']]['image_name'];
+                                        }
+                                    }
                                     ?>
                                     <tr>
-                                        <td style="width: 200px;"><?php echo $farmer['lead_farmers_name']?></td>
+                                        <td style="width: 200px;"><?php echo $lead_farmer_name; ?></td>
                                         <td style="width: 800px;">
-                                            <textarea name="farmer_items[<?php echo $farmer['id']?>][description]" class="form-control"><?php echo $farmer['description'] ?></textarea>
+                                            <textarea name="farmer_items[<?php echo $farmer['id']?>][description]" class="form-control"><?php echo $lead_farmer_description; ?></textarea>
                                         </td>
                                         <td>
-                                            <input type="file" id="farmer_file_<?php echo $farmer['id']?>" name="farmer_file_<?php echo $farmer['id']?>" class="browse_button" data-preview-container="#preview_farmer_img_<?php echo $farmer['id']?>" data-preview-width="300" style="float: left">
-                                            <div class="preview_farmer_img" id="preview_farmer_img_<?php echo $farmer['id']?>">
-                                                <a href="<?php echo $CI->config->item('system_base_url_picture').$item['area_id'].'/'.$farmer['image_location']; ?>" class="external" target="_blank">
-                                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$farmer['image_location']; ?>" alt="<?php echo $farmer['image_name']; ?>">
+                                            <div class="preview_farmer_img" id="preview_farmer_img_<?php echo $farmer['id']?>" style="float: left; margin-right: 10px;">
+                                                <a href="<?php echo $farmer_img_path; ?>" class="external" target="_blank">
+                                                    <img style="max-width: 150px;" src="<?php echo $farmer_img_path; ?>" alt="<?php echo $farmer_img_name; ?>">
                                                 </a>
                                             </div>
+                                            <input type="file" id="farmer_file_<?php echo $farmer['id']?>" name="farmer_file_<?php echo $farmer['id']?>" class="browse_button" data-preview-container="#preview_farmer_img_<?php echo $farmer['id']?>" data-preview-width="150" style="float: left" />
                                         </td>
                                     </tr>
                                 <?php
@@ -391,19 +405,33 @@ echo "</pre>";*/
                             {
                                 foreach($dealers as $dealer)
                                 {
+                                    $lead_dealer_name=$dealer['dealer_name'];
+                                    $lead_dealer_description='';
+                                    $dealer_img_path=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    $dealer_img_name=$CI->config->item('system_base_url_picture').'images/no_image.jpg';
+                                    if(isset($edit_dealers[$dealer['id']]))
+                                    {
+                                        $lead_dealer_name=$edit_dealers[$dealer['id']]['dealer_name'];
+                                        $lead_dealer_description=$edit_dealers[$dealer['id']]['description'];
+                                        if($edit_dealers[$dealer['id']]['image_location'])
+                                        {
+                                            $dealer_img_path=$CI->config->item('system_base_url_picture').$edit_dealers[$dealer['id']]['image_location'];
+                                            $dealer_img_name=$edit_dealers[$dealer['id']]['image_name'];
+                                        }
+                                    }
                                     ?>
                                     <tr>
-                                        <td style="width: 200px;"><?php echo $dealer['dealer_name']?></td>
+                                        <td style="width: 200px;"><?php echo $lead_dealer_name?></td>
                                         <td style="width: 800px;">
-                                            <textarea name="dealer_items[<?php echo $dealer['id']?>][description]" class="form-control"><?php echo $dealer['description'] ?></textarea>
+                                            <textarea name="dealer_items[<?php echo $dealer['id']?>][description]" class="form-control"><?php echo $lead_dealer_description ?></textarea>
                                         </td>
                                         <td>
-                                            <input type="file" id="dealer_file_<?php echo $dealer['id']?>" name="dealer_file_<?php echo $dealer['id']?>" class="browse_button" data-preview-container="#preview_dealer_img_<?php echo $dealer['id']?>" data-preview-width="300">
-                                            <div class="preview_dealer_img" id="preview_dealer_img_<?php echo $dealer['id']?>">
-                                                <a href="<?php echo $CI->config->item('system_base_url_picture').$dealer['image_location']; ?>" class="external" target="_blank">
-                                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$dealer['image_location']; ?>" alt="<?php echo $dealer['image_name']; ?>">
+                                            <div class="preview_dealer_img" id="preview_dealer_img_<?php echo $dealer['id']?>" style="float: left; margin-right: 10px;">
+                                                <a href="<?php echo $dealer_img_path; ?>" class="external" target="_blank">
+                                                    <img style="max-width: 150px;" src="<?php echo $dealer_img_path; ?>" alt="<?php echo $dealer_img_name; ?>" />
                                                 </a>
                                             </div>
+                                            <input type="file" id="dealer_file_<?php echo $dealer['id']?>" name="dealer_file_<?php echo $dealer['id']?>" class="browse_button" data-preview-container="#preview_dealer_img_<?php echo $dealer['id']?>" data-preview-width="150" />
                                         </td>
                                     </tr>
                                 <?php
