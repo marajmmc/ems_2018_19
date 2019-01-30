@@ -603,6 +603,81 @@ class Fd_budget_helper
         return $data;
     }
 
+    public static function get_basic_info($result)
+    {
+        $CI = & get_instance();
+        //---------Getting User Names------------
+        $user_ids = array(
+            $result['user_created'] => $result['user_created'],
+            /*$result['user_deleted'] => $result['user_deleted'],
+            $result['user_budget_forwarded'] => $result['user_budget_forwarded'],
+            $result['user_recommendation'] => $result['user_recommendation'],
+            $result['user_approved'] => $result['user_approved'],
+            $result['user_payment_approved'] => $result['user_payment_approved'],
+            $result['user_payment_paid'] => $result['user_payment_paid']*/
+        );
+        $user_info = System_helper::get_users_info($user_ids);
+
+        //----------------Basic Info. Array Generate----------------
+
+        $data = array();
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_DATE_PROPOSAL'),
+            'value_1' => System_helper::display_date($result['date_proposal']),
+            'label_2' => $CI->lang->line('LABEL_DATE_EXPECTED'),
+            'value_2' => System_helper::display_date($result['date_expected'])
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_CROP_NAME'),
+            'value_1' => $result['crop_name'],
+            'label_2' => $CI->lang->line('LABEL_CROP_TYPE'),
+            'value_2' => $result['crop_type_name']
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_VARIETY1_NAME'),
+            'value_1' => $result['variety1_name'],
+            'label_2' => $CI->lang->line('LABEL_VARIETY2_NAME'),
+            'value_2' => ($result['variety2_name']) ? $result['variety2_name'] : '<i style="font-weight:normal">- No Variety Selected -</i>'
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_PRESENT_CONDITION'),
+            'value_1' => nl2br($result['present_condition'])
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_DEALERS_EVALUATION'),
+            'value_1' => nl2br($result['farmers_evaluation'])
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_DIVISION_NAME'),
+            'value_1' => $result['division_name'],
+            'label_2' => $CI->lang->line('LABEL_ZONE_NAME'),
+            'value_2' => $result['zone_name']
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_TERRITORY_NAME'),
+            'value_1' => $result['territory_name'],
+            'label_2' => $CI->lang->line('LABEL_DISTRICT_NAME'),
+            'value_2' => $result['district_name']
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_OUTLET_NAME'),
+            'value_1' => $result['outlet_name'],
+            'label_2' => $CI->lang->line('LABEL_GROWING_AREA'),
+            'value_2' => ($result['growing_area_name']) ? $result['growing_area_name'] : '<i style="font-weight:normal">- No Growing Area Selected -</i>'
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_ADDRESS'),
+            'value_1' => nl2br($result['address'])
+        );
+        $data[] = array(
+            'label_1' => 'Created By',
+            'value_1' => $user_info[$result['user_created']]['name'] . ' ( ' . $user_info[$result['user_created']]['employee_id'] . ' )',
+            'label_2' => 'Created Time',
+            'value_2' => System_helper::display_date_time($result['date_created'])
+        );
+        return $data;
+    }
+
     public static function fd_budget_status_check($item_array, $check_status)
     {
 
@@ -724,13 +799,3 @@ class Fd_budget_helper
     }
 }
 
-if (!function_exists('pr'))
-{ // Temporary Function for Debugging. Will be Deleted after the Task Completes.
-    function pr($arr = array(), $die = 1)
-    {
-        echo '<pre>';
-        print_r($arr);
-        echo '</pre>';
-        if ($die) die();
-    }
-}
