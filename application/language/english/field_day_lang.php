@@ -10,6 +10,7 @@ $lang['LABEL_COM_VARIETY_NAME'] = 'Competitor Variety';
 $lang['LABEL_STATUS_BUDGET_FORWARD'] = 'Budget Forward Status';
 $lang['LABEL_STATUS_RECOMMENDATION'] = 'Recommendation Status';
 $lang['LABEL_STATUS_BUDGET_APPROVE'] = 'Approval Status';
+$lang['LABEL_STATUS_REPORTING_FORWARD'] = 'Reporting Forward Status';
 
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
 $lang['LABEL_DEALERS_EVALUATION'] = 'Dealer\'s/ Farmer\'s Comment';//'Dealers/ Farmers Evaluation';
@@ -38,3 +39,5 @@ $lang['LABEL_REJECT'] = "Reject";
 $lang['LABEL_GROWING_AREA'] = "Growing Area";
 $lang['LABEL_STATUS_PAYMENT_APPROVE'] = "Approve Status";
 $lang['LABEL_STATUS_PAYMENT_PAY'] = "Payment Status";
+
+$lang['LABEL_REPORTING_COUNT'] = "Reports";

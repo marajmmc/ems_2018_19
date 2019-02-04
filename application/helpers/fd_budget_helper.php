@@ -25,9 +25,75 @@ CONST FD_PAYMENT_NOT_APPROVED = 12;
 CONST FD_PAYMENT_PAID = 13;
 CONST FD_PAYMENT_NOT_PAID = 14;
 
+/* ------FD Reporting Status Constants----- */
+CONST FD_REPORTING_FORWARDED = 15;
+CONST FD_REPORTING_NOT_FORWARDED = 16;
+CONST FD_REPORTING_APPROVED = 17;
+CONST FD_REPORTING_NOT_APPROVED = 18;
+
 
 class Fd_budget_helper
 {
+    public static function get_fd_budget_by_id($item_id, $method_name = '')
+    {
+        $CI = & get_instance();
+
+        $CI->db->from($CI->config->item('table_ems_fd_budget') . ' fd_budget');
+        $CI->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve, fd_budget.status_payment_approve, fd_budget.status_payment_pay, fd_budget.status_reporting_forward');
+
+        $CI->db->join($CI->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id AND fd_budget_details.revision = 1', 'INNER');
+        $CI->db->select('fd_budget_details.*');
+
+        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety1', 'variety1.id = fd_budget.variety1_id', 'INNER');
+        $CI->db->select('CONCAT(variety1.name, " ( ", variety1.whose, " )") AS variety1_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = fd_budget.variety2_id', 'LEFT');
+        $CI->db->select('CONCAT(variety2.name, " ( ", variety2.whose, " )") AS variety2_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_classification_crop_types') . ' crop_type', 'crop_type.id = variety1.crop_type_id', 'INNER');
+        $CI->db->select('crop_type.id AS crop_type_id, crop_type.name AS crop_type_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = crop_type.crop_id', 'INNER');
+        $CI->db->select('crop.id AS crop_id, crop.name AS crop_name');
+
+        $CI->db->join($CI->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = fd_budget.outlet_id AND cus_info.revision=1', 'INNER');
+        $CI->db->select('cus_info.name AS outlet_name');
+
+        $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = fd_budget_details.growing_area_id', 'LEFT');
+        $CI->db->select('CONCAT_WS(" - ", areas.name, areas.address) AS growing_area_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+        $CI->db->select('district.id AS district_id, district.name AS district_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
+        $CI->db->select('territory.id AS territory_id, territory.name AS territory_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
+        $CI->db->select('zone.id AS zone_id, zone.name AS zone_name');
+
+        $CI->db->join($CI->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
+        $CI->db->select('division.id AS division_id, division.name AS division_name');
+
+        $CI->db->where('fd_budget.status !=', $CI->config->item('system_status_delete'));
+        $CI->db->where('fd_budget.id', $item_id);
+        $result = $CI->db->get()->row_array();
+        if (!$result)
+        {
+            System_helper::invalid_try($method_name, $item_id, 'ID Not Exists');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Invalid Try.';
+            $CI->json_return($ajax);
+        }
+        if (!Fd_budget_helper::check_my_editable($result))
+        {
+            System_helper::invalid_try($method_name, $item_id, 'Trying to View or, Edit Information of other Location');
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'Trying to View or, Edit Information of other Location';
+            $CI->json_return($ajax);
+        }
+        return $result;
+    }
+
     /* ARM & Upcoming varieties */
     public static function get_variety_arm_upcoming($crop_type_id = 0)
     {
@@ -601,6 +667,28 @@ class Fd_budget_helper
 
         $data['title'] = 'Field Day Budget Details ( ID: ' . $item_id . ' )';
         return $data;
+    }
+
+    private static function check_my_editable($item)
+    {
+        $CI = & get_instance();
+        if (($CI->locations['division_id'] > 0) && ($CI->locations['division_id'] != $item['division_id']))
+        {
+            return false;
+        }
+        if (($CI->locations['zone_id'] > 0) && ($CI->locations['zone_id'] != $item['zone_id']))
+        {
+            return false;
+        }
+        if (($CI->locations['territory_id'] > 0) && ($CI->locations['territory_id'] != $item['territory_id']))
+        {
+            return false;
+        }
+        if (($CI->locations['district_id'] > 0) && ($CI->locations['district_id'] != $item['district_id']))
+        {
+            return false;
+        }
+        return true;
     }
 
     public static function get_basic_info($result)
