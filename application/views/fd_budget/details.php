@@ -54,6 +54,12 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
 
     <?php
     }
+//    echo '<pre>';
+//    print_r($old_reporting);
+//    print_r($dealers);
+//    print_r($lead_farmers);
+//    print_r($expense_items);
+//    echo '</pre>';
     if($show_participant_info)
     {
     ?>
@@ -73,6 +79,11 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
             <div class="row show-grid" style="margin:0">
                 <div class="col-xs-6" id="dealer-wrap">
                     <table style="width:100%">
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                            <th style="text-align:right;width:12%">Budgeted</th>
+                            <th style="text-align:right;width:12%">Actual</th>
+                        </tr>
                         <?php
                         $sub_total_dealer = $total_participant = 0;
                         $init_ga_id = -1;
@@ -86,7 +97,7 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                                         <label style="font-style:italic; text-decoration:underline; padding:5px;" class="control-label pull-right"><?php echo $dealer['ga_name']; ?>:</label>
                                     </td>
                                     <td style="text-align:right; width:35%;">&nbsp;</td>
-                                    <td style="text-align:right; width:5%; padding:5px">&nbsp;</td>
+                                    <td colspan="2">&nbsp;</td>
                                 </tr>
                                 <?php
                                 $init_ga_id=$dealer['ga_id'];
@@ -95,6 +106,7 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                             <tr>
                                 <td style="text-align:right" colspan="2"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
                                 <td style="text-align:right; padding:5px"><?php echo $dealer['participant']; ?></td>
+                                <td style="text-align:right; padding:5px"><?php echo (isset($old_reporting['reporting_participants_dealer'][$dealer['dealer_id']]))? $old_reporting['reporting_participants_dealer'][$dealer['dealer_id']] : "-"; ?></td>
                             </tr>
                             <?php
                             $total_participant += $dealer['participant'];
@@ -110,6 +122,11 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
 
                 <div class="col-xs-6" id="farmer-wrap" style="border-left:1px solid #cfcfcf; overflow-y:scroll">
                     <table style="width:100%">
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                            <th style="text-align:right;width:12%">Budgeted</th>
+                            <th style="text-align:right;width:12%">Actual</th>
+                        </tr>
                         <?php
                         $sub_total_farmer = 0;
                         $init_ga_id = -1;
@@ -123,7 +140,7 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                                         <label style="font-style:italic; text-decoration:underline; padding:5px;" class="control-label pull-right"><?php echo $farmer['ga_name']; ?>:</label>
                                     </td>
                                     <td style="text-align:right; width:35%;">&nbsp;</td>
-                                    <td style="text-align:right; width:5%; padding:5px">&nbsp;</td>
+                                    <td colspan="2">&nbsp;</td>
                                 </tr>
                                 <?php
                                 $init_ga_id=$farmer['ga_id'];
@@ -132,6 +149,7 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                             <tr>
                                 <td style="text-align:right" colspan="2"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
                                 <td style="text-align:right; padding:5px"><?php echo $farmer['participant']; ?></td>
+                                <td style="text-align:right; padding:5px"><?php echo (isset($old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']]))? $old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']] : "-"; ?></td>
                             </tr>
                             <?php
                             $total_participant += $farmer['participant'];
@@ -203,6 +221,11 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                         <div class="row show-grid">
                             <div class="col-xs-12" style="padding:0">
                                 <table style="width:100%">
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <th style="text-align:right; width:20%">Budgeted</th>
+                                        <th style="text-align:right; width:20%">Actual</th>
+                                    </tr>
                                     <?php
                                     $total_budget = 0;
                                     foreach ($expense_items as $expense)
@@ -210,16 +233,17 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                                         ?>
                                         <tr>
                                             <td style="text-align:right"><?php echo $expense['name']; ?> :</td>
-                                            <td style="text-align:right; padding:10px; font-weight:bold"><?php echo System_helper::get_string_amount($expense['amount']); ?></td>
+                                            <td style="text-align:right"><?php echo System_helper::get_string_amount($expense['amount']); ?></td>
+                                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_amount_expense_items'][$expense['id']]))? System_helper::get_string_amount($old_reporting['reporting_amount_expense_items'][$expense['id']]) : "-"; ?></td>
                                         </tr>
                                         <?php
                                         $total_budget += $expense['amount'];
                                     }
                                     ?>
-
                                     <tr>
                                         <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo $CI->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET'); ?> :</td>
-                                        <td style="border-top:1px solid #000; text-align:right; font-weight:bold; width:25%; padding:10px"><?php echo System_helper::get_string_amount($total_budget); ?></td>
+                                        <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo System_helper::get_string_amount($total_budget); ?></td>
+                                        <td style="border-top:1px solid #000; text-align:right; font-weight:bold">&nbsp;</td>
                                     </tr>
                                 </table>
                             </div>

@@ -60,11 +60,10 @@ class Fd_reporting extends Root_Controller
         {
             $this->system_save_forward();
         }
-        /*
         elseif ($action == "details")
         {
             $this->system_details($id);
-        }*/
+        }
         elseif ($action == "set_preference_list")
         {
             $this->system_set_preference('list');
@@ -73,10 +72,6 @@ class Fd_reporting extends Root_Controller
         {
             $this->system_set_preference('list_all');
         }
-        /* elseif ($action == "set_preference_list_waiting")
-        {
-            $this->system_set_preference('list_waiting');
-        } */
         elseif ($action == "save_preference")
         {
             System_helper::save_preference();
@@ -332,7 +327,7 @@ class Fd_reporting extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $result = Fd_budget_helper::get_fd_budget_by_id($item_id, __FUNCTION__);
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED, FD_REPORTING_NOT_FORWARDED));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -466,12 +461,21 @@ class Fd_reporting extends Root_Controller
             $this->json_return($ajax);
         }
 
+        $item_id = $this->input->post('budget_id');
         $item = $this->input->post('item');
         $dealer = $this->input->post('dealer_participants');
         $farmer = $this->input->post('farmer_participants');
         $expense_item = $this->input->post('expense_item_id');
         $user = User_helper::get_user();
         $time = time();
+
+        $result = Fd_budget_helper::get_fd_budget_by_id($item_id, __FUNCTION__);
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED, FD_REPORTING_NOT_FORWARDED));
+        if (!$ajax['status'])
+        {
+            $this->json_return($ajax);
+        }
+
         if ($dealer)
         {
             foreach ($dealer as &$value)
@@ -509,7 +513,7 @@ class Fd_reporting extends Root_Controller
         $this->db->trans_start(); //DB Transaction Handle START
 
         $this->db->set('revision', 'revision+1', FALSE);
-        Query_helper::update($this->config->item('table_ems_fd_budget_reporting'), array(), array("budget_id =" . $item['budget_id']), FALSE);
+        Query_helper::update($this->config->item('table_ems_fd_budget_reporting'), array(), array("budget_id =" . $item_id), FALSE);
 
         $item['revision'] = 1;
         $item['date_reported'] = $time;
@@ -545,7 +549,7 @@ class Fd_reporting extends Root_Controller
             }
 
             $result = Fd_budget_helper::get_fd_budget_by_id($item_id, __FUNCTION__);
-            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED));
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED, FD_REPORTING_NOT_FORWARDED));
             if (!$ajax['status'])
             {
                 $this->json_return($ajax);
@@ -565,7 +569,9 @@ class Fd_reporting extends Root_Controller
             }
             else
             {
-                $old_reporting = array();
+                $ajax['status'] = false;
+                $ajax['system_message'] = 'No Reporting has been Done Yet.';
+                $this->json_return($ajax);
             }
             $data['old_reporting'] = $old_reporting;
 
@@ -678,16 +684,28 @@ class Fd_reporting extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
-
         $item_id = $this->input->post('budget_id');
         $item = $this->input->post('item');
         $user = User_helper::get_user();
         $time = time();
 
+        if($item['status_reporting_forward'] != $this->config->item('system_status_forwarded')){
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line('LABEL_FORWARD').' field is Required.';
+            $this->json_return($ajax);
+        }
+
         $result = Fd_budget_helper::get_fd_budget_by_id($item_id, __FUNCTION__);
-        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED));
+        $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED, FD_REPORTING_NOT_FORWARDED));
         if (!$ajax['status'])
         {
+            $this->json_return($ajax);
+        }
+        $old_reporting = Query_helper::get_info($this->config->item('table_ems_fd_budget_reporting'), array('*'), array('budget_id=' . $item_id, 'revision=1'), 1);
+        if (!$old_reporting)
+        {
+            $ajax['status'] = false;
+            $ajax['system_message'] = 'No Reporting has been Done Yet.';
             $this->json_return($ajax);
         }
 
@@ -712,24 +730,41 @@ class Fd_reporting extends Root_Controller
         }
     }
 
-    private function check_my_editable($item)
+    private function system_details($id)
     {
-        if (($this->locations['division_id'] > 0) && ($this->locations['division_id'] != $item['division_id']))
+        if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            return false;
+            if ($id > 0)
+            {
+                $item_id = $id;
+            }
+            else
+            {
+                $item_id = $this->input->post('id');
+            }
+            $result = Fd_budget_helper::get_fd_budget_by_id($item_id, __FUNCTION__);
+            $ajax = Fd_budget_helper::fd_budget_status_check($result, array(FD_BUDGET_APPROVED, FD_PAYMENT_APPROVED));
+            if (!$ajax['status'])
+            {
+                $this->json_return($ajax);
+            }
+
+            $data = Fd_budget_helper::get_fd_budget_details_data($item_id); // Fetching all Data from 'Fd_budget_helper' along with Page Title
+
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->common_view_location . "/details", $data, true));
+            if ($this->message)
+            {
+                $ajax['system_message'] = $this->message;
+            }
+            $ajax['system_page_url'] = site_url($this->controller_url . '/index/details/' . $item_id);
+            $this->json_return($ajax);
         }
-        if (($this->locations['zone_id'] > 0) && ($this->locations['zone_id'] != $item['zone_id']))
+        else
         {
-            return false;
+            $ajax['status'] = false;
+            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->json_return($ajax);
         }
-        if (($this->locations['territory_id'] > 0) && ($this->locations['territory_id'] != $item['territory_id']))
-        {
-            return false;
-        }
-        if (($this->locations['district_id'] > 0) && ($this->locations['district_id'] != $item['district_id']))
-        {
-            return false;
-        }
-        return true;
     }
 }

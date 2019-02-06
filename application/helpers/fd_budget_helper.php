@@ -39,7 +39,7 @@ class Fd_budget_helper
         $CI = & get_instance();
 
         $CI->db->from($CI->config->item('table_ems_fd_budget') . ' fd_budget');
-        $CI->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve, fd_budget.status_payment_approve, fd_budget.status_payment_pay, fd_budget.status_reporting_forward');
+        $CI->db->select('fd_budget.date_proposal, fd_budget.status_budget_forward, fd_budget.status_recommendation, fd_budget.status_approve, fd_budget.status_payment_approve, fd_budget.status_payment_pay, fd_budget.status_reporting_forward, fd_budget.status_reporting_approve');
 
         $CI->db->join($CI->config->item('table_ems_fd_budget_details') . ' fd_budget_details', 'fd_budget_details.budget_id = fd_budget.id AND fd_budget_details.revision = 1', 'INNER');
         $CI->db->select('fd_budget_details.*');
@@ -644,6 +644,15 @@ class Fd_budget_helper
                 $expense_item['amount'] = 0;
             }
         }
+        //------------------Reporting Array Generate-------------------
+        $old_reporting = Query_helper::get_info($CI->config->item('table_ems_fd_budget_reporting'), array('*'), array('budget_id=' . $item_id, 'revision=1'), 1);
+        if ($old_reporting)
+        {
+            $old_reporting['reporting_participants_dealer'] = json_decode($old_reporting['reporting_participants_dealer'], true);
+            $old_reporting['reporting_participants_farmer'] = json_decode($old_reporting['reporting_participants_farmer'], true);
+            $old_reporting['reporting_amount_expense_items'] = json_decode($old_reporting['reporting_amount_expense_items'], true);
+            $data['old_reporting'] = $old_reporting;
+        }
         //------------------Uploaded Image Array Generate-------------------
         $picture_data = Query_helper::get_info($CI->config->item('table_ems_fd_budget_details_picture'), '*', array('budget_id =' . $item_id, 'revision=1', 'status !="' . $CI->config->item('system_status_delete') . '"'));
         $data['image_details'] = array();
@@ -880,6 +889,37 @@ class Fd_budget_helper
                 return array(
                     'status' => false,
                     'system_message' => 'This Field day Payment has been Paid Already.'
+                );
+            }
+            /*
+            ----------------FD Reporting Status Constants----------------
+            */
+            elseif ((FD_REPORTING_FORWARDED == $flag) && ($item_array['status_reporting_forward'] != $CI->config->item('system_status_forwarded'))) // Checks if FD Reporting FORWARDED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Reporting is not Forwarded yet.'
+                );
+            }
+            elseif ((FD_REPORTING_NOT_FORWARDED == $flag) && ($item_array['status_reporting_forward'] == $CI->config->item('system_status_forwarded'))) // Checks if FD Reporting not FORWARDED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Reporting has been Forwarded Already.'
+                );
+            }
+            elseif ((FD_REPORTING_APPROVED == $flag) && ($item_array['status_reporting_approve'] != $CI->config->item('system_status_approved'))) // Checks if FD Reporting APPROVED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Reporting is not Approved yet.'
+                );
+            }
+            elseif ((FD_REPORTING_NOT_APPROVED == $flag) && ($item_array['status_reporting_approve'] == $CI->config->item('system_status_approved'))) // Checks if FD Reporting not APPROVED
+            {
+                return array(
+                    'status' => false,
+                    'system_message' => 'This Field day Reporting has been Approved Already.'
                 );
             }
         }

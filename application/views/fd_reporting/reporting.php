@@ -24,7 +24,7 @@ $image_style = FD_IMAGE_DISPLAY_STYLE;
     <?php echo $CI->load->view("info_basic", "", true); ?>
 
     <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save_reporting'); ?>" method="post">
-        <input type="hidden" id="id" name="item[budget_id]" value="<?php echo $item['budget_id']; ?>"/>
+        <input type="hidden" id="id" name="budget_id" value="<?php echo $item['budget_id']; ?>"/>
 
         <div class="row show-grid">
             <div class="col-xs-8">
