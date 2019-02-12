@@ -27,41 +27,30 @@ $image_base_path = $CI->config->item('system_base_url_picture');
 $image_style = FD_IMAGE_DISPLAY_STYLE;
 
 //--------Accordion View Settings----------
-$show_basic_info        = (isset($show_basic_info))? $show_basic_info : TRUE;
-$show_participant_info  = (isset($show_participant_info))? $show_participant_info : TRUE;
-$show_expense_info      = (isset($show_expense_info))? $show_expense_info : TRUE;
-$show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
+$show_basic_info = (isset($show_basic_info)) ? $show_basic_info : TRUE;
+$show_participant_info = (isset($show_participant_info)) ? $show_participant_info : TRUE;
+$show_expense_info = (isset($show_expense_info)) ? $show_expense_info : TRUE;
+$show_image_info = (isset($show_image_info)) ? $show_image_info : TRUE;
 
 ?>
-<style>
-    .widget-header{background-image: none}
-    .bottom-summary > div{padding:20px 0 5px; background:#E8E8E8; text-align:center}
-    .participant-wrap > div{font-size:1.3em; padding:10px; background:#E8E8E8}
-</style>
 
 <div class="row widget">
-    <div class="widget-header" style="margin-bottom:20px">
-        <div class="title"><?php echo $title; ?></div>
-        <div class="clearfix"></div>
-    </div>
+<div class="widget-header" style="margin-bottom:20px">
+    <div class="title"><?php echo $title; ?></div>
+    <div class="clearfix"></div>
+</div>
 
-    <?php
-    if($show_basic_info)
-    {
+<?php
+if ($show_basic_info)
+{
     ?>
 
     <?php echo $CI->load->view("info_basic", '', true); ?>
 
-    <?php
-    }
-//    echo '<pre>';
-//    print_r($old_reporting);
-//    print_r($dealers);
-//    print_r($lead_farmers);
-//    print_r($expense_items);
-//    echo '</pre>';
-    if($show_participant_info)
-    {
+<?php
+}
+if ($show_participant_info)
+{
     ?>
 
     <div class="panel panel-default">
@@ -72,8 +61,8 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
         </div>
         <div id="collapse1" class="panel-collapse collapse out">
             <div class="row show-grid participant-wrap" style="margin:0">
-                <div class="col-xs-6"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?></div>
-                <div class="col-xs-6" style="border-left:1px solid #cfcfcf"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?></div>
+                <div class="col-xs-6" style="font-size:1.3em; padding:10px; background:#E8E8E8"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?></div>
+                <div class="col-xs-6" style="font-size:1.3em; padding:10px; background:#E8E8E8;border-left:1px solid #cfcfcf"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?></div>
             </div>
 
             <div class="row show-grid" style="margin:0">
@@ -86,11 +75,13 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                         </tr>
                         <?php
                         $sub_total_dealer = $total_participant = 0;
+                        $reporting_sub_total_dealer = $reporting_total_participant = 0;
                         $init_ga_id = -1;
                         foreach ($dealers as &$dealer)
                         {
                             $dealer['participant'] = (isset($dealer['participant'])) ? $dealer['participant'] : 0;
-                            if($init_ga_id != $dealer['ga_id']){
+                            if ($init_ga_id != $dealer['ga_id'])
+                            {
                                 ?>
                                 <tr>
                                     <td style="text-align:right">
@@ -100,13 +91,26 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                                     <td colspan="2">&nbsp;</td>
                                 </tr>
                                 <?php
-                                $init_ga_id=$dealer['ga_id'];
+                                $init_ga_id = $dealer['ga_id'];
                             }
                             ?>
                             <tr>
                                 <td style="text-align:right" colspan="2"><?php echo $dealer['dealer_name'] . ' ( ' . $dealer['phone_no'] . ' )'; ?> :</td>
                                 <td style="text-align:right; padding:5px"><?php echo $dealer['participant']; ?></td>
-                                <td style="text-align:right; padding:5px"><?php echo (isset($old_reporting['reporting_participants_dealer'][$dealer['dealer_id']]))? $old_reporting['reporting_participants_dealer'][$dealer['dealer_id']] : "-"; ?></td>
+                                <td style="text-align:right; padding:5px">
+                                    <?php
+                                    if (isset($old_reporting['reporting_participants_dealer'][$dealer['dealer_id']]))
+                                    {
+                                        echo $old_reporting['reporting_participants_dealer'][$dealer['dealer_id']];
+                                        $reporting_sub_total_dealer += $old_reporting['reporting_participants_dealer'][$dealer['dealer_id']];
+                                        $reporting_total_participant += $old_reporting['reporting_participants_dealer'][$dealer['dealer_id']];
+                                    }
+                                    else
+                                    {
+                                        echo "-";
+                                    }
+                                    ?>
+                                </td>
                             </tr>
                             <?php
                             $total_participant += $dealer['participant'];
@@ -116,6 +120,7 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                         <tr>
                             <td style="text-align:right; font-weight:bold" colspan="2">Sub Total :</td>
                             <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $sub_total_dealer; ?></td>
+                            <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $reporting_sub_total_dealer; ?></td>
                         </tr>
                     </table>
                 </div>
@@ -129,11 +134,13 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                         </tr>
                         <?php
                         $sub_total_farmer = 0;
+                        $reporting_sub_total_farmer = 0;
                         $init_ga_id = -1;
                         foreach ($lead_farmers as &$farmer)
                         {
                             $farmer['participant'] = (isset($farmer['participant'])) ? $farmer['participant'] : 0;
-                            if($init_ga_id != $farmer['ga_id']){
+                            if ($init_ga_id != $farmer['ga_id'])
+                            {
                                 ?>
                                 <tr>
                                     <td style="text-align:right">
@@ -143,13 +150,26 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                                     <td colspan="2">&nbsp;</td>
                                 </tr>
                                 <?php
-                                $init_ga_id=$farmer['ga_id'];
+                                $init_ga_id = $farmer['ga_id'];
                             }
                             ?>
                             <tr>
                                 <td style="text-align:right" colspan="2"><?php echo $farmer['lead_farmers_name'] . ' ( ' . $farmer['phone_no'] . ' )'; ?> :</td>
                                 <td style="text-align:right; padding:5px"><?php echo $farmer['participant']; ?></td>
-                                <td style="text-align:right; padding:5px"><?php echo (isset($old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']]))? $old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']] : "-"; ?></td>
+                                <td style="text-align:right; padding:5px">
+                                    <?php
+                                    if (isset($old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']]))
+                                    {
+                                        echo $old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']];
+                                        $reporting_sub_total_farmer += $old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']];
+                                        $reporting_total_participant += $old_reporting['reporting_participants_farmer'][$farmer['lead_farmers_id']];
+                                    }
+                                    else
+                                    {
+                                        echo "-";
+                                    }
+                                    ?>
+                                </td>
                             </tr>
                             <?php
                             $total_participant += $farmer['participant'];
@@ -159,145 +179,160 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
                         <tr>
                             <td style="text-align:right; font-weight:bold" colspan="2">Sub Total :</td>
                             <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $sub_total_farmer; ?></td>
+                            <td style="text-align:right; padding:5px; font-weight:bold"><?php echo $reporting_sub_total_farmer; ?></td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <div class="row show-grid bottom-summary">
-                <div class="col-xs-3">
-                    <label class="control-label">
-                        <?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?> : <?php echo $sub_total_dealer; ?>
-                    </label>
-                </div>
-                <div class="col-xs-3">
-                    <label class="control-label">
-                        <?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?> : <?php echo $sub_total_farmer; ?>
-                    </label>
-                </div>
-                <div class="col-xs-3">
-                    <label class="control-label">
-                        <?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?> : <?php echo $item['participant_others'];  $total_participant += $item['participant_others']; ?>
-                    </label>
-                </div>
-                <div class="col-xs-3">
-                    <label class="control-label">
-                        <?php echo $CI->lang->line('LABEL_TOTAL_PARTICIPANT'). " : ({$sub_total_dealer} + {$sub_total_farmer} + {$item['participant_others']})"?> = <?php echo $total_participant; ?>
-                    </label>
+            <div class="row show-grid bottom-summary" style="background:#E8E8E8; text-align:right">
+                <div class="col-xs-4"> &nbsp; </div>
+                <div class="col-xs-4" style="padding:15px">
+                    <table class="table" style="width:100%;margin:0">
+                        <tr>
+                            <th> &nbsp; </th>
+                            <th style="width:20%;text-align:right">Budgeted</th>
+                            <th style="width:15%;text-align:right">Actual</th>
+                        </tr>
+                        <tr>
+                            <td><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_DEALER'); ?></td>
+                            <td><?php echo $sub_total_dealer; ?></td>
+                            <td><?php echo $reporting_sub_total_dealer; ?></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER'); ?></td>
+                            <td><?php echo $sub_total_farmer; ?></td>
+                            <td><?php echo $reporting_sub_total_farmer; ?></td>
+                        </tr>
+                        <tr>
+                            <td><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_OTHERS'); ?></td>
+                            <td><?php echo $item['participant_others']; ?></td>
+                            <td><?php echo (isset($old_reporting['reporting_participant_others'])) ? $old_reporting['reporting_participant_others'] : '-'; ?></td>
+                        </tr>
+                        <?php
+                        $total_participant += $item['participant_others'];
+                        if (isset($old_reporting['reporting_participant_others']))
+                        {
+                            $reporting_total_participant += $old_reporting['reporting_participant_others'];
+                        }
+                        ?>
+                        <tr>
+                            <th style="border-top:1px solid #000; text-align:right"><?php echo $CI->lang->line('LABEL_TOTAL_PARTICIPANT'); ?></th>
+                            <th style="border-top:1px solid #000; text-align:right"><?php echo $total_participant; ?></th>
+                            <th style="border-top:1px solid #000; text-align:right"><?php echo $reporting_total_participant; ?></th>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <?php
-    }
-    if($show_expense_info)
-    {
+<?php
+}
+if ($show_expense_info)
+{
     ?>
 
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <label><a class="external text-danger" data-toggle="collapse" data-target="#collapse2" href="#"> + Budget Expense &amp; Payment Summary</a></label>
+                <label><a class="external text-danger" data-toggle="collapse" data-target="#collapse2" href="#"> + Field Day Expense &amp; Market Size </a></label>
             </h4>
         </div>
         <div id="collapse2" class="panel-collapse collapse out">
-            <table class="table table-bordered table-responsive system_table_details_view">
-                <tr>
-                    <td class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_PAYMENT_APPROVE'); ?></label>
-                    </td>
-                    <td  style="width:120px">
-                        <label class="control-label"><?php echo $item['status_payment_approve']; ?></label>
-                    </td>
-                    <td class="widget-header header_caption" style="width:100px">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-                    </td>
-                    <td>
-                        <label class="control-label" style="font-weight:normal"><?php echo ($item['remarks_payment_approve'])? nl2br($item['remarks_payment_approve']):'-'; ?></label>
-                    </td>
-                    <td rowspan="4" style="width:35%">
-                        <div class="row show-grid">
-                            <div class="col-xs-12" style="padding:0">
-                                <table style="width:100%">
-                                    <tr>
-                                        <td>&nbsp;</td>
-                                        <th style="text-align:right; width:20%">Budgeted</th>
-                                        <th style="text-align:right; width:20%">Actual</th>
-                                    </tr>
+            <div class="row show-grid">
+                <div class="col-xs-6">
+                    <table class="table" style="width:100%">
+                        <tr>
+                            <th colspan="3" style="border-bottom:1px solid #000; text-align:center">Budget Expense Summary</th>
+                        </tr>
+                        <tr>
+                            <th style="border-bottom:1px solid #000; text-align:right">Items &nbsp;</th>
+                            <th style="border-bottom:1px solid #000; text-align:right; width:20%">Budgeted</th>
+                            <th style="border-bottom:1px solid #000; text-align:right; width:20%">Actual</th>
+                        </tr>
+                        <?php
+                        $total_budget = 0;
+                        $reporting_total_budget = 0;
+                        foreach ($expense_items as $expense)
+                        {
+                            ?>
+                            <tr>
+                                <td style="text-align:right"><?php echo $expense['name']; ?> :</td>
+                                <td style="text-align:right"><?php echo System_helper::get_string_amount($expense['amount']); ?></td>
+                                <td style="text-align:right">
                                     <?php
-                                    $total_budget = 0;
-                                    foreach ($expense_items as $expense)
+                                    if (isset($old_reporting['reporting_amount_expense_items'][$expense['id']]))
                                     {
-                                        ?>
-                                        <tr>
-                                            <td style="text-align:right"><?php echo $expense['name']; ?> :</td>
-                                            <td style="text-align:right"><?php echo System_helper::get_string_amount($expense['amount']); ?></td>
-                                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_amount_expense_items'][$expense['id']]))? System_helper::get_string_amount($old_reporting['reporting_amount_expense_items'][$expense['id']]) : "-"; ?></td>
-                                        </tr>
-                                        <?php
-                                        $total_budget += $expense['amount'];
+                                        echo System_helper::get_string_amount($old_reporting['reporting_amount_expense_items'][$expense['id']]);
+                                        $reporting_total_budget += $old_reporting['reporting_amount_expense_items'][$expense['id']];
+                                    }
+                                    else
+                                    {
+                                        echo "-";
                                     }
                                     ?>
-                                    <tr>
-                                        <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo $CI->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET'); ?> :</td>
-                                        <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo System_helper::get_string_amount($total_budget); ?></td>
-                                        <td style="border-top:1px solid #000; text-align:right; font-weight:bold">&nbsp;</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="widget-header header_caption">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS_PAYMENT_PAY'); ?></label>
-                    </td>
-                    <td>
-                        <label class="control-label"><?php echo $item['status_payment_pay']; ?></label>
-                    </td>
-                    <td class="widget-header header_caption" style="width:100px">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-                    </td>
-                    <td>
-                        <label class="control-label" style="font-weight:normal"><?php echo ($item['remarks_payment_pay'])? nl2br($item['remarks_payment_pay']):'-'; ?></label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="widget-header header_caption">
-                        <label class="control-label pull-right">Adjustment Forward Status</label></td>
-                    <td>
-                        <label class="control-label">Pending</label>
-                    </td>
-                    <td class="widget-header header_caption" style="width:100px">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-                    </td>
-                    <td>
-                        <label class="control-label" style="font-weight:normal">-</label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="widget-header header_caption">
-                        <label class="control-label pull-right">Adjustment Approval Status</label></td>
-                    <td>
-                        <label class="control-label">Pending</label>
-                    </td>
-                    <td class="widget-header header_caption" style="width:100px">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
-                    </td>
-                    <td>
-                        <label class="control-label" style="font-weight:normal">-</label>
-                    </td>
-                </tr>
-            </table>
+                                </td>
+                            </tr>
+                            <?php
+                            $total_budget += $expense['amount'];
+                        }
+                        ?>
+                        <tr>
+                            <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo $CI->lang->line('LABEL_TOTAL_FIELD_DAY_BUDGET'); ?> :</td>
+                            <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo System_helper::get_string_amount($total_budget); ?></td>
+                            <td style="border-top:1px solid #000; text-align:right; font-weight:bold"><?php echo System_helper::get_string_amount($reporting_total_budget); ?></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <div class="col-xs-6">
+                    <table class="table" style="width:100%">
+                        <tr>
+                            <th colspan="3" style="border-bottom:1px solid #000; text-align:center"><?php echo $CI->lang->line('LABEL_MARKET_SIZE_TITLE'); ?></th>
+                        </tr>
+                        <tr>
+                            <th style="border-bottom:1px solid #000">&nbsp;</th>
+                            <th style="border-bottom:1px solid #000; text-align:right; width:20%">Budgeted</th>
+                            <th style="border-bottom:1px solid #000; text-align:right; width:20%">Actual</th>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><?php echo $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'); ?> :</td>
+                            <td style="text-align:right"><?php echo System_helper::get_string_amount($item['quantity_market_size_showroom_total']); ?></td>
+                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_quantity_market_size_showroom_total'])) ? System_helper::get_string_amount($old_reporting['reporting_quantity_market_size_showroom_total']) : '-'; ?></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><?php echo $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'); ?> :</td>
+                            <td style="text-align:right"><?php echo System_helper::get_string_amount($item['quantity_market_size_ga_total']); ?></td>
+                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_quantity_market_size_ga_total'])) ? System_helper::get_string_amount($old_reporting['reporting_quantity_market_size_ga_total']) : '-'; ?></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><?php echo $CI->lang->line('LABEL_ARM_MARKET_SIZE'); ?> :</td>
+                            <td style="text-align:right"><?php echo System_helper::get_string_amount($item['quantity_market_size_showroom_arm']); ?></td>
+                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_quantity_market_size_showroom_arm'])) ? System_helper::get_string_amount($old_reporting['reporting_quantity_market_size_showroom_arm']) : '-'; ?></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><?php echo $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'); ?> :</td>
+                            <td style="text-align:right"><?php echo System_helper::get_string_amount($item['quantity_market_size_ga_arm']); ?></td>
+                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_quantity_market_size_ga_arm'])) ? System_helper::get_string_amount($old_reporting['reporting_quantity_market_size_ga_arm']) : '-'; ?></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:right"><?php echo $CI->lang->line('LABEL_NEXT_SALES_TARGET'); ?> :</td>
+                            <td style="text-align:right"><?php echo System_helper::get_string_amount($item['quantity_sales_target']); ?></td>
+                            <td style="text-align:right"><?php echo (isset($old_reporting['reporting_quantity_sales_target'])) ? System_helper::get_string_amount($old_reporting['reporting_quantity_sales_target']) : '-'; ?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <?php
-    }
-    if($show_image_info)
-    {
+<?php
+}
+if ($show_image_info)
+{
     ?>
 
     <div class="panel panel-default">
@@ -396,21 +431,11 @@ $show_image_info        = (isset($show_image_info))? $show_image_info : TRUE;
         </div>
     </div>
 
-    <?php } ?>
+<?php } ?>
 </div>
 
 <script type="application/javascript">
     jQuery(document).ready(function ($) {
         system_off_events(); // Triggers
-
-        /* $(document).on('click', 'a.external', function(){
-            var element_id = '#'+$(this).closest('.panel-default').children('.panel-collapse').attr('id');
-            //alert(element_id);
-            if($(element_id).hasClass('in'))
-            {
-                var height = $(element_id+" #dealer-wrap").height();
-                $("#farmer-wrap").css("max-height", height+"px");
-            }
-        }); */
     });
 </script>

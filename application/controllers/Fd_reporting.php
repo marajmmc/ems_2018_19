@@ -14,7 +14,7 @@ class Fd_reporting extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
-        $this->common_view_location = 'Fd_budget';
+        $this->common_view_location = 'fd_budget';
         $this->locations = User_helper::get_locations();
         if (!($this->locations))
         {
@@ -515,6 +515,7 @@ class Fd_reporting extends Root_Controller
         $this->db->set('revision', 'revision+1', FALSE);
         Query_helper::update($this->config->item('table_ems_fd_budget_reporting'), array(), array("budget_id =" . $item_id), FALSE);
 
+        $item['budget_id'] = $item_id;
         $item['revision'] = 1;
         $item['date_reported'] = $time;
         $item['user_reported'] = $user->user_id;

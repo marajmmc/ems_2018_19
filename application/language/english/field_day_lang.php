@@ -11,6 +11,7 @@ $lang['LABEL_STATUS_BUDGET_FORWARD'] = 'Budget Forward Status';
 $lang['LABEL_STATUS_RECOMMENDATION'] = 'Recommendation Status';
 $lang['LABEL_STATUS_BUDGET_APPROVE'] = 'Approval Status';
 $lang['LABEL_STATUS_REPORTING_FORWARD'] = 'Reporting Forward Status';
+$lang['LABEL_STATUS_REPORTING_APPROVE'] = 'Reporting Approve Status';
 
 $lang['LABEL_PRESENT_CONDITION'] = 'Present Crop/ Field Condition';
 $lang['LABEL_DEALERS_EVALUATION'] = 'Dealer\'s/ Farmer\'s Comment';//'Dealers/ Farmers Evaluation';

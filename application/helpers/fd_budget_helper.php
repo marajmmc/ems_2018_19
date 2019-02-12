@@ -448,26 +448,6 @@ class Fd_budget_helper
             'label_2' => $CI->lang->line('LABEL_DIVISION_NAME'),
             'value_2' => $result['division_name']
         );
-        //----------------Market Size Info. Array Generate----------------
-        $data['info_basic'][] = array(
-            'label_1' => $CI->lang->line('LABEL_MARKET_SIZE_TITLE')
-        );
-        $data['info_basic'][] = array(
-            'label_1' => $CI->lang->line('LABEL_TOTAL_MARKET_SIZE'),
-            'value_1' => System_helper::get_string_kg($result['quantity_market_size_showroom_total']),
-            'label_2' => $CI->lang->line('LABEL_TOTAL_GA_MARKET_SIZE'),
-            'value_2' => System_helper::get_string_kg($result['quantity_market_size_ga_total'])
-        );
-        $data['info_basic'][] = array(
-            'label_1' => $CI->lang->line('LABEL_ARM_MARKET_SIZE'),
-            'value_1' => System_helper::get_string_kg($result['quantity_market_size_showroom_arm']),
-            'label_2' => $CI->lang->line('LABEL_ARM_GA_MARKET_SIZE'),
-            'value_2' => System_helper::get_string_kg($result['quantity_market_size_ga_arm'])
-        );
-        $data['info_basic'][] = array(
-            'label_1' => $CI->lang->line('LABEL_NEXT_SALES_TARGET'),
-            'value_1' => System_helper::get_string_kg($result['quantity_sales_target'])
-        );
         //----------------Status Info Array Generate----------------
         $data['info_basic'][] = array(
             'label_1' => 'Budget Status'
@@ -926,4 +906,3 @@ class Fd_budget_helper
         return array('status' => true, 'system_message' => '');
     }
 }
-

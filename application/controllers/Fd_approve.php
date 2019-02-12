@@ -14,7 +14,7 @@ class Fd_approve extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
-        $this->common_view_location = 'Fd_budget';
+        $this->common_view_location = 'fd_budget';
         $this->locations = User_helper::get_locations();
         if (!($this->locations))
         {

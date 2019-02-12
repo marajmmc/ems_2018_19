@@ -363,6 +363,10 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
     jQuery(document).ready(function ($) {
         system_off_events(); // Triggers
+        $(document).off('click','.input-group-addon');
+        $(document).off('change','#growing_area_id');
+        $(document).off('change','#lead_farmer_id');
+        $(document).off('change','#variety2_id');
 
         $(".datepicker").datepicker({dateFormat: display_date_format});
         $('.input-group-addon').click(function(){

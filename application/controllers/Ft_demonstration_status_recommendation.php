@@ -16,7 +16,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
         $this->locations = User_helper::get_locations();
-        $this->common_view_location = 'Ft_demonstration_status';
+        $this->common_view_location = 'ft_demonstration_status';
         $this->evaluation_items = array('Excellent', 'Very Good', 'Good', 'Average', 'Poor');
         if (!($this->locations))
         {
@@ -24,8 +24,8 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $ajax['system_message'] = $this->lang->line('MSG_LOCATION_NOT_ASSIGNED_OR_INVALID');
             $this->json_return($ajax);
         }
-        $this->load->helper('Ft_demonstration');
-        $this->lang->load('Ft_demonstration');
+        $this->load->helper('ft_demonstration');
+        $this->lang->load('ft_demonstration');
     }
 
     public function index($action = "list", $id = 0)
