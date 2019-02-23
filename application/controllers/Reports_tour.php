@@ -49,6 +49,10 @@ class Reports_tour extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif ($action == "get_employee_dropdown")
+        {
+            $this->system_get_employee_dropdown();
+        }
         else
         {
             $this->system_search();
@@ -106,17 +110,17 @@ class Reports_tour extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $this->db->from($this->config->item('table_login_setup_user') . ' user');
-            $this->db->select('user.employee_id, user.user_name, user.status');
+            /* $this->db->from($this->config->item('table_login_setup_user') . ' user');
+            $this->db->select('user.id user_id, user.employee_id, user.user_name, user.status');
 
             $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
-            $this->db->select('user_info.name, user_info.ordering');
+            $this->db->select('user_info.name, user_info.department_id, user_info.ordering');
 
             $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
             $this->db->select('designation.name AS designation_name');
 
             $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = user.id', 'INNER');
-            $this->db->select('user_area.*');
+            $this->db->select('user_area.division_id, user_area.division_id, user_area.division_id');
             if ($this->locations['division_id'] > 0)
             {
                 $this->db->where('user_area.division_id', $this->locations['division_id']);
@@ -135,12 +139,17 @@ class Reports_tour extends Root_Controller
             $this->db->order_by('user_info.ordering', 'ASC');
             $results = $this->db->get()->result_array();
             $all_user = array();
+            echo '<pre>';
+            print_r($results);
+            echo '</pre>'; die();
             foreach ($results as &$result)
             {
                 $result['value'] = $result['user_id'];
                 $result['text'] = $result['employee_id'] . '-' . $result['name'] . ' (' . $result['designation_name'] . ')';
                 $all_user[] = $result;
-            }
+            } */
+
+            $data['departments'] = Query_helper::get_info($this->config->item('table_login_setup_department'), array('id value', 'name text', 'status', 'ordering'), array('status !="' . $this->config->item('system_status_delete') . '"'));
 
             $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
             $data['zones'] = array();
@@ -154,7 +163,7 @@ class Reports_tour extends Root_Controller
                 }
             }
 
-            $data['user_info'] = $all_user;
+            $data['user_info'] = array();
             $data['user_counter'] = count($data['user_info']);
             $data['date_from'] = '';
             $data['date_to'] = '';
@@ -179,10 +188,12 @@ class Reports_tour extends Root_Controller
 
     private function system_list()
     {
-        $user = User_helper::get_user();
-        $method = 'search';
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
+            $user = User_helper::get_user();
+            $method = 'search';
+
+            $data = array();
             $data['options'] = $this->input->post('report');
             // Storing search options in session for 'Refresh' & 'Load More'
             if (!$data['options'] && $this->session->has_userdata('tour_report_criteria' . $user->user_id))
@@ -230,6 +241,8 @@ class Reports_tour extends Root_Controller
             $pagesize = $pagesize * 2;
         }
 
+        $department_id = $this->input->post('department_id');
+        $user_status = $this->input->post('user_status');
         $employee_id = $this->input->post('employee_id');
         $user_id = $this->input->post('user_id');
 
@@ -281,6 +294,14 @@ class Reports_tour extends Root_Controller
         if ($date_to)
         {
             $this->db->where('tour_setup.date_to <=', System_helper::get_time($date_to));
+        }
+        if ($department_id)
+        {
+            $this->db->where('user_info.department_id', $department_id);
+        }
+        if (trim($user_status))
+        {
+            $this->db->where('user.status', trim($user_status));
         }
         if ($division_id > 0)
         {
@@ -418,6 +439,70 @@ class Reports_tour extends Root_Controller
             $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->json_return($ajax);
         }
+    }
+
+    private function system_get_employee_dropdown()
+    {
+        $search_filter = $this->input->post();
+        $html_container_id = $this->input->post('html_container_id');
+
+        $this->db->from($this->config->item('table_login_setup_user') . ' user');
+        $this->db->select('user.id user_id, user.employee_id, user.status');
+
+        $this->db->join($this->config->item('table_login_setup_user_info') . ' user_info', 'user_info.user_id = user.id', 'INNER');
+        $this->db->select('user_info.name');
+
+        $this->db->join($this->config->item('table_login_setup_designation') . ' designation', 'designation.id = user_info.designation', 'LEFT');
+        $this->db->select('designation.name AS designation_name');
+
+        $this->db->join($this->config->item('table_login_setup_user_area') . ' user_area', 'user_area.user_id = user.id', 'INNER');
+        if ($search_filter['division_id'] > 0)
+        {
+            $this->db->where('user_area.division_id', $search_filter['division_id']);
+        }
+        if ($search_filter['zone_id'] > 0)
+        {
+            $this->db->where('user_area.zone_id', $search_filter['zone_id']);
+        }
+        if ($search_filter['territory_id'] > 0)
+        {
+            $this->db->where('user_area.territory_id', $search_filter['territory_id']);
+        }
+        $this->db->where('user_area.revision', 1);
+        $this->db->where('user_info.revision', 1);
+        $this->db->where('user.status !=', $this->config->item('system_status_delete'));
+        if ($search_filter['department_id'])
+        {
+            $this->db->where('user_info.department_id', $search_filter['department_id']);
+        }
+        if ($search_filter['user_status'])
+        {
+            $this->db->where('user.status', $search_filter['user_status']);
+        }
+        $this->db->order_by('user.status', 'ASC');
+        $this->db->order_by('designation.name', 'ASC');
+        $this->db->order_by('user_info.ordering', 'ASC');
+        $results = $this->db->get()->result_array();
+
+        $data = array();
+        $data['items'] = array();
+        $i = 0;
+        foreach ($results as $result)
+        {
+            $status = ($result['status'] == $this->config->item('system_status_inactive')) ? ' (' . $this->config->item('system_status_inactive') . ') - ' : "";
+            $data['items'][] = array(
+                'value' => $result['user_id'],
+                'text' => ++$i . ') ' . $result['employee_id'] . ' - ' . $status . $result['name'] . ' (' . $result['designation_name'] . ')'
+            );
+        }
+
+        if (!$data['items'])
+        {
+            $ajax['system_message'] = 'No Employees Found';
+        }
+        $ajax['status'] = true;
+        $ajax['system_content'][] = array("id" => $html_container_id, "html" => $this->load->view("dropdown_with_select", $data, true));
+        $this->json_return($ajax);
     }
 
     private function check_my_editable($item)
