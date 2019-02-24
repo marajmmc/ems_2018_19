@@ -267,7 +267,15 @@ $CI = & get_instance();
             get_filtered_employees_for_dropdown();
         });
 
-        $(document).on('change', ' #territory_id, #department_id, #user_status', function () {
+        $(document).on('change', '#territory_id', function () {
+            get_filtered_employees_for_dropdown();
+        });
+
+        $(document).on('change', '#department_id', function () {
+            get_filtered_employees_for_dropdown();
+        });
+
+        $(document).on('change', '#user_status', function () {
             get_filtered_employees_for_dropdown();
         });
 
@@ -307,5 +315,4 @@ $CI = & get_instance();
             }
         });
     }
-
 </script>
