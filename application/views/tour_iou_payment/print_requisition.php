@@ -24,7 +24,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 // Fetching Approver Info.
 if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
 {
-    $user_ids = array($item['user_approved_payment']);
+    $user_ids = array($item['user_approved_tour'], $item['user_approved_payment']);
     $users_info = System_helper::get_users_info($user_ids);
 }
 /*-------------------------------- PAGE PRINT CONFIGURATION -----------------------------------*/
@@ -112,14 +112,20 @@ $num_pages = ceil($total_records / $row_per_page);
                             <td><strong>Employee ID</strong></td>
                             <td><?php echo $item['employee_id']; ?></td>
                         </tr>
+                        <tr>
+                            <td><strong>Tour Approved By</strong></td>
+                            <td><?php echo $users_info[$item['user_approved_tour']]['name']; ?></td>
+                            <td><strong>Tour Approved Time</strong></td>
+                            <td><?php echo System_helper::display_date_time($item['date_approved_tour']); ?></td>
+                        </tr>
                         <?php
                         if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
                         {
                         ?>
                         <tr>
-                            <td><strong>Approved By</strong></td>
+                            <td><strong>IOU Approved By</strong></td>
                             <td><?php echo $users_info[$item['user_approved_payment']]['name']; ?></td>
-                            <td><strong>Approved Time</strong></td>
+                            <td><strong>IOU Approved Time</strong></td>
                             <td><?php echo System_helper::display_date_time($item['date_approved_payment']); ?></td>
                         </tr>
                         <?php
