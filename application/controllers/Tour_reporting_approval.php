@@ -417,6 +417,7 @@ class Tour_reporting_approval extends Root_Controller
             $this->db->join($this->config->item('table_ems_tour_reporting') . ' tour_reporting', 'tour_reporting.purpose_id = tour_purpose.id', 'LEFT');
             $this->db->select("GROUP_CONCAT( tour_reporting.date_reporting SEPARATOR ', ' ) AS reporting_dates");
             $this->db->where('tour_purpose.tour_id', $item_id);
+            $this->db->where('tour_purpose.status !=', $this->config->item('system_status_delete'));
             $this->db->group_by('p_id');
             $data['items'] = $this->db->get()->result_array();
 
@@ -625,6 +626,7 @@ class Tour_reporting_approval extends Root_Controller
             $this->db->join($this->config->item('table_ems_tour_reporting') . ' tour_reporting', 'tour_reporting.purpose_id = tour_purpose.id', 'LEFT');
             $this->db->select("GROUP_CONCAT( tour_reporting.date_reporting SEPARATOR ', ' ) AS reporting_dates");
             $this->db->where('tour_purpose.tour_id', $item_id);
+            $this->db->where('tour_purpose.status !=', $this->config->item('system_status_delete'));
             $this->db->group_by('p_id');
             $data['items'] = $this->db->get()->result_array();
 

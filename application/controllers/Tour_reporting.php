@@ -687,6 +687,7 @@ class Tour_reporting extends Root_Controller
             $this->db->from($this->config->item('table_ems_tour_purpose'));
             $this->db->select('*');
             $this->db->where('tour_id', $item_id);
+            $this->db->where('status !=', $this->config->item('system_status_delete'));
             $data['item']['purposes'] = $this->db->get()->result_array();
 
 

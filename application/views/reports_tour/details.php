@@ -7,6 +7,7 @@ $purposes = array();
 $CI->db->from($CI->config->item('table_ems_tour_purpose'));
 $CI->db->select('id, purpose, type');
 $CI->db->where('tour_id', $item['id']);
+$CI->db->where('status !=', $CI->config->item('system_status_delete'));
 $result = $CI->db->get()->result_array();
 if ($result)
 {
