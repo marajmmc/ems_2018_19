@@ -6,6 +6,7 @@ class Tour_reporting extends Root_Controller
     public $permissions;
     public $controller_url;
     public $locations;
+    public $common_view_location;
     public $custom_image_types;
 
     public function __construct()
@@ -14,6 +15,7 @@ class Tour_reporting extends Root_Controller
         $this->message = "";
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
+        $this->common_view_location = 'tour_setup';
         $this->locations = User_helper::get_locations();
         $this->custom_image_types = 'gif|jpg|jpe|jpeg|png';
         if (!($this->locations))
@@ -1284,7 +1286,7 @@ class Tour_reporting extends Root_Controller
 
             $data['title'] = 'Tour Details :: ' . $data['item']['title'] . ' ( Tour ID:' . $data['item']['tour_setup_id'] . ' )';
             $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->common_view_location . "/details", $data, true));
             if ($this->message)
             {
                 $ajax['system_message'] = $this->message;
