@@ -6,6 +6,7 @@ class Tour_reporting extends Root_Controller
     public $permissions;
     public $controller_url;
     public $locations;
+    public $custom_image_types;
 
     public function __construct()
     {
@@ -14,6 +15,7 @@ class Tour_reporting extends Root_Controller
         $this->permissions = User_helper::get_permission(get_class($this));
         $this->controller_url = strtolower(get_class($this));
         $this->locations = User_helper::get_locations();
+        $this->custom_image_types = 'gif|jpg|jpe|jpeg|png';
         if (!($this->locations))
         {
             $ajax['status'] = false;
@@ -927,7 +929,7 @@ class Tour_reporting extends Root_Controller
 
         // Image Saving
         $path = 'images/tour_reporting/' . $item_id;
-        $uploaded_files = System_helper::upload_file($path);
+        $uploaded_files = System_helper::upload_file($path, $this->custom_image_types);
         foreach($uploaded_files as $file) // Validation for uploaded Files
         {
             if(!$file['status'])

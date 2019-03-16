@@ -278,10 +278,10 @@ if ($items) // OLD ITEMS
             <div class="row show-grid">
                 <div class="col-xs-4">
                     <label class="control-label pull-right">Picture (If any)</label>
+                    <br/><p style="clear:both; text-align:right; font-size:0.85em">Allowed Image types(.<?php echo str_replace('|', ', .', $CI->custom_image_types); ?>)</p>
                 </div>
                 <div class="col-xs-4">
-                    <input type="file" class="form-control old_browse_button" name="old_image_<?php echo $info['id']; ?>" data-preview-container="#old_image_reporting_<?php echo $info['id']; ?>" data-preview-width="<?php echo $img_width; ?>"/>
-                </div>
+                    <input type="file" class="form-control old_browse_button" name="old_image_<?php echo $info['id']; ?>" data-preview-container="#old_image_reporting_<?php echo $info['id']; ?>" data-preview-width="<?php echo $img_width; ?>"/>                </div>
             </div>
 
             <div class="row show-grid">
