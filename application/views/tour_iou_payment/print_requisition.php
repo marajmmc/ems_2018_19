@@ -22,17 +22,22 @@ if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1))
 $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 // Fetching Approver Info.
-if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
+$user_ids = array();
+if (isset($item['user_approved_tour']) && ($item['user_approved_tour'] != ""))
 {
-    $user_ids = array($item['user_approved_tour'], $item['user_approved_payment']);
-    $users_info = System_helper::get_users_info($user_ids);
+    $user_ids[] = $item['user_approved_tour'];
 }
+if (isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
+{
+    $user_ids[] = $item['user_approved_payment'];
+}
+$users_info = System_helper::get_users_info($user_ids);
 /*-------------------------------- PAGE PRINT CONFIGURATION -----------------------------------*/
 $width = 8.27 * 100;
 $height = 11.69 * 100;
 $row_per_page = 20;
-$header_image = $CI->config->item('system_base_url_picture').'images/print/header.jpg';
-$footer_image = $CI->config->item('system_base_url_picture').'images/print/footer.jpg';
+$header_image = $CI->config->item('system_base_url_picture') . 'images/print/header.jpg';
+$footer_image = $CI->config->item('system_base_url_picture') . 'images/print/footer.jpg';
 
 $result = Query_helper::get_info($CI->config->item('table_system_setup_print'), '*', array('controller ="' . $this->controller_url . '"', 'method ="print_requisition"'), 1);
 if ($result)
@@ -63,6 +68,7 @@ $num_pages = ceil($total_records / $row_per_page);
             <div class="row show-grid">
                 <div class="col-xs-12">
                     <img src="<?php echo $header_image; ?>" style="width: 100%">
+
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -79,8 +85,8 @@ $num_pages = ceil($total_records / $row_per_page);
                             <td><?php echo $item['tour_setup_id']; ?></td>
                             <td><strong><?php echo $CI->lang->line('LABEL_DATE'); ?></strong></td>
                             <td>
-                                <b><?php echo System_helper::display_date($item['date_from']) ?></b>
-                                &nbsp; to &nbsp; <b><?php echo System_helper::display_date($item['date_to']) ?></b>
+                                <b><?php echo System_helper::display_date($item['date_from']) ?></b> &nbsp; to &nbsp;
+                                <b><?php echo System_helper::display_date($item['date_to']) ?></b>
                             </td>
                         </tr>
                         <tr>
@@ -112,22 +118,27 @@ $num_pages = ceil($total_records / $row_per_page);
                             <td><strong>Employee ID</strong></td>
                             <td><?php echo $item['employee_id']; ?></td>
                         </tr>
-                        <tr>
-                            <td><strong>Tour Approved By</strong></td>
-                            <td><?php echo $users_info[$item['user_approved_tour']]['name']; ?></td>
-                            <td><strong>Tour Approved Time</strong></td>
-                            <td><?php echo System_helper::display_date_time($item['date_approved_tour']); ?></td>
-                        </tr>
                         <?php
-                        if(isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
+                        if (isset($item['user_approved_tour']) && ($item['user_approved_tour'] != ""))
                         {
-                        ?>
-                        <tr>
-                            <td><strong>IOU Approved By</strong></td>
-                            <td><?php echo $users_info[$item['user_approved_payment']]['name']; ?></td>
-                            <td><strong>IOU Approved Time</strong></td>
-                            <td><?php echo System_helper::display_date_time($item['date_approved_payment']); ?></td>
-                        </tr>
+                            ?>
+                            <tr>
+                                <td><strong>Tour Approved By</strong></td>
+                                <td><?php echo $users_info[$item['user_approved_tour']]['name']; ?></td>
+                                <td><strong>Tour Approved Time</strong></td>
+                                <td><?php echo System_helper::display_date_time($item['date_approved_tour']); ?></td>
+                            </tr>
+                        <?php
+                        }
+                        if (isset($item['user_approved_payment']) && ($item['user_approved_payment'] != ""))
+                        {
+                            ?>
+                            <tr>
+                                <td><strong>IOU Approved By</strong></td>
+                                <td><?php echo $users_info[$item['user_approved_payment']]['name']; ?></td>
+                                <td><strong>IOU Approved Time</strong></td>
+                                <td><?php echo System_helper::display_date_time($item['date_approved_payment']); ?></td>
+                            </tr>
                         <?php
                         }
                         ?>
@@ -147,7 +158,8 @@ $num_pages = ceil($total_records / $row_per_page);
                         $total_amount = 0;
                         foreach ($iou_items as $key => $iou_item)
                         {
-                            if(!isset($amount_iou_items[$key]) || $amount_iou_items[$key] <=0){
+                            if (!isset($amount_iou_items[$key]) || $amount_iou_items[$key] <= 0)
+                            {
                                 continue;
                             }
                             $current_iou_amount = $amount_iou_items[$key];
@@ -169,12 +181,14 @@ $num_pages = ceil($total_records / $row_per_page);
                                 <strong><?php echo System_helper::get_string_amount($total_amount); ?></strong>
                             </td>
                         </tr>
-                        <?php if($item['remarks_approved_tour']!=""){ ?>
-                        <tr>
-                            <td colspan="3">
-                                <strong>Remarks:</strong> <?php echo $item['remarks_approved_tour']; ?>
-                            </td>
-                        </tr>
+                        <?php if ($item['remarks_approved_tour'] != "")
+                        {
+                            ?>
+                            <tr>
+                                <td colspan="3">
+                                    <strong>Remarks:</strong> <?php echo $item['remarks_approved_tour']; ?>
+                                </td>
+                            </tr>
                         <?php } ?>
                     </table>
                 </div>
@@ -182,7 +196,8 @@ $num_pages = ceil($total_records / $row_per_page);
 
             <div class="row show-grid">
                 <div class="col-xs-12">
-                    <img src="<?php echo $footer_image; ?>" style="width: 100%;" />
+                    <img src="<?php echo $footer_image; ?>" style="width: 100%;"/>
+
                     <div class="clearfix"></div>
                 </div>
             </div>

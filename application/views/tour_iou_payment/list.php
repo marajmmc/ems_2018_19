@@ -162,7 +162,8 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             element.html(get_string_amount(value));
                             return element[0].outerHTML;
                         }
-                    }
+                    },
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_APPROVED_PAYMENT'); ?>', dataField: 'status_approved_payment', filtertype: 'list', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['status_approved_payment']?0:1;?>},
                 ]
             });
     });

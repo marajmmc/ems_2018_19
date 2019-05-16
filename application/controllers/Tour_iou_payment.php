@@ -97,9 +97,9 @@ class Tour_iou_payment extends Root_Controller
         $data['date_from'] = 1;
         $data['date_to'] = 1;
         $data['amount_iou_request'] = 1;
+        $data['status_approved_payment'] = 1;
         if ($method == 'list_all')
         {
-            $data['status_approved_payment'] = 1;
             $data['status_paid_payment'] = 1;
             $data['status_approved_adjustment'] = 1;
         }
