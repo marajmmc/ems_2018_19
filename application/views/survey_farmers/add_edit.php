@@ -24,6 +24,7 @@ $action_buttons[] = array
     'data-form' => '#save_form'
 );
 $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
+
 ?>
 
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
@@ -56,13 +57,13 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                             <div class="form-row">
                                 <div class="col-md-3">
                                     <label for="validationTooltip01"><?php echo $this->lang->line('SURVEY_FARMER_DISTRICT_NAME');?></label>
-                                    <select class="form-control" id="district_id" name="district_id">
+                                    <select class="form-control" id="district_id" name="item[district_id]">
                                         <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                                         <?php
                                         foreach ($districts as $district)
                                         {
                                             ?>
-                                            <option value="<?php echo $district['value'] ?>"><?php echo $district['text']; ?></option>
+                                            <option value="<?php echo $district['value'] ?>" <?php if($item['district_id']==$district['value']){echo "selected='selected'";}?>><?php echo $district['text']; ?></option>
                                         <?php
                                         }
                                         ?>
@@ -70,13 +71,14 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                 </div>
                                 <div class="col-md-3">
                                     <label for="validationTooltip02"><?php echo $this->lang->line('SURVEY_FARMER_UPAZILLA_NAME');?></label>
-                                    <select class="form-control" id="upazilla_id" name="upazilla_id">
+                                    <select class="form-control" id="upazilla_id" name="item[upazilla_id]">
                                         <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+
                                     </select>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="validationTooltip02"><?php echo $this->lang->line('SURVEY_FARMER_UNION_NAME');?></label>
-                                    <select class="form-control" id="union_id" name="union_id">
+                                    <select class="form-control" id="union_id" name="item[union_id]">
                                         <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
 
                                     </select>
@@ -235,6 +237,30 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         </tr>
                         </thead>
                         <tbody>
+                        <?php
+                        foreach($items as $info)
+                        {
+                            ?>
+                            <tr>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][vegetable_variety_name]" id="vegetable_variety_name_<?php echo $info['id'];?>" value="<?php echo $info['vegetable_variety_name'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][area_size]" id="area_size_<?php echo $info['id'];?>" value="<?php echo $info['area_size'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_total_kg]" id="production_total_kg_<?php echo $info['id'];?>" value="<?php echo $info['production_total_kg'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][cost_total_produced]" id="cost_total_produced_<?php echo $info['id'];?>" value="<?php echo $info['cost_total_produced'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_cost_land_preparation]" id="production_cost_land_preparation_<?php echo $info['id'];?>" value="<?php echo $info['production_cost_land_preparation'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_cost_wages]" id="production_cost_wages_<?php echo $info['id'];?>" value="<?php echo $info['production_cost_wages'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_cost_irrigation]" id="production_cost_irrigation_<?php echo $info['id'];?>" value="<?php echo $info['production_cost_irrigation'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_cost_fertilizers]" id="production_cost_fertilizers_<?php echo $info['id'];?>" value="<?php echo $info['production_cost_fertilizers'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_cost_pesticide]" id="production_cost_pesticide_<?php echo $info['id'];?>" value="<?php echo $info['production_cost_pesticide'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][production_cost_others]" id="production_cost_others_<?php echo $info['id'];?>" value="<?php echo $info['production_cost_others'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][cost_total]" id="cost_total_<?php echo $info['id'];?>" value="<?php echo $info['cost_total'];?>"></td>
+                                <td><input type="text" class="form-control" name="items[<?php echo $info['id'];?>][net_profit]" id="net_profit_<?php echo $info['id'];?>" value="<?php echo $info['net_profit'];?>"></td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
+                                </td>
+                            </tr>
+                        <?php
+                        }
+                        ?>
                         <tr class="add_more_tr_last">
                             <td colspan="14">
                                 <button type="button" class="btn btn-success btn-sm system_button_add_more pull-right" data-current-id="0">+ যোগ করুন</button>
@@ -479,40 +505,40 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         <tbody>
         <tr>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control vegetable_variety_name"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control area_size"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_total_kg"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control cost_total_produced"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_cost_land_preparation"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_cost_wages"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_cost_irrigation"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_cost_fertilizers"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_cost_pesticide"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control production_cost_others"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control cost_total"/>
             </td>
             <td>
-                <input type="text" class="form-control purpose"/>
+                <input type="text" class="form-control net_profit"/>
             </td>
             <td style="width:1%">
                 <button type="button" class="btn btn-danger btn-sm system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -531,13 +557,63 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
         system_off_events(); // Triggers
         var system_upazillas = JSON.parse('<?php echo json_encode($upazillas); ?>');
         var system_unions = JSON.parse('<?php echo json_encode($unions); ?>');
+        <?php
+        if($item['id']>0 && $item['district_id']>0)
+        {
+            ?>
+        $("#upazilla_id").html(get_dropdown_with_select(system_upazillas[<?php echo $item['district_id']?>],<?php echo $item['upazilla_id']?>));
+        <?php
+            if($item['upazilla_id']>0)
+            {
+                 ?>
+                $("#union_id").html(get_dropdown_with_select(system_unions[<?php echo $item['upazilla_id']?>],<?php echo $item['union_id']?>));
+                <?php
+            }
+        }
+        ?>
         $(document).on("click", ".system_button_add_more", function (event)
         {
             var current_id = parseInt($(this).attr('data-current-id'));
             current_id = current_id + 1;
             $(this).attr('data-current-id', current_id);
             var content_id = '#system_content_add_more table tbody';
-            $(content_id + ' .purpose').attr('name', 'items[' + current_id + ']');
+
+            $(content_id+' .vegetable_variety_name').attr('name','items['+current_id+'][vegetable_variety_name]');
+            $(content_id+' .vegetable_variety_name').attr('id','vegetable_variety_name_'+current_id);
+
+            $(content_id+' .area_size').attr('name','items['+current_id+'][area_size]');
+            $(content_id+' .area_size').attr('id','area_size_'+current_id);
+
+            $(content_id+' .production_total_kg').attr('name','items['+current_id+'][production_total_kg]');
+            $(content_id+' .production_total_kg').attr('id','production_total_kg_'+current_id);
+
+            $(content_id+' .cost_total_produced').attr('name','items['+current_id+'][cost_total_produced]');
+            $(content_id+' .cost_total_produced').attr('id','cost_total_produced_'+current_id);
+
+            $(content_id+' .production_cost_land_preparation').attr('name','items['+current_id+'][production_cost_land_preparation]');
+            $(content_id+' .production_cost_land_preparation').attr('id','production_cost_land_preparation_'+current_id);
+
+            $(content_id+' .production_cost_wages').attr('name','items['+current_id+'][production_cost_wages]');
+            $(content_id+' .production_cost_wages').attr('id','production_cost_wages_'+current_id);
+
+            $(content_id+' .production_cost_irrigation').attr('name','items['+current_id+'][production_cost_irrigation]');
+            $(content_id+' .production_cost_irrigation').attr('id','production_cost_irrigation_'+current_id);
+
+            $(content_id+' .production_cost_fertilizers').attr('name','items['+current_id+'][production_cost_fertilizers]');
+            $(content_id+' .production_cost_fertilizers').attr('id','production_cost_fertilizers_'+current_id);
+
+            $(content_id+' .production_cost_pesticide').attr('name','items['+current_id+'][production_cost_pesticide]');
+            $(content_id+' .production_cost_pesticide').attr('id','production_cost_pesticide_'+current_id);
+
+            $(content_id+' .production_cost_others').attr('name','items['+current_id+'][production_cost_others]');
+            $(content_id+' .production_cost_others').attr('id','production_cost_others_'+current_id);
+
+            $(content_id+' .cost_total').attr('name','items['+current_id+'][cost_total]');
+            $(content_id+' .cost_total').attr('id','cost_total_'+current_id);
+
+            $(content_id+' .net_profit').attr('name','items['+current_id+'][net_profit]');
+            $(content_id+' .net_profit').attr('id','net_profit_'+current_id);
+
             var html = $(content_id).html();
             $("#system_add_more_table_container tbody tr.add_more_tr_last").before(html);
         });
