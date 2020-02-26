@@ -246,8 +246,8 @@ class Survey_farmers extends Root_Controller
             {
                 $data['item'][$field->name]='';
             }
-
-            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['items']=array();
+            /*$data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $results=Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'),array('id value','name text','district_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $data['upazillas']=array();
             foreach($results as $result)
@@ -255,6 +255,20 @@ class Survey_farmers extends Root_Controller
                 $data['upazillas'][$result['district_id']][]=$result;
             }
             $results=Query_helper::get_info($this->config->item('table_login_setup_location_unions'),array('id value','name text','upazilla_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['unions']=array();
+            foreach($results as $result)
+            {
+                $data['unions'][$result['upazilla_id']][]=$result;
+            }*/
+
+            $data['districts']=Query_helper::get_info($this->config->item('table_ems_survey_farmers_districts'),array('id value','name text'),array());
+            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_upazilas'),array('id value','name text','district_id'),array());
+            $data['upazillas']=array();
+            foreach($results as $result)
+            {
+                $data['upazillas'][$result['district_id']][]=$result;
+            }
+            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_unions'),array('id value','name text','upazilla_id'),array());
             $data['unions']=array();
             foreach($results as $result)
             {
@@ -301,21 +315,21 @@ class Survey_farmers extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $results=Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'),array('id value','name text','district_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['districts']=Query_helper::get_info($this->config->item('table_ems_survey_farmers_districts'),array('id value','name text'),array());
+            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_upazilas'),array('id value','name text','district_id'),array());
             $data['upazillas']=array();
             foreach($results as $result)
             {
                 $data['upazillas'][$result['district_id']][]=$result;
             }
-            $results=Query_helper::get_info($this->config->item('table_login_setup_location_unions'),array('id value','name text','upazilla_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_unions'),array('id value','name text','upazilla_id'),array());
             $data['unions']=array();
             foreach($results as $result)
             {
                 $data['unions'][$result['upazilla_id']][]=$result;
             }
 
-            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id,'status ="'.$this->config->item('system_status_active').'"'));
+            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title'] = "Edit Farmer Base Line Survey Form 2020";
             $ajax['status'] = true;
@@ -358,7 +372,6 @@ class Survey_farmers extends Root_Controller
                 $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
             }
-
         }
         else
         {
@@ -370,7 +383,7 @@ class Survey_farmers extends Root_Controller
             }
         }
 
-        $results = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id));
+        $results = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id,'status ="'.$this->config->item('system_status_active').'"'));
         $items_old=array();
         foreach($results as $result)
         {
@@ -417,14 +430,14 @@ class Survey_farmers extends Root_Controller
         }
         else
         {
-            Query_helper::add($this->config->item('table_ems_survey_farmers'), $fields, FALSE);
+            $survey_id=Query_helper::add($this->config->item('table_ems_survey_farmers'), $fields, FALSE);
 
             if(sizeof($items)>0)
             {
                 foreach($items as $info)
                 {
                     $data=$info;
-                    $data['survey_id']=$id;
+                    $data['survey_id']=$survey_id;
                     $data['status']= $this->config->item('system_status_active');
                     Query_helper::add($this->config->item('table_ems_survey_farmers_details'), $data, FALSE);
                 }
@@ -482,13 +495,15 @@ class Survey_farmers extends Root_Controller
 
     private function check_validation()
     {
-        /*$this->load->library('form_validation');
-        $this->form_validation->set_rules('id', $this->lang->line('LABEL_ID'), 'required');
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[farmer_name]', $this->lang->line('SURVEY_FARMER_TITLE_FARMER_NAME'), 'required');
+        $this->form_validation->set_rules('item[father_husband_name]', $this->lang->line('SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'), 'required');
+        $this->form_validation->set_rules('item[mobile_no]', $this->lang->line('SURVEY_FARMER_MOBILE_NO'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
             return false;
-        }*/
+        }
         return true;
     }
 }

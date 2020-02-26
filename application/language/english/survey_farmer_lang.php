@@ -8,9 +8,9 @@ $lang['SURVEY_FARMER_OTHERS_PLACEHOLDER'] = 'যদি অন্যান্য 
 // 1. farmer name
 $lang['SURVEY_FARMER_TITLE_FARMER_NAME'] = '১. কৃষকের নাম: <br /><small> 1.	Farmer’s Name: </small>';
 //2. father_husband_name
-$lang['SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'] = '২. পিতা/স্বামীর নাম:: <br /><small> 2.	Father/ Husband’s Name:</small>';
+$lang['SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'] = '২. পিতা/স্বামীর নাম: <br /><small> 2.	Father/ Husband’s Name:</small>';
 //3. address
-$lang['SURVEY_FARMER_TITLE_ADDRESS'] = '৩.	ঠিকানা:  : <br /><small> 3.	Address:</small>';
+$lang['SURVEY_FARMER_TITLE_ADDRESS'] = '৩.	ঠিকানা:  <br /><small> 3.	Address:</small>';
 $lang['SURVEY_FARMER_DISTRICT_NAME'] = 'জেলা:';
 $lang['SURVEY_FARMER_UPAZILLA_NAME'] = 'উপজেলা:';
 $lang['SURVEY_FARMER_UNION_NAME'] = 'ইউনিয়ন:';
@@ -19,10 +19,10 @@ $lang['SURVEY_FARMER_MOBILE_NO'] = 'মোবাইল:';
 $lang['SURVEY_FARMER_NID_NO'] = 'এনআইডি নং:';
 $lang['SURVEY_FARMER_GROWING_AREA'] = 'আবাদি এলাকা:';
 //4. father_husband_name
-$lang['SURVEY_FARMER_TITLE_FAMILY_MEMBER'] = '৪.	আপনার পরিবারের সদস্য কতজন : <br /><small> 4.	No. of Family </small>';
+$lang['SURVEY_FARMER_TITLE_FAMILY_MEMBER'] = '৪.	আপনার পরিবারের সদস্য কতজন : <br /><small> 4.	No. of Family Members</small>';
 $lang['SURVEY_FARMER_FAMILY_MEMBER_FEMALE'] = 'নারী:';
 $lang['SURVEY_FARMER_FAMILY_MEMBER_MALE'] = 'পুরুষ:';
-$lang['SURVEY_FARMER_FAMILY_MEMBER_OTHERS'] = 'উভলিঙ্গ:';
+$lang['SURVEY_FARMER_FAMILY_MEMBER_OTHERS'] = 'অন্যান্য:';
 $lang['SURVEY_FARMER_FAMILY_MEMBER_TOTAL'] = 'মোট:';
 //5. land size
 $lang['SURVEY_FARMER_TITLE_LAND_SIZE'] = '৫. জমির বিবরণ (শতাংশ):<br /><small> 5.	Land Size(decimal):</small>';
@@ -66,8 +66,8 @@ $lang['SURVEY_FARMER_SEEDS_COLLECT_HATBAZAR'] = ' হাট/বাজার';
 $lang['SURVEY_FARMER_SEEDS_COLLECT_OWNSEEDS'] = 'নিজস্ব বীজ';
 // 14
 $lang['SURVEY_FARMER_TITLE_ENSURE_SEED_QUALITY'] = '১৪. আপনার সংগৃহিত সবজি বীজ যে ভাল বীজ তা আপনি কিভাবে নিশ্চিত করেন? <br /><small> 14. How do you ensure your   quality of seeds?  </small>';
-$lang['SURVEY_FARMER_ENSURE_SEED_QUALITY_GERMINATION'] = 'ডিলার';
-$lang['SURVEY_FARMER_ENSURE_SEED_QUALITY_FAITH'] = 'রিটেইলার ';
+$lang['SURVEY_FARMER_ENSURE_SEED_QUALITY_GERMINATION'] = 'অঙ্কুরোদগম পরীক্ষা করে';
+$lang['SURVEY_FARMER_ENSURE_SEED_QUALITY_FAITH'] = 'বিশ্বাসের উপর ';
 // 15
 $lang['SURVEY_FARMER_TITLE_GOOD_SEED_PURCHASE'] = '১৫. ভাল বীজের নিশ্চয়তা নিয়ে কেউ যদি আপনার কাছে বীজ নিয়ে আসে তাহলে কি আপনি তার কাছ থেকে বীজ ক্রয় করবেন ? <br /><small> 15. If anybody/dealer ensures you the seed quality, would you purchase from him?  </small>';
 // 16
