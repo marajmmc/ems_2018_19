@@ -47,14 +47,6 @@ class Survey_farmers extends Root_Controller
         {
             $this->system_get_items();
         }
-        elseif ($action == "list_all")
-        {
-            $this->system_list_all();
-        }
-        elseif ($action == "get_items_all")
-        {
-            $this->system_get_items_all();
-        }
         elseif ($action == "add")
         {
             $this->system_add();
@@ -186,79 +178,11 @@ class Survey_farmers extends Root_Controller
         $this->json_return($items);
     }
 
-    private function system_list_all()
-    {
-        if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
-        {
-            $user = User_helper::get_user();
-            $method = 'list_all';
-            $data = array();
-            $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers($method));
-            $data['title'] = "Farmer Base Line Survey Form 2020 - All List";
-            $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/list_all", $data, true));
-            if ($this->message)
-            {
-                $ajax['system_message'] = $this->message;
-            }
-            $ajax['system_page_url'] = site_url($this->controller_url . '/index/' . $method);
-            $this->json_return($ajax);
-        }
-        else
-        {
-            $ajax['status'] = false;
-            $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->json_return($ajax);
-        }
-    }
-
-    private function system_get_items_all()
-    {
-        /*$current_records = $this->input->post('total_records');
-        if (!$current_records) {
-            $current_records = 0;
-        }
-        $pagesize = $this->input->post('pagesize');
-        if (!$pagesize) {
-            $pagesize = 100;
-        } else {
-            $pagesize = $pagesize * 2;
-        }
-
-        $this->common_query(); // Call Common part of below Query Stack
-
-        // Additional Conditions -STARTS
-        if ($this->locations['division_id'] > 0) {
-            $this->db->where('division.id', $this->locations['division_id']);
-            if ($this->locations['zone_id'] > 0) {
-                $this->db->where('zone.id', $this->locations['zone_id']);
-                if ($this->locations['territory_id'] > 0) {
-                    $this->db->where('territory.id', $this->locations['territory_id']);
-                    if ($this->locations['district_id'] > 0) {
-                        $this->db->where('district.id', $this->locations['district_id']);
-                    }
-                }
-            }
-        }
-        $this->db->where('pref.status', $this->config->item('system_status_active'));
-        $this->db->limit($pagesize, $current_records);
-        // Additional Conditions -ENDS
-
-        $items = $this->db->get()->result_array();
-        $this->db->flush_cache(); // Flush/Clear current Query Stack
-
-        foreach ($items as &$item) {
-            $item['requested_on'] = System_helper::display_date_time($item['date_created']);
-        }*/
-
-        $items=array();
-        $this->json_return($items);
-    }
-
     private function system_add()
     {
         if (isset($this->permissions['action1']) && ($this->permissions['action1'] == 1))
         {
+            $user=User_helper::get_user();
             $data = array();
             $fields = $this->db->field_data($this->config->item('table_ems_survey_farmers'));
             foreach ($fields as $field)
@@ -266,20 +190,6 @@ class Survey_farmers extends Root_Controller
                 $data['item'][$field->name]='';
             }
             $data['items']=array();
-            /*$data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $results=Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'),array('id value','name text','district_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
-            $data['upazillas']=array();
-            foreach($results as $result)
-            {
-                $data['upazillas'][$result['district_id']][]=$result;
-            }
-            $results=Query_helper::get_info($this->config->item('table_login_setup_location_unions'),array('id value','name text','upazilla_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
-            $data['unions']=array();
-            foreach($results as $result)
-            {
-                $data['unions'][$result['upazilla_id']][]=$result;
-            }*/
-
             $data['districts']=Query_helper::get_info($this->config->item('table_ems_survey_farmers_districts'),array('id value','name text'),array());
             $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_upazilas'),array('id value','name text','district_id'),array());
             $data['upazillas']=array();
@@ -293,6 +203,9 @@ class Survey_farmers extends Root_Controller
             {
                 $data['unions'][$result['upazilla_id']][]=$result;
             }
+            $data['user_info']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
+            $data['user_info']['name']=$user->name;
+            $data['user_info']['mobile_no']=$user->mobile_no;
 
             $data['title'] = "New Farmer Base Line Survey Form 2020";
             $ajax['status'] = true;
@@ -324,6 +237,7 @@ class Survey_farmers extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
+            $user=User_helper::get_user();
             $data = array();
             $data['item']=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('id='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1);
             if (!$data['item'])
@@ -349,6 +263,9 @@ class Survey_farmers extends Root_Controller
             }
 
             $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
+            $data['user']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
+            $data['user']['name']=$user->name;
+            $data['user']['mobile_no']=$user->mobile_no;
 
             $data['title'] = "Edit Farmer Base Line Survey Form 2020";
             $ajax['status'] = true;
@@ -371,7 +288,7 @@ class Survey_farmers extends Root_Controller
     {
         $user = User_helper::get_user();
         $time = time();
-
+        $system_form_token = $this->input->post("system_form_token");
         $id = $this->input->post('id');
         $item = $this->input->post('item');
         $items = $this->input->post('items');
@@ -381,6 +298,13 @@ class Survey_farmers extends Root_Controller
             $ajax['status'] = false;
             $ajax['system_message'] = $this->message;
             $this->json_return($ajax);
+        }
+
+        $token_id = Token_helper::get_token_id($system_form_token);
+        if($token_id>0)
+        {
+            $this->message="This Data Already Saved.";
+            $this->system_list();
         }
 
         if ($id > 0)
@@ -415,6 +339,7 @@ class Survey_farmers extends Root_Controller
         foreach ($results as $result)
         {
             $fields[$result->name]=isset($item[$result->name])?$item[$result->name]:'';
+            $fields['date_collection_data']=System_helper::get_time($item['date_collection_data']);
             $fields['status']=$this->config->item('system_status_active');
             $fields['date_created']=$time;
             $fields['user_created']=$user->user_id;
@@ -462,6 +387,8 @@ class Survey_farmers extends Root_Controller
                 }
             }
         }
+
+        Token_helper::update_token($token_id, $system_form_token);
 
         $this->db->trans_complete(); //DB Transaction Handle END
 
@@ -518,6 +445,7 @@ class Survey_farmers extends Root_Controller
         $this->form_validation->set_rules('item[farmer_name]', $this->lang->line('SURVEY_FARMER_TITLE_FARMER_NAME'), 'required');
         $this->form_validation->set_rules('item[father_husband_name]', $this->lang->line('SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'), 'required');
         $this->form_validation->set_rules('item[mobile_no]', $this->lang->line('SURVEY_FARMER_MOBILE_NO'), 'required');
+        $this->form_validation->set_rules('item[date_collection_data]', $this->lang->line('SURVEY_FARMER_TITLE_DATE'), 'required');
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();

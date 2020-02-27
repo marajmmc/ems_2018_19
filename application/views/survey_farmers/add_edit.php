@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
-
+$user=User_helper::get_user();
 $action_buttons = array();
 $action_buttons[] = array
 (
@@ -27,7 +27,8 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 ?>
 
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url . '/index/save'); ?>" method="post">
-    <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>"/>
+    <input type="hidden" id="id" name="id" value="<?php echo $item['id']; ?>" />
+    <input type="hidden" id="system_form_token" name="system_form_token" value="<?php echo time().'_'.$user->user_id; ?>" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -407,7 +408,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                                 <input class="form-check-input" type="checkbox" id="ensure_seed_quality_others" name="item[ensure_seed_quality_others]" value="1" <?php if($item['ensure_seed_quality_others']==1){echo "checked=true";}?> >
                                 <label class="form-check-label" for="ensure_seed_quality_others">
                                     <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS');?>
-                                    <input type="text" class=" form-inline" id="seeds_collect_others_remarks" name="item[seeds_collect_others_remarks]" value="<?php echo $item['seeds_collect_others_remarks']?>" placeholder="<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS_PLACEHOLDER');?>"  style="width: 250px;"/>
+                                    <input type="text" class=" form-inline" id="ensure_seed_quality_others_remarks" name="item[ensure_seed_quality_others_remarks]" value="<?php echo $item['ensure_seed_quality_others_remarks']?>" placeholder="<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS_PLACEHOLDER');?>"  style="width: 250px;"/>
                                 </label>
                             </div>
                         </th>
@@ -534,6 +535,46 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                             </div>
                         </th>
                     </tr>
+                    <tr>
+                        <th>
+                            <div class="col-md-3">
+                                <label for="remarks"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DATE');?></label>
+                            </div>
+                        </th>
+                        <th>
+                            <input type="text" name="item[date_collection_data]" id="date_collection_data" class="form-control datepicker" value="<?php echo $item['date_collection_data']?System_helper::display_date($item['date_collection_data']):'';?>" readonly />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <div class="col-md-3">
+                                <label for="remarks"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY');?></label>
+                            </div>
+                        </th>
+                        <th>
+                            <span class="form-control"><?php echo $user_info['name']?></span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <div class="col-md-3">
+                                <label for="remarks"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_MOBILE_NO');?></label>
+                            </div>
+                        </th>
+                        <th>
+                            <span class="form-control"><?php echo $user_info['mobile_no']?></span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <div class="col-md-3">
+                                <label for="remarks"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_DESIGNATION');?></label>
+                            </div>
+                        </th>
+                        <th>
+                            <span class="form-control"><?php echo $user_info['designation']['text']?></span>
+                        </th>
+                    </tr>
                     </tbody>
                 </table>
 
@@ -594,6 +635,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
     jQuery(document).ready(function ($)
     {
+        $(".datepicker").datepicker({dateFormat : display_date_format});
         system_preset({controller: '<?php echo $CI->router->class; ?>'});
         system_off_events(); // Triggers
         var system_upazillas = JSON.parse('<?php echo json_encode($upazillas); ?>');

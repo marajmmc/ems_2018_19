@@ -104,6 +104,10 @@ $lang['SURVEY_FARMER_TITLE_DO_KNOW_ARM'] = '২০. আপনি " এ আর �
 $lang['SURVEY_FARMER_DO_KNOW_ARM_REMARKS'] = 'যদি হা হয় তাহলে কিভাবে জানেন ?  ';
 
 $lang['SURVEY_FARMER_TITLE_REMARKS'] = 'মন্তব্য <br /><small> Remarks</small>';
+$lang['SURVEY_FARMER_TITLE_DATE'] = 'তারিখ <br /><small> Date</small>';
+$lang['SURVEY_FARMER_TITLE_ENTRY_BY'] = 'তথ্য সংগ্রহকারীর নাম <br /><small> Name of the data collector</small>';
+$lang['SURVEY_FARMER_TITLE_ENTRY_BY_MOBILE_NO'] = 'মোবাইল <br /><small> Mobile</small>';
+$lang['SURVEY_FARMER_TITLE_ENTRY_BY_DESIGNATION'] = 'পদবী <br /><small> Designation</small>';
 
 
 ///////////////////////////////// Only Bangla /////////////////////////
