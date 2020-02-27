@@ -248,21 +248,21 @@ class Survey_farmers extends Root_Controller
                 $this->json_return($ajax);
             }
 
-            $data['districts']=Query_helper::get_info($this->config->item('table_ems_survey_farmers_districts'),array('id value','name text'),array());
-            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_upazilas'),array('id value','name text','district_id'),array());
+            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $results=Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'),array('id value','name text','district_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $data['upazillas']=array();
             foreach($results as $result)
             {
                 $data['upazillas'][$result['district_id']][]=$result;
             }
-            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_unions'),array('id value','name text','upazilla_id'),array());
+            $results=Query_helper::get_info($this->config->item('table_login_setup_location_unions'),array('id value','name text','upazilla_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $data['unions']=array();
             foreach($results as $result)
             {
                 $data['unions'][$result['upazilla_id']][]=$result;
             }
 
-            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
+            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id,'status ="'.$this->config->item('system_status_active').'"'));
             $data['user_info']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
             $data['user_info']['name']=$user->name;
             $data['user_info']['mobile_no']=$user->mobile_no;
@@ -418,14 +418,38 @@ class Survey_farmers extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
+            $data = array();
 
-            $data = $this->get_item_info($item_id);
+            $this->db->from($this->config->item('table_ems_survey_farmers') . ' survey_farmer');
+            $this->db->select('survey_farmer.*');
 
-            $data['title'] = ($this->lang->line('LABEL_OUTLET_NAME')) . "-wise Crop Type Preference Details (ID: " . $item_id . ")";
-            $ajax['status'] = true;
-            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->common_view_location . "/details", $data, true));
-            if ($this->message)
+            $this->db->join($this->config->item('table_ems_survey_farmers_unions') . ' union', 'union.id = survey_farmer.union_id', 'LEFT');
+            $this->db->select('union.bn_name union_name');
+
+            $this->db->join($this->config->item('table_ems_survey_farmers_upazilas') . ' upazilla', 'upazilla.id = survey_farmer.upazilla_id', 'LEFT');
+            $this->db->select('upazilla.bn_name upazilla_name');
+
+            $this->db->join($this->config->item('table_ems_survey_farmers_districts') . ' district', 'district.id = survey_farmer.district_id', 'LEFT');
+            $this->db->select('district.bn_name district_name');
+
+            $this->db->where('survey_farmer.id', $item_id);
+            $this->db->where('survey_farmer.status !=', $this->config->item('system_status_delete'));
+            // Main Table data
+            $data['item'] = $this->db->get()->row_array();
+            if (!$data['item'])
             {
+                System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
+                $ajax['status'] = false;
+                $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
+                $this->json_return($ajax);
+            }
+            // Details Table data
+            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id,'status ="'.$this->config->item('system_status_active').'"'));
+
+            $data['title'] = "Farmer based Survey Details - 2020 (ID: ".$item_id.")";
+            $ajax['status'] = true;
+            $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
+            if ($this->message) {
                 $ajax['system_message'] = $this->message;
             }
             $ajax['system_page_url'] = site_url($this->controller_url . '/index/details/' . $item_id);
