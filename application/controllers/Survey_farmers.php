@@ -267,7 +267,7 @@ class Survey_farmers extends Root_Controller
                 }
             }
 
-            $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            /*$data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $results=Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'),array('id value','name text','district_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $data['upazillas']=array();
             foreach($results as $result)
@@ -279,9 +279,22 @@ class Survey_farmers extends Root_Controller
             foreach($results as $result)
             {
                 $data['unions'][$result['upazilla_id']][]=$result;
+            }*/
+            $data['districts']=Query_helper::get_info($this->config->item('table_ems_survey_farmers_districts'),array('id value','name text'),array());
+            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_upazilas'),array('id value','name text','district_id'),array());
+            $data['upazillas']=array();
+            foreach($results as $result)
+            {
+                $data['upazillas'][$result['district_id']][]=$result;
+            }
+            $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_unions'),array('id value','name text','upazilla_id'),array());
+            $data['unions']=array();
+            foreach($results as $result)
+            {
+                $data['unions'][$result['upazilla_id']][]=$result;
             }
 
-            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id,'status ="'.$this->config->item('system_status_active').'"'));
+            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
             $data['user_info']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
             $data['user_info']['name']=$user->name;
             $data['user_info']['mobile_no']=$user->mobile_no;
