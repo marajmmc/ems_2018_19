@@ -396,7 +396,7 @@ class Survey_farmers extends Root_Controller
         {
             $ajax['status'] = true;
             $this->message = $this->lang->line("MSG_SAVED_SUCCESS");
-            //$this->system_list();
+            $this->system_list();
         }
         else
         {
