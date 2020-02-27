@@ -158,6 +158,7 @@ class Survey_farmers extends Root_Controller
 
     private function system_get_items()
     {
+        $user=User_helper::get_user();
         //$items=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('status !="'.$this->config->item('system_status_delete').'"'));
         $this->db->from($this->config->item('table_ems_survey_farmers').' item');
         $this->db->select('item.*');
@@ -170,6 +171,11 @@ class Survey_farmers extends Root_Controller
         $this->db->select('unions.name union_name');
         $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=item.user_created AND user_info.revision = 1','INNER');
         $this->db->select('user_info.name user_created');
+        $this->db->where('item.status',$this->config->item('system_status_active'));
+        if($user->user_group>2)
+        {
+            $this->db->where('item.user_created',$user->user_id);
+        }
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
@@ -237,15 +243,28 @@ class Survey_farmers extends Root_Controller
             {
                 $item_id = $this->input->post('id');
             }
-            $user=User_helper::get_user();
             $data = array();
-            $data['item']=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('id='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1);
-            if (!$data['item'])
+            $user=User_helper::get_user();
+            if($user->user_group>2)
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
-                $ajax['status'] = false;
-                $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
-                $this->json_return($ajax);
+                $data['item']=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('id='.$item_id,'user_created='.$user->user_id,'status !="'.$this->config->item('system_status_delete').'"'),1);
+                if (!$data['item'])
+                {
+                    $ajax['status'] = false;
+                    $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
+                    $this->json_return($ajax);
+                }
+            }
+            else
+            {
+                $data['item']=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('id='.$item_id,'status !="'.$this->config->item('system_status_delete').'"'),1);
+                if (!$data['item'])
+                {
+                    //System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
+                    $ajax['status'] = false;
+                    $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
+                    $this->json_return($ajax);
+                }
             }
 
             $data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -314,6 +333,27 @@ class Survey_farmers extends Root_Controller
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->json_return($ajax);
+            }
+            if($user->user_group>2)
+            {
+                $data['item']=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('id='.$id,'user_created='.$user->user_id,'status !="'.$this->config->item('system_status_delete').'"'),1);
+                if (!$data['item'])
+                {
+                    $ajax['status'] = false;
+                    $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
+                    $this->json_return($ajax);
+                }
+            }
+            else
+            {
+                $data['item']=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('id='.$id,'status !="'.$this->config->item('system_status_delete').'"'),1);
+                if (!$data['item'])
+                {
+                    //System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
+                    $ajax['status'] = false;
+                    $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
+                    $this->json_return($ajax);
+                }
             }
         }
         else
@@ -419,7 +459,7 @@ class Survey_farmers extends Root_Controller
                 $item_id = $this->input->post('id');
             }
             $data = array();
-
+            $user=User_helper::get_user();
             $this->db->from($this->config->item('table_ems_survey_farmers') . ' survey_farmer');
             $this->db->select('survey_farmer.*');
 
@@ -434,11 +474,14 @@ class Survey_farmers extends Root_Controller
 
             $this->db->where('survey_farmer.id', $item_id);
             $this->db->where('survey_farmer.status !=', $this->config->item('system_status_delete'));
-            // Main Table data
+            if($user->user_group>2)
+            {
+                $this->db->where('survey_farmer.user_created',$user->user_id);
+            }
             $data['item'] = $this->db->get()->row_array();
             if (!$data['item'])
             {
-                System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
+                //System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
                 $ajax['status'] = false;
                 $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
                 $this->json_return($ajax);
