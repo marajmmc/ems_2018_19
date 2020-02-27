@@ -3,7 +3,7 @@
 $lang['SURVEY_FARMER_YES'] = 'হ্যাঁ <small>( Yes )</small>';
 $lang['SURVEY_FARMER_NO'] = 'না <small>( No )</small>';
 $lang['SURVEY_FARMER_NO_PLACEHOLDER'] = 'যদি না হয় তাহলে পূরণ করুন ';
-$lang['SURVEY_FARMER_OTHERS'] = 'অন্যান্য <small>(Others)</small>';
+$lang['SURVEY_FARMER_OTHERS'] = 'অন্যান্য  <small>(Others)</small>';
 $lang['SURVEY_FARMER_OTHERS_PLACEHOLDER'] = 'যদি অন্যান্য হয় তাহলে পূরণ করুন ';
 $lang['SURVEY_FARMER_REMARKS_YES'] = 'যদি  হ্যাঁ  হয় তাহলে মন্তব্য:';
 $lang['SURVEY_FARMER_REMARKS_NO'] = 'যদি না হয় তাহলে মন্তব্য:';
@@ -14,26 +14,26 @@ $lang['SURVEY_FARMER_TITLE_FARMER_NAME'] = '১. কৃষকের নাম: <
 $lang['SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'] = '২. পিতা/স্বামীর নাম: <br /><small> 2.	Father/ Husband’s Name:</small>';
 //3. address
 $lang['SURVEY_FARMER_TITLE_ADDRESS'] = '৩.	ঠিকানা:  <br /><small> 3.	Address:</small>';
-$lang['SURVEY_FARMER_DISTRICT_NAME'] = 'জেলা: <small>(District)</small>';
-$lang['SURVEY_FARMER_UPAZILLA_NAME'] = 'উপজেলা: <small>(Upazilla)</small>';
-$lang['SURVEY_FARMER_UNION_NAME'] = 'ইউনিয়ন: <small>(Union)</small>';
-$lang['SURVEY_FARMER_VILLAGE_NAME'] = 'গ্রাম: <small>(Village)</small>';
-$lang['SURVEY_FARMER_MOBILE_NO'] = 'মোবাইল: <small>(Mobile No)</small>';
-$lang['SURVEY_FARMER_NID_NO'] = 'এনআইডি নং: <small>(NID No)</small>';
-$lang['SURVEY_FARMER_GROWING_AREA'] = 'আবাদি এলাকা: <small>(Growing Area)</small>';
+$lang['SURVEY_FARMER_DISTRICT_NAME'] = 'জেলা <small>(District)</small> : ';
+$lang['SURVEY_FARMER_UPAZILLA_NAME'] = 'উপজেলা <small>(Upazilla)</small> : ';
+$lang['SURVEY_FARMER_UNION_NAME'] = 'ইউনিয়ন <small>(Union)</small> : ';
+$lang['SURVEY_FARMER_VILLAGE_NAME'] = 'গ্রাম <small>(Village)</small> : ';
+$lang['SURVEY_FARMER_MOBILE_NO'] = 'মোবাইল <small>(Mobile No)</small> : ';
+$lang['SURVEY_FARMER_NID_NO'] = 'এনআইডি নং <small>(NID No)</small> : ';
+$lang['SURVEY_FARMER_GROWING_AREA'] = 'আবাদি এলাকা <small>(Growing Area)</small> : ';
 //4. father_husband_name
-$lang['SURVEY_FARMER_TITLE_FAMILY_MEMBER'] = '৪.	আপনার পরিবারের সদস্য কতজন : <br /><small> 4.	No. of Family Members</small>';
-$lang['SURVEY_FARMER_FAMILY_MEMBER_FEMALE'] = 'নারী: <small>(Female)</small>';
-$lang['SURVEY_FARMER_FAMILY_MEMBER_MALE'] = 'পুরুষ: <small>(Male)</small>';
-$lang['SURVEY_FARMER_FAMILY_MEMBER_OTHERS'] = 'অন্যান্য: <small>(Other)</small>';
-$lang['SURVEY_FARMER_FAMILY_MEMBER_TOTAL'] = 'মোট: <small>(Total)</small>';
+$lang['SURVEY_FARMER_TITLE_FAMILY_MEMBER'] = '৪.	আপনার পরিবারের সদস্য কতজন: <br /><small> 4.	No. of Family Members</small>';
+$lang['SURVEY_FARMER_FAMILY_MEMBER_FEMALE'] = 'নারী <small>(Female)</small> : ';
+$lang['SURVEY_FARMER_FAMILY_MEMBER_MALE'] = 'পুরুষ <small>(Male)</small> : ';
+$lang['SURVEY_FARMER_FAMILY_MEMBER_OTHERS'] = 'অন্যান্য <small>(Other)</small>';
+$lang['SURVEY_FARMER_FAMILY_MEMBER_TOTAL'] = 'মোট <small>(Total)</small> : ';
 //5. land size
 $lang['SURVEY_FARMER_TITLE_LAND_SIZE'] = '৫. জমির বিবরণ (শতাংশ):<br /><small> 5.	Land Size(decimal):</small>';
-$lang['SURVEY_FARMER_LAND_SIZE_CULTIVABLE'] = 'চাষযোগ্য জমি <small>(Cultivable)</small>';
-$lang['SURVEY_FARMER_LAND_SIZE_RESIDENTIAL'] = 'বসতভিটা <small>(Residential)</small>';
+$lang['SURVEY_FARMER_LAND_SIZE_CULTIVABLE'] = 'চাষযোগ্য জমি <small>(Cultivable)</small> : ';
+$lang['SURVEY_FARMER_LAND_SIZE_RESIDENTIAL'] = 'বসতভিটা <small>(Residential)</small> : ';
 //4. father_husband_name
 $lang['SURVEY_FARMER_TITLE_CULTIVATED_AREA'] = '৬. চাষকৃত ফসল (শতাংশ):<br /><small> 6.	Cultivated Area(decimal):</small>';
-$lang['SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES'] = 'সবজি <small>(Vegetables)</small>';
+$lang['SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES'] = 'সবজি  <small>(Vegetables)</small> : ';
 // 7. Which crops cultivated last year other than vegetables?
 $lang['SURVEY_FARMER_TITLE_LAST_YEAR_CULTIVATED'] = '৭. গত বছর সবজি ছাড়া আপনি আর কি কি ফসল চাষ করেছিলেন ?<br /><small> 7.	Which crops cultivated last year other than vegetables:</small>';
 $lang['SURVEY_FARMER_LAST_YEAR_CULTIVATED_PADDY'] = 'ধান <small>(Paddy)</small>';
