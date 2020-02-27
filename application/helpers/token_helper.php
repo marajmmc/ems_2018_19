@@ -3,16 +3,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Token_helper
 {
-    public static function get_token_id($token)
+    public static function get_token($token)
     {
         $CI =& get_instance();
         $user = User_helper::get_user();
-        $result=Query_helper::get_info($CI->config->item('table_system_token'),array('id'),array('user_id='.$user->user_id,'token ="'.$token.'"'),1);
+        $result=Query_helper::get_info($CI->config->item('table_system_token'),array('id, token'),array('user_id='.$user->user_id),1);
         if($result)
         {
-            return $result['id'];
+            if($result['token']==$token)
+            {
+                return array('status'=>true, 'id'=>$result['id']);
+            }
+            else
+            {
+                return array('status'=>false, 'id'=>$result['id']);
+            }
         }
-        return 0;
+
+        return array('status'=>false, 'id'=>0);
     }
     public static function update_token($id, $token)
     {
