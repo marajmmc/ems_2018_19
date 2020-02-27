@@ -22,7 +22,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
 ?>
 
 <div class="row widget">
-    <div class="widget-header" style="margin:0">
+    <div class="widget-header" style="margin:0; padding:5px">
         <div class="title">
             <?php echo $title; ?>
         </div>
@@ -34,23 +34,21 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
             <table border="1" bgcolor="red" style="width:100%">
                 <tr>
                     <th style="width:30%"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FARMER_NAME'); ?></th>
-                    <td><?php echo $item['farmer_name']; ?></td>
-                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'); ?></th>
-                    <td><?php echo $item['father_husband_name']; ?></td>
+                    <td style="width:20%"><?php echo $item['farmer_name']; ?></td>
+                    <th style="width:25%"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'); ?></th>
+                    <td style="width:25%"><?php echo $item['father_husband_name']; ?></td>
                 </tr>
                 <tr>
-                    <th colspan="4"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ADDRESS'); ?></th>
-                </tr>
-                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ADDRESS'); ?></th>
                     <td><b><?php echo $CI->lang->line('SURVEY_FARMER_DISTRICT_NAME'); ?></b> <?php echo $item['district_name']; ?></td>
                     <td><b><?php echo $CI->lang->line('SURVEY_FARMER_UPAZILLA_NAME'); ?></b> <?php echo $item['upazilla_name']; ?></td>
                     <td><b><?php echo $CI->lang->line('SURVEY_FARMER_UNION_NAME'); ?></b> <?php echo $item['union_name']; ?></td>
-                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_VILLAGE_NAME'); ?></b> <?php echo $item['village_name']; ?></td>
                 </tr>
                 <tr>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_VILLAGE_NAME'); ?></b> <?php echo $item['village_name']; ?></td>
                     <td><b><?php echo $CI->lang->line('SURVEY_FARMER_MOBILE_NO'); ?></b> <?php echo $item['mobile_no']; ?></td>
                     <td><b><?php echo $CI->lang->line('SURVEY_FARMER_NID_NO'); ?></b> <?php echo $item['nid_no']; ?></td>
-                    <td colspan="2"><b><?php echo $CI->lang->line('SURVEY_FARMER_GROWING_AREA'); ?></b> <?php echo $item['growing_area']; ?></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_GROWING_AREA'); ?></b> <?php echo $item['growing_area']; ?></td>
                 </tr>
                 <tr>
                     <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FAMILY_MEMBER'); ?></th>
@@ -59,7 +57,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         &nbsp;&nbsp; | &nbsp;&nbsp;
                         <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_MALE').'</b> '.$item['family_member_male']; ?>
                         &nbsp;&nbsp; | &nbsp;&nbsp;
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_OTHERS').'</b> '.$item['family_member_others']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_OTHERS').' : </b>'.$item['family_member_others']; ?>
                         &nbsp;&nbsp; | &nbsp;&nbsp;
                         <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_TOTAL').'</b> '; ?>
                         <?php echo ($item['family_member_female'] + $item['family_member_male'] + $item['family_member_others']); ?>
@@ -72,10 +70,10 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         &nbsp;&nbsp; | &nbsp;&nbsp;
                         <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_LAND_SIZE_RESIDENTIAL').'</b> '.$item['land_size_residential']; ?>
                         &nbsp;&nbsp; | &nbsp;&nbsp;
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_OTHERS').'</b> '.$item['land_size_others']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_OTHERS').' : </b>'.$item['land_size_others']; ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['land_size_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['land_size_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -83,10 +81,10 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                     <td colspan="2">
                         <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES').'</b> '.$item['cultivated_area_vegetables']; ?>
                         &nbsp;&nbsp; | &nbsp;&nbsp;
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_OTHERS').'</b> '.$item['cultivated_area_others']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_OTHERS').' : </b>'.$item['cultivated_area_others']; ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['cultivated_area_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['cultivated_area_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -105,7 +103,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo ($item['last_year_cultivated_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['last_year_cultivated_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['last_year_cultivated_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -173,7 +171,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                     <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_HAVE_VEGETABLES_TRAINING'); ?></th>
                     <td>
                         <?php echo ($item['have_vegetables_training']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
-                        &nbsp; &nbsp;
+                        <br/>
                         <?php echo ($item['have_vegetables_training']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
                     </td>
                     <td>
@@ -205,7 +203,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo ($item['technical_knowledge_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['technical_knowledge_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['technical_knowledge_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -224,7 +222,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo ($item['seeds_collect_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['seeds_collect_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['seeds_collect_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -237,18 +235,18 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo ($item['ensure_seed_quality_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['ensure_seed_quality_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['ensure_seed_quality_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
                     <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_GOOD_SEED_PURCHASE'); ?></th>
                     <td>
                         <?php echo ($item['good_seed_purchase']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
-                        &nbsp; &nbsp;
+                        <br/>
                         <?php echo ($item['good_seed_purchase']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
                     </td>
                     <td colspan="2">
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_NO').'</b> '.$item['good_seed_purchase_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_NO').'</b> '.nl2br($item['good_seed_purchase_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -263,7 +261,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo ($item['sell_vegetables_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['sell_vegetables_others_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['sell_vegetables_others_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -290,29 +288,29 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo ($item['does_artodar_paikar_helps_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
                     </td>
                     <td>
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.$item['does_artodar_paikar_helps_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['does_artodar_paikar_helps_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
                     <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEED_FACILITIES'); ?></th>
                     <td>
                         <?php echo ($item['seed_facilities']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
-                        &nbsp; &nbsp;
+                        <br/>
                         <?php echo ($item['seed_facilities']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
                     </td>
                     <td colspan="2">
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_NO').'</b> '.$item['seed_facilities_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_NO').'</b> '.nl2br($item['seed_facilities_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
                     <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DO_KNOW_ARM'); ?></th>
                     <td>
                         <?php echo ($item['do_know_arm']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
-                        &nbsp; &nbsp;
+                        <br/>
                         <?php echo ($item['do_know_arm']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
                     </td>
                     <td colspan="2">
-                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_YES').'</b> '.$item['do_know_arm_remarks']; ?>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_YES').'</b> '.nl2br($item['do_know_arm_remarks']); ?>
                     </td>
                 </tr>
                 <tr>
@@ -321,8 +319,31 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                         <?php echo nl2br($item['remarks']); ?>
                     </td>
                 </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY'); ?></th>
+                    <td colspan="3">
+                        <?php echo $user_info['name']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_DESIGNATION'); ?></th>
+                    <td colspan="3">
+                        <?php echo $user_info['designation']['text']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_MOBILE_NO'); ?></th>
+                    <td colspan="3">
+                        <?php echo $user_info['mobile_no']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DATE'); ?></th>
+                    <td colspan="3">
+                        <?php echo $item['date_collection_data']?System_helper::display_date($item['date_collection_data']):'';?>
+                    </td>
+                </tr>
             </table>
-
         </div>
     </div>
 </div>
