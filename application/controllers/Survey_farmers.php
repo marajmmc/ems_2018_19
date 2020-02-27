@@ -35,6 +35,7 @@ class Survey_farmers extends Root_Controller
         $this->lang->language['LABEL_CULTIVATED_AREA_VEGETABLES'] = 'Cultivated Area (Vegetables)';
         $this->lang->language['LABEL_DATE_CREATED'] = 'Entry Time';
         $this->lang->language['LABEL_USER_CREATED'] = 'Entry By';
+        /*$this->lang->language['LABEL_REVISION_COUNT'] = 'Number of Edit';*/
     }
 
     public function index($action = "list", $id = 0)
@@ -93,6 +94,7 @@ class Survey_farmers extends Root_Controller
         $data['upazilla_name'] = 1;
         $data['union_name'] = 1;
         $data['cultivated_area_vegetables'] = 1;
+        /*$data['revision_count'] = 1;*/
 
         $data['date_created'] = 1;
         if (($method == 'list_all')||($user->user_group == $this->config->item('USER_GROUP_SUPER')))
@@ -266,20 +268,6 @@ class Survey_farmers extends Root_Controller
                     $this->json_return($ajax);
                 }
             }
-
-            /*$data['districts']=Query_helper::get_info($this->config->item('table_login_setup_location_districts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $results=Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'),array('id value','name text','district_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
-            $data['upazillas']=array();
-            foreach($results as $result)
-            {
-                $data['upazillas'][$result['district_id']][]=$result;
-            }
-            $results=Query_helper::get_info($this->config->item('table_login_setup_location_unions'),array('id value','name text','upazilla_id'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
-            $data['unions']=array();
-            foreach($results as $result)
-            {
-                $data['unions'][$result['upazilla_id']][]=$result;
-            }*/
             $data['districts']=Query_helper::get_info($this->config->item('table_ems_survey_farmers_districts'),array('id value','name text'),array());
             $results=Query_helper::get_info($this->config->item('table_ems_survey_farmers_upazilas'),array('id value','name text','district_id'),array());
             $data['upazillas']=array();
@@ -401,6 +389,7 @@ class Survey_farmers extends Root_Controller
 
         if ($id > 0)
         {
+            //$this->db->set('revision_count', 'revision_count+1', FALSE);
             Query_helper::update($this->config->item('table_ems_survey_farmers'), $fields,array("id = ".$id), FALSE);
 
             Query_helper::update($this->config->item('table_ems_survey_farmers_details'), array('status' => $this->config->item('system_status_delete')), array("survey_id=" . $id));
@@ -500,9 +489,14 @@ class Survey_farmers extends Root_Controller
                 $this->json_return($ajax);
             }
             // Details Table data
-            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $id,'status ="'.$this->config->item('system_status_active').'"'));
+            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
 
-            $data['title'] = "Farmer based Survey Details - 2020 (ID: ".$item_id.")";
+            $user=User_helper::get_user();
+            $data['user_info']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
+            $data['user_info']['name']=$user->name;
+            $data['user_info']['mobile_no']=$user->mobile_no;
+
+            $data['title'] = "Farmer based Survey Details - 2020";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/details", $data, true));
             if ($this->message) {

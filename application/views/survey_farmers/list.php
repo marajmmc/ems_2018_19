@@ -141,6 +141,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_UNION_NAME'); ?>', dataField: 'union_name', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['union_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CULTIVATED_AREA_VEGETABLES'); ?>', dataField: 'cultivated_area_vegetables', filtertype: 'list', width: '50', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['cultivated_area_vegetables']?0:1;?>},
+                    /*{ text: '<?php echo $CI->lang->line('LABEL_REVISION_COUNT'); ?>', dataField: 'revision_count', width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['revision_count']?0:1;?>},*/
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_CREATED'); ?>', dataField: 'date_created', width: '200', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_created']?0:1;?>}
                     <?php
                     $user = User_helper::get_user();
