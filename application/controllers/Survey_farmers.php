@@ -24,7 +24,7 @@ class Survey_farmers extends Root_Controller
         }
         $this->language_labels();
         $this->lang->load('survey_farmer');
-        $this->load->helper('survey_farmer');
+        //$this->load->helper('survey_farmer');
     }
 
     private function language_labels()
