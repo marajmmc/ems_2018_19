@@ -225,7 +225,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="2">৯.	গত বছরের সবজি চাষের বিবরণ:</th>
+                        <th colspan="2"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_CULTIVATION');?></th>
                     </tr>
                     </tbody>
                 </table>
@@ -233,22 +233,22 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                     <table class="table table-bordered table-responsive" style="">
                         <thead>
                         <tr>
-                            <th class="text-center" rowspan="2">সবজির নাম ও জাত</th>
-                            <th class="text-center" rowspan="2">জমির পরিমান (শতাংশ)</th>
-                            <th class="text-center" rowspan="2">মোট উৎপাদন (কেজি/টন)</th>
-                            <th class="text-center" rowspan="2">মোট উৎপাদিত পণ্যের বিক্রয় মূল্য (টাকা)</th>
-                            <th class="text-center" colspan="6"> খরচের বিবরণ (টাকা)</th>
-                            <th class="text-center" rowspan="2">মোট খরচ (টাকা) </th>
-                            <th class="text-center" rowspan="2"> আয় (টাকা)</th>
-                            <th class="text-center" rowspan="2"> বাতিল/মুছুন</th>
+                            <th class="text-center" rowspan="2"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_VARIETY_NAME');?></th>
+                            <th class="text-center" rowspan="2"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_AREA_SIZE');?></th>
+                            <th class="text-center" rowspan="2"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_TOTAL_KG');?></th>
+                            <th class="text-center" rowspan="2"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_COST_TOTAL_PRODUCED');?></th>
+                            <th class="text-center" colspan="6"> <?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST');?></th>
+                            <th class="text-center" rowspan="2"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_COST_TOTAL');?> </th>
+                            <th class="text-center" rowspan="2"> <?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_NET_PROFIT');?></th>
+                            <th class="text-center" rowspan="2"> <?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_STATUS');?></th>
                         </tr>
                         <tr>
-                            <th class="text-center">জমি তৈরী</th>
-                            <th class="text-center">মজুরী</th>
-                            <th class="text-center">সেচ </th>
-                            <th class="text-center">সার </th>
-                            <th class="text-center">কীটনাশক</th>
-                            <th class="text-center">অন্যান্য</th>
+                            <th class="text-center"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST_LAND_PREPARATION');?></th>
+                            <th class="text-center"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST_WAGES');?></th>
+                            <th class="text-center"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST_IRRIGATION');?></th>
+                            <th class="text-center"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST_FERTILIZERS');?></th>
+                            <th class="text-center"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST_PESTICIDE');?></th>
+                            <th class="text-center"><?php echo $this->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_VEGETABLES_PRODUCTION_COST_OTHERS');?></th>
                         </tr>
                         </thead>
                         <tbody>
