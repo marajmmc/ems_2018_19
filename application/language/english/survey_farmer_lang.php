@@ -5,6 +5,9 @@ $lang['SURVEY_FARMER_NO'] = 'না <small>( No )</small>';
 $lang['SURVEY_FARMER_NO_PLACEHOLDER'] = 'যদি না হয় তাহলে পূরণ করুন ';
 $lang['SURVEY_FARMER_OTHERS'] = 'অন্যান্য <small>(Others)</small>';
 $lang['SURVEY_FARMER_OTHERS_PLACEHOLDER'] = 'যদি অন্যান্য হয় তাহলে পূরণ করুন ';
+$lang['SURVEY_FARMER_REMARKS_YES'] = 'যদি  হ্যাঁ  হয় তাহলে মন্তব্য:';
+$lang['SURVEY_FARMER_REMARKS_NO'] = 'যদি না হয় তাহলে মন্তব্য:';
+$lang['SURVEY_FARMER_REMARKS_OTHERS'] = 'যদি অন্যান্য হয় তাহলে মন্তব্য:';
 // 1. farmer name
 $lang['SURVEY_FARMER_TITLE_FARMER_NAME'] = '১. কৃষকের নাম: <br /><small> 1.	Farmer’s Name: </small>';
 //2. father_husband_name
