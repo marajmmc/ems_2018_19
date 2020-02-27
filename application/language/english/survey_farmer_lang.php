@@ -101,7 +101,7 @@ $lang['SURVEY_FARMER_DOES_DOES_ARTODAR_PAIKAR_HELPS_CREDIT_FACILITIES'] = 'ঋ�
 $lang['SURVEY_FARMER_TITLE_SEED_FACILITIES'] = ' ১৯. আপনাকে যদি ভাল বীজ, কারিগরী জ্ঞান, বাজারজাতকরণ চেইন সহ অন্যান্য সুযোগ সুবিধা করে দেওয়া  হয় তাহলে কি আপনি আরও বেশী লাভবান হবেন বলে মনে করেন ? <br /><small> 19. If you are provided with good seeds and other inputs, technical Knowhow, market linkage, supply chain facilities for selling your produce, in that case; Do you think you will be able to grow more vegetable as well as making more profit?    </small>';
 // 20
 $lang['SURVEY_FARMER_TITLE_DO_KNOW_ARM'] = '২০. আপনি " এ আর মালিক সিডস প্রাঃ লিঃ " সম্পর্কে  জানেন কি না ? <br /><small> 20. Do you know about the seeds of AR Malik Seeds (Pvt.) Ltd is marketing?     </small>';
-$lang['SURVEY_FARMER_DO_KNOW_ARM_REMARKS'] = 'যদি হা হয় তাহলে কিভাবে জানেন ?  <br /><small> If yes, how?</small>';
+$lang['SURVEY_FARMER_DO_KNOW_ARM_REMARKS'] = 'যদি হা হয় তাহলে কিভাবে জানেন ?  ';
 
 $lang['SURVEY_FARMER_TITLE_REMARKS'] = 'মন্তব্য <br /><small> Remarks</small>';
 

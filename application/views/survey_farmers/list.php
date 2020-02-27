@@ -2,13 +2,6 @@
 $CI = & get_instance();
 
 $action_buttons = array();
-if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
-{
-    $action_buttons[] = array(
-        'label' => 'All List',
-        'href' => site_url($CI->controller_url . '/index/list_all')
-    );
-}
 if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
 {
     $action_buttons[] = array(
@@ -59,16 +52,6 @@ if (isset($CI->permissions['action6']) && ($CI->permissions['action6'] == 1))
     (
         'label' => 'Preference',
         'href' => site_url($CI->controller_url . '/index/set_preference')
-    );
-}
-if (isset($CI->permissions['action7']) && ($CI->permissions['action7'] == 1))
-{
-    $action_buttons[] = array
-    (
-        'type' => 'button',
-        'label' => $CI->lang->line('ACTION_FORWARD'),
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/forward')
     );
 }
 $action_buttons[] = array(
@@ -151,8 +134,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                 columnsreorder: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_ID'); ?>', dataField: 'id', width: '50', pinned: true, cellsalign: 'right', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['id']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>', dataField: 'farmer_name', width: '80', pinned: true, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_FATHER_HUSBAND_NAME'); ?>', dataField: 'father_husband_name', pinned: true , width: '80', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['father_husband_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>', dataField: 'farmer_name', width: '150', pinned: true, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FATHER_HUSBAND_NAME'); ?>', dataField: 'father_husband_name', pinned: true , width: '150', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['father_husband_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_MOBILE_NO'); ?>', dataField: 'mobile_no', width: '100', pinned: true, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['mobile_no']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_UNION_NAME'); ?>', dataField: 'union_name', filtertype: 'list', width: '100', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['union_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_CULTIVATED_AREA_VEGETABLES'); ?>', dataField: 'cultivated_area_vegetables', filtertype: 'list', width: '50', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['cultivated_area_vegetables']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_CREATED'); ?>', dataField: 'date_created', width: '200', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_created']?0:1;?>}
                     <?php
                     $user = User_helper::get_user();

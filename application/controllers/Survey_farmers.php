@@ -31,6 +31,8 @@ class Survey_farmers extends Root_Controller
     {
         $this->lang->language['LABEL_FARMER_NAME'] = 'Farmer Name';
         $this->lang->language['LABEL_FATHER_HUSBAND_NAME'] = 'Farmer Father Name';
+        $this->lang->language['LABEL_MOBILE_NO'] = 'Mobile No';
+        $this->lang->language['LABEL_CULTIVATED_AREA_VEGETABLES'] = 'Cultivated Area (Vegetables)';
         $this->lang->language['LABEL_DATE_CREATED'] = 'Entry Time';
         $this->lang->language['LABEL_USER_CREATED'] = 'Entry By';
     }
@@ -94,6 +96,11 @@ class Survey_farmers extends Root_Controller
         $data['id'] = 1;
         $data['farmer_name'] = 1;
         $data['father_husband_name'] = 1;
+        $data['mobile_no'] = 1;
+        $data['district_name'] = 1;
+        $data['upazilla_name'] = 1;
+        $data['union_name'] = 1;
+        $data['cultivated_area_vegetables'] = 1;
 
         $data['date_created'] = 1;
         if (($method == 'list_all')||($user->user_group == $this->config->item('USER_GROUP_SUPER')))
@@ -159,7 +166,19 @@ class Survey_farmers extends Root_Controller
 
     private function system_get_items()
     {
-        $items=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('status !="'.$this->config->item('system_status_delete').'"'));
+        //$items=Query_helper::get_info($this->config->item('table_ems_survey_farmers'),'*',array('status !="'.$this->config->item('system_status_delete').'"'));
+        $this->db->from($this->config->item('table_ems_survey_farmers').' item');
+        $this->db->select('item.*');
+        $this->db->select('IF(cultivated_area_vegetables>0, "Yes", "No") cultivated_area_vegetables');
+        $this->db->join($this->config->item('table_ems_survey_farmers_districts').' districts','districts.id = item.district_id','INNER');
+        $this->db->select('districts.name district_name');
+        $this->db->join($this->config->item('table_ems_survey_farmers_upazilas').' upazilas','upazilas.id = item.upazilla_id','INNER');
+        $this->db->select('upazilas.name upazilla_name');
+        $this->db->join($this->config->item('table_ems_survey_farmers_unions').' unions','unions.id = item.union_id','INNER');
+        $this->db->select('unions.name union_name');
+        $this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=item.user_created AND user_info.revision = 1','INNER');
+        $this->db->select('user_info.name user_created');
+        $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
             $item['date_created']=System_helper::display_date_time($item['date_created']);
