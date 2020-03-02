@@ -328,7 +328,7 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
                 <tr>
                     <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_DESIGNATION'); ?></th>
                     <td colspan="3">
-                        <?php echo $user_info['designation']['text']; ?>
+                        <?php echo $user_info['designation']; ?>
                     </td>
                 </tr>
                 <tr>

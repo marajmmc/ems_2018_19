@@ -572,7 +572,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                             </div>
                         </th>
                         <th>
-                            <span class="form-control"><?php echo $user_info['designation']['text']?></span>
+                            <span class="form-control"><?php echo $user_info['designation']?></span>
                         </th>
                     </tr>
                     </tbody>

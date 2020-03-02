@@ -283,9 +283,20 @@ class Survey_farmers extends Root_Controller
             }
 
             $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
-            $data['user_info']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
-            $data['user_info']['name']=$user->name;
-            $data['user_info']['mobile_no']=$user->mobile_no;
+
+
+            $this->db->from($this->config->item('table_login_setup_user_info').' user_info');
+            $this->db->select('user_info.name user_name, user_info.mobile_no');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','left');
+            $this->db->select('designation.name designation_name');
+            $this->db->where('user_info.revision',1);
+            $this->db->where('user_info.user_id',$data['item']['user_created']);
+            //$this->db->where('user_info.status',$this->config->item('system_status_active'));
+            $user_info=$this->db->get()->row();
+
+            $data['user_info']['designation']=$user_info->designation_name;
+            $data['user_info']['name']=$user_info->user_name;
+            $data['user_info']['mobile_no']=$user_info->mobile_no;
 
             $data['title'] = "Edit Farmer Base Line Survey Form 2020";
             $ajax['status'] = true;
@@ -491,10 +502,18 @@ class Survey_farmers extends Root_Controller
             // Details Table data
             $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
 
-            $user=User_helper::get_user();
-            $data['user_info']['designation']=$results=Query_helper::get_info($this->config->item('table_login_setup_designation'),array('id value','name text'),array('id='.$user->designation),1);
-            $data['user_info']['name']=$user->name;
-            $data['user_info']['mobile_no']=$user->mobile_no;
+            $this->db->from($this->config->item('table_login_setup_user_info').' user_info');
+            $this->db->select('user_info.name user_name, user_info.mobile_no');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','left');
+            $this->db->select('designation.name designation_name');
+            $this->db->where('user_info.revision',1);
+            $this->db->where('user_info.user_id',$data['item']['user_created']);
+            //$this->db->where('user_info.status',$this->config->item('system_status_active'));
+            $user_info=$this->db->get()->row();
+
+            $data['user_info']['designation']=$user_info->designation_name;
+            $data['user_info']['name']=$user_info->user_name;
+            $data['user_info']['mobile_no']=$user_info->mobile_no;
 
             $data['title'] = "Farmer based Survey Details - 2020";
             $ajax['status'] = true;
