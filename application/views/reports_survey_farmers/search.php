@@ -10,10 +10,10 @@ $CI = & get_instance();
             <div class="clearfix"></div>
         </div>
         <div class="row show-grid">
-            <div class="col-xs-6">
+            <!--<div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_START');?></label>
+                        <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_DATE_START');*/?></label>
                     </div>
                     <div class="col-xs-6">
                         <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="">
@@ -21,15 +21,18 @@ $CI = & get_instance();
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_END');?></label>
+                        <label class="control-label pull-right"><?php /*echo $CI->lang->line('LABEL_DATE_END');*/?></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time());?>">
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php /*echo System_helper::display_date(time());*/?>">
                     </div>
                 </div>
-            </div>
-            <div class="col-xs-6">
+            </div>-->
+            <div class="col-xs-8">
                 <div style="" class="row show-grid">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+                    </div>
                     <div class="col-xs-6">
                         <select id="district_id" name="report[district_id]" class="form-control">
                             <option value=""><?php echo $CI->lang->line('SELECT');?></option>
@@ -42,29 +45,25 @@ $CI = & get_instance();
                             ?>
                         </select>
                     </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
-                    </div>
                 </div>
                 <div style="display:none" class="row show-grid" id="upazilla_id_container">
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?></label>
+                    </div>
                     <div class="col-xs-6">
                         <select id="upazilla_id" class="form-control" name="report[upazilla_id]">
                             <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
                     </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?></label>
-                    </div>
                 </div>
                 <div style="display:none" class="row show-grid" id="union_id_container">
-
+                    <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UNION_NAME');?></label>
+                    </div>
                     <div class="col-xs-6">
                         <select id="union_id" class="form-control" name="report[union_id]">
                             <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                         </select>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_UNION_NAME');?></label>
                     </div>
                 </div>
             </div>
@@ -72,12 +71,12 @@ $CI = & get_instance();
         <div class="row show-grid">
             <div class="col-xs-4">
             </div>
-            <div class="col-xs-5">
+            <div class="col-xs-4">
                 <div class="action_button pull-right">
                     <button id="button_action_report" type="button" class="btn" data-form="#search_form"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
                 </div>
             </div>
-            <div class="col-xs-3">
+            <div class="col-xs-4">
             </div>
         </div>
     </div>

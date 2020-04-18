@@ -52,10 +52,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         ?>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="sl_no" <?php if($system_preference_items['sl_no']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_SL_NO'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="farmer_name" <?php if($system_preference_items['farmer_name']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?></span></label></div></div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="mobile_no" <?php if($system_preference_items['mobile_no']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_MOBILE_NO'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="district_name" <?php if($system_preference_items['district_name']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="upazilla_name" <?php if($system_preference_items['upazilla_name']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="union_name" <?php if($system_preference_items['union_name']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_UNION_NAME'); ?></span></label></div></div>
-        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="mobile_no" <?php if($system_preference_items['mobile_no']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_MOBILE_NO'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column_cultivated_area value="cultivated_area" <?php if($system_preference_items['cultivated_area']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_CULTIVATED_AREA'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="have_vegetables_training" <?php if($system_preference_items['have_vegetables_training']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_HAVE_VEGETABLES_TRAINING'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column_seeds_collect" value="seeds_collect" <?php if($system_preference_items['seeds_collect']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEEDS_COLLECT'); ?></span></label></div></div>
@@ -64,6 +64,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
     <?php
     }
     ?>
+    <div style="" class="row show-grid">
+        <div class="col-xs-12 ">
+            <input type="button" value="X Remove Filter" id="clearfilteringbutton" class="btn btn-danger pull-right" />
+        </div>
+    </div>
+
     <div class="col-xs-12" id="system_jqx_container">
 
     </div>
@@ -175,9 +181,22 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             dataFields: [
                 { name: 'id', type: 'int' },
                 <?php
-                foreach($system_preference_items as $key => $value){ ?>
-                { name: '<?php echo $key; ?>', type: 'string' },
-                <?php } ?>
+                foreach($system_preference_items as $key => $value)
+                {
+                    if($key=='cultivated_area_vegetables' || $key=='cultivated_area_others')
+                    {
+                        ?>
+                        { name: '<?php echo $key; ?>', type: 'number' },
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                        { name: '<?php echo $key; ?>', type: 'string' },
+                        <?php
+                    }
+
+                } ?>
             ],
             id: 'id',
             type: 'POST',
@@ -201,57 +220,61 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
         $("#system_jqx_container").jqxGrid(
-            {
-                width: '100%',
-                height:'350px',
-                source: dataAdapter,
-                filterable: true,
-                sortable: true,
-                showfilterrow: true,
-                columnsresize: true,
-                columnsreorder: true,
-                altrows: true,
-                enabletooltips: true,
-                showstatusbar: true,
-                rowsheight: 45,
-                enablebrowserselection:true,
-                columns: [
-                    { text: 'ID',pinned:true,dataField: 'id',width:'110',cellsrenderer: cellsrenderer,rendered:tooltiprenderer, hidden: true},
+        {
+            width: '100%',
+            height:'350px',
+            source: dataAdapter,
+            filterable: true,
+            sortable: true,
+            showfilterrow: true,
+            columnsresize: true,
+            columnsreorder: true,
+            altrows: true,
+            enabletooltips: true,
+            showstatusbar: true,
+            rowsheight: 45,
+            enablebrowserselection:true,
+            columns: [
+                { text: 'ID',pinned:true,dataField: 'id',width:'110',cellsrenderer: cellsrenderer,rendered:tooltiprenderer, hidden: true},
+                {
+                    text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: 'sl_no',pinned:true,width:'30', hidden: <?php echo $system_preference_items['sl_no']?0:1;?>, columntype: 'number',cellsalign: 'right', sortable: false, menu: false,
+                    cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
                     {
-                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: 'sl_no',pinned:true,width:'30', hidden: <?php echo $system_preference_items['sl_no']?0:1;?>, columntype: 'number',cellsalign: 'right', sortable: false, menu: false,
-                        cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
-                        {
-                            var element = $(defaultHtml);
-                            element.html(value+1);
-                            return element[0].outerHTML;
-                        }
-                    },
-                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>',pinned:true,dataField: 'farmer_name',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_UNION_NAME'); ?>', dataField: 'union_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['union_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('SURVEY_FARMER_MOBILE_NO'); ?>', dataField: 'mobile_no',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['mobile_no']?0:1;?>},
-                    { columngroup: 'cultivated_area',text: '<?php echo $CI->lang->line('SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES'); ?>', dataField: 'cultivated_area_vegetables',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['cultivated_area']?0:1;?>},
-                    { columngroup: 'cultivated_area',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'cultivated_area_others',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['cultivated_area']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_HAVE_VEGETABLES_TRAINING'); ?>', dataField: 'have_vegetables_training',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['have_vegetables_training']?0:1;?>},
-                    { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_DEALERS'); ?>', dataField: 'seeds_collect_dealers',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_dealers']?0:1;?>},
-                    { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_RETAILERS'); ?>', dataField: 'seeds_collect_retailers',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_retailers']?0:1;?>},
-                    { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_LEADFARMERS'); ?>', dataField: 'seeds_collect_leadfarmers',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_leadfarmers']?0:1;?>},
-                    { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_HATBAZAR'); ?>', dataField: 'seeds_collect_hatbazar',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_hatbazar']?0:1;?>},
-                    { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_OWNSEEDS'); ?>', dataField: 'seeds_collect_ownseeds',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_ownseeds']?0:1;?>},
-                    { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_ARTODAR_PAIKAR'); ?>', dataField: 'seeds_collect_others',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_others']?0:1;?>},
+                        var element = $(defaultHtml);
+                        element.html(value+1);
+                        return element[0].outerHTML;
+                    }
+                },
+                { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>',pinned:true,dataField: 'farmer_name',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('SURVEY_FARMER_MOBILE_NO'); ?>',pinned:true, dataField: 'mobile_no',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['mobile_no']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',filtertype: 'list',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_UNION_NAME'); ?>', dataField: 'union_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['union_name']?0:1;?>},
+                { columngroup: 'cultivated_area',text: '<?php echo $CI->lang->line('SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES'); ?>', dataField: 'cultivated_area_vegetables', filtertype: 'number',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['cultivated_area']?0:1;?>},
+                { columngroup: 'cultivated_area',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'cultivated_area_others', filtertype: 'number',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['cultivated_area']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_HAVE_VEGETABLES_TRAINING'); ?>', dataField: 'have_vegetables_training',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['have_vegetables_training']?0:1;?>},
+                { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_DEALERS'); ?>', dataField: 'seeds_collect_dealers',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_dealers']?0:1;?>},
+                { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_RETAILERS'); ?>', dataField: 'seeds_collect_retailers',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_retailers']?0:1;?>},
+                { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_LEADFARMERS'); ?>', dataField: 'seeds_collect_leadfarmers',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_leadfarmers']?0:1;?>},
+                { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_HATBAZAR'); ?>', dataField: 'seeds_collect_hatbazar',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_hatbazar']?0:1;?>},
+                { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_OWNSEEDS'); ?>', dataField: 'seeds_collect_ownseeds',filtertype: 'list',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_ownseeds']?0:1;?>},
+                { columngroup: 'seeds_collect',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_ARTODAR_PAIKAR'); ?>', dataField: 'seeds_collect_others',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['seeds_collect_others']?0:1;?>},
 
-                    { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_ARTODAR_PAIKAR'); ?>', dataField: 'sell_vegetables_to_artodar_paikar',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_artodar_paikar']?0:1;?>},
-                    { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_HATBAZAR'); ?>', dataField: 'sell_vegetables_to_hatbazar',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_hatbazar']?0:1;?>},
-                    { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_IN_GROUP'); ?>', dataField: 'sell_vegetables_in_group',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_in_group']?0:1;?>},
-                    { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'sell_vegetables_others',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_others']?0:1;?>}
-                ],
-                columngroups:
-                    [
-                        { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_CULTIVATED_AREA'); ?>', align: 'center', name: 'cultivated_area' },
-                        { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEEDS_COLLECT'); ?>', align: 'center', name: 'seeds_collect' },
-                        { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SELL_VEGETABLES_TO'); ?>', align: 'center', name: 'sell_vegetables' }
-                    ]
-            });
+                { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_ARTODAR_PAIKAR'); ?>', dataField: 'sell_vegetables_to_artodar_paikar',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_artodar_paikar']?0:1;?>},
+                { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_HATBAZAR'); ?>', dataField: 'sell_vegetables_to_hatbazar',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_hatbazar']?0:1;?>},
+                { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_IN_GROUP'); ?>', dataField: 'sell_vegetables_in_group',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_in_group']?0:1;?>},
+                { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'sell_vegetables_others',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_others']?0:1;?>}
+            ],
+            columngroups:
+                [
+                    { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_CULTIVATED_AREA'); ?>', align: 'center', name: 'cultivated_area' },
+                    { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEEDS_COLLECT'); ?>', align: 'center', name: 'seeds_collect' },
+                    { text: '<?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SELL_VEGETABLES_TO'); ?>', align: 'center', name: 'sell_vegetables' }
+                ]
+        });
+        //$('#clearfilteringbutton').jqxButton({ height: 25});
+        $('#clearfilteringbutton').click(function () {
+            $("#system_jqx_container").jqxGrid('clearfilters');
+        });
     });
 </script>

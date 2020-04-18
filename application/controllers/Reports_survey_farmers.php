@@ -97,11 +97,11 @@ class Reports_survey_farmers extends Root_Controller
         //$data['date_collection_data']= 1;
         $data['farmer_name']= 1;
         //$data['father_husband_name']= 1;
+        $data['mobile_no']= 1;
         $data['district_name']= 1;
         $data['upazilla_name']= 1;
-        $data['union_name']= 1;
         //$data['village_name']= 1;
-        $data['mobile_no']= 1;
+        $data['union_name']= 1;
         //$data['nid_no']= 1;
         //$data['growing_area']= 1;
         //$data['family_member_female']= 1;
@@ -162,12 +162,12 @@ class Reports_survey_farmers extends Root_Controller
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
             $reports=$this->input->post('report');
-            $reports['date_end']=System_helper::get_time($reports['date_end']);
+            /*$reports['date_end']=System_helper::get_time($reports['date_end']);
             $reports['date_start']=System_helper::get_time($reports['date_start']);
             if($reports['date_end']>0)
             {
                 $reports['date_end']=$reports['date_end']+3600*24-1;
-            }
+            }*/
             $data['options']=$reports;
             $data['title']="Farmer Base Line Survey Form 2020 Report";
             $data['system_preference_items'] = System_helper::get_preference($user->user_id, $this->controller_url, $method, $this->get_preference_headers());
@@ -240,7 +240,53 @@ class Reports_survey_farmers extends Root_Controller
             $item['farmer_name']=$item['name'];
             $item['date_sowing']=System_helper::display_date($item['date_sowing']);
         }*/
+        $district_id=$this->input->post('district_id');
+        $upazilla_id=$this->input->post('upazilla_id');
+        $union_id=$this->input->post('union_id');
         $items=array();
+        $this->db->from($this->config->item('table_ems_survey_farmers').' item');
+        $this->db->select('item.*');
+        $this->db->select('IF(have_vegetables_training>0, "Yes", "No") have_vegetables_training');
+        $this->db->select('IF(seeds_collect_dealers>0, "Yes", "") seeds_collect_dealers');
+        $this->db->select('IF(seeds_collect_retailers>0, "Yes", "") seeds_collect_retailers');
+        $this->db->select('IF(seeds_collect_leadfarmers>0, "Yes", "") seeds_collect_leadfarmers');
+        $this->db->select('IF(seeds_collect_hatbazar>0, "Yes", "") seeds_collect_hatbazar');
+        $this->db->select('IF(seeds_collect_ownseeds>0, "Yes", "") seeds_collect_ownseeds');
+        $this->db->select('IF(seeds_collect_others>0, "Yes", "") seeds_collect_others');
+        $this->db->select('IF(sell_vegetables_to_artodar_paikar>0, "Yes", "") sell_vegetables_to_artodar_paikar');
+        $this->db->select('IF(sell_vegetables_to_hatbazar>0, "Yes", "") sell_vegetables_to_hatbazar');
+        $this->db->select('IF(sell_vegetables_in_group>0, "Yes", "") sell_vegetables_in_group');
+        $this->db->select('IF(sell_vegetables_others>0, "Yes", "") sell_vegetables_others');
+        $this->db->join($this->config->item('table_ems_survey_farmers_districts').' districts','districts.id = item.district_id','LEFT');
+        $this->db->select('districts.name district_name');
+        $this->db->join($this->config->item('table_ems_survey_farmers_upazilas').' upazilas','upazilas.id = item.upazilla_id','LEFT');
+        $this->db->select('upazilas.name upazilla_name');
+        $this->db->join($this->config->item('table_ems_survey_farmers_unions').' unions','unions.id = item.union_id','LEFT');
+        $this->db->select('unions.name union_name');
+        /*$this->db->join($this->config->item('table_login_setup_user_info').' user_info','user_info.user_id=item.user_created AND user_info.revision = 1','INNER');
+        $this->db->select('user_info.name user_created');*/
+        $this->db->where('item.status',$this->config->item('system_status_active'));
+        /*if($user->user_group>2)
+        {
+            $this->db->where('item.user_created',$user->user_id);
+        }*/
+        if($district_id>0)
+        {
+            $this->db->where('districts.id',$district_id);
+            if($upazilla_id>0)
+            {
+                $this->db->where('upazilas.id',$upazilla_id);
+                if($union_id>0)
+                {
+                    $this->db->where('unions.id',$union_id);
+                }
+            }
+        }
+        $items=$this->db->get()->result_array();
+        foreach($items as &$item)
+        {
+            $item['date_created']=System_helper::display_date_time($item['date_created']);
+        }
         $this->json_return($items);
     }
     private function system_details($id)
