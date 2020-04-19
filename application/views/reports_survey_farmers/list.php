@@ -146,6 +146,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         $(document).off("click", ".pop_up");
         $(document).on("click", ".pop_up", function(event)
         {
+            console.log(this)
             var left=((($(window).width()-550)/2)+$(window).scrollLeft());
             var top=((($(window).height()-550)/2)+$(window).scrollTop());
             $("#popup_window").jqxWindow({width: 1200,height:550,position:{x:left,y:top}}); //to change position always
@@ -235,6 +236,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             showstatusbar: true,
             rowsheight: 45,
             enablebrowserselection:true,
+            selectionmode: 'multiplecellsextended',
             columns: [
                 { text: 'ID',pinned:true,dataField: 'id',width:'110',cellsrenderer: cellsrenderer,rendered:tooltiprenderer, hidden: true},
                 {
@@ -248,7 +250,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 },
                 { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>',pinned:true,dataField: 'farmer_name',width:'200',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('SURVEY_FARMER_MOBILE_NO'); ?>',pinned:true, dataField: 'mobile_no',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['mobile_no']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',filtertype: 'list',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',filtertype: 'checkedlist',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['district_name']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['upazilla_name']?0:1;?>},
                 { text: '<?php echo $CI->lang->line('LABEL_UNION_NAME'); ?>', dataField: 'union_name',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['union_name']?0:1;?>},
                 { columngroup: 'cultivated_area',text: '<?php echo $CI->lang->line('SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES'); ?>', dataField: 'cultivated_area_vegetables', filtertype: 'number',width:'100',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['cultivated_area']?0:1;?>},
@@ -265,7 +267,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_HATBAZAR'); ?>', dataField: 'sell_vegetables_to_hatbazar',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_hatbazar']?0:1;?>},
                 { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_IN_GROUP'); ?>', dataField: 'sell_vegetables_in_group',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_in_group']?0:1;?>},
                 { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'sell_vegetables_others',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_others']?0:1;?>},
-                { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button', width: '85', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['details_button']?0:1;?>}
+                { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button',filtertype: 'none',width: '85',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,hidden: <?php echo $system_preference_items['details_button']?0:1;?>}
             ],
             columngroups:
                 [

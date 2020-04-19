@@ -236,6 +236,8 @@ class Reports_survey_farmers extends Root_Controller
         foreach($items as &$item)
         {
             $item['date_created']=System_helper::display_date_time($item['date_created']);
+            $item['cultivated_area_vegetables']=$item['cultivated_area_vegetables']?$item['cultivated_area_vegetables']:'';
+            $item['cultivated_area_others']=$item['cultivated_area_others']?$item['cultivated_area_others']:'';
         }
         $this->json_return($items);
     }

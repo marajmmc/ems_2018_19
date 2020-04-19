@@ -351,6 +351,6 @@ $checked = "<span style='font-size:1.5em'>&#9745;</span>";
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
         system_preset({controller: '<?php echo $CI->router->class; ?>'});
-        system_off_events(); // Triggers
+        //system_off_events(); // Triggers
     });
 </script>
