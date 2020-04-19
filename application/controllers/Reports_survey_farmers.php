@@ -153,6 +153,7 @@ class Reports_survey_farmers extends Root_Controller
         //$data['does_artodar_paikar_helps_others']= 1;
         //$data['does_artodar_paikar_helps_remarks']= 1;
         $data['do_know_arm']= 1;
+        $data['details_button']= 1;
         return $data;
     }
     private function system_list()
@@ -189,57 +190,6 @@ class Reports_survey_farmers extends Root_Controller
     }
     private function system_get_items()
     {
-        /*$division_id=$this->input->post('division_id');
-        $zone_id=$this->input->post('zone_id');
-        $territory_id=$this->input->post('territory_id');
-        $date_end=$this->input->post('date_end');
-        $date_start=$this->input->post('date_start');
-
-        $this->db->from($this->config->item('table_ems_ft_field_visit_setup_farmer').' setup_farmer');
-        $this->db->select('setup_farmer.*');
-        $this->db->select('upazillas.name upazilla_name');
-        $this->db->join($this->config->item('table_login_setup_location_upazillas').' upazillas','upazillas.id = setup_farmer.upazilla_id','INNER');
-        $this->db->select('districts.name district_name');
-        $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = upazillas.district_id','INNER');
-        $this->db->select('territories.name territory_name');
-        $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-        $this->db->select('zones.name zone_name');
-        $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-        $this->db->select('divisions.name division_name');
-        $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-        $this->db->select('seasons.name season');
-        $this->db->join($this->config->item('table_ems_setup_seasons').' seasons','seasons.id =setup_farmer.season_id','INNER');
-        $this->db->select('count(distinct case when visits_picture.date_created>='.$date_start.' and visits_picture.date_created<='.$date_end.' then visits_picture.day_no end) num_visit_done',false);
-        $this->db->join($this->config->item('table_ems_ft_field_visit_visits_picture').' visits_picture','setup_farmer.id =visits_picture.setup_id','LEFT');
-        if($division_id>0)
-        {
-            $this->db->where('divisions.id',$division_id);
-            if($zone_id>0)
-            {
-                $this->db->where('zones.id',$zone_id);
-                if($territory_id>0)
-                {
-                    $this->db->where('territories.id',$territory_id);
-                }
-            }
-        }
-        if($date_end>0)
-        {
-            $this->db->where('setup_farmer.date_created <=',$date_end);
-        }
-        if($date_start>0)
-        {
-            $this->db->where('setup_farmer.date_created >=',$date_start);
-        }
-        $this->db->where('setup_farmer.status',$this->config->item('system_status_active'));
-        $this->db->order_by('setup_farmer.id','DESC');
-        $this->db->group_by('setup_farmer.id');
-        $items=$this->db->get()->result_array();
-        foreach($items as &$item)
-        {
-            $item['farmer_name']=$item['name'];
-            $item['date_sowing']=System_helper::display_date($item['date_sowing']);
-        }*/
         $district_id=$this->input->post('district_id');
         $upazilla_id=$this->input->post('upazilla_id');
         $union_id=$this->input->post('union_id');
@@ -289,90 +239,64 @@ class Reports_survey_farmers extends Root_Controller
         }
         $this->json_return($items);
     }
+
     private function system_details($id)
     {
         if(isset($this->permissions['action0'])&&($this->permissions['action0']==1))
         {
-            if($id>0)
+            if ($id > 0)
             {
-                $item_id=$id;
+                $item_id = $id;
             }
             else
             {
-                $item_id=$this->input->post('id');
+                $item_id = $this->input->post('id');
             }
-            $data['previous_varieties']=array();
-            $this->db->from($this->config->item('table_ems_ft_field_visit_setup_farmer_varieties').' farmer_varieties');
-            $this->db->select('farmer_varieties.*');
-            $this->db->select('v.name variety_name,v.whose');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id =farmer_varieties.variety_id','INNER');
-            $this->db->where('farmer_varieties.setup_id',$item_id);
-            $this->db->where('farmer_varieties.revision',1);
-            $this->db->order_by('v.whose ASC');
-            $this->db->order_by('v.ordering ASC');
-            $results=$this->db->get()->result_array();
-            if(!$results)
-            {
-                System_helper::invalid_try('Details',$item_id,'Id Non-Exists in field_visit_setup_farmer_varieties');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try';
-                $this->json_return($ajax);
-            }
-            $variety_id=0;
-            foreach($results as $key=>$result)
-            {
-                if($key==0)
-                {
-                    $variety_id=$result['variety_id'];
-                }
-                $data['previous_varieties'][$result['variety_id']]=$result;
-            }
+            $data = array();
+            $user=User_helper::get_user();
+            $this->db->from($this->config->item('table_ems_survey_farmers') . ' survey_farmer');
+            $this->db->select('survey_farmer.*');
 
-            $this->db->from($this->config->item('table_ems_ft_field_visit_setup_farmer').' setup_farmer');
-            $this->db->select('setup_farmer.*');
-            $this->db->select('seasons.name season');
-            $this->db->join($this->config->item('table_ems_setup_seasons').' seasons','seasons.id =setup_farmer.season_id','INNER');
-            $this->db->join($this->config->item('table_login_setup_classification_varieties').' v','v.id ='.$variety_id,'INNER');
-            $this->db->select('crop_types.name crop_type_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crop_types').' crop_types','crop_types.id =v.crop_type_id','INNER');
-            $this->db->select('crops.name crop_name');
-            $this->db->join($this->config->item('table_login_setup_classification_crops').' crops','crops.id =crop_types.crop_id','INNER');
-            $this->db->select('upazillas.name upazilla_name');
-            $this->db->join($this->config->item('table_login_setup_location_upazillas').' upazillas','upazillas.id = setup_farmer.upazilla_id','INNER');
-            $this->db->select('districts.name district_name');
-            $this->db->join($this->config->item('table_login_setup_location_districts').' districts','districts.id = upazillas.district_id','INNER');
-            $this->db->select('territories.name territory_name');
-            $this->db->join($this->config->item('table_login_setup_location_territories').' territories','territories.id = districts.territory_id','INNER');
-            $this->db->select('zones.name zone_name');
-            $this->db->join($this->config->item('table_login_setup_location_zones').' zones','zones.id = territories.zone_id','INNER');
-            $this->db->select('divisions.name division_name');
-            $this->db->join($this->config->item('table_login_setup_location_divisions').' divisions','divisions.id = zones.division_id','INNER');
-            $this->db->where('setup_farmer.id',$item_id);
-            $this->db->where('setup_farmer.status',$this->config->item('system_status_active'));
-            $data['item']=$this->db->get()->row_array();
-            if(!$data['item'])
+            $this->db->join($this->config->item('table_ems_survey_farmers_unions') . ' union', 'union.id = survey_farmer.union_id', 'LEFT');
+            $this->db->select('union.bn_name union_name');
+
+            $this->db->join($this->config->item('table_ems_survey_farmers_upazilas') . ' upazilla', 'upazilla.id = survey_farmer.upazilla_id', 'LEFT');
+            $this->db->select('upazilla.bn_name upazilla_name');
+
+            $this->db->join($this->config->item('table_ems_survey_farmers_districts') . ' district', 'district.id = survey_farmer.district_id', 'LEFT');
+            $this->db->select('district.bn_name district_name');
+
+            $this->db->where('survey_farmer.id', $item_id);
+            $this->db->where('survey_farmer.status !=', $this->config->item('system_status_delete'));
+            /*if($user->user_group>2)
             {
-                System_helper::invalid_try('Details',$item_id,'Id Non-Exists in field_visit_setup_farmer');
-                $ajax['status']=false;
-                $ajax['system_message']='Invalid Try.';
+                $this->db->where('survey_farmer.user_created',$user->user_id);
+            }*/
+            $data['item'] = $this->db->get()->row_array();
+            if (!$data['item'])
+            {
+                //System_helper::invalid_try(__FUNCTION__, $item_id, $this->lang->line('MSG_ID_NOT_EXIST'));
+                $ajax['status'] = false;
+                $ajax['system_message'] = $this->lang->line('MSG_INVALID_TRY');
                 $this->json_return($ajax);
             }
-            $data['visits_picture']=array();
-            $results=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_visits_picture'),'*',array('setup_id ='.$item_id));
-            foreach($results as $result)
-            {
-                $data['visits_picture'][$result['day_no']][$result['variety_id']]=$result;
-            }
-            $data['fruits_picture_headers']=Query_helper::get_info($this->config->item('table_ems_ft_rnd_demo_setup_fruit_picture'),'*',array('status !="'.$this->config->item('system_status_delete').'"'),0,0,array('ordering ASC'));
-            $data['fruits_picture']=array();
-            $results=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_fruit_picture'),'*',array('setup_id ='.$item_id));
-            foreach($results as $result)
-            {
-                $data['fruits_picture'][$result['picture_id']][$result['variety_id']]=$result;
-            }
-            $data['disease_picture']=Query_helper::get_info($this->config->item('table_ems_ft_field_visit_disease_picture'),'*',array('setup_id ='.$item_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('id'));
-            $data['users']=System_helper::get_users_info(array());
-            $data['title']="Details:: Field Visit";
+            // Details Table data
+            $data['items'] = Query_helper::get_info($this->config->item('table_ems_survey_farmers_details'), array('*'), array("survey_id=" . $item_id,'status ="'.$this->config->item('system_status_active').'"'));
+
+            $this->db->from($this->config->item('table_login_setup_user_info').' user_info');
+            $this->db->select('user_info.name user_name, user_info.mobile_no');
+            $this->db->join($this->config->item('table_login_setup_designation').' designation','designation.id=user_info.designation','left');
+            $this->db->select('designation.name designation_name');
+            $this->db->where('user_info.revision',1);
+            $this->db->where('user_info.user_id',$data['item']['user_created']);
+            //$this->db->where('user_info.status',$this->config->item('system_status_active'));
+            $user_info=$this->db->get()->row();
+
+            $data['user_info']['designation']=$user_info->designation_name;
+            $data['user_info']['name']=$user_info->user_name;
+            $data['user_info']['mobile_no']=$user_info->mobile_no;
+
+            $data['title'] = "Farmer based Survey Details - 2020";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#popup_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)

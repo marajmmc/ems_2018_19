@@ -1,400 +1,356 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-$CI =& get_instance();
-?>
-<div class="row widget">
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+$CI = & get_instance();
 
-    <div class="widget-header">
+$action_buttons = array();
+$action_buttons[] = array(
+    'label' => $CI->lang->line("ACTION_BACK"),
+    'href' => site_url($CI->controller_url . '/index/list')
+);
+if (isset($CI->permissions['action4']) && ($CI->permissions['action4'] == 1)) {
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => $CI->lang->line("ACTION_PRINT"),
+        'onClick' => "window.print()"
+    );
+}
+$CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
+
+// Check Mark Indicate
+$unchecked = "<span style='font-size:1.5em'>&#9744;</span>";
+$checked = "<span style='font-size:1.5em'>&#9745;</span>";
+
+?>
+
+<div class="row widget">
+    <div class="widget-header" style="margin:0; padding:5px">
         <div class="title">
             <?php echo $title; ?>
         </div>
         <div class="clearfix"></div>
     </div>
+    <div class="row show-grid">
+        <div style="width:100%">
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                <label class=""><a class="external text-danger" data-toggle="collapse" data-target="#collapse_basic_info" href="#">+ Field Visit Setup Information</a></label>
-            </h4>
-        </div>
-        <div id="collapse_basic_info" class="panel-collapse collapse">
-            <table class="table table-bordered table-responsive system_table_details_view">
-                <tbody>
+            <table border="1" bgcolor="red" style="width:100%">
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['year'];?></label></td>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['division_name'];?></label></td>
+                    <th style="width:30%"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FARMER_NAME'); ?></th>
+                    <td style="width:20%"><?php echo $item['farmer_name']; ?></td>
+                    <th style="width:25%"><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FATHER_HUSBAND_NAME'); ?></th>
+                    <td style="width:25%"><?php echo $item['father_husband_name']; ?></td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['season'];?></label></td>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['zone_name'];?></label></td>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ADDRESS'); ?></th>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_DISTRICT_NAME'); ?></b> <?php echo $item['district_name']; ?></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_UPAZILLA_NAME'); ?></b> <?php echo $item['upazilla_name']; ?></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_UNION_NAME'); ?></b> <?php echo $item['union_name']; ?></td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['crop_name'];?></label></td>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['territory_name'];?></label></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_VILLAGE_NAME'); ?></b> <?php echo $item['village_name']; ?></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_MOBILE_NO'); ?></b> <?php echo $item['mobile_no']; ?></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_NID_NO'); ?></b> <?php echo $item['nid_no']; ?></td>
+                    <td><b><?php echo $CI->lang->line('SURVEY_FARMER_GROWING_AREA'); ?></b> <?php echo $item['growing_area']; ?></td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['crop_type_name'];?></label></td>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['district_name'];?></label></td>
-                </tr>
-                <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label></td>
-                    <td class="header_value">
-                        <?php
-                        foreach($previous_varieties as $variety)
-                        {
-                            ?>
-                            <div class="">
-                                <label><?php  echo $variety['variety_name'].' ('.$variety['whose'].')';?></label>
-                            </div>
-                        <?php
-                        }
-                        ?>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_FAMILY_MEMBER'); ?></th>
+                    <td colspan="3">
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_FEMALE').'</b> '.$item['family_member_female']; ?>
+                        &nbsp;&nbsp; | &nbsp;&nbsp;
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_MALE').'</b> '.$item['family_member_male']; ?>
+                        &nbsp;&nbsp; | &nbsp;&nbsp;
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_OTHERS').' : </b>'.$item['family_member_others']; ?>
+                        &nbsp;&nbsp; | &nbsp;&nbsp;
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_FAMILY_MEMBER_TOTAL').'</b> '; ?>
+                        <?php echo ($item['family_member_female'] + $item['family_member_male'] + $item['family_member_others']); ?>
                     </td>
-                    <td colspan="2">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right">Farmer's Name</label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['name'];?></label></td>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['upazilla_name'];?></label></td>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_LAND_SIZE'); ?></th>
+                    <td colspan="2">
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_LAND_SIZE_CULTIVABLE').'</b> '.$item['land_size_cultivable']; ?>
+                        &nbsp;&nbsp; | &nbsp;&nbsp;
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_LAND_SIZE_RESIDENTIAL').'</b> '.$item['land_size_residential']; ?>
+                        &nbsp;&nbsp; | &nbsp;&nbsp;
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_OTHERS').' : </b>'.$item['land_size_others']; ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['land_size_others_remarks']); ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ADDRESS');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['address'];?></label></td>
-                    <td colspan="2">&nbsp;</td>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_CULTIVATED_AREA'); ?></th>
+                    <td colspan="2">
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_CULTIVATED_AREA_VEGETABLES').'</b> '.$item['cultivated_area_vegetables']; ?>
+                        &nbsp;&nbsp; | &nbsp;&nbsp;
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_OTHERS').' : </b>'.$item['cultivated_area_others']; ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['cultivated_area_others_remarks']); ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CONTACT_NO');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['contact_no'];?></label></td>
-                    <td colspan="2">&nbsp;</td>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_LAST_YEAR_CULTIVATED'); ?></th>
+                    <td colspan="2">
+                        <?php echo ($item['last_year_cultivated_paddy']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_LAST_YEAR_CULTIVATED_PADDY') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['last_year_cultivated_jute']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_LAST_YEAR_CULTIVATED_JUTE') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['last_year_cultivated_wheat']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_LAST_YEAR_CULTIVATED_WHEAT') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['last_year_cultivated_mustard']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_LAST_YEAR_CULTIVATED_MUSTARD') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['last_year_cultivated_maize']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_LAST_YEAR_CULTIVATED_MAIZE') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['last_year_cultivated_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['last_year_cultivated_others_remarks']); ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_sowing']);?></label></td>
-                    <td colspan="2">&nbsp;</td>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_CROPPING_INTENSITY'); ?></th>
+                    <td colspan="3">
+                        <?php echo ($item['cropping_intensity_single']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_CROPPING_INTENSITY_SINGLE') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['cropping_intensity_double']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_CROPPING_INTENSITY_DOUBLE') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['cropping_intensity_triple']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_CROPPING_INTENSITY_TRIPLE') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['cropping_intensity_multiple']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_CROPPING_INTENSITY_MULTIPLE') ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSPLANT');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo System_helper::display_date($item['date_transplant']);?></label></td>
-                    <td colspan="2">&nbsp;</td>
+                    <th colspan="4">৯. গত বছরের সবজি চাষের বিবরণ:</th>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['num_visits'];?></label></td>
-                    <td colspan="2">&nbsp;</td>
+                    <td colspan="4">
+                        <div style="width:100%">
+                            <table border="1" style="width:100%;">
+                                <tr>
+                                    <th class="text-center" rowspan="2">সবজির নাম ও জাত</th>
+                                    <th class="text-center" rowspan="2">জমির পরিমান (শতাংশ)</th>
+                                    <th class="text-center" rowspan="2">মোট উৎপাদন (কেজি/টন)</th>
+                                    <th class="text-center" rowspan="2">মোট উৎপাদিত পণ্যের বিক্রয় মূল্য (টাকা)</th>
+                                    <th class="text-center" colspan="6" style="width:30%"> খরচের বিবরণ (টাকা)</th>
+                                    <th class="text-center" rowspan="2">মোট খরচ (টাকা)</th>
+                                    <th class="text-center" rowspan="2"> আয় (টাকা)</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">জমি তৈরী</th>
+                                    <th class="text-center">মজুরী</th>
+                                    <th class="text-center">সেচ</th>
+                                    <th class="text-center">সার</th>
+                                    <th class="text-center">কীটনাশক</th>
+                                    <th class="text-center">অন্যান্য</th>
+                                </tr>
+                                <?php
+                                foreach ($items as $info)
+                                {
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $info['vegetable_variety_name']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['area_size']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_total_kg']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['cost_total_produced']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_cost_land_preparation']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_cost_wages']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_cost_irrigation']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_cost_fertilizers']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_cost_pesticide']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['production_cost_others']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['cost_total']; ?></td>
+                                        <td style="text-align:right"><?php echo $info['net_profit']; ?></td>
+                                    </tr>
+                                <?php
+                                }
+                                ?>
+                            </table>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="widget-header header_caption"><label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?></label></td>
-                    <td class="header_value"><label class="control-label"><?php echo $item['interval'];?></label></td>
-                    <td colspan="2">&nbsp;</td>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_HAVE_VEGETABLES_TRAINING'); ?></th>
+                    <td>
+                        <?php echo ($item['have_vegetables_training']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
+                        <br/>
+                        <?php echo ($item['have_vegetables_training']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
+                    </td>
+                    <td>
+                        <b><?php echo $CI->lang->line('SURVEY_FARMER_HAVE_VEGETABLES_TRAINING_MEDIA'); ?>:</b> <?php echo $item['have_vegetables_training_media']; ?>
+                        <br/>
+                        <b><?php echo $CI->lang->line('SURVEY_FARMER_HAVE_VEGETABLES_TRAINING_INSTITUTE'); ?>:</b> <?php echo $item['have_vegetables_training_institute']; ?>
+                    </td>
+                    <td>
+                        <b><?php echo $CI->lang->line('SURVEY_FARMER_HAVE_VEGETABLES_TRAINING_SUBJECT'); ?>:</b> <?php echo $item['have_vegetables_training_subject']; ?>
+                    </td>
                 </tr>
-
-                </tbody>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_NEED_TECHNICAL_KNOWLEDGE_CULTIVATION'); ?></th>
+                    <td colspan="3">
+                        <?php echo ($item['need_technical_knowledge_cultivation']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['need_technical_knowledge_cultivation']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_TECHNICAL_KNOWLEDGE_VEGETABLES_CULTIVATION'); ?></th>
+                    <td colspan="2">
+                        <?php echo ($item['technical_knowledge_vegetables_cultivation']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_TECHNICAL_KNOWLEDGE_VEGETABLES_CULTIVATION') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['technical_knowledge_quality_seeds']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_TECHNICAL_KNOWLEDGE_QUALITY_SEEDS') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['technical_knowledge_pest_management']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_TECHNICAL_KNOWLEDGE_PEST_MANAGEMENT') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['technical_knowledge_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['technical_knowledge_others_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEEDS_COLLECT'); ?></th>
+                    <td colspan="2">
+                        <?php echo ($item['seeds_collect_dealers']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_DEALERS') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['seeds_collect_retailers']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_RETAILERS') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['seeds_collect_leadfarmers']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_LEADFARMERS') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['seeds_collect_hatbazar']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_HATBAZAR') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['seeds_collect_ownseeds']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SEEDS_COLLECT_OWNSEEDS') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['seeds_collect_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['seeds_collect_others_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENSURE_SEED_QUALITY'); ?></th>
+                    <td colspan="2">
+                        <?php echo ($item['ensure_seed_quality_germination']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_ENSURE_SEED_QUALITY_GERMINATION') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['ensure_seed_quality_faith']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_ENSURE_SEED_QUALITY_FAITH') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['ensure_seed_quality_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['ensure_seed_quality_others_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_GOOD_SEED_PURCHASE'); ?></th>
+                    <td>
+                        <?php echo ($item['good_seed_purchase']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
+                        <br/>
+                        <?php echo ($item['good_seed_purchase']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
+                    </td>
+                    <td colspan="2">
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_NO').'</b> '.nl2br($item['good_seed_purchase_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SELL_VEGETABLES_TO'); ?></th>
+                    <td colspan="2">
+                        <?php echo ($item['sell_vegetables_to_artodar_paikar']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_ARTODAR_PAIKAR') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['sell_vegetables_to_hatbazar']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_HATBAZAR') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['sell_vegetables_in_group']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_IN_GROUP') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['sell_vegetables_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['sell_vegetables_others_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ADDRESS_SELLING_HATBAZAR'); ?></th>
+                    <td colspan="3">
+                        <?php echo nl2br($item['address_selling_hatbazar']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DOES_ARTODAR_PAIKAR'); ?></th>
+                    <td colspan="3">
+                        <?php echo ($item['does_artodar_paikar_helps']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['does_artodar_paikar_helps']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th> &nbsp;&nbsp;&nbsp;&nbsp; - <?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DOES_ARTODAR_PAIKAR_HELPS'); ?></th>
+                    <td colspan="2">
+                        <?php echo ($item['does_artodar_paikar_helps_supplying_seeds']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_DOES_ARTODAR_PAIKAR_HELPS_SUPPLYING_SEEDS') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['does_artodar_paikar_helps_credit_facilities']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_DOES_DOES_ARTODAR_PAIKAR_HELPS_CREDIT_FACILITIES') ?>
+                        &nbsp; &nbsp;
+                        <?php echo ($item['does_artodar_paikar_helps_others']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_OTHERS') ?>
+                    </td>
+                    <td>
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_OTHERS').'</b> '.nl2br($item['does_artodar_paikar_helps_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEED_FACILITIES'); ?></th>
+                    <td>
+                        <?php echo ($item['seed_facilities']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
+                        <br/>
+                        <?php echo ($item['seed_facilities']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
+                    </td>
+                    <td colspan="2">
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_NO').'</b> '.nl2br($item['seed_facilities_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DO_KNOW_ARM'); ?></th>
+                    <td>
+                        <?php echo ($item['do_know_arm']==1)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_YES') ?>
+                        <br/>
+                        <?php echo ($item['do_know_arm']==0)? $checked:$unchecked;?> <?php echo $CI->lang->line('SURVEY_FARMER_NO') ?>
+                    </td>
+                    <td colspan="2">
+                        <?php echo '<b>'.$CI->lang->line('SURVEY_FARMER_REMARKS_YES').'</b> '.nl2br($item['do_know_arm_remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_REMARKS'); ?></th>
+                    <td colspan="3">
+                        <?php echo nl2br($item['remarks']); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY'); ?></th>
+                    <td colspan="3">
+                        <?php echo $user_info['name']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_DESIGNATION'); ?></th>
+                    <td colspan="3">
+                        <?php echo $user_info['designation']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_ENTRY_BY_MOBILE_NO'); ?></th>
+                    <td colspan="3">
+                        <?php echo $user_info['mobile_no']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_DATE'); ?></th>
+                    <td colspan="3">
+                        <?php echo $item['date_collection_data']?System_helper::display_date($item['date_collection_data']):'';?>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
 </div>
-<div class="panel-group" id="accordion">
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_visits_picture" href="#">Visit Picture and remarks</a>
-        </h4>
-    </div>
-    <div id="collapse_visits_picture" class="panel-collapse collapse in">
-        <?php
-        for($i=1;$i<=$item['num_visits'];$i++)
-        {
-            ?>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-                    <label class="control-label pull-right"><?php echo 'Day - '.$i.' - '. $this->lang->line('LABEL_DATE');?></label>
-                </div>
-                <div class="col-xs-4">
-                    <label class="form-control" style="background-color: #F5F5F5;"><?php echo System_helper::display_date($item['date_sowing']+24*3600*$i*$item['interval']); ?></label>
-                </div>
-            </div>
-            <?php
-            if(isset($visits_picture[$i]))
-            {
-                ?>
-                <div style="overflow-x: auto;" class="row show-grid">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                            <th style="min-width: 250px;">Plot Picture</th>
-                            <th style="min-width: 250px;">Plant Picture</th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        foreach($previous_varieties as $variety)
-                        {
-                            ?>
-                            <tr>
-                                <td><?php echo $variety['variety_name']; ?></td>
-                                <td>
-                                    <?php
-                                    $image_plot_location='images/no_image.jpg';
-                                    if(isset($visits_picture[$i][$variety['variety_id']]['image_plot_location'])&&strlen($visits_picture[$i][$variety['variety_id']]['image_plot_location'])>0)
-                                    {
-                                        $image_plot_location=$visits_picture[$i][$variety['variety_id']]['image_plot_location'];
-                                    }
-                                    ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_plot_location; ?>">
-                                </td>
-                                <td>
-                                    <?php
-                                    $image_plant_location='images/no_image.jpg';
-                                    if(isset($visits_picture[$i][$variety['variety_id']]['image_plant_location'])&&strlen($visits_picture[$i][$variety['variety_id']]['image_plant_location'])>0)
-                                    {
-                                        $image_plant_location=$visits_picture[$i][$variety['variety_id']]['image_plant_location'];
-                                    }
-                                    ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_plant_location; ?>">
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if(isset($visits_picture[$i][$variety['variety_id']]))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_created']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_created']);
-                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php
-            }
-            else
-            {
-                ?>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
 
-                    </div>
-                    <div class="col-xs-4">
-                        <label class="control-label">Visit Not Done Yet</label>
-                    </div>
-                </div>
-            <?php
-            }
-        }
-        ?>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_fruit_picture" href="#">Fruit Picture and remarks</a>
-        </h4>
-    </div>
-    <div id="collapse_fruit_picture" class="panel-collapse collapse">
-        <?php
-        foreach($fruits_picture_headers as $headers)
-        {
-            if(isset($fruits_picture[$headers['id']]))
-            {
-                ?>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                    </div>
-                    <div class="col-xs-4">
-                        <label class="control-label"><?php echo $headers['name'];?></label>
-                    </div>
-                </div>
-                <div style="overflow-x: auto;" class="row show-grid">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                            <th style="min-width: 250px;">Picture</th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_FEEDBACK');?></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        foreach($previous_varieties as $variety)
-                        {
-                            ?>
-                            <tr>
-                                <td><?php echo $variety['variety_name']; ?></td>
-                                <td>
-                                    <?php
-                                    $image_location='images/no_image.jpg';
-                                    if(isset($fruits_picture[$headers['id']][$variety['variety_id']]['image_location'])&&strlen($fruits_picture[$headers['id']][$variety['variety_id']]['image_location'])>0)
-                                    {
-                                        $image_location=$fruits_picture[$headers['id']][$variety['variety_id']]['image_location'];
-                                    }
-                                    ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if(isset($fruits_picture[$headers['id']][$variety['variety_id']]))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_created']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_created']);
-                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['remarks']);
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if((isset($fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback']))&&(($fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback'])>0))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_feedback']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:<br>'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['feedback']);
-                                    }
-                                    else
-                                    {
-                                        $text=$CI->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php
-            }
-            else
-            {
-                ?>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $headers['name'];?></label>
-                    </div>
-                    <div class="col-xs-4">
-                        <label class="control-label">Visit Not Done Yet</label>
-                    </div>
-                </div>
-            <?php
-            }
-        }
-        ?>
-    </div>
-</div>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_disease_picture" href="#">Disease Picture and remarks</a>
-        </h4>
-    </div>
-    <div id="collapse_disease_picture" class="panel-collapse collapse">
-        <?php
-        if(sizeof($disease_picture)>0)
-        {
-            ?>
-            <div id="disease_container">
-                <div style="overflow-x: auto;" class="row show-grid">
-                    <table class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                            <th style="min-width: 250px;">Picture</th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                            <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_FEEDBACK');?></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        foreach($disease_picture as $index=>$disease_info)
-                        {
-                            ?>
-                            <tr>
-                                <td>
-                                    <?php echo $previous_varieties[$disease_info['variety_id']]['variety_name']; ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $image_location='images/no_image.jpg';
-                                    if(strlen($disease_info['image_location'])>0)
-                                    {
-                                        $image_location=$disease_info['image_location'];
-                                    }
-                                    ?>
-                                    <img style="max-width: 250px;" src="<?php echo $CI->config->item('system_base_url_picture').$image_location; ?>">
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$disease_info['user_created']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($disease_info['date_created']);
-                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($disease_info['remarks']);
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $text='';
-                                    if((isset($disease_info['user_feedback']))&&(($disease_info['user_feedback'])>0))
-                                    {
-                                        $text.='<b>Entry By</b>:'.$users[$disease_info['user_feedback']]['name'];
-                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($disease_info['date_feedback']);
-                                        $text.='<br><b>Feedback</b>:<br>'.nl2br($disease_info['feedback']);
-                                    }
-                                    else
-                                    {
-                                        $text=$CI->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
-                                    }
-                                    echo $text;
-                                    ?>
-                                </td>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        <?php
-        }
-        else
-        {
-            ?>
-            <div class="row show-grid">
-                <div class="col-xs-4">
-
-                </div>
-                <div class="col-xs-4">
-                    <label class="control-label">No Disease Found Yet</label>
-                </div>
-            </div>
-        <?php
-        }
-        ?>
-    </div>
-</div>
-</div>
-<div class="clearfix"></div>
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        system_preset({controller: '<?php echo $CI->router->class; ?>'});
+        system_off_events(); // Triggers
+    });
+</script>

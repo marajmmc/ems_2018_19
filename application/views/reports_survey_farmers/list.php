@@ -21,14 +21,14 @@ if(isset($CI->permissions['action5']) && ($CI->permissions['action5']==1))
         'data-title'=>"Download"
     );
 }
-if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
+/*if(isset($CI->permissions['action6']) && ($CI->permissions['action6']==1))
 {
     $action_buttons[]=array
     (
         'label'=>'Preference',
         'href'=>site_url($CI->controller_url.'/index/set_preference')
     );
-}
+}*/
 $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 ?>
 <div class="row widget">
@@ -60,13 +60,14 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="have_vegetables_training" <?php if($system_preference_items['have_vegetables_training']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_HAVE_VEGETABLES_TRAINING'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column_seeds_collect" value="seeds_collect" <?php if($system_preference_items['seeds_collect']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SEEDS_COLLECT'); ?></span></label></div></div>
         <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column_sell_vegetables" value="sell_vegetables" <?php if($system_preference_items['sell_vegetables']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('SURVEY_FARMER_TITLE_SELL_VEGETABLES_TO'); ?></span></label></div></div>
+        <div class="col-xs-2 "><div class="checkbox"><label><input type="checkbox" class="system_jqx_column" value="details_button" <?php if($system_preference_items['details_button']){echo 'checked';}?>><span class=""><?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?></span></label></div></div>
 
     <?php
     }
     ?>
     <div style="" class="row show-grid">
         <div class="col-xs-12 ">
-            <input type="button" value="X Remove Filter" id="clearfilteringbutton" class="btn btn-danger pull-right" />
+            <input type="button" value="Remove All Filter" id="clearfilteringbutton" class="btn btn-danger pull-right" />
         </div>
     </div>
 
@@ -263,7 +264,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_ARTODAR_PAIKAR'); ?>', dataField: 'sell_vegetables_to_artodar_paikar',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_artodar_paikar']?0:1;?>},
                 { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_TO_HATBAZAR'); ?>', dataField: 'sell_vegetables_to_hatbazar',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_to_hatbazar']?0:1;?>},
                 { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_SELL_VEGETABLES_IN_GROUP'); ?>', dataField: 'sell_vegetables_in_group',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_in_group']?0:1;?>},
-                { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'sell_vegetables_others',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_others']?0:1;?>}
+                { columngroup: 'sell_vegetables',text: '<?php echo $CI->lang->line('SURVEY_FARMER_OTHERS'); ?>', dataField: 'sell_vegetables_others',filtertype: 'list',width:'100',cellsalign: 'center',rendered:tooltiprenderer,hidden: <?php echo $system_preference_items['sell_vegetables_others']?0:1;?>},
+                { text: '<?php echo $CI->lang->line('LABEL_DETAILS_BUTTON'); ?>', dataField: 'details_button', width: '85', cellsrenderer: cellsrenderer, rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['details_button']?0:1;?>}
             ],
             columngroups:
                 [
