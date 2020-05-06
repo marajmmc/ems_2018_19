@@ -93,7 +93,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $data['union_name'] = 1;
         /*$data['outlet_name'] = 1;
         $data['growing_area'] = 1;*/
-        $data['lead_farmer_name'] = 1;
+        $data['farmer_name'] = 1;
         $data['crop_name'] = 1;
         $data['crop_type_name'] = 1;
         $data['variety1_name'] = 1;
@@ -102,7 +102,6 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $data['date_sowing_variety2'] = 1;
         $data['date_transplanting_variety1'] = 1;
         $data['date_transplanting_variety2'] = 1;
-        $data['date_expected_evaluation'] = 1;
         $data['date_actual_evaluation'] = 1;
         if ($method == 'list_all')
         {
@@ -161,7 +160,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
     private function system_get_items()
     {
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-        $this->db->select('demonstration.*');
+        $this->db->select('demonstration.*, demonstration.name_other_farmer farmer_name');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
@@ -170,10 +169,10 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');*/
+        $this->db->select('areas.name growing_area');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer) ) AS lead_farmer_name');
+        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer) ) AS farmer_name');*/
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -286,7 +285,7 @@ class Ft_demonstration_status_recommendation extends Root_Controller
             $pagesize = $pagesize * 2;
         }
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-        $this->db->select('demonstration.*');
+        $this->db->select('demonstration.*, demonstration.name_other_farmer farmer_name');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
@@ -295,10 +294,10 @@ class Ft_demonstration_status_recommendation extends Root_Controller
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');*/
+        $this->db->select('areas.name growing_area');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS lead_farmer_name');
+        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS farmer_name');*/
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');

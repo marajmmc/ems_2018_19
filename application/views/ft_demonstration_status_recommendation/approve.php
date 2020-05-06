@@ -112,7 +112,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Evaluation <span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZSC_EVALUATION'); ?> <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">
                 <select name="item[evaluation]" class="form-control">
@@ -131,7 +131,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_STATUS'); ?>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZSC_STATUS'); ?>
                     <span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-xs-4">

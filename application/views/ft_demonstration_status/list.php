@@ -20,25 +20,13 @@ if (isset($CI->permissions['action2']) && ($CI->permissions['action2'] == 1))
 {
     $action_buttons[] = array(
         'type' => 'button',
-        'label' => 'Admin ' . $CI->lang->line("ACTION_EDIT"),
+        'label' => $CI->lang->line("ACTION_EDIT"),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/edit')
     );
 }
 if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
 {
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Image',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/list_image')
-    );
-    $action_buttons[] = array(
-        'type' => 'button',
-        'label' => 'Video',
-        'class' => 'button_jqx_action',
-        'data-action-link' => site_url($CI->controller_url . '/index/list_video')
-    );
     $action_buttons[] = array(
         'type' => 'button',
         'label' => $CI->lang->line('LABEL_DATE_TRANSPLANTING'),
@@ -50,6 +38,18 @@ if (isset($CI->permissions['action1']) && ($CI->permissions['action1'] == 1))
         'label' => $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
         'class' => 'button_jqx_action',
         'data-action-link' => site_url($CI->controller_url . '/index/edit_actual_evaluation_date')
+    );
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'Image',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/list_image')
+    );
+    $action_buttons[] = array(
+        'type' => 'button',
+        'label' => 'Video',
+        'class' => 'button_jqx_action',
+        'data-action-link' => site_url($CI->controller_url . '/index/list_video')
     );
 }
 if (isset($CI->permissions['action0']) && ($CI->permissions['action0'] == 1))
@@ -193,7 +193,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['year']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season', width: '80', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['season']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_UNION_NAME'); ?>', dataField: 'union_name', width: '180', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['union_name']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_LEAD_FARMER_NAME'); ?>', dataField: 'lead_farmer_name', width: '200', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['lead_farmer_name']?0:1;?>},
+                    { text: '<?php echo $CI->lang->line('LABEL_FARMER_NAME'); ?>', dataField: 'farmer_name', width: '200', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['farmer_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name', width: '120', rendered: tooltiprenderer, filtertype: 'list', hidden: <?php echo $system_preference_items['crop_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['crop_type_name']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY1_NAME'); ?>', dataField: 'variety1_name', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['variety1_name']?0:1;?>},
@@ -202,7 +202,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING_VARIETY2'); ?>', dataField: 'date_sowing_variety2', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_sowing_variety2']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'); ?>', dataField: 'date_transplanting_variety1', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_transplanting_variety1']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'); ?>', dataField: 'date_transplanting_variety2', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_transplanting_variety2']?0:1;?>},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_EXPECTED_EVALUATION'); ?>', dataField: 'date_expected_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_expected_evaluation']?0:1;?>},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?>', dataField: 'date_actual_evaluation', width: '120', rendered: tooltiprenderer, hidden: <?php echo $system_preference_items['date_actual_evaluation']?0:1;?>}
                 ]
             });

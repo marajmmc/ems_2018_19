@@ -2,8 +2,8 @@
 // Ft Demonstration Status Task
 $lang['SET_LEADING_FARMER_AND_DEALER'] = 'Dealers/ Lead Farmer information is Not set for selected Outlet';
 $lang['LABEL_DATE_TRANSPLANTING'] = 'Transplanting Date';
-$lang['LABEL_DATE_EXPECTED_EVALUATION'] = 'Expected Date of Evaluation';
-$lang['LABEL_DATE_ACTUAL_EVALUATION'] = 'Actual Date of Evaluation';
+//$lang['LABEL_DATE_EXPECTED_EVALUATION'] = 'Expected Date of Evaluation';
+$lang['LABEL_DATE_ACTUAL_EVALUATION'] = 'Date of Evaluation';
 $lang['LABEL_OTHER_FARMER_NAME'] = 'Other Farmer';
 $lang['LABEL_NO_OF_IMAGES'] = 'Images';
 $lang['LABEL_NO_OF_VIDEOS'] = 'Videos';
@@ -15,12 +15,12 @@ $lang['LABEL_DATE_SOWING_VARIETY1'] = 'Sowing Date (Selected)';
 $lang['LABEL_DATE_SOWING_VARIETY2'] = 'Sowing Date (Compare with)';
 $lang['LABEL_DATE_TRANSPLANTING_VARIETY1'] = 'Transplanting Date (Selected)';
 $lang['LABEL_DATE_TRANSPLANTING_VARIETY2'] = 'Transplanting Date (Compare with)';
-$lang['LABEL_FARMERS_COMMENT'] = 'Comment from Farmer';
-$lang['LABEL_TMPOS_COMMENT'] = 'Comment from MDE';
-$lang['LABEL_ZSCS_COMMENT'] = 'Comment from AMS';
+$lang['LABEL_FARMERS_COMMENT'] = 'Farmer\'s Comment';
+$lang['LABEL_TMPOS_COMMENT'] = 'MDE\'s Comment';
+$lang['LABEL_ZSCS_COMMENT'] = 'AMS\'s Comment';
 $lang['LABEL_STATUS_RECOMMENDATION'] = 'Status Recommendation';
-$lang['LABEL_ZSC_EVALUATION'] = 'ZSC Evaluation';
-$lang['LABEL_ZSC_STATUS'] = 'ZSC Status';
+$lang['LABEL_ZSC_EVALUATION'] = 'AMS\'s Evaluation';
+$lang['LABEL_ZSC_STATUS'] = 'Trial Status';
 $lang['LABEL_REASON_REMARKS'] = 'Reason/ Remarks';
 // Messages
 $lang['MSG_NOT_FORWARDED_DEMONSTRATION'] = 'This Demonstration has not been Forwarded yet.';

@@ -319,7 +319,6 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
                 else
                 {
                     ?>
-                    <!--<select name="item[upazilla_id]" id="upazilla_id" class="form-control">-->
                     <select id="upazilla_id" class="form-control">
                         <option value=""><?php echo $CI->lang->line('SELECT'); ?> </option>
                         <?php
@@ -414,8 +413,7 @@ $CI->load->view("action_buttons", array('action_buttons' => $action_buttons));
 
                 <div class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_LEAD_FARMER_NAME'); ?>
-                            <span style="color:#FF0000">*</span></label>
+                        <label class="control-label pull-right">Farmer Details <span style="color:#FF0000">*</span></label>
                     </div>
                     <div class="col-xs-4">
                         <table class="new_farmer table table-bordered">

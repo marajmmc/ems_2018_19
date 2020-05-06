@@ -79,7 +79,6 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                             <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
                             <option value="date_sowing_variety1"><?php echo $CI->lang->line('LABEL_DATE_SOWING_VARIETY1'); ?></option>
                             <option value="date_sowing_variety2"><?php echo $CI->lang->line('LABEL_DATE_SOWING_VARIETY2'); ?></option>
-                            <option value="date_expected_evaluation"><?php echo $CI->lang->line('LABEL_DATE_EXPECTED_EVALUATION'); ?></option>
                             <option value="date_transplanting_variety1"><?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY1'); ?></option>
                             <option value="date_transplanting_variety1"><?php echo $CI->lang->line('LABEL_DATE_TRANSPLANTING_VARIETY2'); ?></option>
                             <option value="date_actual_evaluation"><?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?></option>

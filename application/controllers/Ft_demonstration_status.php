@@ -137,10 +137,10 @@ class Ft_demonstration_status extends Root_Controller
         {
             $this->system_get_growing_area($id);
         }
-        elseif ($action == "get_lead_farmer_by_growing_area")
+        /*elseif ($action == "get_lead_farmer_by_growing_area")
         {
             $this->system_get_lead_farmer_by_growing_area($id);
-        }
+        }*/
         elseif ($action == "get_arm_competitor_varieties")
         {
             $this->system_get_arm_competitor_varieties($id);
@@ -185,9 +185,7 @@ class Ft_demonstration_status extends Root_Controller
             $data['year'] = 1;
             $data['season'] = 1;
             $data['union_name'] = 1;
-            /*$data['outlet_name'] = 1;
-            $data['growing_area'] = 1;*/
-            $data['lead_farmer_name'] = 1;
+            $data['farmer_name'] = 1;
             $data['crop_name'] = 1;
             $data['crop_type_name'] = 1;
             $data['variety1_name'] = 1;
@@ -196,7 +194,6 @@ class Ft_demonstration_status extends Root_Controller
             $data['date_sowing_variety2'] = 1;
             $data['date_transplanting_variety1'] = 1;
             $data['date_transplanting_variety2'] = 1;
-            $data['date_expected_evaluation'] = 1;
             $data['date_actual_evaluation'] = 1;
             if ($method == 'list_all')
             {
@@ -259,7 +256,7 @@ class Ft_demonstration_status extends Root_Controller
         $user = User_helper::get_user();
 
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-        $this->db->select('demonstration.*');
+        $this->db->select('demonstration.*, demonstration.name_other_farmer farmer_name');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
@@ -268,10 +265,10 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');*/
+        $this->db->select('areas.name growing_area');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer) ) AS lead_farmer_name');
+        $this->db->select('lead_farmers.name farmer_name');*/
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -402,7 +399,7 @@ class Ft_demonstration_status extends Root_Controller
         $user = User_helper::get_user();
 
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
-        $this->db->select('demonstration.*');
+        $this->db->select('demonstration.*, demonstration.name_other_farmer farmer_name');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
@@ -411,10 +408,10 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');*/
+        $this->db->select('areas.name growing_area');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer) ) AS lead_farmer_name');
+        $this->db->select('lead_farmers.name farmer_name');*/
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -1673,6 +1670,7 @@ class Ft_demonstration_status extends Root_Controller
         }
     }
 
+/*
     private function system_get_lead_farmer_by_growing_area($id = 0)
     {
         if ($id > 0)
@@ -1710,6 +1708,7 @@ class Ft_demonstration_status extends Root_Controller
             $this->json_return($ajax);
         }
     }
+*/
 
     private function system_get_arm_competitor_varieties($id = 0)
     {
@@ -1760,9 +1759,9 @@ class Ft_demonstration_status extends Root_Controller
         /*$this->form_validation->set_rules('item[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item[growing_area_id]', $this->lang->line('LABEL_GROWING_AREA'), 'required|numeric');
         $this->form_validation->set_rules('item[lead_farmer_id]', $this->lang->line('LABEL_LEAD_FARMER_NAME'), 'numeric'); // Here, Only checks if Numeric */
-        $this->form_validation->set_rules('item[name_other_farmer]', $this->lang->line('LABEL_LEAD_FARMER_NAME').' Name', 'required|trim');
-        $this->form_validation->set_rules('item[phone_other_farmer]', $this->lang->line('LABEL_LEAD_FARMER_NAME').' Phone No.', 'required|trim');
-        $this->form_validation->set_rules('item[address_other_farmer]', $this->lang->line('LABEL_LEAD_FARMER_NAME').' Address', 'required|trim');
+        $this->form_validation->set_rules('item[name_other_farmer]', $this->lang->line('LABEL_FARMER_NAME').' Name', 'required|trim');
+        $this->form_validation->set_rules('item[phone_other_farmer]', $this->lang->line('LABEL_FARMER_NAME').' Phone No.', 'required|trim');
+        $this->form_validation->set_rules('item[address_other_farmer]', $this->lang->line('LABEL_FARMER_NAME').' Address', 'required|trim');
 
         $this->form_validation->set_rules('item[crop_id]', $this->lang->line('LABEL_CROP_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item[crop_type_id]', $this->lang->line('LABEL_CROP_TYPE'), 'required|numeric');
