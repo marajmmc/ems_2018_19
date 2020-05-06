@@ -75,8 +75,10 @@ class Ft_demonstration_status_report extends Root_Controller
         $data['zone_name'] = 1;
         $data['territory_name'] = 1;
         $data['district_name'] = 1;
-        $data['outlet_name'] = 1;
-        $data['growing_area'] = 1;
+        $data['upazilla_name'] = 1;
+        $data['union_name'] = 1;
+        /*$data['outlet_name'] = 1;
+        $data['growing_area'] = 1;*/
 
         $data['crop_name'] = 1;
         $data['lead_farmer_name'] = 1;
@@ -84,7 +86,7 @@ class Ft_demonstration_status_report extends Root_Controller
         $data['date_sowing_variety2'] = 1;
         $data['date_transplanting_variety1'] = 1;
         $data['date_transplanting_variety2'] = 1;
-        $data['date_expected_evaluation'] = 1;
+        /*$data['date_expected_evaluation'] = 1;*/
         $data['date_actual_evaluation'] = 1;
         $data['zsc_evaluation'] = 1;
         $data['zsc_status'] = 1;
@@ -117,8 +119,36 @@ class Ft_demonstration_status_report extends Root_Controller
     {
         if (isset($this->permissions['action0']) && ($this->permissions['action0'] == 1))
         {
-            $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
             $data['seasons'] = Query_helper::get_info($this->config->item('table_ems_setup_seasons'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
+
+            $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
+            if ($this->locations['division_id'] > 0)
+            {
+                $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $this->locations['division_id']));
+                if ($this->locations['zone_id'] > 0)
+                {
+                    $data['territories'] = Query_helper::get_info($this->config->item('table_login_setup_location_territories'), array('id value', 'name text'), array('zone_id =' . $this->locations['zone_id']));
+                    if ($this->locations['territory_id'] > 0)
+                    {
+                        $data['districts'] = Query_helper::get_info($this->config->item('table_login_setup_location_districts'), array('id value', 'name text'), array('territory_id =' . $this->locations['territory_id']));
+                        if ($this->locations['district_id'] > 0)
+                        {
+                            $data['upazillas'] = Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'), array('id value', 'name text'), array('district_id =' . $this->locations['district_id']));
+                        }
+                    }
+                }
+            }
+            $results = Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'), array('id value', 'name text', 'district_id'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($results as $result)
+            {
+                $data['system_upazillas'][$result['district_id']][] = $result;
+            }
+            $results2 = Query_helper::get_info($this->config->item('table_login_setup_location_unions'), array('id value', 'name text', 'upazilla_id'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($results2 as $result)
+            {
+                $data['system_unions'][$result['upazilla_id']][] = $result;
+            }
+
 
             $data['title'] = "Demonstration Report Search";
             $ajax['status'] = true;
@@ -178,11 +208,11 @@ class Ft_demonstration_status_report extends Root_Controller
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
+        /*$this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');
+        $this->db->select('areas.name growing_area');*/
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
         $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS lead_farmer_name');
@@ -190,15 +220,16 @@ class Ft_demonstration_status_report extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
 
-        $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+        $this->db->join($this->config->item('table_login_setup_location_unions') . ' union', 'union.id = demonstration.union_id', 'INNER');
+        $this->db->select('union.name union_name');
+        $this->db->join($this->config->item('table_login_setup_location_upazillas') . ' upazilla', 'upazilla.id = union.upazilla_id', 'INNER');
+        $this->db->select('upazilla.name upazilla_name');
+        $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = upazilla.district_id', 'INNER');
         $this->db->select('district.name district_name');
-
         $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
         $this->db->select('territory.name territory_name');
-
         $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
         $this->db->select('zone.name zone_name');
-
         $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
         $this->db->select('division.name division_name');
 
@@ -231,21 +262,21 @@ class Ft_demonstration_status_report extends Root_Controller
         if ($item['division_id'] > 0)
         {
             $this->db->where('division.id', $item['division_id']);
-            if ($item['zone_id'])
+            if ($item['zone_id'] > 0)
             {
                 $this->db->where('zone.id', $item['zone_id']);
-                if ($item['territory_id'])
+                if ($item['territory_id'] > 0)
                 {
                     $this->db->where('territory.id', $item['territory_id']);
-                    if ($item['district_id'])
+                    if ($item['district_id'] > 0)
                     {
                         $this->db->where('district.id', $item['district_id']);
-                        if ($item['outlet_id'])
+                        if ($item['upazilla_id'] > 0)
                         {
-                            $this->db->where('demonstration.outlet_id', $item['outlet_id']);
-                            if ($item['growing_area_id'])
+                            $this->db->where('upazilla.id', $item['upazilla_id']);
+                            if ($item['union_id'] > 0)
                             {
-                                $this->db->where('demonstration.growing_area_id', $item['growing_area_id']);
+                                $this->db->where('union.id', $item['union_id']);
                             }
                         }
                     }

@@ -19,6 +19,7 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         </div>
 
         <div class="row show-grid">
+
             <div class="col-md-6">
                 <div class="row show-grid">
                     <div class="col-xs-4">
@@ -95,9 +96,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                         <div class="form-group">
                             <div class='input-group date'>
                                 <input type="text" name="item[start_date]" class="form-control datepicker" value="" readonly/>
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-calendar"></i>
-                                </span>
+                                    <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </span>
                             </div>
                         </div>
                     </div>
@@ -107,9 +108,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
                         <div class="form-group">
                             <div class='input-group date'>
                                 <input type="text" name="item[end_date]" class="form-control datepicker" value="" readonly/>
-                                <span class="input-group-addon">
-                                    <i class="glyphicon glyphicon-calendar"></i>
-                                </span>
+                                    <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </span>
                             </div>
                         </div>
                     </div>
@@ -117,83 +118,202 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </div>
 
             <div class="col-md-6">
+
                 <div class="row show-grid">
-                    <div class="col-xs-3">
+                    <div class="col-xs-4">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                     </div>
                     <div class="col-xs-8">
-                        <select id="division_id" name="item[division_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                            <?php
-                            if ($divisions)
-                            {
+                        <?php
+                        if ($CI->locations['division_id'] > 0)
+                        {
+                            ?>
+                            <label class="control-label"><?php echo $CI->locations['division_name']; ?></label>
+                            <input type="hidden" name="item[division_id]" value="<?php echo $CI->locations['division_id']; ?>" />
+                        <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <select name="item[division_id]" id="division_id" class="form-control">
+                                <option value=""><?php echo $CI->lang->line('SELECT'); ?> </option>
+                                <?php
                                 foreach ($divisions as $division)
                                 {
                                     ?>
                                     <option value="<?php echo $division['value'] ?>"><?php echo $division['text']; ?></option>
                                 <?php
                                 }
-                            }
-                            ?>
-                        </select>
+                                ?>
+                            </select>
+                        <?php
+                        }
+                        ?>
                     </div>
                 </div>
-
-                <div class="row show-grid" id="zone_id_container" style="display:none">
-                    <div class="col-xs-3">
+                <div class="row show-grid" id="zone_id_container" style="<?php echo (!($CI->locations['division_id'] > 0)) ? 'display:none' : '' ?>">
+                    <div class="col-xs-4">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
                     </div>
                     <div class="col-xs-8">
-                        <select id="zone_id" name="item[zone_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                        </select>
+                        <?php
+                        if ($CI->locations['zone_id'] > 0)
+                        {
+                            ?>
+                            <label class="control-label"><?php echo $CI->locations['zone_name']; ?></label>
+                            <input type="hidden" name="item[zone_id]" value="<?php echo $CI->locations['zone_id']; ?>" />
+                        <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <select name="item[zone_id]" id="zone_id" class="form-control">
+                                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                                <?php
+                                foreach ($zones as $zone)
+                                {
+                                    ?>
+                                    <option value="<?php echo $zone['value'] ?>"><?php echo $zone['text']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        <?php
+                        }
+                        ?>
                     </div>
                 </div>
-
-                <div class="row show-grid" id="territory_id_container" style="display:none">
-                    <div class="col-xs-3">
+                <div class="row show-grid" id="territory_id_container" style="<?php echo (!($CI->locations['zone_id'] > 0)) ? 'display:none' : '' ?>">
+                    <div class="col-xs-4">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
                     </div>
                     <div class="col-xs-8">
-                        <select id="territory_id" name="item[territory_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                        </select>
+                        <?php
+                        if ($CI->locations['territory_id'] > 0)
+                        {
+                            ?>
+                            <label class="control-label"><?php echo $CI->locations['territory_name']; ?></label>
+                            <input type="hidden" name="item[territory_id]" value="<?php echo $CI->locations['territory_id']; ?>" />
+                        <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <select name="item[territory_id]" id="territory_id" class="form-control">
+                                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                                <?php
+                                foreach ($territories as $territory)
+                                {
+                                    ?>
+                                    <option value="<?php echo $territory['value'] ?>"><?php echo $territory['text']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        <?php
+                        }
+                        ?>
                     </div>
                 </div>
-
-                <div class="row show-grid" id="district_id_container" style="display:none">
-                    <div class="col-xs-3">
+                <div class="row show-grid" id="district_id_container" style="<?php echo (!($CI->locations['territory_id'] > 0)) ? 'display:none' : '' ?>">
+                    <div class="col-xs-4">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
                     </div>
                     <div class="col-xs-8">
-                        <select id="district_id" name="item[district_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                        </select>
+                        <?php
+                        if ($CI->locations['district_id'] > 0)
+                        {
+                            ?>
+                            <label class="control-label"><?php echo $CI->locations['district_name']; ?></label>
+                            <input type="hidden" name="item[district_id]" value="<?php echo $CI->locations['district_id']; ?>" />
+                        <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <select name="item[district_id]" id="district_id" class="form-control">
+                                <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
+                                <?php
+                                foreach ($districts as $district)
+                                {
+                                    ?>
+                                    <option value="<?php echo $district['value'] ?>"><?php echo $district['text']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="row show-grid" id="upazilla_id_container" style="<?php echo (!($CI->locations['district_id'] > 0)) ? 'display:none' : ''; ?>">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?></label>
+                    </div>
+                    <div class="col-xs-8">
+                        <?php
+                        if ($CI->locations['upazilla_id'] > 0)
+                        {
+                            ?>
+                            <label class="control-label"><?php echo $CI->locations['upazilla_name']; ?></label>
+                            <input type="hidden" name="item[upazilla_id]" value="<?php echo $CI->locations['upazilla_id']; ?>" />
+                        <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <select name="item[upazilla_id]" id="upazilla_id" class="form-control">
+                                <option value=""><?php echo $CI->lang->line('SELECT'); ?> </option>
+                                <?php
+                                foreach ($upazillas as $upazilla)
+                                {
+                                    ?>
+                                    <option value="<?php echo $upazilla['value'] ?>"><?php echo $upazilla['text']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="row show-grid" id="union_id_container" style="<?php echo (!($CI->locations['upazilla_id'] > 0)) ? 'display:none' : ''; ?>">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UNION_NAME'); ?></label>
+                    </div>
+                    <div class="col-xs-8">
+                        <?php
+                        if ($CI->locations['union_id'] > 0)
+                        {
+                            ?>
+                            <label class="control-label"><?php echo $CI->locations['union_name']; ?></label>
+                            <input type="hidden" name="item[union_id]" value="<?php echo $CI->locations['union_id']; ?>" />
+                        <?php
+                        }
+                        else
+                        {
+                            ?>
+                            <select name="item[union_id]" id="union_id" class="form-control">
+                                <option value=""><?php echo $CI->lang->line('SELECT'); ?> </option>
+                                <?php
+                                foreach ($unions as $union)
+                                {
+                                    ?>
+                                    <option value="<?php echo $union['value'] ?>"><?php echo $union['text']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </select>
+                        <?php
+                        }
+                        ?>
                     </div>
                 </div>
 
-                <div class="row show-grid" id="outlet_id_container" style="display:none">
-                    <div class="col-xs-3">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_OUTLET_NAME'); ?></label>
-                    </div>
-                    <div class="col-xs-8">
-                        <select id="outlet_id" name="item[outlet_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row show-grid" id="growing_area_id_container" style="display:none">
-                    <div class="col-xs-3">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_GROWING_AREA'); ?></label>
-                    </div>
-                    <div class="col-xs-8">
-                        <select id="growing_area_id" name="item[growing_area_id]" class="form-control">
-                            <option value=""><?php echo $CI->lang->line('SELECT'); ?></option>
-                        </select>
-                    </div>
-                </div>
             </div>
+
         </div>
 
         <hr style="margin-top:0"/>
@@ -214,6 +334,40 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
 
 </div>
 <script type="text/javascript">
+
+    function clear_child(union=false, upazilla=false, district=false, territory=false, zone=false, division=false)
+    {
+        if(union)
+        {
+            $("#union_id").val('');
+            $('#union_id_container').hide();
+        }
+        if(upazilla)
+        {
+            $("#upazilla_id").val('');
+            $('#upazilla_id_container').hide();
+        }
+        if(district)
+        {
+            $("#district_id").val('');
+            $('#district_id_container').hide();
+        }
+        if(territory)
+        {
+            $("#territory_id").val('');
+            $('#territory_id_container').hide();
+        }
+        if(zone)
+        {
+            $("#zone_id").val('');
+            $('#zone_id_container').hide();
+        }
+        if(division)
+        {
+            $("#division_id").val('');
+            $('#division_id_container').hide();
+        }
+    }
 
     jQuery(document).ready(function ($) {
         system_off_events();
@@ -236,19 +390,12 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
         });
 
         /*--------------------- LOCATION RELATED DROPDOWN -----------------------------*/
+        var system_upazillas = JSON.parse('<?php echo json_encode($system_upazillas); ?>');
+        var system_unions = JSON.parse('<?php echo json_encode($system_unions); ?>');
         $(document).on("change", "#division_id", function () {
-            $("#zone_id").val('');
-            $("#territory_id").val('');
-            $("#district_id").val('');
-            $("#outlet_id").val('');
-            $('#growing_area_id').val('');
+            clear_child(true, true, true, true, true)
 
-            var division_id = $('#division_id').val();
-            $('#zone_id_container').hide();
-            $('#territory_id_container').hide();
-            $('#district_id_container').hide();
-            $('#outlet_id_container').hide();
-            $('#growing_area_id_container').hide();
+            var division_id = $(this).val();
             if (division_id > 0) {
                 $('#zone_id_container').show();
                 if (system_zones[division_id] !== undefined) {
@@ -257,18 +404,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             }
         });
         $(document).on("change", "#zone_id", function () {
-            $("#territory_id").val('');
-            $("#district_id").val('');
-            $("#outlet_id").val('');
-            $('#growing_area_id').val('');
+            clear_child(true, true, true, true)
 
-            var zone_id = $('#zone_id').val();
-            $('#territory_id_container').hide();
-            $('#district_id_container').hide();
-            $('#outlet_id_container').hide();
-            $('#growing_area_id_container').hide();
-            $('#dealer_container').hide();
-            $('#leading_farmer_container').hide();
+            var zone_id = $(this).val();
             if (zone_id > 0) {
                 $('#territory_id_container').show();
                 if (system_territories[zone_id] !== undefined) {
@@ -277,16 +415,9 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             }
         });
         $(document).on("change", "#territory_id", function () {
-            $("#district_id").val('');
-            $("#outlet_id").val('');
-            $('#growing_area_id').val('');
+            clear_child(true, true, true)
 
-            var territory_id = $('#territory_id').val();
-            $('#district_id_container').hide();
-            $('#outlet_id_container').hide();
-            $('#growing_area_id_container').hide();
-            $('#dealer_container').hide();
-            $('#leading_farmer_container').hide();
+            var territory_id = $(this).val();
             if (territory_id > 0) {
                 $('#district_id_container').show();
                 if (system_districts[territory_id] !== undefined) {
@@ -295,44 +426,25 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             }
         });
         $(document).on("change", "#district_id", function () {
-            $('#outlet_id').val('');
-            $('#growing_area_id').val('');
+            clear_child(true, true)
 
-            var district_id = $('#district_id').val();
-            $('#outlet_id_container').hide();
-            $('#growing_area_id_container').hide();
-            $('#dealer_container').hide();
-            $('#leading_farmer_container').hide();
+            var district_id = $(this).val();
             if (district_id > 0) {
-                if (system_outlets[district_id] !== undefined) {
-                    $('#outlet_id_container').show();
-                    $('#outlet_id').html(get_dropdown_with_select(system_outlets[district_id]));
+                $('#upazilla_id_container').show();
+                if (system_upazillas[district_id] !== undefined) {
+                    $("#upazilla_id").html(get_dropdown_with_select(system_upazillas[district_id]));
                 }
             }
         });
-        $(document).on("change", "#outlet_id", function () {
-            $('#growing_area_id').val('');
+        $(document).on("change", "#upazilla_id", function () {
+            clear_child(true);
 
-            var outlet_id = parseInt($(this).val());
-            $('#growing_area_id_container').hide();
-            if (outlet_id > 0) {
-                $.ajax({
-                    url: "<?php echo site_url($CI->controller_url.'/index/get_growing_area/') ?>",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data: {
-                        html_container_id: '#growing_area_id',
-                        id: outlet_id
-                    },
-                    success: function (data, status) {
-                        if (data.status) {
-                            $('#growing_area_id_container').show();
-                        }
-                    },
-                    error: function (xhr, desc, err) {
-                        console.log("error");
-                    }
-                });
+            var upazilla_id = $(this).val();
+            if (upazilla_id > 0) {
+                $('#union_id_container').show();
+                if (system_unions[upazilla_id] !== undefined) {
+                    $("#union_id").html(get_dropdown_with_select(system_unions[upazilla_id]));
+                }
             }
         });
         /*--------------------- LOCATION RELATED DROPDOWN ( END ) ---------------------*/

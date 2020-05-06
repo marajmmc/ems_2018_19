@@ -184,8 +184,9 @@ class Ft_demonstration_status extends Root_Controller
             $data['no_of_videos'] = 1;
             $data['year'] = 1;
             $data['season'] = 1;
-            $data['outlet_name'] = 1;
-            $data['growing_area'] = 1;
+            $data['union_name'] = 1;
+            /*$data['outlet_name'] = 1;
+            $data['growing_area'] = 1;*/
             $data['lead_farmer_name'] = 1;
             $data['crop_name'] = 1;
             $data['crop_type_name'] = 1;
@@ -255,20 +256,22 @@ class Ft_demonstration_status extends Root_Controller
 
     private function system_get_items()
     {
+        $user = User_helper::get_user();
+
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
         $this->db->select('demonstration.*');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
+        /*$this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');
+        $this->db->select('areas.name growing_area');*/
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS lead_farmer_name');
+        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer) ) AS lead_farmer_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -282,22 +285,45 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
         $this->db->select('variety2.name variety2_name');
 
-        $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+        $this->db->join($this->config->item('table_login_setup_location_unions') . ' union', 'union.id = demonstration.union_id', 'INNER');
+        $this->db->select('union.name union_name');
+        $this->db->join($this->config->item('table_login_setup_location_upazillas') . ' upazilla', 'upazilla.id = union.upazilla_id', 'INNER');
+        $this->db->select('upazilla.name upazilla_name');
+        $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = upazilla.district_id', 'INNER');
+        $this->db->select('district.name district_name');
         $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
+        $this->db->select('territory.name territory_name');
         $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
+        $this->db->select('zone.name zone_name');
         $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
-        if ($this->locations['division_id'] > 0)
+        $this->db->select('division.name division_name');
+        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
         {
-            $this->db->where('division.id', $this->locations['division_id']);
-            if ($this->locations['zone_id'] > 0)
+            $this->db->where('demonstration.user_created', $user->user_id);
+        }
+        else
+        {
+            if ($this->locations['division_id'] > 0)
             {
-                $this->db->where('zone.id', $this->locations['zone_id']);
-                if ($this->locations['territory_id'] > 0)
+                $this->db->where('division.id', $this->locations['division_id']);
+                if ($this->locations['zone_id'] > 0)
                 {
-                    $this->db->where('territory.id', $this->locations['territory_id']);
-                    if ($this->locations['district_id'] > 0)
+                    $this->db->where('zone.id', $this->locations['zone_id']);
+                    if ($this->locations['territory_id'] > 0)
                     {
-                        $this->db->where('district.id', $this->locations['district_id']);
+                        $this->db->where('territory.id', $this->locations['territory_id']);
+                        if ($this->locations['district_id'] > 0)
+                        {
+                            $this->db->where('district.id', $this->locations['district_id']);
+                            if ($this->locations['upazilla_id'] > 0)
+                            {
+                                $this->db->where('upazilla.id', $this->locations['upazilla_id']);
+                                if ($this->locations['union_id'] > 0)
+                                {
+                                    $this->db->where('union.id', $this->locations['union_id']);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -327,6 +353,7 @@ class Ft_demonstration_status extends Root_Controller
             $item['date_expected_evaluation'] = System_helper::display_date($item['date_expected_evaluation']);
             $item['date_actual_evaluation'] = System_helper::display_date($item['date_actual_evaluation']);
         }
+
         $this->json_return($items);
     }
 
@@ -372,20 +399,22 @@ class Ft_demonstration_status extends Root_Controller
         {
             $pagesize = $pagesize * 2;
         }
+        $user = User_helper::get_user();
+
         $this->db->from($this->config->item('table_ems_demonstration_status') . ' demonstration');
         $this->db->select('demonstration.*');
 
         $this->db->join($this->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $this->db->select('season.name season');
 
-        $this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
+        /*$this->db->join($this->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
         $this->db->select('cus_info.name outlet_name');
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $this->db->select('areas.name growing_area');
+        $this->db->select('areas.name growing_area');*/
 
         $this->db->join($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer, " (Other)") ) AS lead_farmer_name');
+        $this->db->select('IF( (demonstration.lead_farmer_id > 0), lead_farmers.name, CONCAT(demonstration.name_other_farmer) ) AS lead_farmer_name');
 
         $this->db->join($this->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $this->db->select('crop.name crop_name');
@@ -399,22 +428,45 @@ class Ft_demonstration_status extends Root_Controller
         $this->db->join($this->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
         $this->db->select('variety2.name variety2_name');
 
-        $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+        $this->db->join($this->config->item('table_login_setup_location_unions') . ' union', 'union.id = demonstration.union_id', 'INNER');
+        $this->db->select('union.name union_name');
+        $this->db->join($this->config->item('table_login_setup_location_upazillas') . ' upazilla', 'upazilla.id = union.upazilla_id', 'INNER');
+        $this->db->select('upazilla.name upazilla_name');
+        $this->db->join($this->config->item('table_login_setup_location_districts') . ' district', 'district.id = upazilla.district_id', 'INNER');
+        $this->db->select('district.name district_name');
         $this->db->join($this->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
+        $this->db->select('territory.name territory_name');
         $this->db->join($this->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
+        $this->db->select('zone.name zone_name');
         $this->db->join($this->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
-        if ($this->locations['division_id'] > 0)
+        $this->db->select('division.name division_name');
+        if ($user->user_group != $this->config->item('USER_GROUP_SUPER'))
         {
-            $this->db->where('division.id', $this->locations['division_id']);
-            if ($this->locations['zone_id'] > 0)
+            $this->db->where('demonstration.user_created', $user->user_id);
+        }
+        else
+        {
+            if ($this->locations['division_id'] > 0)
             {
-                $this->db->where('zone.id', $this->locations['zone_id']);
-                if ($this->locations['territory_id'] > 0)
+                $this->db->where('division.id', $this->locations['division_id']);
+                if ($this->locations['zone_id'] > 0)
                 {
-                    $this->db->where('territory.id', $this->locations['territory_id']);
-                    if ($this->locations['district_id'] > 0)
+                    $this->db->where('zone.id', $this->locations['zone_id']);
+                    if ($this->locations['territory_id'] > 0)
                     {
-                        $this->db->where('district.id', $this->locations['district_id']);
+                        $this->db->where('territory.id', $this->locations['territory_id']);
+                        if ($this->locations['district_id'] > 0)
+                        {
+                            $this->db->where('district.id', $this->locations['district_id']);
+                            if ($this->locations['upazilla_id'] > 0)
+                            {
+                                $this->db->where('upazilla.id', $this->locations['upazilla_id']);
+                                if ($this->locations['union_id'] > 0)
+                                {
+                                    $this->db->where('union.id', $this->locations['union_id']);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -573,7 +625,35 @@ class Ft_demonstration_status extends Root_Controller
 
             $data['seasons'] = Query_helper::get_info($this->config->item('table_ems_setup_seasons'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
 
-            $outlet_conditions = array('revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id'));
+            $data['divisions'] = Query_helper::get_info($this->config->item('table_login_setup_location_divisions'), array('id value', 'name text'), array('status !="' . $this->config->item('system_status_delete') . '"'));
+            if ($this->locations['division_id'] > 0)
+            {
+                $data['zones'] = Query_helper::get_info($this->config->item('table_login_setup_location_zones'), array('id value', 'name text'), array('division_id =' . $this->locations['division_id']));
+                if ($this->locations['zone_id'] > 0)
+                {
+                    $data['territories'] = Query_helper::get_info($this->config->item('table_login_setup_location_territories'), array('id value', 'name text'), array('zone_id =' . $this->locations['zone_id']));
+                    if ($this->locations['territory_id'] > 0)
+                    {
+                        $data['districts'] = Query_helper::get_info($this->config->item('table_login_setup_location_districts'), array('id value', 'name text'), array('territory_id =' . $this->locations['territory_id']));
+                        if ($this->locations['district_id'] > 0)
+                        {
+                            $data['upazillas'] = Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'), array('id value', 'name text'), array('district_id =' . $this->locations['district_id']));
+                        }
+                    }
+                }
+            }
+            $results = Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'), array('id value', 'name text', 'district_id'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($results as $result)
+            {
+                $data['system_upazillas'][$result['district_id']][] = $result;
+            }
+            $results2 = Query_helper::get_info($this->config->item('table_login_setup_location_unions'), array('id value', 'name text', 'upazilla_id'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($results2 as $result)
+            {
+                $data['system_unions'][$result['upazilla_id']][] = $result;
+            }
+
+            /*$outlet_conditions = array('revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id'));
             if ($this->locations['district_id'] > 0)
             {
                 $outlet_conditions[] = 'district_id =' . $this->locations['district_id'];
@@ -588,7 +668,7 @@ class Ft_demonstration_status extends Root_Controller
             if (sizeof($data['outlets']) === 1) // Growing Area - Only if, 1 showroom exist for current user
             {
                 $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id value, CONCAT_WS(" - ", name, address) text', array('outlet_id =' . $data['outlets'][0]['value'], 'status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('name'));
-            }
+            }*/
 
             $data['title'] = "Create New Demonstration Status";
             $ajax['status'] = true;
@@ -622,6 +702,12 @@ class Ft_demonstration_status extends Root_Controller
             }
 
             $result = Ft_demonstration_helper::get_demonstration_by_id($item_id, __FUNCTION__);
+
+            /*echo '<pre>';
+            print_r($result);
+            echo '</pre>';
+            die('===============');*/
+
             if ($result['status_forward'] == $this->config->item('system_status_forwarded'))
             {
                 $ajax['status'] = false;
@@ -632,6 +718,20 @@ class Ft_demonstration_status extends Root_Controller
             $data = array();
             $data['item'] = $result;
             $data['seasons'] = Query_helper::get_info($this->config->item('table_ems_setup_seasons'), array('id value', 'name text'), array('status ="' . $this->config->item('system_status_active') . '"'));
+
+            $results = Query_helper::get_info($this->config->item('table_login_setup_location_upazillas'), array('id value', 'name text', 'district_id'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($results as $result)
+            {
+                $data['system_upazillas'][$result['district_id']][] = $result;
+            }
+            $results2 = Query_helper::get_info($this->config->item('table_login_setup_location_unions'), array('id value', 'name text', 'upazilla_id'), array('status ="' . $this->config->item('system_status_active') . '"'), 0, 0, array('ordering ASC'));
+            foreach ($results2 as $result)
+            {
+                $data['system_unions'][$result['upazilla_id']][] = $result;
+            }
+
+
+/*
             $outlet_conditions = array('revision=1', 'type =' . $this->config->item('system_customer_type_outlet_id'));
             if ($this->locations['district_id'] > 0)
             {
@@ -646,6 +746,7 @@ class Ft_demonstration_status extends Root_Controller
             $data['outlets'] = Query_helper::get_info($this->config->item('table_login_csetup_cus_info'), array('*, customer_id value', 'name text'), $outlet_conditions, 0, 0, array('name ASC'));
             $data['growing_area'] = Query_helper::get_info($this->config->item('table_ems_da_tmpo_setup_areas'), 'id value, CONCAT_WS(" - ", name, address) text', array('outlet_id =' . $result['outlet_id'], 'status !="' . $this->config->item('system_status_delete') . '"'), 0, 0, array('name'));
 
+
             // Lead Farmer List by GA id
             $this->db->from($this->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers');
             $this->db->select('lead_farmers.id value, CONCAT(lead_farmers.name, " (", lead_farmers.mobile_no, ")") text');
@@ -657,19 +758,21 @@ class Ft_demonstration_status extends Root_Controller
             $this->db->where('areas.id', $result['growing_area_id']);
             $this->db->order_by('areas.name', 'ASC');
             $this->db->order_by('lead_farmers.ordering', 'ASC');
-            $data['lead_farmer'] = $this->db->get()->result_array();
+            $data['lead_farmer'] = $this->db->get()->result_array();*/
 
             // Crop List with selected, is Loaded by JS
             // Crop Type List with selected, is Loaded by JS
 
+
+
             $this->load->helper('Fd_budget');
-            $data['crop_varieties1'] = Fd_budget_helper::get_variety_arm_upcoming($result['crop_type_id']);
-            $data['crop_varieties2'] = Fd_budget_helper::get_variety_all($result['crop_type_id']);
+            $data['crop_varieties1'] = Fd_budget_helper::get_variety_arm_upcoming($data['item']['crop_type_id']);
+            $data['crop_varieties2'] = Fd_budget_helper::get_variety_all($data['item']['crop_type_id']);
 
-            $data['crop_varieties1'] = $data['crop_varieties1'][$result['crop_type_id']];
-            $data['crop_varieties2'] = $data['crop_varieties2'][$result['crop_type_id']];
+            $data['crop_varieties1'] = $data['crop_varieties1'][$data['item']['crop_type_id']];
+            $data['crop_varieties2'] = $data['crop_varieties2'][$data['item']['crop_type_id']];
 
-            $data['title'] = "Edit Demonstration Status ( ID:" . $result['id'] . " )";
+            $data['title'] = "Edit Demonstration Status ( ID:" . $data['item']['id'] . " )";
             $ajax['status'] = true;
             $ajax['system_content'][] = array("id" => "#system_content", "html" => $this->load->view($this->controller_url . "/add_edit", $data, true));
             if ($this->message)
@@ -689,6 +792,11 @@ class Ft_demonstration_status extends Root_Controller
 
     private function system_save()
     {
+        /*echo '<pre>';
+        print_r($this->input->post());
+        echo '</pre>';
+        die('=======system_save========');*/
+
         $item_id = $this->input->post('id');
         $item_head = $this->input->post('item');
         $user = User_helper::get_user();
@@ -732,8 +840,8 @@ class Ft_demonstration_status extends Root_Controller
             $item_head['date_sowing_variety2'] = NULL;
             $item_head['date_transplanting_variety2'] = NULL; //If 'Variety(Compare with)' is Removed later, then date_transplanting_variety2 Will be Null
         }
-        $item_head['date_expected_evaluation'] = System_helper::get_time($item_head['date_expected_evaluation']);
 
+        /*$item_head['date_expected_evaluation'] = System_helper::get_time($item_head['date_expected_evaluation']);*/
 
         $item_info = $item_head; // Data for Info. table Insert
 
@@ -1648,10 +1756,13 @@ class Ft_demonstration_status extends Root_Controller
 
         $this->form_validation->set_rules('item[year]', $this->lang->line('LABEL_YEAR'), 'required|numeric');
         $this->form_validation->set_rules('item[season_id]', $this->lang->line('LABEL_SEASON'), 'required|numeric');
-        $this->form_validation->set_rules('item[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required|numeric');
+        $this->form_validation->set_rules('item[union_id]', $this->lang->line('LABEL_UNION_NAME'), 'required|numeric');
+        /*$this->form_validation->set_rules('item[outlet_id]', $this->lang->line('LABEL_OUTLET_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item[growing_area_id]', $this->lang->line('LABEL_GROWING_AREA'), 'required|numeric');
-
-        $this->form_validation->set_rules('item[lead_farmer_id]', $this->lang->line('LABEL_LEAD_FARMER_NAME'), 'numeric'); // Here, Only checks if Numeric
+        $this->form_validation->set_rules('item[lead_farmer_id]', $this->lang->line('LABEL_LEAD_FARMER_NAME'), 'numeric'); // Here, Only checks if Numeric */
+        $this->form_validation->set_rules('item[name_other_farmer]', $this->lang->line('LABEL_LEAD_FARMER_NAME').' Name', 'required|trim');
+        $this->form_validation->set_rules('item[phone_other_farmer]', $this->lang->line('LABEL_LEAD_FARMER_NAME').' Phone No.', 'required|trim');
+        $this->form_validation->set_rules('item[address_other_farmer]', $this->lang->line('LABEL_LEAD_FARMER_NAME').' Address', 'required|trim');
 
         $this->form_validation->set_rules('item[crop_id]', $this->lang->line('LABEL_CROP_NAME'), 'required|numeric');
         $this->form_validation->set_rules('item[crop_type_id]', $this->lang->line('LABEL_CROP_TYPE'), 'required|numeric');
@@ -1661,7 +1772,9 @@ class Ft_demonstration_status extends Root_Controller
         {
             $this->form_validation->set_rules('item[date_sowing_variety2]', $this->lang->line('LABEL_DATE_SOWING') . ' of ' . $this->lang->line('LABEL_VARIETY2_NAME'), 'required');
         }
-        $this->form_validation->set_rules('item[date_expected_evaluation]', $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'), 'required');
+
+        /*$this->form_validation->set_rules('item[date_expected_evaluation]', $this->lang->line('LABEL_DATE_EXPECTED_EVALUATION'), 'required');*/
+
         if ($this->form_validation->run() == FALSE)
         {
             $this->message = validation_errors();
@@ -1674,7 +1787,7 @@ class Ft_demonstration_status extends Root_Controller
             return false;
         }
 
-        if (!($item['lead_farmer_id'] > 0))
+        /*if (!($item['lead_farmer_id'] > 0))
         {
             if ((trim($item['name_other_farmer']) == "") && (trim($item['phone_other_farmer']) == "") && (trim($item['address_other_farmer']) == ""))
             {
@@ -1696,12 +1809,26 @@ class Ft_demonstration_status extends Root_Controller
                 $this->message = $this->lang->line('LABEL_OTHER_FARMER_NAME') . ' Address cannot be Empty';
                 return false;
             }
-        }
+        }*/
 
         return true;
     }
 
     private function check_validation_forward($result)
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('item[status_forward]', $this->lang->line('LABEL_FORWARD'), 'required');
+        $this->form_validation->set_rules('item[remarks_farmer]', $this->lang->line('LABEL_FARMERS_COMMENT'), 'required');
+        $this->form_validation->set_rules('item[remarks_forward]', $this->lang->line('LABEL_TMPOS_COMMENT'), 'required');
+        if ($this->form_validation->run() == FALSE)
+        {
+            $this->message = validation_errors();
+            return false;
+        }
+        return true;
+    }
+
+    /*private function check_validation_forward($result)
     {
         $this->message = '';
         $invalid = false;
@@ -1726,5 +1853,5 @@ class Ft_demonstration_status extends Root_Controller
             return false;
         }
         return true;
-    }
+    }*/
 }

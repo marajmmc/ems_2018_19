@@ -17,14 +17,14 @@ class Ft_demonstration_helper
         $CI->db->join($CI->config->item('table_ems_setup_seasons') . ' season', 'season.id = demonstration.season_id', 'INNER');
         $CI->db->select('season.name season');
 
-        $CI->db->join($CI->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
+        /*$CI->db->join($CI->config->item('table_login_csetup_cus_info') . ' cus_info', 'cus_info.customer_id = demonstration.outlet_id AND cus_info.revision=1', 'INNER');
         $CI->db->select('cus_info.name outlet_name');
 
         $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_areas') . ' areas', 'areas.id = demonstration.growing_area_id', 'INNER');
-        $CI->db->select('areas.name growing_area');
+        $CI->db->select('areas.name growing_area');*/
 
         $CI->db->join($CI->config->item('table_ems_da_tmpo_setup_area_lead_farmers') . ' lead_farmers', 'lead_farmers.id = demonstration.lead_farmer_id', 'LEFT');
-        $CI->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
+        $CI->db->select('IF( (demonstration.lead_farmer_id > 0), CONCAT( lead_farmers.name, " (Mobile No.: ", lead_farmers.mobile_no, ")" ), CONCAT(demonstration.name_other_farmer, " (Mobile No.: ", demonstration.phone_other_farmer, ")") ) AS lead_farmer_name');
 
         $CI->db->join($CI->config->item('table_login_setup_classification_crops') . ' crop', 'crop.id = demonstration.crop_id', 'INNER');
         $CI->db->select('crop.name crop_name');
@@ -38,7 +38,7 @@ class Ft_demonstration_helper
         $CI->db->join($CI->config->item('table_login_setup_classification_varieties') . ' variety2', 'variety2.id = demonstration.variety2_id', 'LEFT');
         $CI->db->select('variety2.name variety2_name');
 
-        $CI->db->join($CI->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
+        /*$CI->db->join($CI->config->item('table_login_setup_location_districts') . ' district', 'district.id = cus_info.district_id', 'INNER');
         $CI->db->select('district.id district_id, district.name district_name');
 
         $CI->db->join($CI->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
@@ -47,6 +47,24 @@ class Ft_demonstration_helper
         $CI->db->join($CI->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
         $CI->db->select('zone.id zone_id, zone.name zone_name');
 
+        $CI->db->join($CI->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
+        $CI->db->select('division.id division_id, division.name division_name');*/
+
+        $CI->db->join($CI->config->item('table_login_setup_location_unions') . ' union', 'union.id = demonstration.union_id', 'INNER');
+        $CI->db->select('union.id union_id, union.name union_name');
+        
+        $CI->db->join($CI->config->item('table_login_setup_location_upazillas') . ' upazilla', 'upazilla.id = union.upazilla_id', 'INNER');
+        $CI->db->select('upazilla.id upazilla_id, upazilla.name upazilla_name');
+        
+        $CI->db->join($CI->config->item('table_login_setup_location_districts') . ' district', 'district.id = upazilla.district_id', 'INNER');
+        $CI->db->select('district.id district_id, district.name district_name');
+        
+        $CI->db->join($CI->config->item('table_login_setup_location_territories') . ' territory', 'territory.id = district.territory_id', 'INNER');
+        $CI->db->select('territory.id territory_id, territory.name territory_name');
+        
+        $CI->db->join($CI->config->item('table_login_setup_location_zones') . ' zone', 'zone.id = territory.zone_id', 'INNER');
+        $CI->db->select('zone.id zone_id, zone.name zone_name');
+        
         $CI->db->join($CI->config->item('table_login_setup_location_divisions') . ' division', 'division.id = zone.division_id', 'INNER');
         $CI->db->select('division.id division_id, division.name division_name');
 
@@ -112,17 +130,38 @@ class Ft_demonstration_helper
             'label_2' => $CI->lang->line('LABEL_SEASON'),
             'value_2' => $result['season']
         );
+        //---------LOCATION-----------
         $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_UNION_NAME'),
+            'value_1' => $result['union_name'],
+            'label_2' => $CI->lang->line('LABEL_UPAZILLA_NAME'),
+            'value_2' => $result['upazilla_name']
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_DISTRICT_NAME'),
+            'value_1' => $result['district_name'],
+            'label_2' => $CI->lang->line('LABEL_TERRITORY_NAME'),
+            'value_2' => $result['territory_name']
+        );
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_ZONE_NAME'),
+            'value_1' => $result['zone_name'],
+            'label_2' => $CI->lang->line('LABEL_DIVISION_NAME'),
+            'value_2' => $result['division_name']
+        );
+        /*$data[] = array(
             'label_1' => $CI->lang->line('LABEL_OUTLET_NAME'),
             'value_1' => $result['outlet_name'],
             'label_2' => $CI->lang->line('LABEL_GROWING_AREA'),
             'value_2' => $result['growing_area']
+        );*/
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_LEAD_FARMER_NAME'),
+            'value_1' => $result['lead_farmer_name']
         );
         $data[] = array(
-            'label_1' => $CI->lang->line('LABEL_FARMER_NAME'),
-            'value_1' => $result['lead_farmer_name'],
-            'label_2' => 'Farmer Type',
-            'value_2' => ($result['lead_farmer_id'] > 0) ? $CI->lang->line('LABEL_LEAD_FARMER_NAME') : $CI->lang->line('LABEL_OTHER_FARMER_NAME')
+            'label_1' => $CI->lang->line('LABEL_LEAD_FARMER_NAME'). ' Address',
+            'value_1' => $result['address_other_farmer']
         );
         $data[] = array(
             'label_1' => $CI->lang->line('LABEL_CROP_NAME'),
@@ -162,11 +201,15 @@ class Ft_demonstration_helper
                 'value_2' => ($result['date_transplanting_variety2']) ? System_helper::display_date($result['date_transplanting_variety2']) : '<i style="font-weight:normal">- No Date Selected -</i>'
             );
         }
-        $data[] = array(
+        /*$data[] = array(
             'label_1' => $CI->lang->line('LABEL_DATE_EXPECTED_EVALUATION'),
             'value_1' => System_helper::display_date($result['date_expected_evaluation']),
             'label_2' => $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
             'value_2' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal;color:#FF0000">- No Date Selected -</i>'
+        );*/
+        $data[] = array(
+            'label_1' => $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'),
+            'value_1' => ($result['date_actual_evaluation']) ? System_helper::display_date($result['date_actual_evaluation']) : '<i style="font-weight:normal">- No Date Selected -</i>'
         );
         $data[] = array(
             'label_1' => 'Created By',
@@ -213,13 +256,15 @@ class Ft_demonstration_helper
             );
             $data[] = array(
                 'label_1' => 'Forwarded Status',
-                'value_1' => $CI->config->item('system_status_forwarded'),
-                'label_2' => $CI->lang->line('LABEL_TMPOS_COMMENT'),
-                'value_2' => nl2br($result['remarks_forward'])
+                'value_1' => $CI->config->item('system_status_forwarded')
             );
             $data[] = array(
                 'label_1' => $CI->lang->line('LABEL_FARMERS_COMMENT'),
                 'value_1' => nl2br($result['remarks_farmer'])
+            );
+            $data[] = array(
+                'label_1' => $CI->lang->line('LABEL_TMPOS_COMMENT'),
+                'value_1' => nl2br($result['remarks_forward'])
             );
             $data[] = array(
                 'label_1' => 'Forwarded By',

@@ -99,13 +99,13 @@ $CI->load->view('action_buttons', array('action_buttons' => $action_buttons));
             </div>
         <?php } ?>
         <!-----Image & video Accordion (ENDS)----->
-        <?php if (!$item['date_actual_evaluation']){ ?>
+        <?php /*if (!$item['date_actual_evaluation']){ ?>
             <div class="row show-grid">
                 <div class="col-xs-12 bg-danger text-danger" style="text-align:center; padding:10px 0 5px; font-size:1.2em; font-weight:normal">
                     '<label class="control-label"><?php echo $CI->lang->line('LABEL_DATE_ACTUAL_EVALUATION'); ?></label>' must be Set.
                 </div>
             </div>
-        <?php } ?>
+        <?php }*/ ?>
 
         <div class="row show-grid">
             <div class="col-xs-4">
